@@ -1,0 +1,173 @@
+#search-icon {
+  position: absolute;
+  left: 20px;
+  top: calc(20px + var(--window-inset-top));
+  width: 40px;
+  height: 40px;
+  background-color: black;
+  border-radius: 50%;
+  box-sizing: border-box;
+  box-shadow: inset 0px 0px 0px 3px white;
+  transform: scale(-1, 1);
+
+  &.active {
+    background: white;
+    color: black;
+  }
+
+  p {
+    pointer-events: none;
+    position: relative;
+    left: 11px;
+    top: 9px;
+    font-size: 20px;
+    margin: 0px;
+    padding: 0px;
+  }
+}
+
+#main-home-slider>div.slide-content>div:nth-child(2)>div.inner-page {
+  max-width: 1200px;
+}
+
+.inner-page>.app-list {
+  max-height: 100vh;
+  height: 100vh;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+
+  .app-list-container {
+    will-change: transform;
+
+    .groove-element.groove-app-tile {
+      float: left;
+      width: 100%;
+
+    }
+
+    @media (min-width: 700px) {
+      & {
+        .groove-element.groove-app-tile {
+          float: left;
+          width: 50%;
+        }
+      }
+    }
+
+    @media (min-width: 1000px) {
+      & {
+        .groove-element.groove-app-tile {
+          float: left;
+          width: calc(100% / 3);
+        }
+      }
+    }
+
+    padding-left: 80px;
+    padding-right: 5vw;
+    padding-top: calc(50px + var(--window-inset-top));
+    padding-bottom: calc(50px + var(--window-inset-top));
+    box-sizing: border-box;
+    /* display: flex;
+    flex-direction: column;*/
+  }
+}
+
+.groove-element.groove-app-tile {
+  &.active {
+    transition: 0s;
+    background: rgb(white, 0.1) !important;
+    transform: scale(0.95) !important;
+  }
+
+  transition: transform 0.5s,
+  background-color 0.5s;
+  display: flex;
+  position: relative;
+  height: 60px;
+  padding: 0px;
+  margin: 0px;
+  align-items: center;
+
+  &.iconpack0 {
+    .groove-app-tile-icon {
+      font-family: IconGlyphs;
+    }
+  }
+
+  &.iconpack1 {
+    .groove-app-tile-icon {
+      font-family: SymbolsNerd;
+    }
+  }
+
+  .groove-app-tile-icon,
+  .groove-app-tile-imageicon {
+    margin: 5px;
+    padding: 0px;
+    object-fit: cover;
+    background: var(--accent-color);
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    min-height: 50px;
+    pointer-events: none;
+  }
+
+  .groove-app-tile-imageicon {
+    padding: 0px;
+    margin: 0px;
+    position: relative;
+    left: 0px;
+    top: 0px;
+    background: transparent;
+    filter: saturate(0) brightness(0.6) contrast(10);
+    mix-blend-mode: plus-lighter;
+  }
+
+  p.groove-app-tile-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 35px;
+  }
+
+  .groove-app-tile-title {
+    font-size: 20px;
+    margin: 10px;
+    padding: 0px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 320;
+    pointer-events: none;
+  }
+}
+
+.groove-element.groove-letter-tile {
+  width: 60px !important;
+  margin-right: 100%;
+  background: transparent !important;
+
+  &.active {
+    transition: 0s;
+    opacity: .5;
+    transform: scale(0.95) !important;
+  }
+
+  transition: transform 0.5s,
+  opacity 0.5s;
+
+  .groove-app-tile-icon {
+    background: transparent;
+    box-shadow: inset 0px 0px 0px 3px var(--accent-color);
+    color: var(--accent-color);
+    justify-content: start;
+    align-items: start;
+    padding: 5px 8px;
+    font-size: 30px;
+    box-sizing: border-box;
+    font-weight: 350;
+  }
+}

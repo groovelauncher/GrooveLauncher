@@ -24,10 +24,13 @@ const searchModeSwitch = {
         // history.pushState("searchmodeon", document.title, location.href);
         appListPage.removeClass("no-search-result")
         $("div.app-list-container > div.groove-app-tile:not(.groove-letter-tile)").removeClass("search-hidden")
+        scrollers.app_page_scroller.scrollTo(0, 0, 0, "linear")
+        $("div.app-search-search-store").css("visibility", "hidden")
     },
     off: () => {
         GrooveBoard.BackendMethods.navigation.invalidate("searchOn")
         scrollers.main_home_scroller.enabled = true
+
         appListPage.removeClass("search-mode")
         appListPage[0].searchModeOffTimeout = setTimeout(() => {
             appListPage.removeClass("search-mode-animations")
@@ -35,6 +38,15 @@ const searchModeSwitch = {
         }, 250);
         scrollers.app_page_scroller.refresh()
         setTimeout(() => { scrollers.app_page_scroller.refresh(); appListSearch.val("") }, 500);
+
+        $("div.app-list-container > div.groove-app-tile:not(.groove-letter-tile)").each(function (index, element) {
+            try {
+                element.querySelector("p.groove-app-tile-title").innerText = element.getAttribute("title")
+            } catch (error) {
+
+            }
+        })
+
         appListPage.removeClass("no-search-result")
         $("div.app-list-container > div.groove-app-tile:not(.groove-letter-tile)").removeClass("search-hidden")
     }
@@ -48,7 +60,6 @@ const letterSelectorSwitch = {
         $("div.letter-selector-letter").removeClass("disabled")
 
         $("div.letter-selector-letter").each((index, element) => {
-            console.log(element)
             if (!enabledones.includes(element.innerText.toLocaleUpperCase("en"))) element.classList.add("disabled")
         })
         Bridge.requestSetStatusBarAppearance("hide")
@@ -73,6 +84,17 @@ const letterSelectorSwitch = {
         }, 500);
     }
 }
+
+appListSearch.on("focus", function () {
+    GrooveBoard.BackendMethods.navigation.push("searchBarFocus", () => { }, () => {
+        appListSearch.blur()
+    })
+
+})
+appListSearch.on("blur", function () {
+    GrooveBoard.BackendMethods.navigation.invalidate("searchBarFocus")
+
+})
 $("#search-icon").on("flowClick", function () {
     const searchModeOn = appListPage.hasClass("search-mode")
     if (searchModeOn) {
@@ -81,32 +103,32 @@ $("#search-icon").on("flowClick", function () {
         searchModeSwitch.on()
     }
 
-    console.log("sdgas")
 })
 $(window).on("finishedLoading", () => {
     window.scrollers.main_home_scroller.on("scrollStart", () => { searchModeSwitch.off(); console.log("hey") })
-  /*  $(window).on("pointerdown", function (e) {
-        if (!e.target.classList.contains("letter-selector-letter")) return
-        console.log(e.target)
-        e.stopPropagation()
-        e.stopImmediatePropagation()
-        e.preventDefault()
-        setTimeout(() => {
-            scrollers.main_home_scroller.enable()
-
-        }, 1000);
-    })
-    $(window).on("pointerup", function (e) {
-        if (!e.target.classList.contains("letter-selector-letter")) return
-
-        console.log(e.target)
-        e.stopPropagation()
-        e.stopImmediatePropagation()
-        e.preventDefault()
-    })*/
+    /*  $(window).on("pointerdown", function (e) {
+          if (!e.target.classList.contains("letter-selector-letter")) return
+          console.log(e.target)
+          e.stopPropagation()
+          e.stopImmediatePropagation()
+          e.preventDefault()
+          setTimeout(() => {
+              scrollers.main_home_scroller.enable()
+  
+          }, 1000);
+      })
+      $(window).on("pointerup", function (e) {
+          if (!e.target.classList.contains("letter-selector-letter")) return
+  
+          console.log(e.target)
+          e.stopPropagation()
+          e.stopImmediatePropagation()
+          e.preventDefault()
+      })*/
     $("div.letter-selector-letter").on("flowClick", function (e) {
-        if(e.target.classList.contains("disabled")) return
+        if (e.target.classList.contains("disabled")) return
         letterSelectorSwitch.off()
+        scrollers.app_page_scroller.scrollTo(0, Math.max(scrollers.app_page_scroller.maxScrollY, window.windowInsets.top - document.querySelector(`div.groove-app-tile.groove-letter-tile[icon='${e.target.innerText}']`).offsetTop,), 0, "linear")
         e.stopPropagation()
         e.stopImmediatePropagation()
         e.preventDefault()
@@ -118,11 +140,16 @@ $(window).on("finishedLoading", () => {
 });*/
 appListSearch.on("input", function (e) {
     const search = window.normalizeDiacritics(this.value).toLocaleLowerCase("en")
+    if (search.length == 0) $("div.app-search-search-store").css("visibility", "hidden"); else $("div.app-search-search-store").css("visibility", "");
     $("div.app-list-container > div.groove-app-tile:not(.groove-letter-tile)").each(function (index, element) {
         try {
             const app_title = window.normalizeDiacritics(element.title).toLocaleLowerCase("en")
             if (app_title.includes(search)) {
                 $(element).removeClass("search-hidden")
+                const ogtitle = element.getAttribute("title")
+                const indexoftitle = app_title.indexOf(search)
+                element.querySelector("p.groove-app-tile-title").innerHTML = `${ogtitle.slice(0, indexoftitle)}<span class="groove-app-tile-title-search-tip">${ogtitle.slice(indexoftitle, indexoftitle + search.length)}</span>${ogtitle.slice(indexoftitle + search.length)}`
+
             } else {
                 $(element).addClass("search-hidden")
             }
@@ -130,7 +157,6 @@ appListSearch.on("input", function (e) {
 
         }
     })
-    console.log("search count:", $("div.app-list-container > div.groove-app-tile:not(.groove-letter-tile):not(.search-hidden)").length)
     if ($("div.app-list-container > div.groove-app-tile:not(.groove-letter-tile):not(.search-hidden)").length == 0) {
         appListPage.addClass("no-search-result")
         $("div.app-search-no-result > span").text(this.value)
@@ -141,12 +167,130 @@ appListSearch.on("input", function (e) {
     scrollers.app_page_scroller.refresh()
 
 })
-$("div.app-search-search-store").click(() => {
+$("div.app-search-search-store").on("flowClick", () => {
     window.open("https://play.google.com/store/search?q=" + appListSearch[0].value, "_blank")
 
 })
 
+
+
+
 $(window).on("click", function (e) {
-    if (!e.target.classList.contains("groove-letter-tile")) return
-    letterSelectorSwitch.on()
+    console.log(e.target)
+    if (e.target.classList.contains("groove-letter-tile")) {
+        setTimeout(letterSelectorSwitch.on, 0);
+    } else if (e.target.classList.contains("groove-app-tile") && !e.target.classList.contains("groove-letter-tile")) {
+        if (e.target.canClick) Bridge.requestLaunchApp(e.target.getAttribute("packageName"))
+    }
+})
+$("div.app-list-page").on("flowClick", function (e) {
+    if (e.target.classList.contains("app-menu-back") || e.target.classList.contains("app-menu-back-intro")) {
+        appMenuClose()
+    }
+})
+
+$(window).on("pointerdown", function (e) {
+    if (e.target.classList.contains("groove-app-tile") && !e.target.classList.contains("groove-letter-tile")) {
+        e.target.canClick = true
+        e.target.appMenu = false
+        e.target.appMenuState = false
+        e.target.appRect = e.target.getBoundingClientRect()
+        clearTimeout(window.appMenuCreationFirstTimeout)
+        clearTimeout(window.appMenuCreationSecondTimeout)
+        $("div.groove-app-menu").remove()
+        window.appMenuCreationFirstTimeout = setTimeout(() => {
+            e.target.canClick = false
+            $("div.app-list-page").addClass("app-menu-back-intro")
+            const appMenu = GrooveBoard.BoardMethods.createAppMenu(e.target.getAttribute("packagename"))
+            const optionalTop = (e.target.offsetTop + scrollers.app_page_scroller.y + 64)
+            appMenu.style.top = (optionalTop + 154 >= window.innerHeight ? optionalTop - 64 : optionalTop) + "px"
+            appMenu.style.setProperty("--pointerX", e.pageX - $("div.app-list-page").position().left + "px")
+            appMenu.classList.add("intro")
+            const appClone = e.target.cloneNode(true)
+            appClone.setAttribute("style", appClone.getAttribute("style") + "transition-duration: 1s !important;")
+            $(appClone).addClass("app-tile-clone").css({
+                left: e.target.appRect.left - $("div.app-list-page").position().left,
+                top: e.target.appRect.top
+            })
+            $("div.app-list-page").append(appClone)
+            setTimeout(() => {
+                appClone.classList.remove("active")
+            }, 0);
+            e.target.style.visibility = "hidden"
+
+            if (optionalTop + 154 >= window.innerHeight) appMenu.classList.add("intro-bottom")
+
+            e.target.appMenu = appMenu
+            GrooveBoard.BackendMethods.navigation.push("appMenuOn", () => { }, () => {
+                appMenuClose()
+            })
+
+            window.appMenuCreationSecondTimeout = setTimeout(() => {
+                $("div.app-list-page").addClass("app-menu-back").removeClass("app-menu-back-intro")
+                e.target.appMenuState = true
+                cancelScroll(scrollers.app_page_scroller)
+
+            }, 500);
+
+        }, 500);
+    }
+})
+
+$(window).on("pointerup", function (e) {
+    $("div.groove-app-tile").each((index, element) => {
+        if (element["appMenuState"] == false) {
+            if (element["appMenu"]) element["appMenu"].remove()
+            delete element["appMenuState"]
+            delete element["appMenu"]
+            delete element["appRect"]
+            appMenuClean()
+
+        } else if (element["appMenuState"] == true) {
+
+        }
+
+    })
+
+})
+function appMenuClose() {
+    GrooveBoard.BackendMethods.navigation.invalidate("appMenuOn")
+    console.log("kapat dendi")
+    clearTimeout(window.appMenuCreationFirstTimeout)
+    clearTimeout(window.appMenuCreationSecondTimeout)
+    $("div.groove-app-menu").remove()
+    $("div.app-list-page").removeClass("app-menu-back app-menu-back-intro")
+    setTimeout(() => {
+        appMenuClean()
+    }, 500);
+}
+function appMenuClean() {
+    GrooveBoard.BackendMethods.navigation.invalidate("appMenuOn")
+
+    clearTimeout(window.appMenuCreationFirstTimeout)
+    clearTimeout(window.appMenuCreationSecondTimeout)
+    $("div.app-list-page").removeClass("app-menu-back-intro")
+    $("div.groove-app-tile").css("visibility", "")
+    $("div.app-tile-clone").remove()
+}
+function appImmediateClose() {
+    $("div.groove-app-tile").each((index, element) => {
+        if (element["appMenuState"] == false) {
+            if (element["appMenu"]) element["appMenu"].remove()
+            delete element["appMenuState"]
+            delete element["appMenu"]
+            delete element["appRect"]
+            appMenuClean()
+
+        } else if (element["appMenuState"] == true) {
+
+        }
+
+    })
+}
+window.appMenuClean = appMenuClean
+window.appMenuClose = appMenuClose
+$(window).on("finishedLoading", () => {
+    scrollers.app_page_scroller.scroller.hooks.on('scrollStart', appImmediateClose)
+    scrollers.main_home_scroller.scroller.hooks.on('scrollStart', appImmediateClose)
+
 })

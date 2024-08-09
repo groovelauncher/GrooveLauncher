@@ -1,19 +1,21 @@
 :root {
-    --flow-touch-distance: -5px;
+    --flow-touch-distance: -10px;
     --flow-touch-down-transition: .025s;
     --flow-touch-up-transition: .25s;
-    --flow-perspective: 500px;
+    --flow-perspective: calc(min(100vw, 100vh));
 }
 
 
 @mixin flow-touch {
     transition: transform var(--flow-touch-up-transition) ease-out !important;
     --flow-touch: true;
+    --flow-rotate-scale: .5;
+    transform: translateZ(0px) rotateZ(calc(var(--flow-rotate-y) * -1)) rotateX(0deg) rotateZ(var(--flow-rotate-y));
 
     //  &:active,
     &.active {
         transition: transform var(--flow-touch-down-transition) ease-in-out !important;
-        transform: translateZ(var(--flow-touch-distance)) rotateX(var(--flow-rotate-y)) rotateY(var(--flow-rotate-x)) !important;
+        transform: translateZ(var(--flow-touch-distance)) rotateZ(calc(var(--flow-rotate-y) * -1)) rotateX(calc(var(--flow-rotate-x) * var(--flow-rotate-scale))) rotateZ(var(--flow-rotate-y));
     }
 }
 

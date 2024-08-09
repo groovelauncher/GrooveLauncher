@@ -23,7 +23,7 @@ const BoardMethods = {
 
                 break;
             case "2,1":
-
+                el.classList.add("")
                 break;
             case "2,2":
 
@@ -33,8 +33,7 @@ const BoardMethods = {
                 break;
         }
         const el = GrooveElements.wHomeTile(options.imageIcon, options.icon, options.title, options.packageName, options.color)
-        $()
-        $(el).css
+        document.querySelector("div.tile-list-page div.tile-list-inner-container").appendChild(el)
         return el
     },
     createAppTile: (options) => {
@@ -47,6 +46,17 @@ const BoardMethods = {
     createLetterTile: (letter) => {
         const el = GrooveElements.wLetterTile(letter)
         document.querySelector("#main-home-slider > div > div:nth-child(2) > div > div.app-list > div.app-list-container").appendChild(el)
+        return el
+    },
+    createAppMenu: (packageName) => {
+        const el = GrooveElements.wAppMenu(packageName, {
+            "pin to start": () => {
+
+            }, "uninstall": () => {
+                Bridge.requestAppUninstall(packageName)
+            }
+        })
+        document.querySelector("div.app-list-page").appendChild(el)
         return el
     }
 }
@@ -149,32 +159,35 @@ const BackendMethods = {
     navigation: {
         history: [],
         push: (change, forwardAction, backAction) => {
+            GrooveBoard.BackendMethods.navigation.invalidate(change)
             forwardAction()
-            console.log("pushed", change)
             BackendMethods.navigation.history.push({ forwardAction: forwardAction, change: change, backAction })
             history.pushState(change, "", window.location.href); // Explicitly using the current URL
         },
         back: (action = true) => {
+            if (action == false) BackendMethods.navigation.history.reverse()[0].backAction = () => { }
             history.back()
+
+
             // try {
             //   } catch (error) {
             //} 
         },
         get lastPush() {
+            if (GrooveBoard.BackendMethods.navigation.history.length == 0) return undefined
             return GrooveBoard.BackendMethods.navigation.history.slice(-1)[0]
         },
-        invalidate:(change)=>{
+        invalidate: (change) => {
+            if (GrooveBoard.BackendMethods.navigation.history.length == 0) return undefined
             if (GrooveBoard.BackendMethods.navigation.lastPush.change == change) {
-                GrooveBoard.BackendMethods.navigation.back()
+                GrooveBoard.BackendMethods.navigation.back(false)
             }
         }
     },
     get database() {
-        console.log("get")
         return dadn
     },
     set database(data) {
-        console.log("set")
         dadn = data
     },
 }
@@ -182,7 +195,7 @@ var dadn = {
     kaka: "bok"
 }
 window.onpopstate = function (event) {
-    console.log(event)
+    // console.log(event)
     const act = BackendMethods.navigation.history.pop()
     // try {
     act.backAction()

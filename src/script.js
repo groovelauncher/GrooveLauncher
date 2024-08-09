@@ -9,6 +9,7 @@ import GrooveBoard from "./scripts/GrooveBoard";
 import iconPackConverter from "./scripts/iconPack.js";
 import { BridgeMock, createDefaultBridgeMockConfig } from '@bridgelauncher/api-mock';
 import "./scripts/pages/appList.js"
+import "./scripts/pages/tileList.js"
 import { normalizeSync } from 'normalize-diacritics';
 window.normalizeDiacritics = normalizeSync
 const BridgeMockInstance = !window.Bridge
@@ -36,8 +37,8 @@ const scrollers = {
         click: true,
         tap: true,
         bounce: false,
-        disableMouse:false,
-        disableTouch:false,
+        disableMouse: false,
+        disableTouch: false,
         slide: {
             threshold: 100,
             loop: false,
@@ -50,18 +51,38 @@ const scrollers = {
         scrollX: false,
         scrollY: true,
         mouseWheel: true,
-        disableMouse:false,
-        disableTouch:false,
+        disableMouse: false,
+        disableTouch: false,
     }),
     app_page_scroller: new BScroll('#main-home-slider > div > div:nth-child(2) > div > div.app-list', {
         scrollX: false,
         scrollY: true,
         mouseWheel: true,
-        disableMouse:false,
-        disableTouch:false,
+        disableMouse: false,
+        disableTouch: false,
     })
 }
+function cancelScroll(scroller) {
+        const scrollContainer = scroller.wrapper
+
+        // To simulate a pointer up event
+        const touchEndEvent = new TouchEvent("touchend", {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+        });
+        // To simulate a pointer up event
+        const mouseUpEvent = new MouseEvent("mouseup", {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+        });
+        scrollContainer.dispatchEvent(mouseUpEvent);
+        scrollContainer.dispatchEvent(touchEndEvent);
+    
+}
 window.scrollers = scrollers
+window.cancelScroll = cancelScroll
 
 window.console.image = function (url, size = 100) {
     if (typeof url == "string") {
@@ -96,7 +117,7 @@ window.windowInsets = document.body.windowInsets = {
 bridgeEvents.add((name, args) => {
     //    console.log("WOWOWOWOWO", name, args)   // args will be strongly typed
     if (name != "systemBarsWindowInsetsChanged") return;
-    console.log(args)
+//    console.log(args)
     GrooveBoard.BackendMethods.refreshInsets()
 });
 GrooveBoard.BackendMethods.refreshInsets()
@@ -153,7 +174,6 @@ startUpSequence([
 )
 
 scrollers.main_home_scroller.on("slideWillChange", function (e) {
-    console.log(e)
     if (e.pageX == 0) {
         if (GrooveBoard.BackendMethods.navigation.lastPush.change == "appMenuOpened") {
             GrooveBoard.BackendMethods.navigation.back()
@@ -175,4 +195,4 @@ window.addEventListener('popstate', function (event) {
 
 });
 */
-GrooveBoard.BackendMethods.navigation.push("homescreen", () => { }, () => { console.log("ana ekrandan çıkıcan") })
+GrooveBoard.BackendMethods.navigation.push("homescreen", () => { }, () => {})

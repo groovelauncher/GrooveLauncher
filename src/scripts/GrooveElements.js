@@ -1,7 +1,8 @@
 const GrooveElements = {
     wHomeTile: wHomeTile,
     wAppTile: wAppTile,
-    wLetterTile: wLetterTile
+    wLetterTile: wLetterTile,
+    wAppMenu: wAppMenu
 }
 function wHomeTile(imageIcon = false, icon = "", title = "Unknown", packageName = "com.unknown", color = "default") {
     const homeTile = document.createElement("div")
@@ -22,7 +23,7 @@ function wHomeTile(imageIcon = false, icon = "", title = "Unknown", packageNa
         }
         <p class="groove-element groove-home-tile-title"></>
     `
-    if (imageIcon) homeTile.querySelector("p.groove-home-tile-icon").innerText = icon; else homeTile.querySelector("img.groove-home-tile-imageicon").src = icon;
+    if (!imageIcon) homeTile.querySelector("p.groove-home-tile-icon").innerText = icon; else homeTile.querySelector("img.groove-home-tile-imageicon").src = icon;
     homeTile.querySelector("p.groove-home-tile-title").innerText = title
     return homeTile
 }
@@ -49,11 +50,35 @@ function wAppTile(imageIcon = false, icon = "", title = "Unknown", packageNam
     return appTile
 }
 function wLetterTile(letter) {
-    const el = wAppTile(false,letter,"","")
+    const el = wAppTile(false, letter, "", "")
     el.querySelector(".groove-app-tile-title").remove()
     el.classList.add("groove-letter-tile")
     el.removeAttribute("title")
     el.removeAttribute("packageName")
     return el
+}
+function wAppMenu(packageName, entries = {}) {
+    const appMenu = document.createElement("div")
+    appMenu.classList.add("groove-element")
+    appMenu.classList.add("groove-app-menu")
+    appMenu.setAttribute("packageName", packageName)
+    Object.entries(entries).forEach(entry => {
+        const appMenuEntry = document.createElement("div")
+        appMenuEntry.classList.add("groove-element")
+        appMenuEntry.classList.add("groove-app-menu-entry")
+        appMenuEntry.addEventListener("click", function (e) {
+            clearTimeout(window.appMenuCreationFirstTimeout)
+            clearTimeout(window.appMenuCreationSecondTimeout)
+            $("div.groove-app-menu").remove()
+            $("div.app-list-page").removeClass("app-menu-back app-menu-back-intro")
+            setTimeout(() => {
+                appMenuClean()
+            }, 500);
+        })
+        appMenuEntry.innerText = entry[0]
+        if (entry[1] && typeof entry[1] == "function") appMenuEntry.addEventListener("click", entry[1])
+        appMenu.appendChild(appMenuEntry)
+    });
+    return appMenu
 }
 export default GrooveElements;

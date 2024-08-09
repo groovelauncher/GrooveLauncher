@@ -7,7 +7,7 @@ const clickDetectorConfig = {
 var pointerDownElements = {}
 const getElementFromPointerId = (pid) => Object.entries(pointerDownElements).filter(e => e[0] == String(pid))[0][1]
 window.pointerDownElements = pointerDownElements
-const usedProperties = ["pointerdown", "lastPointerPosition", "supportsFlowTouch"]
+const usedProperties = ["pointerdown", "lastPointerPosition", "supportsFlowTouch", "deletePropertiesTimeout"]
 const usedStyleProperties = ["flow-rotate-x", "flow-rotate-y"]
 function deleteProperties(el) {
     usedProperties.forEach(property => {
@@ -20,25 +20,32 @@ function deleteProperties(el) {
 function flowTouchRotate(el, pageX, pageY) {
     if (el.supportsFlowTouch) {
         const rect = el.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const result = [centerX - pageX, centerY - pageY]
-        result[0] = Math.min(Math.max(result[0], -100), 100)
-        result[1] = Math.min(Math.max(result[1], -100), 100)
-        el.style.setProperty("--flow-rotate-x", result[0] * -5 / Math.pow(rect.width, 1) + "deg")
-        el.style.setProperty("--flow-rotate-y", result[1] * 5 / Math.pow(rect.height, 1) + "deg")
+        //const boxcenter = [el.offsetLeft + el.offsetWidth * .5, el.offsetTop + el.offsetHeight * .5]
+        const boxcenter = [rect.left + rect.width * .5, rect.top + rect.height * .5]
+        const distance = [boxcenter[0] - pageX, boxcenter[1] - pageY]
+        const hypotenuse = Math.sqrt(distance[0] * distance[0] + distance[1] * distance[1])
+        const perspective = 500
+        const maxDegree = 20
+        var rotateX = Math.atan(hypotenuse / perspective) * (180 / Math.PI);
+        rotateX = rotateX > maxDegree ? maxDegree : rotateX <= -maxDegree ? -maxDegree : rotateX
+        const rotateY = Math.atan(distance[0] / distance[1]) * (180 / Math.PI) + (distance[1] <= 0 ? (distance[0] < 0 ? -180 : 180) : 0) //-15
+        // Set the CSS variables
+
+        el.style.setProperty("--flow-rotate-x", rotateX + "deg")
+        el.style.setProperty("--flow-rotate-y", rotateY + "deg")
     }
 }
 window.addEventListener("pointerdown", (e) => {
     const el = e.target
+    clearTimeout(el.deletePropertiesTimeout)
     el.supportsFlowTouch = window.getComputedStyle(el).getPropertyValue("--flow-touch") == "true"
     el.classList.add("active")
-    console.log(e.pointerId)
     el.pointerDown = true
     el.lastPointerPosition = [e.pageX, e.pageY]
     if (el.supportsFlowTouch) {
         el.style.setProperty("--flow-rotate-x", "0deg")
         el.style.setProperty("--flow-rotate-y", "0deg")
+        el.style.setProperty("--flow-rotate-z", "0deg")
     }
     pointerDownElements[e.pointerId] = el
     flowTouchRotate(el, e.pageX, e.pageY)
@@ -54,7 +61,9 @@ window.addEventListener("pointerup", (e) => {
             el.dispatchEvent(event);
         }
         el.classList.remove("active")
-        deleteProperties(el)
+        el.deletePropertiesTimeout = setTimeout(() => {
+            deleteProperties(el)
+        }, 500);
         delete pointerDownElements[e.pointerId]
 
     }
@@ -70,7 +79,6 @@ window.addEventListener("pointermove", (e) => {
         deleteProperties(el)
         delete pointerDownElements[e.pointerId]
     }
-    //console.log(hypotenuse)
 })
 
 

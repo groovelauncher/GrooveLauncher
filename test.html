@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p id="stats">FFF</p>
+    <div id="box">DÜZ</div>
+    <canvas></canvas>
+    <style>
+        #box {
+            display: flex;
+            font-size: 100px;
+            color: white;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            left: calc(0% -0px);
+            top: calc(50% - 200px);
+            width: 400px;
+            height: 400px;
+            background: red;
+            --rotateX: 0deg;
+            --rotateY: 0deg;
+            transform: perspective(500px) rotateZ(calc(var(--rotateY) * -1)) rotateX(var(--rotateX)) rotateZ(var(--rotateY));
+        }
+
+        canvas {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+    </style>
+    <script>
+        const box = document.getElementById("box")
+        const stats = document.getElementById("stats")
+        const canvas = document.getElementsByTagName("canvas")[0]
+        const ctx = canvas.getContext("2d")
+        window.addEventListener("pointermove", function (e) {
+            canvas.width = window.innerWidth
+            canvas.height = window.innerHeight
+            const boxrect = box.getBoundingClientRect()
+            const boxcenter = [box.offsetLeft + box.offsetWidth * .5, box.offsetTop + box.offsetHeight * .5]
+            const distance = [boxcenter[0] - e.pageX, boxcenter[1] - e.pageY]
+            const hypotenuse = Math.sqrt(distance[0] * distance[0] + distance[1] * distance[1])
+            const perspective = 500
+            stats.innerText = distance[0].toFixed(2) + " " + distance[1].toFixed(2) + " " + hypotenuse.toFixed(2)
+
+            ctx.strokeStyle = "black"
+
+            ctx.beginPath(); // Start a new path
+            ctx.moveTo(boxcenter[0], boxcenter[1]); // Move the pen to (30, 50)
+            ctx.lineTo(boxcenter[0] - boxcenter[1], 0); // Draw a line to (150, 100)
+            ctx.moveTo(boxcenter[0], boxcenter[1]); // Move the pen to (30, 50)
+            ctx.lineTo(boxcenter[0] + boxcenter[1], 0); // Draw a line to (150, 100)
+            ctx.moveTo(boxcenter[0], boxcenter[1]); // Move the pen to (30, 50)
+            ctx.lineTo(boxcenter[0] + boxcenter[1], window.innerHeight); // Draw a line to (150, 100)
+            ctx.moveTo(boxcenter[0], boxcenter[1]); // Move the pen to (30, 50)
+            ctx.lineTo(boxcenter[0] - boxcenter[1], window.innerHeight); // Draw a line to (150, 100)
+
+            ctx.stroke(); // Render the path
+
+            ctx.strokeStyle = "green"
+            ctx.beginPath(); // Start a new path
+            ctx.moveTo(boxcenter[0], boxcenter[1]); // Move the pen to (30, 50)
+            ctx.lineTo(e.pageX, e.pageY); // Draw a line to (150, 100)
+            ctx.stroke(); // Render the path
+
+            const rotateX = Math.atan(hypotenuse / perspective) * (180 / Math.PI);
+            const rotateY = Math.atan(distance[0] / distance[1]) * (180 / Math.PI) + (distance[1] < 0 ? 180 : 0) //-15
+            console.log(distance[1])
+            // Set the CSS variables
+            box.style.setProperty("--rotateX", rotateX + "deg");
+            box.style.setProperty("--rotateY", rotateY + "deg");
+        })
+    </script>
+</body>
+
+</html>

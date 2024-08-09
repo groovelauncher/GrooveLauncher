@@ -1,0 +1,65 @@
+div.tile-list-page {}
+
+div.tile-list-page {
+    perspective: var(--flow-perspective);
+}
+
+div.tile-list-container,
+div.tile-list-inner-container {
+    transform-style: preserve-3d;
+}
+
+div.tile-list-inner-container {}
+
+div.app-page-icon-banner {
+    width: 100%;
+    height: calc(42px + 26px * 2);
+    position: relative;
+    transform-style: preserve-3d;
+
+    #app-page-icon {
+        --flow-rotate-scale: 2;
+
+        position: absolute;
+        right: 25px;
+        top: calc(26px + var(--window-inset-top));
+        width: 42px;
+        height: 42px;
+        background-color: black;
+        border-radius: 50%;
+        box-sizing: border-box;
+        box-shadow: inset 0px 0px 0px 3px white;
+
+        &.active {
+            background: white;
+            color: black;
+        }
+
+        p {
+            pointer-events: none;
+            position: relative;
+            left: 11px;
+            top: 13px;
+            font-size: 30px;
+            margin: 0px;
+            padding: 0px;
+            font-weight: bold;
+            height: 16px;
+            width: 30px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+    }
+}
+
+div.groove-home-tile {
+    @include flow-touch;
+    float: left;
+    box-sizing: border-box;
+    padding: 10px;
+    width: calc(50%);
+    aspect-ratio: 1;
+    background: var(--accent-color);
+    --flow-rotate-scale: .5;
+}

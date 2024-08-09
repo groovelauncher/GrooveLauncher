@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="">
 
 <head>
     <meta charset="UTF-8">
@@ -9,6 +9,8 @@
 </head>
 
 <body>
+    <img src="dark3.png"
+        style="display:none;position: fixed;z-index: 9999999; pointer-events: none; opacity: .5;left: 0px;top:-30px;zoom:calc(1 / 1)">
     <div id="loader"
         style="position: fixed;z-index: 999;left: 0px;top: 0px;width: 100%;height: 100%; background: black; font-size: 60px;font-weight: 200;display:flex;align-items: center;justify-content: center;padding-bottom: 20vh; box-sizing: border-box;">
         :)<br>Welcome</div>
@@ -18,8 +20,9 @@
     <div id="main-home-slider" class="slide-wrapper">
         <div class="slide-content">
             <div class="slide-page">
-                <div class="inner-page">
+                <div class="inner-page tile-list-page">
                     <div class="container">
+                        <div style="position: relative;left: 50px;top:50px;background: red; width: 200px; height: 200px;" class="flow-touch"></div>
                         <p></p><br> fed<br> fed<br> fed<br> fed<br> fed<br> fed<br> fed<br> fed<br> fed<br> fed<br>
                         fed<br>
                         fed<br> fed<br> fed<br> fed<br> fed<br> fed<br> fed<br> fed<br> fed<br> fed<br> fed<br> fed<br>
@@ -55,13 +58,19 @@
                 </div>
             </div>
             <div class="slide-page">
-                <div class="inner-page">
-                    <div class="app-list">
-                        <div class="app-list-container">
+                <div class="inner-page app-list-page">
+                    <input type="search" class="app-list-search" placeholder="search">
+                    <div class="letter-selector">
 
+                    </div>
+                    <div class="app-list">
+                        <div class="app-list-container transform-3d">
+                            <div class="app-search-no-result">No results for <span
+                                    style="color: var(--accent-color);">SEARCH</span></div>
+                            <div class="app-search-search-store flow-touch">search Store</div>
                         </div>
                     </div>
-                    <div id="search-icon">
+                    <div id="search-icon" class="flow-touch">
                         <p></p>
                     </div>
                 </div>
@@ -80,8 +89,8 @@
         </div>
     </div>-->
 
-    <script src="https://bridgesimulator.netlify.app/dist/bridgemock.js"
-        integrity="sha256-KgsntFQeRvvF7i7Copl67jy7dDemGnUqDVAWVIFSGpA=" crossorigin="anonymous"></script>
+    <!--<script src="https://bridgesimulator.netlify.app/dist/bridgemock.js"
+        integrity="sha256-KgsntFQeRvvF7i7Copl67jy7dDemGnUqDVAWVIFSGpA=" crossorigin="anonymous"></script>-->
     <script src="dist/script.js"></script>
 </body>
 

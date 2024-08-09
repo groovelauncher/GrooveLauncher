@@ -4,6 +4,7 @@ import eventReloads from "./eventReloads";
 const BoardMethods = {
     finishLoading: () => {
         try {
+            $(window).trigger("finishedLoading")
             const loader = document.getElementById("loader")
             setTimeout(() => {
                 loader.classList.add("finished")
@@ -86,7 +87,6 @@ function sortObjectsByLabel(a, b) {
     }
 }
 function sortObjectsByKey(a, b) {
-    console.log(b[0])
     let labelA = window.normalizeDiacritics(String(a[0])).toLocaleLowerCase("en");
     let labelB = window.normalizeDiacritics(String(b[0])).toLocaleLowerCase("en");
     // Get the ranks for the first characters in the labels
@@ -121,17 +121,11 @@ const BackendMethods = {
                 //appSortCategories = 
                 appSortCategories = (Object.fromEntries(Object.entries(appSortCategories).sort(sortObjectsByKey)))
                 Object.keys(appSortCategories).forEach(labelSortCategory => {
-                    let letter = BoardMethods.createLetterTile(labelSortCategory.toLocaleLowerCase("en"))
-                    console.log(labelSortCategory == "0-9")
-                    if (labelSortCategory == "0-9") {
-                        let label = letter.querySelector("p.groove-app-tile-icon")
-                        label.style.fontSize = "23px"
-                        label.style.paddingTop = "12px"
-                    }
+                    let letter = BoardMethods.createLetterTile(labelSortCategory == "0-9" ? "#" : labelSortCategory == "&" ? "" : labelSortCategory.toLocaleLowerCase("en"))
                     appSortCategories[labelSortCategory].forEach(app => {
                         const ipe = window.iconPackDB[app.packageName]
                         const el = BoardMethods.createAppTile({ title: app.label, packageName: app.packageName, imageIcon: ipe ? false : true, icon: ipe ? ipe.icon : Bridge.getDefaultAppIconURL(app.packageName) })
-                        if (ipe) {if (ipe.pack == 0) el.classList.add("iconpack0"); else el.classList.add("iconpack1")}
+                        if (ipe) { if (ipe.pack == 0) el.classList.add("iconpack0"); else el.classList.add("iconpack1") }
                     });
                     // BoardMethods.createAppTile({ title: entry.label })
                 });
@@ -146,10 +140,51 @@ const BackendMethods = {
             })
     },
     refreshInsets: () => {
+        if (window.stopInsetUpdate) return;
         window.windowInsets = JSON.parse(Bridge.getSystemBarsWindowInsets());
         Object.keys(windowInsets).forEach((element) => {
             document.body.style.setProperty("--window-inset-" + element, windowInsets[element] + "px");
         });
-    }
+    },
+    navigation: {
+        history: [],
+        push: (change, forwardAction, backAction) => {
+            forwardAction()
+            console.log("pushed", change)
+            BackendMethods.navigation.history.push({ forwardAction: forwardAction, change: change, backAction })
+            history.pushState(change, "", window.location.href); // Explicitly using the current URL
+        },
+        back: (action = true) => {
+            history.back()
+            // try {
+            //   } catch (error) {
+            //} 
+        },
+        get lastPush() {
+            return GrooveBoard.BackendMethods.navigation.history.slice(-1)[0]
+        },
+        invalidate:(change)=>{
+            if (GrooveBoard.BackendMethods.navigation.lastPush.change == change) {
+                GrooveBoard.BackendMethods.navigation.back()
+            }
+        }
+    },
+    get database() {
+        console.log("get")
+        return dadn
+    },
+    set database(data) {
+        console.log("set")
+        dadn = data
+    },
 }
+var dadn = {
+    kaka: "bok"
+}
+window.onpopstate = function (event) {
+    console.log(event)
+    const act = BackendMethods.navigation.history.pop()
+    // try {
+    act.backAction()
+};
 export default { BoardMethods, BackendMethods }

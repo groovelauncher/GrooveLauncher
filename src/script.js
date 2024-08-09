@@ -1,5 +1,6 @@
 import jQuery from "jquery";
 window.$ = jQuery
+import clickDetectorConfig from "./scripts/clickDetector.js";
 import BScroll from "better-scroll";
 import { BoardMethods } from "./scripts/GrooveBoard";
 import startUpSequence from "./scripts/startUpSequence";
@@ -24,7 +25,7 @@ window["allappsarchive"] = allappsarchive
 const bridgeEvents = new Set();
 // upon receiving an event, forward it to all listeners
 window.onBridgeEvent = (...event) => {
-  bridgeEvents.forEach((l) => l(...event));
+    bridgeEvents.forEach((l) => l(...event));
 };
 
 window.GrooveBoard = GrooveBoard
@@ -34,7 +35,9 @@ const scrollers = {
         scrollY: false,
         click: true,
         tap: true,
-
+        bounce: false,
+        disableMouse:false,
+        disableTouch:false,
         slide: {
             threshold: 100,
             loop: false,
@@ -47,25 +50,18 @@ const scrollers = {
         scrollX: false,
         scrollY: true,
         mouseWheel: true,
-
+        disableMouse:false,
+        disableTouch:false,
     }),
     app_page_scroller: new BScroll('#main-home-slider > div > div:nth-child(2) > div > div.app-list', {
         scrollX: false,
         scrollY: true,
         mouseWheel: true,
-
-        scrollbar: {
-            minSize: 50,
-            scrollbarTrackClickable: true,
-            scrollbarTrackOffsetTime: 1000
-
-        }
-
+        disableMouse:false,
+        disableTouch:false,
     })
 }
 window.scrollers = scrollers
-
-
 
 window.console.image = function (url, size = 100) {
     if (typeof url == "string") {
@@ -104,10 +100,13 @@ bridgeEvents.add((name, args) => {
     GrooveBoard.BackendMethods.refreshInsets()
 });
 GrooveBoard.BackendMethods.refreshInsets()
-
+$(window).on("resize", () => {
+    $(":root").css({ "--window-width": window.innerWidth + "px", "--window-height": window.innerHeight + "px", "--window-hypotenuse": (Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2))) + "px" })
+})
+$(":root").css({ "--window-width": window.innerWidth + "px", "--window-height": window.innerHeight + "px", "--window-hypotenuse": (Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2))) + "px" })
 startUpSequence([
     (next) => {
-       setTimeout(next, 500);
+        setTimeout(next, 500);
     },
     (next) => {
         detectDeviceType();
@@ -123,6 +122,28 @@ startUpSequence([
         });
         next()
     },
+    (next) => {
+        const letter_selector_entries = ["#abcdefghijklmnopqrstuvwxyz"]
+        const groupedEntries = [];
+
+        for (let i = 0; i < letter_selector_entries[0].length; i += 4) {
+            groupedEntries.push(letter_selector_entries[0].slice(i, i + 4));
+        }
+
+        const letterSelectorDiv = $('.letter-selector');
+
+        groupedEntries.forEach(group => {
+            const $rowDiv = $('<div>', { class: 'letter-selector-row' });
+
+            for (let letter of group) {
+                const $letterDiv = $('<div>', { class: 'letter-selector-letter', text: letter });
+                $rowDiv.append($letterDiv);
+            }
+
+            letterSelectorDiv.append($rowDiv);
+        });
+        next()
+    }
 ],
     function () {
         setTimeout(() => {
@@ -130,9 +151,28 @@ startUpSequence([
         }, 100);
     }
 )
-$(window).on("pointerdown", function (e) {
-    e.target.classList.add("active")
+
+scrollers.main_home_scroller.on("slideWillChange", function (e) {
+    console.log(e)
+    if (e.pageX == 0) {
+        if (GrooveBoard.BackendMethods.navigation.lastPush.change == "appMenuOpened") {
+            GrooveBoard.BackendMethods.navigation.back()
+        }
+    } else {
+        GrooveBoard.BackendMethods.navigation.push("appMenuOpened", () => { }, () => {
+            scrollers.main_home_scroller.scrollTo(0, 0, 500)
+        })
+    }
+    // history.pushState("applistopen", document.title, location.href);
 })
-$(window).on("pointerup", function (e) {
-    $("*").removeClass("active")
-})
+/*
+window.addEventListener('popstate', function (event) {
+    console.log(event)
+    if (event.state != "applistopen") {
+        scrollers.main_home_scroller.scrollTo(0, 0, 500)
+    }
+    // scrollers.main_home_scroller.scrollTo(0,0,500)
+
+});
+*/
+GrooveBoard.BackendMethods.navigation.push("homescreen", () => { }, () => { console.log("ana ekrandan çıkıcan") })

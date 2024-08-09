@@ -5,8 +5,8 @@ function appTileClick(e) {
 }
 const eventReloads = {
     appTile: () => {
-        $("div.groove-element.groove-app-tile:not(.groove-letter-tile)").off("click", appTileClick)
-        $("div.groove-element.groove-app-tile:not(.groove-letter-tile)").on("click", appTileClick)
+        $("div.groove-element.groove-app-tile:not(.groove-letter-tile)").off("flowClick", appTileClick)
+        $("div.groove-element.groove-app-tile:not(.groove-letter-tile)").on("flowClick", appTileClick)
     }
 }
 export default eventReloads;

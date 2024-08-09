@@ -1,22 +1,38 @@
 @import "./styles/appList.scss";
 @import "./styles/colors.scss";
+@import "./styles/flowProperties.scss";
 @import "./styles/fonts.scss";
 @import "./styles/systemBars.scss";
+
 body,
 html {
   color-scheme: dark;
   background: black;
   color: white;
-  word-spacing: -4px;
+  word-spacing: -6px;
+  perspective: var(--flow-perspective);
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100vw;
+  height: 100vh;
+  margin: 0px;
+  padding: 0px;
+
 }
+
+
+
 * {
   font-family: SymbolsNerd, IconGlyphs, OpenSans, sans-serif;
   touch-action: none;
   user-select: none;
-  user-drag:none;
+  user-drag: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
+  outline: transparent;
 }
+
 #main-home-slider {
   position: fixed;
   left: 0px;
@@ -27,29 +43,43 @@ html {
   .slide-content {
     display: flex;
     height: 100%;
+
     .slide-page {
+      perspective: var(--flow-perspective);
       position: relative;
       display: flex;
       justify-content: center;
+
       .inner-page {
         position: relative;
         width: 100%;
         max-width: 768px;
-        & > div.container {
+
+        &>div.container {
           min-height: 100vh;
         }
       }
     }
   }
 }
+
+.transform-3d {
+  transform-style: preserve-3d !important;
+}
+.transform-flat {
+  transform-style: flat;
+}
+
 #loader {
   box-shadow: 0px 0px 0px 10000px black;
   animation: 0.5s loader-show cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+
   @keyframes loader-show {
     from {
       color: black;
       transform: translateX(100px) rotateY(45deg);
     }
+
     to {
       color: white;
     }
@@ -57,11 +87,13 @@ html {
 
   &.finished {
     animation: loader-finished 0.5s cubic-bezier(1, 0, 0.5, 1) forwards;
+
     @keyframes loader-finished {
       from {
         opacity: 1;
         scale: 1;
       }
+
       to {
         opacity: 0;
         scale: 0.75;

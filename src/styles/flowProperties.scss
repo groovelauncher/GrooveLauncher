@@ -1,0 +1,34 @@
+:root {
+    --flow-touch-distance: -5px;
+    --flow-touch-down-transition: .025s;
+    --flow-touch-up-transition: .25s;
+    --flow-perspective: 500px;
+}
+
+
+@mixin flow-touch {
+    transition: transform var(--flow-touch-up-transition) ease-out !important;
+    --flow-touch: true;
+
+    //  &:active,
+    &.active {
+        transition: transform var(--flow-touch-down-transition) ease-in-out !important;
+        transform: translateZ(var(--flow-touch-distance)) rotateX(var(--flow-rotate-y)) rotateY(var(--flow-rotate-x)) !important;
+    }
+}
+
+@mixin flow-touch-disabled {
+    transition: transform var(--flow-touch-up-transition) ease-out !important;
+    --flow-touch: false;
+
+    //  &:active,
+    &.active {
+        transition: transform var(--flow-touch-down-transition) ease-in-out !important;
+        transform: none !important;
+    }
+}
+
+.flow-touch,
+.flow-touch-container>* {
+    @include flow-touch
+}

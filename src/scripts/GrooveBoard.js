@@ -16,7 +16,22 @@ const BoardMethods = {
 
         }
     },
-    createHomeTile: (size = [0, 0], options = {}) => {
+    createHomeTile: (size = [1, 1], options = {}) => {
+        options = Object.assign({ imageIcon: false, icon: "", title: "Unknown", packageName: "com.unknown", supportedSizes: ["s", "m"] }, options)
+        setTimeout(() => {
+            scrollers.tile_page_scroller.refresh()
+
+        }, 0);
+        console.log("created", options)
+        const widget = window.tileListGrid.addWidget(
+            GrooveElements.wHomeTile(options.imageIcon, options.icon, options.title, options.packageName, "", options.supportedSizes),
+            {
+                w: size[0],
+                h: size[1],
+            })
+        if (window.scrollers) window.scrollers.tile_page_scroller.refresh()
+        return widget
+
         options = Object.assign({ imageIcon: false, icon: "", title: "Unknown", packageName: "com.unknown", color: "default" }, options)
         switch (String(size)) {
             case "1,1":
@@ -40,6 +55,7 @@ const BoardMethods = {
         options = Object.assign({ imageIcon: false, icon: "", title: "Unknown", packageName: "com.unknown" }, options)
         const el = GrooveElements.wAppTile(options.imageIcon, options.icon, options.title, options.packageName)
         document.querySelector("#main-home-slider > div > div:nth-child(2) > div > div.app-list > div.app-list-container").appendChild(el)
+
         // window.scrollers.app_page_scroller.refresh()
         return el
     },
@@ -51,12 +67,36 @@ const BoardMethods = {
     createAppMenu: (packageName) => {
         const el = GrooveElements.wAppMenu(packageName, {
             "pin to start": () => {
+                const findTile = $(`div.inner-page.app-list-page > div.app-list > div.app-list-container > div.groove-element.groove-app-tile[packagename="${packageName}"]`)[0]
+                console.log("BUNDAN TİLE", findTile)
 
+                GrooveBoard.BoardMethods.createHomeTile([1, 1], {
+                    packageName: findTile.getAttribute("packagename"),
+                    title: findTile.getAttribute("title"),
+                    icon: findTile.getAttribute("icon"),
+                    imageIcon: findTile.getAttribute("imageicon") == "true",
+                    //  supportedSizes: ["s", "m", "w", "l"]
+                    supportedSizes: ["s", "m", "w", "l"]
+                })
+                scrollers.tile_page_scroller.refresh()
+                setTimeout(() => {
+                    scrollers.main_home_scroller.scrollTo(0, 0, 500)
+                    setTimeout(() => {
+                        scrollers.tile_page_scroller.scrollTo(0, scrollers.tile_page_scroller.maxScrollY, 500)
+
+                    }, 300);
+                }, 300);
             }, "uninstall": () => {
                 Bridge.requestAppUninstall(packageName)
             }
         })
         document.querySelector("div.app-list-page").appendChild(el)
+        return el
+    },
+    createTileMenu: (el) => {
+        document.querySelectorAll(".groove-tile-menu").forEach(i => i.remove())
+        const tileMenu = GrooveElements.wTileMenu(el)
+        el.appendChild(tileMenu)
         return el
     }
 }
@@ -96,6 +136,7 @@ function sortObjectsByLabel(a, b) {
         return rankA - rankB;
     }
 }
+const originalWidgetSizes = [98.5, 209, 319.5430]
 function sortObjectsByKey(a, b) {
     let labelA = window.normalizeDiacritics(String(a[0])).toLocaleLowerCase("en");
     let labelB = window.normalizeDiacritics(String(b[0])).toLocaleLowerCase("en");
@@ -160,9 +201,12 @@ const BackendMethods = {
         history: [],
         push: (change, forwardAction, backAction) => {
             GrooveBoard.BackendMethods.navigation.invalidate(change)
+
+            console.log("HISTORY PUSH", change)
             forwardAction()
             BackendMethods.navigation.history.push({ forwardAction: forwardAction, change: change, backAction })
             history.pushState(change, "", window.location.href); // Explicitly using the current URL
+            listHistory()
         },
         back: (action = true) => {
             if (action == false) BackendMethods.navigation.history.reverse()[0].backAction = () => { }
@@ -179,9 +223,11 @@ const BackendMethods = {
         },
         invalidate: (change) => {
             if (GrooveBoard.BackendMethods.navigation.history.length == 0) return undefined
+            console.log("HISTORY INVA", change)
             if (GrooveBoard.BackendMethods.navigation.lastPush.change == change) {
                 GrooveBoard.BackendMethods.navigation.back(false)
             }
+            listHistory()
         }
     },
     get database() {
@@ -190,14 +236,43 @@ const BackendMethods = {
     set database(data) {
         dadn = data
     },
+    getTileSize: function (w, h) {
+        const padding = 12
+        const column = document.querySelector("div.tile-list-inner-container").classList.contains("gs-4") ? 4 : document.querySelector("div.tile-list-inner-container").classList.contains("gs-6") ? 6 : 8
+        const base = (document.querySelector("div.tile-list-inner-container").clientWidth / column) - padding
+        return [w * base + (w - 1) * padding, h * base + (h - 1) * padding]
+    },
+    scaleTiles: function () {
+        const scale = GrooveBoard.BackendMethods.getTileSize(1, 1)[0] / originalWidgetSizes[0]
+        document.querySelector("div.tile-list-inner-container").style.setProperty("--tile-zoom", scale)
+    },
+    resizeTile: function (el, size) {
+        const appSizeDictionary = { s: [1, 1], m: [2, 2], w: [4, 2], l: [4, 4] }
+        if (!appSizeDictionary[size] || !el["gridstackNode"]) return
+        const chosenSize = appSizeDictionary[size]
+        if (size == "s") {
+            el.removeAttribute("gs-w")
+            el.removeAttribute("gs-h")
+        } else {
+            el.setAttribute("gs-w", chosenSize[0])
+            el.setAttribute("gs-h", chosenSize[1])
+        }
+        tileListGrid.moveNode(el.gridstackNode, { w: chosenSize[0], h: chosenSize[1] })
+    }
 }
 var dadn = {
     kaka: "bok"
 }
+function listHistory() {
+    console.log("%c " + GrooveBoard.BackendMethods.navigation.history.map(e => JSON.stringify(e)).join("\n"), 'background: #222; color: #bada55')
+
+}
 window.onpopstate = function (event) {
     // console.log(event)
     const act = BackendMethods.navigation.history.pop()
-    // try {
+    console.log("HISTORY BACK", act.change)
     act.backAction()
+    listHistory()
 };
 export default { BoardMethods, BackendMethods }
+

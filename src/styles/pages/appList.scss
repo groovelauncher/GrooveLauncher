@@ -10,7 +10,6 @@
   border-radius: 50%;
   box-sizing: border-box;
   box-shadow: inset 0px 0px 0px 3px white;
-  --flow-rotate-scale: 2;
 
   &.active {
     background: white;
@@ -241,8 +240,7 @@ div.inner-page.app-list-page {
 
 .groove-element.groove-app-tile {
   @include flow-touch;
-  --flow-touch-distance: -10px;
-
+  --flow-rotate-scale: 0.06;
   transition: transform 0.5s,
     background-color 0.5s;
   display: flex;
@@ -315,11 +313,16 @@ div.inner-page.app-list-page {
 }
 
 .groove-element.groove-letter-tile {
-  background: transparent !important;
+  &.opaque {
+    background: black !important;
+    box-shadow: 0px calc(-6px - var(--window-inset-top)) 0px black;
+  }
+
   margin-right: 100%;
+  transform-style: flat;
 
   .groove-app-tile-icon {
-    background: transparent;
+    background: black;
     box-shadow: inset 0px 0px 0px 3px var(--accent-color);
     color: var(--accent-color);
     justify-content: start !important;
@@ -345,12 +348,12 @@ div.letter-selector {
 
     &.hidden {
       .letter-selector-row {
-        transition: .075s calc(var(--index)*.04s) cubic-bezier(.5, 0, 1, 1);
+        transition: .075s calc(var(--index)*.02s) ease-in;
       }
     }
 
     .letter-selector-row {
-      transition: .1s calc(var(--index)*.04s) ease-out;
+      transition: .15s calc(var(--index)*.02s) ease-out;
     }
 
   }
@@ -405,7 +408,8 @@ div.letter-selector {
       }
 
       @include flow-touch;
-      --flow-touch-distance: -10px;
+      --flow-rotate-scale: .4;
+
       flex-grow: 1;
       margin: 6px;
       background: var(--accent-color);
@@ -432,7 +436,6 @@ div.groove-app-menu {
   font-size: 30px;
   font-weight: 350;
   perspective: var(--flow-perspective);
-  --flow-touch-distance: -10px;
   box-sizing: border-box;
 
   &.intro {
@@ -540,9 +543,7 @@ div.app-list-page {
   }
 
   &.app-menu-back,
-  &.app-menu-back-intro {
-    transform-style: preserve-3d;
-  }
+  &.app-menu-back-intro {}
 
   &.app-menu-back-intro {
 

@@ -14,7 +14,7 @@ module.exports = {
     main:  path.resolve(__dirname, './src/script.js'),
   },
   output: {
-    path: path.resolve(__dirname, './dist/'),
+    path: path.resolve(__dirname, './www/dist/'),
     filename: 'script.js',
   }, externals: {
     'webpackVariables': `${JSON.stringify(webpackVariables)}`,

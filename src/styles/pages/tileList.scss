@@ -1,7 +1,96 @@
+@import "./../../../node_modules/gridstack/dist/gridstack.min.css";
+@import "./../../../node_modules/gridstack/dist/gridstack-extra.min.css";
+
+@property --shake-distance {
+    syntax: '<length>';
+    initial-value: 0;
+    inherits: true;
+}
+
+body {
+    --shake-distance: 0px;
+
+}
+
 div.tile-list-page {}
 
 div.tile-list-page {
     perspective: var(--flow-perspective);
+
+    &.home-menu-back-outro {
+        transition: .5s cubic-bezier(.25, 1, .25, 1) !important;
+        transform: translateZ(0px) !important;
+
+    }
+
+    &.home-menu-back-intro {
+        transition: .5s ease-in !important;
+        transform: translateZ(-20px) !important;
+
+        // opacity: .9;
+        div.groove-home-tile.home-menu-selected {
+            transition: .5s ease-in !important;
+            transform: translateZ(20px) scale(1.075) !important;
+        }
+
+        div.groove-home-tile:not(.home-menu-selected) {
+            transition: .25s ease-out !important;
+            opacity: 1;
+        }
+
+        .app-page-icon-banner {
+            visibility: hidden;
+        }
+    }
+
+    &.home-menu-back {
+        transition: .75s cubic-bezier(0.075, 0.82, 0.165, 1), --shake-distance 1s !important;
+        transform: translateZ(-50px) !important;
+
+        // opacity: .5;
+        div.groove-home-tile.home-menu-selected {
+            transition: .25s cubic-bezier(.43, 1.25, .5, 1) !important;
+            transform: translateZ(10px) scale(1.05) !important;
+
+        }
+
+
+        div.groove-home-tile:not(.home-menu-selected) {
+            opacity: .6;
+            --shake-easing: cubic-bezier(.25, 0, .53, 1);
+
+            &:nth-child(6n) {
+                animation: home-edit-mode-shake0 var(--shake-duration) var(--shake-easing) infinite;
+            }
+
+            &:nth-child(6n + 1) {
+                animation: home-edit-mode-shake1 var(--shake-duration) var(--shake-easing) infinite;
+            }
+
+            &:nth-child(6n + 2) {
+                animation: home-edit-mode-shake2 var(--shake-duration) var(--shake-easing) infinite;
+            }
+
+            &:nth-child(6n + 3) {
+                animation: home-edit-mode-shake3 var(--shake-duration) var(--shake-easing) infinite;
+            }
+
+            &:nth-child(6n + 4) {
+                animation: home-edit-mode-shake4 var(--shake-duration) var(--shake-easing) infinite;
+            }
+
+            &:nth-child(6n + 5) {
+                animation: home-edit-mode-shake5 var(--shake-duration) var(--shake-easing) infinite;
+            }
+
+            will-change: left,
+            top;
+        }
+
+        .app-page-icon-banner {
+            visibility: hidden;
+        }
+    }
 }
 
 div.tile-list-container,
@@ -9,20 +98,30 @@ div.tile-list-inner-container {
     transform-style: preserve-3d;
 }
 
-div.tile-list-inner-container {}
+div.tile-list-inner-container {
+    position: relative;
+    left: 19px;
+    top: calc(19px + var(--window-inset-top));
+    width: calc(100% - 19px * 2);
+
+    &.gs-6 {
+        left: 6px;
+        width: calc(100% - 6px * 2);
+    }
+}
 
 div.app-page-icon-banner {
     width: 100%;
-    height: calc(42px + 26px * 2);
+    height: calc(42px + 33px * 2 + var(--window-inset-top) + var(--window-inset-bottom));
     position: relative;
     transform-style: preserve-3d;
+    box-sizing: border-box;
 
     #app-page-icon {
-        --flow-rotate-scale: 2;
 
         position: absolute;
         right: 25px;
-        top: calc(26px + var(--window-inset-top));
+        top: calc(26px - 6px + 5px);
         width: 42px;
         height: 42px;
         background-color: black;
@@ -51,15 +150,223 @@ div.app-page-icon-banner {
             align-items: center;
         }
     }
+
+    div.tile-list-inner-container:not([gs-current-row="0"])+& {
+        top: calc(12px + var(--window-inset-top));
+    }
+
+    div.tile-list-inner-container[gs-current-row="0"]+& {
+        top: var(--window-inset-top);
+    }
 }
 
 div.groove-home-tile {
     @include flow-touch;
-    float: left;
-    box-sizing: border-box;
-    padding: 10px;
-    width: calc(50%);
-    aspect-ratio: 1;
-    background: var(--accent-color);
-    --flow-rotate-scale: .5;
+    --flow-rotate-scale: .25;
+
+    * {
+        pointer-events: none;
+    }
+
+    &[gs-w="2"],
+    &[gs-h="2"],
+    &[gs-w="4"],
+    &[gs-h="4"] {
+        div.groove-home-inner-tile {
+            img.groove-home-tile-imageicon {}
+
+            p.groove-home-tile-icon {
+                font-size: 100px;
+            }
+
+            p.groove-home-tile-title {
+                display: block;
+            }
+        }
+    }
+
+    &.delete-anim {
+
+        div.groove-tile-menu {
+            display: none !important;
+        }
+
+        div.groove-home-inner-tile {
+            animation: home-tile-delete-anim .2s ease-out forwards !important;
+
+            @keyframes home-tile-delete-anim {
+                from {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+
+                to {
+                    opacity: 0;
+                    transform: scale(.5);
+                }
+            }
+        }
+
+    }
+
+
+    div.groove-home-inner-tile {
+        zoom: var(--tile-zoom);
+
+        position: absolute;
+        left: 6px;
+        top: 5px;
+        overflow: hidden;
+        right: 6px;
+        bottom: 6px;
+        background: var(--accent-color);
+
+        img.groove-home-tile-imageicon {
+            filter: saturate(0) brightness(0.6) contrast(10);
+            mix-blend-mode: plus-lighter;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        p.groove-home-tile-icon {
+            margin: 0px;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 60px;
+
+
+        }
+
+        p.groove-home-tile-title {
+            display: none;
+            position: absolute;
+            bottom: 0px;
+            margin: 10px 12px;
+            font-size: 19px;
+        }
+    }
+
+    transform-style: preserve-3d;
+
+    &:not(.home-menu-selected) {
+        div.groove-tile-menu {
+            display: none;
+        }
+
+    }
+
+
+
+    div.groove-tile-menu {
+
+
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        perspective: var(--flow-perspective);
+
+        div.groove-tile-menu-button {
+            pointer-events: all !important;
+            @include flow-touch;
+            position: absolute;
+            right: 25px;
+            top: calc(26px - 6px + 5px);
+            width: 42px;
+            height: 42px;
+            background-color: black;
+            border-radius: 50%;
+            box-sizing: border-box;
+            box-shadow: inset 0px 0px 0px 3px white;
+            display: flex;
+
+            &.active {
+                background: white;
+                color: black;
+                box-shadow: inset 0px 0px 0px 3px black;
+
+                &.groove-tile-menu-unpin-button {
+                    &::before {
+                        background: black;
+                    }
+
+                    p {
+                        box-shadow: 0px 0px 0px 3px white;
+                    }
+                }
+
+            }
+
+            p {
+                pointer-events: none;
+                position: relative;
+                left: 11px;
+                top: 13px;
+                font-size: 30px;
+                margin: 0px;
+                padding: 0px;
+                font-weight: bold;
+                height: 16px;
+                width: 30px;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+            }
+
+            &.groove-tile-menu-unpin-button {
+                top: calc(-21px + 6px);
+                right: calc(-21px + 6px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &::before {
+
+                    content: "";
+                    width: 42px;
+                    height: 3px;
+                    background: white;
+                    position: absolute;
+                    left: 0px;
+                    top: calc(50% - 3px / 2);
+                    transform: rotate(45deg);
+                }
+
+                p {
+                    box-shadow: 0px 0px 0px 3px black;
+
+                    font-size: 24px;
+                    transform: rotate(45deg);
+                    width: auto;
+                    left: 0px;
+                    top: 0px;
+                    overflow: visible;
+                }
+            }
+
+            &.groove-tile-menu-resize-button {
+                top: calc(100% + -21px - 6px);
+                right: calc(-21px + 6px);
+
+                p {
+                    transform: rotate(0deg);
+                    transform-origin: 35% 45%;
+
+                }
+            }
+        }
+    }
 }

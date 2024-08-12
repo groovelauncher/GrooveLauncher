@@ -1,6 +1,6 @@
 destination_folder="/sdcard/Groove"
 #node modules seperated by spaces
-NODE_MODULES="jquery bootstrap"
+NODE_MODULES="jquery bootstrap gridstack"
 #folders and files to copy, seperated by spaces
 ITEMS_TO_COPY="assets dist index.html"
 

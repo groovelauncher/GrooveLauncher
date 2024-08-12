@@ -22,6 +22,7 @@ function flowTouchRotate(el, pageX, pageY) {
         const rect = el.getBoundingClientRect();
         //const boxcenter = [el.offsetLeft + el.offsetWidth * .5, el.offsetTop + el.offsetHeight * .5]
         const boxcenter = [rect.left + rect.width * .5, rect.top + rect.height * .5]
+        const boxhypotenuse = Math.sqrt(Math.pow(rect.width, 2) + Math.pow(rect.height, 2))
         const distance = [boxcenter[0] - pageX, boxcenter[1] - pageY]
         const hypotenuse = Math.sqrt(distance[0] * distance[0] + distance[1] * distance[1])
         const perspective = 500

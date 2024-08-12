@@ -3,23 +3,31 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "npx webpack --watch & sass --no-source-map --watch src/styles.scss dist/styles.css",
-    "build": "npx webpack & sass --no-source-map src/styles.scss dist/styles.css",
-    "flash": "npx webpack && sass --no-source-map src/styles.scss dist/styles.css && sh flash.sh && echo Finished",
-    "multiflash": "npx webpack && sass --no-source-map src/styles.scss dist/styles.css && sh flash.sh --multi && echo Finished"
+    "test": "npm run test:webpack & npm run test:scss",
+    "test:webpack": "npx webpack --watch",
+    "test:scss": "sass --no-source-map --watch src/styles.scss dist/www/styles.css",
+    "build": "npm run build:webpack & npm run build:scss",
+    "build:webpack": "npx webpack",
+    "build:scss": "sass --no-source-map src/styles.scss dist/www/styles.css",
+    "flash": "npx webpack && sass --no-source-map src/styles.scss dist/www/styles.css && sh flash.sh && echo Finished",
+    "multiflash": "npx webpack && sass --no-source-map src/styles.scss dist/www/styles.css && sh flash.sh --multi && echo Finished"
   },
   "author": "",
   "license": "UNLICENSED",
   "description": "",
   "dependencies": {
     "@bridgelauncher/api-mock": "^0.0.3",
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
     "better-scroll": "^2.5.1",
     "bezier-easing": "^2.1.0",
     "bootstrap": "^5.3.3",
+    "gridstack": "^10.3.1",
     "jquery": "^3.7.1",
     "normalize-diacritics": "^5.0.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "^6.1.2",
     "sass": "^1.77.8",
     "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4"

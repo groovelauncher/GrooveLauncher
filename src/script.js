@@ -1,5 +1,6 @@
 import jQuery from "jquery";
 window.$ = jQuery
+import appTransition from "./scripts/appTransition.js";
 import clickDetectorConfig from "./scripts/clickDetector.js";
 import BScroll from "better-scroll";
 import { BoardMethods } from "./scripts/GrooveBoard";
@@ -24,11 +25,12 @@ var allappsarchive = []
 window["allappsarchive"] = allappsarchive
 
 const bridgeEvents = new Set();
+window.bridgeEvents = bridgeEvents
 // upon receiving an event, forward it to all listeners
 window.onBridgeEvent = (...event) => {
     bridgeEvents.forEach((l) => l(...event));
 };
-
+window.appTransition = appTransition
 window.GrooveBoard = GrooveBoard
 const scrollers = {
     main_home_scroller: new BScroll('#main-home-slider', {
@@ -39,6 +41,7 @@ const scrollers = {
         bounce: false,
         disableMouse: false,
         disableTouch: false,
+        HWCompositing: false,
         slide: {
             threshold: 100,
             loop: false,
@@ -53,6 +56,7 @@ const scrollers = {
         mouseWheel: true,
         disableMouse: false,
         disableTouch: false,
+        HWCompositing: false,
     }),
     app_page_scroller: new BScroll('#main-home-slider > div > div:nth-child(2) > div > div.app-list', {
         scrollX: false,
@@ -60,26 +64,27 @@ const scrollers = {
         mouseWheel: true,
         disableMouse: false,
         disableTouch: false,
+        HWCompositing: false,
     })
 }
 function cancelScroll(scroller) {
-        const scrollContainer = scroller.wrapper
+    const scrollContainer = scroller.wrapper
 
-        // To simulate a pointer up event
-        const touchEndEvent = new TouchEvent("touchend", {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-        });
-        // To simulate a pointer up event
-        const mouseUpEvent = new MouseEvent("mouseup", {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-        });
-        scrollContainer.dispatchEvent(mouseUpEvent);
-        scrollContainer.dispatchEvent(touchEndEvent);
-    
+    // To simulate a pointer up event
+    const touchEndEvent = new TouchEvent("touchend", {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+    });
+    // To simulate a pointer up event
+    const mouseUpEvent = new MouseEvent("mouseup", {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+    });
+    scrollContainer.dispatchEvent(mouseUpEvent);
+    scrollContainer.dispatchEvent(touchEndEvent);
+
 }
 window.scrollers = scrollers
 window.cancelScroll = cancelScroll
@@ -115,9 +120,9 @@ window.windowInsets = document.body.windowInsets = {
     bottom: 0,
 };
 bridgeEvents.add((name, args) => {
-    //    console.log("WOWOWOWOWO", name, args)   // args will be strongly typed
+    console.log("WOWOWOWOWO", name, args)   // args will be strongly typed
     if (name != "systemBarsWindowInsetsChanged") return;
-//    console.log(args)
+    //    console.log(args)
     GrooveBoard.BackendMethods.refreshInsets()
 });
 GrooveBoard.BackendMethods.refreshInsets()
@@ -141,6 +146,11 @@ startUpSequence([
                 window.iconPackDB[packageName] = { icon: icon.icon, pack: icon.pack }
             });
         });
+        next()
+    },
+    (next) => {
+        window.scrollers.tile_page_scroller.refresh()
+        window.scrollers.app_page_scroller.refresh()
         next()
     },
     (next) => {
@@ -195,4 +205,60 @@ window.addEventListener('popstate', function (event) {
 
 });
 */
-GrooveBoard.BackendMethods.navigation.push("homescreen", () => { }, () => {})
+GrooveBoard.BackendMethods.navigation.push("homescreen", () => { }, () => { })
+
+
+function getRandomMultiplier() {
+    // Returns -1, 0, or 1
+    return Math.floor(Math.random() * 3) - 1;
+}
+
+function createShakeKeyframes(n) {
+    const firsttwo = [getRandomMultiplier(), getRandomMultiplier()]
+    return `
+        @keyframes home-edit-mode-shake${n} {
+            0% {
+                transform: scale(var(--shake-scale-distance)) translate(calc(${firsttwo[0]} * var(--shake-distance)), calc(${firsttwo[1]} * var(--shake-distance)));
+            }
+            33% {
+                transform: scale(var(--shake-scale-distance)) translate(calc(${getRandomMultiplier()} * var(--shake-distance)), calc(${getRandomMultiplier()} * var(--shake-distance)));
+            }
+            66% {
+                transform: scale(var(--shake-scale-distance)) translate(calc(${getRandomMultiplier()} * var(--shake-distance)), calc(${getRandomMultiplier()} * var(--shake-distance)));
+            }
+            100% {
+                transform: scale(var(--shake-scale-distance)) translate(calc(${firsttwo[0]} * var(--shake-distance)), calc(${firsttwo[1]} * var(--shake-distance)));
+            }
+        }
+    `;
+}
+
+function generateShakeAnimations() {
+    document.querySelectorAll("style.shake-anim-styles").forEach(i => i.remove())
+
+    const styleSheet = document.createElement('style');
+    styleSheet.classList.add("shake-anim-styles")
+    document.head.appendChild(styleSheet);
+    $("div.groove-home-tile").each((index, element) => {
+        element.style.setProperty("--shake-duration", (Math.floor(Math.random() * 2) + 1 * 6) + "s")
+    })
+    for (let i = 0; i <= 5; i++) {
+
+        const keyframes = createShakeKeyframes(i);
+
+        styleSheet.innerHTML += keyframes;
+    }
+}
+
+// Call the function to generate the CSS rules and keyframes
+window.generateShakeAnimations = generateShakeAnimations
+bridgeEvents.add((name, args) => {
+    if (name == "beforePause") {
+        clearTimeout(window.appTransitionLaunchError)
+    } else if (name == "afterResume") {
+        setTimeout(() => {
+            appTransition.onResume()
+        }, 200);
+    }
+    else return;
+});

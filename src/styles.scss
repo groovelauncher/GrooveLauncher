@@ -1,5 +1,6 @@
 @import "./styles/pages/appList.scss";
 @import "./styles/pages/tileList.scss";
+@import "./styles/appTransition.scss";
 @import "./styles/colors.scss";
 @import "./styles/flowProperties.scss";
 @import "./styles/fonts.scss";
@@ -10,7 +11,6 @@ html {
   color-scheme: dark;
   background: black;
   color: white;
-  word-spacing: -6px;
   perspective: var(--flow-perspective);
   position: fixed;
   left: 0px;
@@ -26,6 +26,8 @@ html {
 
 * {
   font-family: SymbolsNerd, IconGlyphs, OpenSans, sans-serif;
+  word-spacing: -6px;
+  letter-spacing: -.5px;
   touch-action: none;
   user-select: none;
   user-drag: none;

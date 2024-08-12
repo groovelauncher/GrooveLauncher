@@ -1,5 +1,6 @@
 import jQuery from "jquery";
 var $ = jQuery
+
 const appListPage = $("div.inner-page.app-list-page")
 const appListSearch = $("input.app-list-search")
 const letterSelector = $("div.letter-selector")
@@ -105,7 +106,11 @@ $("#search-icon").on("flowClick", function () {
 
 })
 $(window).on("finishedLoading", () => {
-    window.scrollers.main_home_scroller.on("scrollStart", () => { searchModeSwitch.off(); console.log("hey") })
+    window.scrollers.main_home_scroller.on("scrollStart", () => {
+        scrollers.tile_page_scroller.refresh()
+        scrollers.app_page_scroller.refresh()
+        //  console.log("hey")
+    })
     /*  $(window).on("pointerdown", function (e) {
           if (!e.target.classList.contains("letter-selector-letter")) return
           console.log(e.target)
@@ -176,11 +181,16 @@ $("div.app-search-search-store").on("flowClick", () => {
 
 
 $(window).on("click", function (e) {
-    console.log(e.target)
     if (e.target.classList.contains("groove-letter-tile")) {
         setTimeout(letterSelectorSwitch.on, 0);
     } else if (e.target.classList.contains("groove-app-tile") && !e.target.classList.contains("groove-letter-tile")) {
-        if (e.target.canClick) Bridge.requestLaunchApp(e.target.getAttribute("packageName"))
+        if (e.target.canClick) {
+            e.target.classList.add("app-transition-selected")
+            appTransition.onPause()
+           setTimeout(() => {
+            Bridge.requestLaunchApp(e.target.getAttribute("packageName"))
+           }, 1000);
+        }
     }
 })
 $("div.app-list-page").on("flowClick", function (e) {
@@ -200,6 +210,7 @@ $(window).on("pointerdown", function (e) {
         $("div.groove-app-menu").remove()
         window.appMenuCreationFirstTimeout = setTimeout(() => {
             e.target.canClick = false
+            scrollers.main_home_scroller.enabled = false
             $("div.app-list-page").addClass("app-menu-back-intro")
             const appMenu = GrooveBoard.BoardMethods.createAppMenu(e.target.getAttribute("packagename"))
             const optionalTop = (e.target.offsetTop + scrollers.app_page_scroller.y + 64)
@@ -262,6 +273,8 @@ function appMenuClose() {
     setTimeout(() => {
         appMenuClean()
     }, 500);
+    scrollers.main_home_scroller.enabled = true
+
 }
 function appMenuClean() {
     GrooveBoard.BackendMethods.navigation.invalidate("appMenuOn")
@@ -292,5 +305,68 @@ window.appMenuClose = appMenuClose
 $(window).on("finishedLoading", () => {
     scrollers.app_page_scroller.scroller.hooks.on('scrollStart', appImmediateClose)
     scrollers.main_home_scroller.scroller.hooks.on('scrollStart', appImmediateClose)
-
+    stickyLetter()
 })
+window.stickyLetter = stickyLetter
+var lastScroll = 0
+
+function getTranslateY(element) {
+    // Get the computed style of the element
+    const transform = $(element).css('transform');
+
+    // Check if the transform property is not 'none'
+    if (transform !== 'none') {
+        // Extract the translateY value from the matrix
+        const matrix = transform.match(/^matrix\(([^,]+),[^,]+,[^,]+,[^,]+,[^,]+,[^,]+\)$/);
+
+        if (matrix) {
+            // The translateY value is the sixth number in the matrix
+            return parseFloat(matrix[6]);
+        }
+    }
+
+    // Return 0 if there is no transform or translateY is not found
+    return 0;
+}
+function stickyLetter() {
+    const lastChange = GrooveBoard.BackendMethods.navigation.history.slice(-1)[0].change
+    if (lastChange != "appMenuOpened") {
+        requestAnimationFrame(stickyLetter)
+        return
+
+    }
+    var scroll
+    try {
+        scroll = - $("div.app-list-container").offset().top
+    } catch (error) {
+        scroll = 0
+    }
+
+    if (scroll != lastScroll) {
+
+
+        $("div.groove-element.groove-app-tile.groove-letter-tile").css("transition", " all 0s")
+
+        $("div.groove-element.groove-app-tile.groove-letter-tile").each((index, element) => {
+            const topinset = windowInsets.top
+            const minTop = element.offsetTop - topinset
+            const next = $(element).nextAll(".groove-letter-tile")
+            const maxTop = next.length ? (next[0].offsetTop - (64 + 0) - topinset) : 99999
+            if (scroll < minTop) {
+                element.style.setProperty("--flow-before-translate", `0px, 0px`)
+                element.style.setProperty("z-index", "")
+                element.classList.remove("opaque")
+            } else {
+                element.style.setProperty("--flow-before-translate", `0px, ${(Math.min(scroll - minTop, maxTop - minTop))}px`)
+                element.style.setProperty("z-index", "10")
+                element.classList.add("opaque")
+            }
+
+        })
+    } else {
+        $("div.groove-element.groove-app-tile.groove-letter-tile").css("transition", "")
+    }
+    lastScroll = scroll
+
+    requestAnimationFrame(stickyLetter)
+}

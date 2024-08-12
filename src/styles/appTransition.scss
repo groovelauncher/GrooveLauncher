@@ -1,0 +1,146 @@
+#main-home-slider {
+    &.app-transition {
+        pointer-events: none !important;
+
+        &.app-transition-tile-list {
+            &.app-transition-on-pause {
+                div.tile-list-inner-container>div.groove-home-tile {
+                    animation: tileListAppTransitionAnim0 .2s calc(var(--app-animation-index) * .15s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
+                    &.app-transition-selected{
+                        animation: tileListAppTransitionAnim0 .15s calc(2 * .15s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
+                    }
+                    transform-origin: var(--app-animation-distance) 50%;
+
+                    @keyframes tileListAppTransitionAnim0 {
+                        from {
+                            transform: rotateY(0deg);
+                            opacity: 1;
+                        }
+
+                        to {
+                            transform: translateX(calc(var(--flow-perspective) / -1)) rotateY(-20deg) translateX(calc(0%));
+                            opacity: 0;
+                        }
+                    }
+                }
+            }
+
+            &.app-transition-on-resume {
+
+                &:not(.app-transition-back) {
+                    div.tile-list-inner-container>div.groove-home-tile {
+                        // animation: tileListAppTransitionAnim1 .4s calc(var(--app-animation-index) * .15s) cubic-bezier(0.00, 1.00, 0.51, 1.00) forwards;
+                        animation: tileListAppTransitionAnim1 .75s calc(var(--app-animation-index) * .2s) cubic-bezier(.05, 1, .1, 1) forwards;
+                        transform-origin: var(--app-animation-distance) 50%;
+                        opacity: 0;
+
+                        @keyframes tileListAppTransitionAnim1 {
+                            0% {
+                                transform: translateX(-100px) rotateY(20deg) translateZ(-0px) translateX(150px);
+
+                                opacity: 0;
+
+                            }
+
+                            50% {
+                                opacity: 1;
+                            }
+
+                            100% {
+                                transform: rotateY(0deg) translateZ(0px) translateX(-0px);
+                                opacity: 1;
+                            }
+
+
+                        }
+                    }
+
+                    div.slide-content>div.slide-page:nth-child(2) {
+                        perspective-origin: -100% 50%;
+                        z-index: -1;
+                    }
+
+                    div.inner-page.app-list-page {
+                        transform-origin: -100% 50%;
+
+                        animation: tileListAppTransitionAnim9 .75s .1s cubic-bezier(.05, 1, .1, 1) forwards;
+
+                        @keyframes tileListAppTransitionAnim9 {
+                            from {
+                                transform: rotateY(45deg);
+                                opacity: 0;
+                            }
+
+                            to {
+                                transform: rotateY(0deg);
+                                opacity: 1;
+
+                            }
+                        }
+                    }
+                }
+
+                &.app-transition-back {
+                    div.tile-list-inner-container>div.groove-home-tile {
+                        // animation: tileListAppTransitionAnim1 .4s calc(var(--app-animation-index) * .15s) cubic-bezier(0.00, 1.00, 0.51, 1.00) forwards;
+                        animation: tileListAppTransitionAnim2 .75s calc(var(--app-animation-index) * .2s) cubic-bezier(.05, 1, .1, 1) forwards;
+                        transform-origin: var(--app-animation-distance) 50%;
+                        opacity: 0;
+
+                        @keyframes tileListAppTransitionAnim2 {
+                            0% {
+                                transform: translateX(calc(var(--flow-perspective) / -2)) rotateY(-20deg) translateX(calc(0%));
+
+                                opacity: 0;
+
+                            }
+
+                            50% {
+                                opacity: 1;
+                            }
+
+                            100% {
+                                transform: rotateY(0deg) translateZ(0px) translateX(-0px);
+                                opacity: 1;
+                            }
+
+
+                        }
+                    }
+                }
+            }
+        }
+
+        &.app-transition-app-list {
+            &.app-transition-on-pause {
+                input.app-list-search{
+                    transform: translateY(calc(-100% - 4px - var(--window-inset-top))) !important;
+                }
+                div.app-list-container>div.groove-app-tile , #search-icon{
+                    animation: appListAppTransitionAnim0 .15s calc(var(--app-animation-index) * .3s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
+                    &.app-transition-selected{
+                        animation: appListAppTransitionAnim0 .12s calc(1.5 * .3s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
+                    }
+                    transform-origin: var(--app-animation-distance) 50%;
+
+                    @keyframes appListAppTransitionAnim0 {
+                        from {
+                            transform: rotateY(0deg);
+                            opacity: 1;
+                        }
+
+                        to {
+                            transform: translateX(calc(var(--flow-perspective) / -2)) rotateY(-20deg) translateX(calc(0%));
+                            opacity: 0;
+                        }
+                    }
+                }
+
+
+            }
+
+            &.app-transition-on-resume {}
+        }
+    }
+
+}

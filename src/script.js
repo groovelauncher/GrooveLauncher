@@ -122,6 +122,7 @@ window.windowInsets = document.body.windowInsets = {
     right: 0,
     bottom: 0,
 };
+/* OLD BRIDGE EVENT REMOVE
 bridgeEvents.add((name, args) => {
     console.log("WOWOWOWOWO", name, args)   // args will be strongly typed
     if (name != "systemBarsWindowInsetsChanged") return;
@@ -129,6 +130,12 @@ bridgeEvents.add((name, args) => {
     //GrooveBoard.BackendMethods.refreshInsets()
 });
 //GrooveBoard.BackendMethods.refreshInsets()
+*/
+$(window).on("systemInsetsChange",function () {
+    console.log("ay hemen düzelt gülüm")
+    GrooveBoard.BackendMethods.refreshInsets()
+})
+GrooveBoard.BackendMethods.refreshInsets()
 $(window).on("resize", () => {
     $(":root").css({ "--window-width": window.innerWidth + "px", "--window-height": window.innerHeight + "px", "--window-hypotenuse": (Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2))) + "px" })
 })

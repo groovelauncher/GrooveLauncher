@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -19,7 +21,16 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewClientCompat;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import web.bmdominatezz.gravy.WebEvents;
+
 public class MainActivity extends AppCompatActivity {
+    Insets lastInsets;
+    WebEvents webEvents;
+    WebView webView;
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -35,17 +46,17 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         // Do nothing or provide a custom action to prevent closing the launcher
         //super.onBackPressed();
+        webView.evaluateJavascript(webEvents.e_backButtonPress, null);
     }
 
-    int[] lastInsets = {0, 0, 0, 0};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        WebView webView = (WebView) findViewById(R.id.webview);
-
+        webView = (WebView) findViewById(R.id.webview);
+        webEvents = new WebEvents(this, webView);
         final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
                 .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
                 .build();
@@ -76,10 +87,11 @@ public class MainActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             //Don't uncomment this cause webview itself will deal with inset paddings
             //v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            lastInsets[0] = systemBars.left;
-            lastInsets[1] = systemBars.top;
-            lastInsets[2] = systemBars.right;
-            lastInsets[3] = systemBars.bottom;
+            //webView.evaluateJavascript("");
+            webView.evaluateJavascript(webEvents.e_systemInsetsChange, null);
+            Log.d("groovelauncher", "onCreate: inset chhange" + systemBars.toString());
+            lastInsets = systemBars;
+
             return insets;
         });
     }
@@ -91,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
             mContext = c;
         }
 
+        public float getDevicePixelRatio() {
+            DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
+            return displayMetrics.density;
+        }
+
         // Show a toast from the web page.
         @JavascriptInterface
         public void showToast(String toast) {
@@ -100,6 +117,16 @@ public class MainActivity extends AppCompatActivity {
         @JavascriptInterface
         public void showToastHelloWorld() {
             Toast.makeText(mContext, "Hello world! Oh and hello Groove!", Toast.LENGTH_SHORT).show();
+        }
+
+        @JavascriptInterface
+        public String getSystemInsets() throws JSONException {
+            JSONObject systemInsets = new JSONObject();
+            systemInsets.put("left", (lastInsets == null) ? 0 : lastInsets.left / getDevicePixelRatio());
+            systemInsets.put("top", (lastInsets == null) ? 0 : lastInsets.top / getDevicePixelRatio());
+            systemInsets.put("right", (lastInsets == null) ? 0 : lastInsets.right / getDevicePixelRatio());
+            systemInsets.put("bottom", (lastInsets == null) ? 0 : lastInsets.bottom / getDevicePixelRatio());
+            return systemInsets.toString();
         }
     }
 

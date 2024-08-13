@@ -192,7 +192,8 @@ const BackendMethods = {
     },
     refreshInsets: () => {
         if (window.stopInsetUpdate) return;
-        window.windowInsets = JSON.parse(Bridge.getSystemBarsWindowInsets());
+        console.log("tamam düzeltiyorum")
+        window.windowInsets = JSON.parse(Groove.getSystemInsets());
         Object.keys(windowInsets).forEach((element) => {
             document.body.style.setProperty("--window-inset-" + element, windowInsets[element] + "px");
         });
@@ -209,13 +210,12 @@ const BackendMethods = {
             listHistory()
         },
         back: (action = true) => {
+            if (BackendMethods.navigation.history.length <= 1) return
             if (action == false) BackendMethods.navigation.history.reverse()[0].backAction = () => { }
-            history.back()
-
-
-            // try {
-            //   } catch (error) {
-            //} 
+            const act = BackendMethods.navigation.history.pop()
+            console.log("HISTORY BACK", act.change)
+            act.backAction()
+            listHistory()
         },
         get lastPush() {
             if (GrooveBoard.BackendMethods.navigation.history.length == 0) return undefined
@@ -229,12 +229,6 @@ const BackendMethods = {
             }
             listHistory()
         }
-    },
-    get database() {
-        return dadn
-    },
-    set database(data) {
-        dadn = data
     },
     getTileSize: function (w, h) {
         const padding = 12
@@ -260,19 +254,12 @@ const BackendMethods = {
         tileListGrid.moveNode(el.gridstackNode, { w: chosenSize[0], h: chosenSize[1] })
     }
 }
-var dadn = {
-    kaka: "bok"
-}
 function listHistory() {
     console.log("%c " + GrooveBoard.BackendMethods.navigation.history.map(e => JSON.stringify(e)).join("\n"), 'background: #222; color: #bada55')
-
 }
-window.onpopstate = function (event) {
-    // console.log(event)
-    const act = BackendMethods.navigation.history.pop()
-    console.log("HISTORY BACK", act.change)
-    act.backAction()
-    listHistory()
-};
+window.addEventListener("backButtonPress", function () {
+    console.log("back button press")
+    BackendMethods.navigation.back()
+})
 export default { BoardMethods, BackendMethods }
 

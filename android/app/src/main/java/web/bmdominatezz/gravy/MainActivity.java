@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         // Do nothing or provide a custom action to prevent closing the launcher
         //super.onBackPressed();
-        webView.evaluateJavascript(webEvents.e_backButtonPress, null);
+        webEvents.dispatchEvent(WebEvents.events.backButtonPress, null);
     }
 
 
@@ -88,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
             //Don't uncomment this cause webview itself will deal with inset paddings
             //v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             //webView.evaluateJavascript("");
-            webView.evaluateJavascript(webEvents.e_systemInsetsChange, null);
+            webEvents.dispatchEvent(WebEvents.events.systemInsetsChange, null);
+
             Log.d("groovelauncher", "onCreate: inset chhange" + systemBars.toString());
             lastInsets = systemBars;
 

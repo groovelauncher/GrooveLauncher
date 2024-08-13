@@ -1,3 +1,16 @@
+import { SafeArea } from '@capacitor-community/safe-area';
+
+SafeArea.enable({
+  config: {
+    customColorsForSystemBars: true,
+    statusBarColor: '#00000000', // transparent
+    statusBarContent: 'light',
+    navigationBarColor: '#00000000', // transparent
+    navigationBarContent: 'light',
+  },
+});
+
+
 import jQuery from "jquery";
 window.$ = jQuery
 import appTransition from "./scripts/appTransition.js";
@@ -8,16 +21,18 @@ import startUpSequence from "./scripts/startUpSequence";
 import detectDeviceType from "./scripts/detectDeviceType";
 import GrooveBoard from "./scripts/GrooveBoard";
 import iconPackConverter from "./scripts/iconPack.js";
-import { BridgeMock, createDefaultBridgeMockConfig } from '@bridgelauncher/api-mock';
 import "./scripts/pages/appList.js"
 import "./scripts/pages/tileList.js"
 import { normalizeSync } from 'normalize-diacritics';
 window.normalizeDiacritics = normalizeSync
+
+import { BridgeMock, createDefaultBridgeMockConfig } from '@bridgelauncher/api-mock';
+
 const BridgeMockInstance = !window.Bridge
 if (BridgeMockInstance) {
     window.Bridge = new BridgeMock(new createDefaultBridgeMockConfig());
     Bridge.config.logRaisedBridgeEvents = false
-    Bridge.config.appsUrl = "mock/apps.json"
+    Bridge.config.appsUrl = "./mock/apps.json"
     Bridge.config.statusBarHeight = 0
     Bridge.config.navigationBarHeight = 0
 }
@@ -123,9 +138,9 @@ bridgeEvents.add((name, args) => {
     console.log("WOWOWOWOWO", name, args)   // args will be strongly typed
     if (name != "systemBarsWindowInsetsChanged") return;
     //    console.log(args)
-    GrooveBoard.BackendMethods.refreshInsets()
+    //GrooveBoard.BackendMethods.refreshInsets()
 });
-GrooveBoard.BackendMethods.refreshInsets()
+//GrooveBoard.BackendMethods.refreshInsets()
 $(window).on("resize", () => {
     $(":root").css({ "--window-width": window.innerWidth + "px", "--window-height": window.innerHeight + "px", "--window-hypotenuse": (Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2))) + "px" })
 })

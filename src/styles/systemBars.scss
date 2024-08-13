@@ -1,21 +1,24 @@
-body{
-    --window-inset-left:0px;
-    --window-inset-top:0px;
-    --window-inset-right:0px;
-    --window-inset-bottom:0px;
+:root {
+    --window-inset-left: 0px;
+    --window-inset-top: 0px;
+    --window-inset-right: 0px;
+    --window-inset-bottom: 0px;
 }
-.system-bar{
+
+.system-bar {
     position: fixed;
     z-index: 10;
     left: 0px;
     width: 100%;
     height: 0px;
-    background: rgb(black,0);
-    &.system-status-bar{
+    background: rgb(black, 0);
+
+    &.system-status-bar {
         top: 0px;
         height: var(--window-inset-top);
     }
-    &.system-navigation-bar{
+
+    &.system-navigation-bar {
         bottom: 0px;
         height: var(--window-inset-bottom);
     }

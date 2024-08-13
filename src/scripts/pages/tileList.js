@@ -206,27 +206,10 @@ function appImmediateClose() {
     })
 }
 
-GrooveBoard.BoardMethods.createHomeTile([2, 2])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([4, 2])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([2, 2])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([4, 2])
-GrooveBoard.BoardMethods.createHomeTile([2, 2])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([4, 2])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([2, 2])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([1, 1])
-GrooveBoard.BoardMethods.createHomeTile([4, 2])
+
+if (window.Groove) {
+    Object.keys(window.Groove).forEach(element => {
+        const developerModeTile = GrooveBoard.BoardMethods.createHomeTile([2, 2], {title: "dev_" + element})
+        developerModeTile.gridstackNode.el.addEventListener("click", ()=>{window.Groove[element]()})
+    });
+}

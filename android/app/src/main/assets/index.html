@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" style="">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrooveLauncher</title>
+    <link rel="stylesheet" href="dist/styles.css">
+</head>
+
+<body>
+
+    <!-- <img src="tilelist.png"
+        style="display:none;position: fixed;z-index: 9999999; pointer-events: none; opacity: .5;left: 0px;top:-30px;zoom:calc(1 / 1)">
+    <img src="small.png"
+        style="display:none;position: fixed;z-index: 9999999; pointer-events: none; opacity: .5;left: 0px;top:-0px;zoom:calc(1 / 1)">
+   -->
+    <div id="loader"
+        style="position: fixed;z-index: 999;left: 0px;top: 0px;width: 100%;height: 100%; background: black; font-size: 60px;font-weight: 200;display:flex;align-items: center;justify-content: center;padding-bottom: 20vh; box-sizing: border-box;">
+        :)<br>Welcome</div>
+    <div class="system-bar system-status-bar"></div>
+    <div class="system-bar system-navigation-bar"></div>
+    <div class="tiles-app"></div>
+    <div id="main-home-slider" class="slide-wrapper">
+        <div class="slide-content">
+            <div class="slide-page">
+                <div class="inner-page tile-list-page">
+                    <div class="tile-list-container">
+                        <div class="tile-list-inner-container grid-stack"></div>
+                        <div class="app-page-icon-banner">
+                            <div id="app-page-icon" class="flow-touch">
+                                <p>󰁔</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-page">
+                <div class="inner-page app-list-page">
+
+                    <input type="search" class="app-list-search" placeholder="search">
+                    <div class="letter-selector">
+
+                    </div>
+                    <div class="app-list">
+                        <div class="app-list-container transform-3d">
+                            <div class="app-search-no-result">No results for <span
+                                    style="color: var(--accent-color);">SEARCH</span></div>
+                            <div class="app-search-search-store flow-touch">search Store</div>
+                        </div>
+                    </div>
+                    <div id="search-icon" class="flow-touch">
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 
+    <div style="background-color: red; width: 500px;height: 500px; overflow: auto;" id="bigbox">
+
+        <div style="background-color: green; width: 800px;height: 200px; overflow: hidden;">
+            <div>
+                hello<br> hello<br> hello<br> hello<br> hello<br> hello<br> hello<br> hello<br> hello<br> hello<br>
+                hello<br> hello<br> hello<br> hello<br> hello<br> hello<br> hello<br> hello<br> hello<br> hello<br>
+                hello<br> hello<br>
+            </div>
+        </div>
+    </div>-->
+
+    <!--<script src="https://bridgesimulator.netlify.app/dist/bridgemock.js"
+        integrity="sha256-KgsntFQeRvvF7i7Copl67jy7dDemGnUqDVAWVIFSGpA=" crossorigin="anonymous"></script>-->
+    <script src="dist/script.js"></script>
+</body>
+
+</html>

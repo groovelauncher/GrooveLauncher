@@ -1,16 +1,4 @@
-import { SafeArea } from '@capacitor-community/safe-area';
-
-SafeArea.enable({
-  config: {
-    customColorsForSystemBars: true,
-    statusBarColor: '#00000000', // transparent
-    statusBarContent: 'light',
-    navigationBarColor: '#00000000', // transparent
-    navigationBarContent: 'light',
-  },
-});
-
-
+import "./scripts/bridgeMock.js"
 import jQuery from "jquery";
 window.$ = jQuery
 import appTransition from "./scripts/appTransition.js";

@@ -27,9 +27,9 @@ import org.json.JSONObject;
 import web.bmdominatezz.gravy.WebEvents;
 
 public class MainActivity extends AppCompatActivity {
-    Insets lastInsets;
-    WebEvents webEvents;
-    WebView webView;
+    public Insets lastInsets;
+    public WebEvents webEvents;
+    public WebView webView;
 
     @Override
     protected void onPause() {
@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
         webView = (WebView) findViewById(R.id.webview);
         webEvents = new WebEvents(this, webView);
         final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         webViewSettings.setJavaScriptEnabled(true);
 
         // Assets are hosted under http(s)://appassets.androidplatform.net/assets/... .
-        webView.addJavascriptInterface(new Web2JavaInterface(this), "Groove");
+        webView.addJavascriptInterface(new WebInterface(this), "Groove");
 
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
 
@@ -96,39 +97,4 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
     }
-
-    public class Web2JavaInterface {
-        Context mContext;
-
-        Web2JavaInterface(Context c) {
-            mContext = c;
-        }
-
-        public float getDevicePixelRatio() {
-            DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
-            return displayMetrics.density;
-        }
-
-        // Show a toast from the web page.
-        @JavascriptInterface
-        public void showToast(String toast) {
-            Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
-        }
-
-        @JavascriptInterface
-        public void showToastHelloWorld() {
-            Toast.makeText(mContext, "Hello world! Oh and hello Groove!", Toast.LENGTH_SHORT).show();
-        }
-
-        @JavascriptInterface
-        public String getSystemInsets() throws JSONException {
-            JSONObject systemInsets = new JSONObject();
-            systemInsets.put("left", (lastInsets == null) ? 0 : lastInsets.left / getDevicePixelRatio());
-            systemInsets.put("top", (lastInsets == null) ? 0 : lastInsets.top / getDevicePixelRatio());
-            systemInsets.put("right", (lastInsets == null) ? 0 : lastInsets.right / getDevicePixelRatio());
-            systemInsets.put("bottom", (lastInsets == null) ? 0 : lastInsets.bottom / getDevicePixelRatio());
-            return systemInsets.toString();
-        }
-    }
-
 }

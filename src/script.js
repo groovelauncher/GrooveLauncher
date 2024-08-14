@@ -14,7 +14,7 @@ import { normalizeSync } from 'normalize-diacritics';
 window.normalizeDiacritics = (input = "") => {
     return normalizeSync(input)
 }
-import GrooveMock from "./scripts/grooveMock.js";
+import GrooveMock from "./scripts/GrooveMock.js";
 
 const GrooveMockInstance = !window.Groove
 if (GrooveMockInstance) {

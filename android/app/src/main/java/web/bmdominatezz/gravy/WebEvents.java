@@ -29,8 +29,4 @@ public class WebEvents {
     public void dispatchEvent(events eventName,JSONObject arguments) {
         dispatchEvent(eventName.toString(),arguments);
     }
-
-    final String e_systemInsetsChange = "window.dispatchEvent(new Event(\"systemInsetChange\"))";
-    final String e_backButtonPress = "window.dispatchEvent(new Event(\"backButtonPress\"))";
-    final String e_homeButtonPress = "window.dispatchEvent(new Event(\"homeButtonPress\"))";
 }

@@ -12,8 +12,12 @@ import iconPackConverter from "./scripts/iconPack.js";
 import "./scripts/pages/appList.js"
 import "./scripts/pages/tileList.js"
 import { normalizeSync } from 'normalize-diacritics';
-window.normalizeDiacritics = normalizeSync
+window.normalizeDiacritics = (input = "") => {
+    return normalizeSync(input)
+}
+import GrooveMock from "./scripts/grooveMock.js";
 
+/* DELETE ME
 import { BridgeMock, createDefaultBridgeMockConfig } from '@bridgelauncher/api-mock';
 
 const BridgeMockInstance = !window.Bridge
@@ -23,16 +27,23 @@ if (BridgeMockInstance) {
     Bridge.config.appsUrl = "./mock/apps.json"
     Bridge.config.statusBarHeight = 0
     Bridge.config.navigationBarHeight = 0
+}*/
+
+const GrooveMockInstance = !window.Groove
+if (GrooveMockInstance) {
+    window.Groove = new GrooveMock("./mock/apps.json")
 }
 var allappsarchive = []
 window["allappsarchive"] = allappsarchive
 
+/* DELETE ME
 const bridgeEvents = new Set();
 window.bridgeEvents = bridgeEvents
 // upon receiving an event, forward it to all listeners
 window.onBridgeEvent = (...event) => {
     bridgeEvents.forEach((l) => l(...event));
 };
+*/
 window.appTransition = appTransition
 window.GrooveBoard = GrooveBoard
 const scrollers = {
@@ -131,7 +142,7 @@ bridgeEvents.add((name, args) => {
 });
 //GrooveBoard.BackendMethods.refreshInsets()
 */
-$(window).on("systemInsetsChange",function () {
+$(window).on("systemInsetsChange", function () {
     console.log("ay hemen düzelt gülüm")
     GrooveBoard.BackendMethods.refreshInsets()
 })
@@ -145,17 +156,17 @@ startUpSequence([
         setTimeout(next, 500);
     },
     (next) => {
-        detectDeviceType();
-        GrooveBoard.BackendMethods.reloadApps()
-        next()
-    },
-    (next) => {
         window.iconPackDB = {}
         iconPackConverter.forEach(icon => {
             icon.apps.forEach(packageName => {
                 window.iconPackDB[packageName] = { icon: icon.icon, pack: icon.pack }
             });
         });
+        next()
+    },
+    (next) => {
+        detectDeviceType();
+        GrooveBoard.BackendMethods.reloadApps()
         next()
     },
     (next) => {
@@ -262,6 +273,7 @@ function generateShakeAnimations() {
 
 // Call the function to generate the CSS rules and keyframes
 window.generateShakeAnimations = generateShakeAnimations
+/* REMOVE ME
 bridgeEvents.add((name, args) => {
     if (name == "beforePause") {
         clearTimeout(window.appTransitionLaunchError)
@@ -271,4 +283,12 @@ bridgeEvents.add((name, args) => {
         }, 200);
     }
     else return;
-});
+});*/
+window.addEventListener("activityPause", () => {
+    clearTimeout(window.appTransitionLaunchError)
+})
+window.addEventListener("activityResume", () => {
+    setTimeout(() => {
+        appTransition.onResume()
+    }, 200);
+})

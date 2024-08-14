@@ -12,7 +12,9 @@ public class WebEvents {
     public enum events {
         systemInsetsChange,
         backButtonPress,
-        homeButtonPress
+        homeButtonPress,
+        activityPause,
+        activityResume
     }
 
     WebEvents(Context c, WebView w) {

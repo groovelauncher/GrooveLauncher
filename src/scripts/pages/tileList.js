@@ -117,7 +117,7 @@ $(window).on("click", function (e) {
             e.target.classList.add("app-transition-selected")
             appTransition.onPause()
             setTimeout(() => {
-                Bridge.requestLaunchApp(e.target.getAttribute("packageName"))
+                Groove.launchApp(e.target.getAttribute("packageName"))
             }, 1000);
         }
 
@@ -204,12 +204,4 @@ function appImmediateClose() {
         }
 
     })
-}
-
-
-if (window.Groove) {
-    Object.keys(window.Groove).forEach(element => {
-        const developerModeTile = GrooveBoard.BoardMethods.createHomeTile([2, 2], {title: "dev_" + element})
-        developerModeTile.gridstackNode.el.addEventListener("click", ()=>{window.Groove[element]()})
-    });
 }

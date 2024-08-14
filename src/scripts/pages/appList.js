@@ -187,9 +187,9 @@ $(window).on("click", function (e) {
         if (e.target.canClick) {
             e.target.classList.add("app-transition-selected")
             appTransition.onPause()
-           setTimeout(() => {
-            Bridge.requestLaunchApp(e.target.getAttribute("packageName"))
-           }, 1000);
+            setTimeout(() => {
+                Groove.launchApp(e.target.getAttribute("packageName"))
+            }, 1000);
         }
     }
 })

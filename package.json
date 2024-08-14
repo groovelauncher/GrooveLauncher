@@ -18,7 +18,6 @@
   "license": "UNLICENSED",
   "description": "",
   "dependencies": {
-    "@bridgelauncher/api-mock": "^0.0.3",
     "better-scroll": "^2.5.1",
     "bezier-easing": "^2.1.0",
     "bootstrap": "^5.3.3",

@@ -4,7 +4,7 @@ const startUpSequence = function (loaders, finish) {
     var timeouttimer
     function onError(e) {
         clearTimeout(timeouttimer)
-        console.error(e.message)
+       // console.error(e.message)
         try {
             const loader = document.getElementById("loader")
             loader.style.backgroundColor = "red"
@@ -19,6 +19,8 @@ const startUpSequence = function (loaders, finish) {
         } catch (error) {
             alert(":(\nOh no!\n" + e.message)
         }
+        throw e;
+        
     }
 
     var lastindex = 0

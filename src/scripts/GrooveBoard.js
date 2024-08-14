@@ -87,7 +87,7 @@ const BoardMethods = {
                     }, 300);
                 }, 300);
             }, "uninstall": () => {
-                Bridge.requestAppUninstall(packageName)
+                Groove.uninstallApp(packageName)
             }
         })
         document.querySelector("div.app-list-page").appendChild(el)
@@ -156,39 +156,62 @@ function sortObjectsByKey(a, b) {
 // Output: [{ label: "1" }, { label: "2" }, { label: "A" }, { label: "a" }, { label: "B" }, { label: "c" }, { label: "#" }, { label: "@" }]
 const BackendMethods = {
     reloadApps: function (callback) {
-        fetch(Bridge.getAppsURL())
-            .then(resp => resp.json())
-            .then(resp => {
-                // replaceApps(resp);
-                let array = resp.apps
-                array.sort(sortObjectsByLabel);
-                window["allappsarchive"] = array
-                array.forEach(entry => {
-                    const labelSortCategory = getLabelSortCategory(entry.label)
-                    if (!!!appSortCategories[labelSortCategory]) appSortCategories[labelSortCategory] = []
-                    appSortCategories[labelSortCategory].push(entry)
+        const apps = JSON.parse(Groove.retrieveApps())
+         // replaceApps(resp);
+         let array = apps
+         array.sort(sortObjectsByLabel);
+         window["allappsarchive"] = array
+         array.forEach(entry => {
+             const labelSortCategory = getLabelSortCategory(entry.label)
+             if (!!!appSortCategories[labelSortCategory]) appSortCategories[labelSortCategory] = []
+             appSortCategories[labelSortCategory].push(entry)
 
-                });
-                //appSortCategories = 
-                appSortCategories = (Object.fromEntries(Object.entries(appSortCategories).sort(sortObjectsByKey)))
-                Object.keys(appSortCategories).forEach(labelSortCategory => {
-                    let letter = BoardMethods.createLetterTile(labelSortCategory == "0-9" ? "#" : labelSortCategory == "&" ? "" : labelSortCategory.toLocaleLowerCase("en"))
-                    appSortCategories[labelSortCategory].forEach(app => {
-                        const ipe = window.iconPackDB[app.packageName]
-                        const el = BoardMethods.createAppTile({ title: app.label, packageName: app.packageName, imageIcon: ipe ? false : true, icon: ipe ? ipe.icon : Bridge.getDefaultAppIconURL(app.packageName) })
-                        if (ipe) { if (ipe.pack == 0) el.classList.add("iconpack0"); else el.classList.add("iconpack1") }
-                    });
-                    // BoardMethods.createAppTile({ title: entry.label })
-                });
-                scrollers.app_page_scroller.refresh()
-                eventReloads.appTile()
-                /*
-              // springBoard.reloadPages()
-              if (callback && typeof callback == "function") callback(); else {
-                  //  console.log("couldnt call callback")
-              }*/
-                // $("body").append(new cupertinoElements.appIcon("../mock/icons/default/com.android.chrome.png", "bb", "cc"))
-            })
+         });
+         //appSortCategories = 
+         appSortCategories = (Object.fromEntries(Object.entries(appSortCategories).sort(sortObjectsByKey)))
+         Object.keys(appSortCategories).forEach(labelSortCategory => {
+             let letter = BoardMethods.createLetterTile(labelSortCategory == "0-9" ? "#" : labelSortCategory == "&" ? "" : labelSortCategory.toLocaleLowerCase("en"))
+             appSortCategories[labelSortCategory].forEach(app => {
+                 const ipe = window.iconPackDB[app.packageName]
+                 const el = BoardMethods.createAppTile({ title: app.label, packageName: app.packageName, imageIcon: ipe ? false : true, icon: ipe ? ipe.icon : Groove.getAppIconURL(app.packageName) })
+                 if (ipe) { if (ipe.pack == 0) el.classList.add("iconpack0"); else el.classList.add("iconpack1") }
+             });
+             // BoardMethods.createAppTile({ title: entry.label })
+         });
+         scrollers.app_page_scroller.refresh()
+         eventReloads.appTile()
+
+        /* REMOVE ME 
+         fetch(Bridge.getAppsURL())
+              .then(resp => resp.json())
+              .then(resp => {
+                  // replaceApps(resp);
+                  let array = resp.apps
+                  array.sort(sortObjectsByLabel);
+                  window["allappsarchive"] = array
+                  array.forEach(entry => {
+                      const labelSortCategory = getLabelSortCategory(entry.label)
+                      if (!!!appSortCategories[labelSortCategory]) appSortCategories[labelSortCategory] = []
+                      appSortCategories[labelSortCategory].push(entry)
+  
+                  });
+                  //appSortCategories = 
+                  appSortCategories = (Object.fromEntries(Object.entries(appSortCategories).sort(sortObjectsByKey)))
+                  Object.keys(appSortCategories).forEach(labelSortCategory => {
+                      let letter = BoardMethods.createLetterTile(labelSortCategory == "0-9" ? "#" : labelSortCategory == "&" ? "" : labelSortCategory.toLocaleLowerCase("en"))
+                      appSortCategories[labelSortCategory].forEach(app => {
+                          const ipe = window.iconPackDB[app.packageName]
+                          const el = BoardMethods.createAppTile({ title: app.label, packageName: app.packageName, imageIcon: ipe ? false : true, icon: ipe ? ipe.icon : Bridge.getDefaultAppIconURL(app.packageName) })
+                          if (ipe) { if (ipe.pack == 0) el.classList.add("iconpack0"); else el.classList.add("iconpack1") }
+                      });
+                      // BoardMethods.createAppTile({ title: entry.label })
+                  });
+                  scrollers.app_page_scroller.refresh()
+                  eventReloads.appTile()
+        
+                  // $("body").append(new cupertinoElements.appIcon("../mock/icons/default/com.android.chrome.png", "bb", "cc"))
+              })
+              */
     },
     refreshInsets: () => {
         if (window.stopInsetUpdate) return;

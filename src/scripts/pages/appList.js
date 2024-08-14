@@ -63,7 +63,7 @@ const letterSelectorSwitch = {
         $("div.letter-selector-letter").each((index, element) => {
             if (!enabledones.includes(element.innerText.toLocaleUpperCase("en"))) element.classList.add("disabled")
         })
-        Bridge.requestSetStatusBarAppearance("hide")
+        Groove.setStatusBarAppearance("hide")
         letterSelector.addClass("shown").addClass("shown-animation")
         setTimeout(() => {
             if (letterSelector.hasClass("shown")) letterSelector.removeClass("shown-animation")
@@ -75,7 +75,7 @@ const letterSelectorSwitch = {
     off: () => {
         GrooveBoard.BackendMethods.navigation.invalidate("letterSelectOn")
         scrollers.main_home_scroller.enabled = true
-        Bridge.requestSetStatusBarAppearance("light-fg")
+        Groove.setStatusBarAppearance("light")
         letterSelector.removeClass("shown").addClass("shown-animation").addClass("hidden")
         setTimeout(() => {
             delete window.stopInsetUpdate
@@ -109,27 +109,8 @@ $(window).on("finishedLoading", () => {
     window.scrollers.main_home_scroller.on("scrollStart", () => {
         scrollers.tile_page_scroller.refresh()
         scrollers.app_page_scroller.refresh()
-        //  console.log("hey")
     })
-    /*  $(window).on("pointerdown", function (e) {
-          if (!e.target.classList.contains("letter-selector-letter")) return
-          console.log(e.target)
-          e.stopPropagation()
-          e.stopImmediatePropagation()
-          e.preventDefault()
-          setTimeout(() => {
-              scrollers.main_home_scroller.enable()
-  
-          }, 1000);
-      })
-      $(window).on("pointerup", function (e) {
-          if (!e.target.classList.contains("letter-selector-letter")) return
-  
-          console.log(e.target)
-          e.stopPropagation()
-          e.stopImmediatePropagation()
-          e.preventDefault()
-      })*/
+
     $("div.letter-selector-letter").on("flowClick", function (e) {
         if (e.target.classList.contains("disabled")) return
         letterSelectorSwitch.off()
@@ -139,10 +120,6 @@ $(window).on("finishedLoading", () => {
         e.preventDefault()
     })
 })
-/*window.addEventListener('popstate', function (event) {
-    console.log(event.state)
-    searchModeSwitch.off()
-});*/
 appListSearch.on("input", function (e) {
     const search = window.normalizeDiacritics(this.value).toLocaleLowerCase("en")
     if (search.length == 0) $("div.app-search-search-store").css("visibility", "hidden"); else $("div.app-search-search-store").css("visibility", "");

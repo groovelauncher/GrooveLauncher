@@ -37,5 +37,11 @@ class GrooveMock {
         console.log("Launch app info:",packageName)
         return true
     }
+    setStatusBarAppearance(){
+        console.log("setStatusBarAppearance")
+    }
+    setNavigationBarAppearance(){
+        console.log("setNavigationBarAppearance")
+    }
 }
 export default GrooveMock;

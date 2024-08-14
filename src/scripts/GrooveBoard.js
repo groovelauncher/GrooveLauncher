@@ -1,6 +1,5 @@
 
 import GrooveElements from "./GrooveElements";
-import eventReloads from "./eventReloads";
 const BoardMethods = {
     finishLoading: () => {
         try {
@@ -55,8 +54,6 @@ const BoardMethods = {
         options = Object.assign({ imageIcon: false, icon: "", title: "Unknown", packageName: "com.unknown" }, options)
         const el = GrooveElements.wAppTile(options.imageIcon, options.icon, options.title, options.packageName)
         document.querySelector("#main-home-slider > div > div:nth-child(2) > div > div.app-list > div.app-list-container").appendChild(el)
-
-        // window.scrollers.app_page_scroller.refresh()
         return el
     },
     createLetterTile: (letter) => {
@@ -157,7 +154,6 @@ function sortObjectsByKey(a, b) {
 const BackendMethods = {
     reloadApps: function (callback) {
         const apps = JSON.parse(Groove.retrieveApps())
-         // replaceApps(resp);
          let array = apps
          array.sort(sortObjectsByLabel);
          window["allappsarchive"] = array
@@ -167,7 +163,6 @@ const BackendMethods = {
              appSortCategories[labelSortCategory].push(entry)
 
          });
-         //appSortCategories = 
          appSortCategories = (Object.fromEntries(Object.entries(appSortCategories).sort(sortObjectsByKey)))
          Object.keys(appSortCategories).forEach(labelSortCategory => {
              let letter = BoardMethods.createLetterTile(labelSortCategory == "0-9" ? "#" : labelSortCategory == "&" ? "" : labelSortCategory.toLocaleLowerCase("en"))
@@ -176,42 +171,8 @@ const BackendMethods = {
                  const el = BoardMethods.createAppTile({ title: app.label, packageName: app.packageName, imageIcon: ipe ? false : true, icon: ipe ? ipe.icon : Groove.getAppIconURL(app.packageName) })
                  if (ipe) { if (ipe.pack == 0) el.classList.add("iconpack0"); else el.classList.add("iconpack1") }
              });
-             // BoardMethods.createAppTile({ title: entry.label })
          });
          scrollers.app_page_scroller.refresh()
-         eventReloads.appTile()
-
-        /* REMOVE ME 
-         fetch(Bridge.getAppsURL())
-              .then(resp => resp.json())
-              .then(resp => {
-                  // replaceApps(resp);
-                  let array = resp.apps
-                  array.sort(sortObjectsByLabel);
-                  window["allappsarchive"] = array
-                  array.forEach(entry => {
-                      const labelSortCategory = getLabelSortCategory(entry.label)
-                      if (!!!appSortCategories[labelSortCategory]) appSortCategories[labelSortCategory] = []
-                      appSortCategories[labelSortCategory].push(entry)
-  
-                  });
-                  //appSortCategories = 
-                  appSortCategories = (Object.fromEntries(Object.entries(appSortCategories).sort(sortObjectsByKey)))
-                  Object.keys(appSortCategories).forEach(labelSortCategory => {
-                      let letter = BoardMethods.createLetterTile(labelSortCategory == "0-9" ? "#" : labelSortCategory == "&" ? "" : labelSortCategory.toLocaleLowerCase("en"))
-                      appSortCategories[labelSortCategory].forEach(app => {
-                          const ipe = window.iconPackDB[app.packageName]
-                          const el = BoardMethods.createAppTile({ title: app.label, packageName: app.packageName, imageIcon: ipe ? false : true, icon: ipe ? ipe.icon : Bridge.getDefaultAppIconURL(app.packageName) })
-                          if (ipe) { if (ipe.pack == 0) el.classList.add("iconpack0"); else el.classList.add("iconpack1") }
-                      });
-                      // BoardMethods.createAppTile({ title: entry.label })
-                  });
-                  scrollers.app_page_scroller.refresh()
-                  eventReloads.appTile()
-        
-                  // $("body").append(new cupertinoElements.appIcon("../mock/icons/default/com.android.chrome.png", "bb", "cc"))
-              })
-              */
     },
     refreshInsets: () => {
         if (window.stopInsetUpdate) return;

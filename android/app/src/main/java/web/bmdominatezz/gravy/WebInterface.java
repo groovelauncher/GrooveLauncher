@@ -3,9 +3,14 @@ package web.bmdominatezz.gravy;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
@@ -75,8 +80,9 @@ public class WebInterface {
         }
         return false;
     }
+
     @JavascriptInterface
-    public boolean uninstallApp(String packageName){
+    public boolean uninstallApp(String packageName) {
         Intent appIntent = mainActivity.packageManager.getLaunchIntentForPackage(packageName);
         Intent intent = new Intent(Intent.ACTION_DELETE);
         intent.setData(Uri.parse("package:" + packageName));
@@ -86,8 +92,9 @@ public class WebInterface {
         }
         return false;
     }
+
     @JavascriptInterface
-    public boolean launchAppInfo(String packageName){
+    public boolean launchAppInfo(String packageName) {
         Intent appIntent = mainActivity.packageManager.getLaunchIntentForPackage(packageName);
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.parse("package:" + packageName));
@@ -96,6 +103,94 @@ public class WebInterface {
             return true;
         }
         return false;
+    }
+
+    @JavascriptInterface
+    public void setStatusBarAppearance(String appearance) {
+        Window window = mainActivity.getWindow();
+        View decorView = window.getDecorView();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowInsetsController insetsController = window.getInsetsController();
+            if (insetsController != null) {
+                switch (appearance) {
+                    case "hide":
+                        insetsController.hide(WindowInsets.Type.statusBars());
+                        break;
+                    case "dark":
+                        insetsController.show(WindowInsets.Type.statusBars());
+                        insetsController.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+                        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                        break;
+                    case "light":
+                        insetsController.show(WindowInsets.Type.statusBars());
+                        insetsController.setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+                        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        } else {
+            // For older API levels
+            int flags = 0;
+            switch (appearance) {
+                case "hide":
+                    flags |= View.SYSTEM_UI_FLAG_FULLSCREEN;
+                    break;
+                case "dark":
+                    flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                    break;
+                case "light":
+                    flags |= View.SYSTEM_UI_FLAG_VISIBLE;
+                    break;
+            }
+            decorView.setSystemUiVisibility(flags);
+        }
+    }
+
+    @JavascriptInterface
+    public void setNavigationBarAppearance(String appearance) {
+        Window window = mainActivity.getWindow();
+        View decorView = window.getDecorView();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowInsetsController insetsController = window.getInsetsController();
+            if (insetsController != null) {
+                switch (appearance) {
+                    case "hide":
+                        insetsController.hide(WindowInsets.Type.navigationBars());
+                        break;
+                    case "dark":
+                        insetsController.show(WindowInsets.Type.navigationBars());
+                        insetsController.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
+                        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+                        break;
+                    case "light":
+                        insetsController.show(WindowInsets.Type.navigationBars());
+                        insetsController.setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
+                        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        } else {
+            // For older API levels
+            int flags = 0;
+            switch (appearance) {
+                case "hide":
+                    flags |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+                    break;
+                case "dark":
+                    flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+                    break;
+                case "light":
+                    flags |= View.SYSTEM_UI_FLAG_VISIBLE;
+                    break;
+            }
+            decorView.setSystemUiVisibility(flags);
+        }
     }
 
 }

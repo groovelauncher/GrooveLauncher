@@ -1,4 +1,3 @@
-import "./scripts/bridgeMock.js"
 import jQuery from "jquery";
 window.$ = jQuery
 import appTransition from "./scripts/appTransition.js";
@@ -17,18 +16,6 @@ window.normalizeDiacritics = (input = "") => {
 }
 import GrooveMock from "./scripts/grooveMock.js";
 
-/* DELETE ME
-import { BridgeMock, createDefaultBridgeMockConfig } from '@bridgelauncher/api-mock';
-
-const BridgeMockInstance = !window.Bridge
-if (BridgeMockInstance) {
-    window.Bridge = new BridgeMock(new createDefaultBridgeMockConfig());
-    Bridge.config.logRaisedBridgeEvents = false
-    Bridge.config.appsUrl = "./mock/apps.json"
-    Bridge.config.statusBarHeight = 0
-    Bridge.config.navigationBarHeight = 0
-}*/
-
 const GrooveMockInstance = !window.Groove
 if (GrooveMockInstance) {
     window.Groove = new GrooveMock("./mock/apps.json")
@@ -36,14 +23,6 @@ if (GrooveMockInstance) {
 var allappsarchive = []
 window["allappsarchive"] = allappsarchive
 
-/* DELETE ME
-const bridgeEvents = new Set();
-window.bridgeEvents = bridgeEvents
-// upon receiving an event, forward it to all listeners
-window.onBridgeEvent = (...event) => {
-    bridgeEvents.forEach((l) => l(...event));
-};
-*/
 window.appTransition = appTransition
 window.GrooveBoard = GrooveBoard
 const scrollers = {

@@ -93,9 +93,6 @@ window.homeTileEditSwitch = homeTileEditSwitch
 $("#app-page-icon").on("flowClick", function () {
     window.scrollers.main_home_scroller.scrollTo(-window.innerWidth, 0, 500)
 })
-$(window).on("resize", function (e) {
-    //GrooveBoard.BackendMethods.scaleTiles()
-})
 
 const resizeObserver = new ResizeObserver(entries => {
     for (let entry of entries) {
@@ -183,10 +180,8 @@ $(window).on("pointerup", function (e) {
 
 function homeTileMenuClean() {
     document.querySelectorAll(".groove-tile-menu").forEach(i => i.remove())
-
     // GrooveBoard.BackendMethods.navigation.invalidate("homeTileMenuOn")
     $("div.groove-home-tile").removeClass("home-menu-selected")
-
     clearTimeout(window.homeTileMenuCreationFirstTimeout)
     clearTimeout(window.homeTileMenuCreationSecondTimeout)
     $("div.tile-list-page").removeClass("home-menu-back-intro home-menu-back")

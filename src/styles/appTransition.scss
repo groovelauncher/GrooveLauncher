@@ -6,9 +6,11 @@
             &.app-transition-on-pause {
                 div.tile-list-inner-container>div.groove-home-tile {
                     animation: tileListAppTransitionAnim0 .2s calc(var(--app-animation-index) * .15s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
-                    &.app-transition-selected{
+
+                    &.app-transition-selected {
                         animation: tileListAppTransitionAnim0 .15s calc(2 * .15s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
                     }
+
                     transform-origin: var(--app-animation-distance) 50%;
 
                     @keyframes tileListAppTransitionAnim0 {
@@ -18,7 +20,7 @@
                         }
 
                         to {
-                            transform: translateX(calc(var(--flow-perspective) / -1)) rotateY(-20deg) translateX(calc(0%));
+                            transform: translateX(var(--app-page-distance)) translateX(calc(var(--flow-perspective) / -1)) rotateY(-20deg) translateX(calc(0%));
                             opacity: 0;
                         }
                     }
@@ -89,7 +91,7 @@
 
                         @keyframes tileListAppTransitionAnim2 {
                             0% {
-                                transform: translateX(calc(var(--flow-perspective) / -2)) rotateY(-20deg) translateX(calc(0%));
+                                transform: translateX(var(--app-page-distance)) translateX(calc(var(--flow-perspective) / -2)) rotateY(-20deg) translateX(calc(0%));
 
                                 opacity: 0;
 
@@ -113,14 +115,18 @@
 
         &.app-transition-app-list {
             &.app-transition-on-pause {
-                input.app-list-search{
+                input.app-list-search {
                     transform: translateY(calc(-100% - 4px - var(--window-inset-top))) !important;
                 }
-                div.app-list-container>div.groove-app-tile , #search-icon{
+                div.app-list-container>div.groove-app-tile,
+                #sticky-letter,
+                #search-icon {
                     animation: appListAppTransitionAnim0 .15s calc(var(--app-animation-index) * .3s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
-                    &.app-transition-selected{
+
+                    &.app-transition-selected {
                         animation: appListAppTransitionAnim0 .12s calc(1.5 * .3s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
                     }
+
                     transform-origin: var(--app-animation-distance) 50%;
 
                     @keyframes appListAppTransitionAnim0 {

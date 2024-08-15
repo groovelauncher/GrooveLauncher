@@ -25,7 +25,7 @@ div.tile-list-page {
 
     &.home-menu-back-intro {
         transition: .5s ease-in !important;
-        transform: translateZ(-20px) !important;
+        transform: translateZ(-5px) !important;
 
         // opacity: .9;
         div.groove-home-tile.home-menu-selected {
@@ -45,17 +45,118 @@ div.tile-list-page {
 
     &.home-menu-back {
         transition: .75s cubic-bezier(0.075, 0.82, 0.165, 1), --shake-distance 1s !important;
-        transform: translateZ(-50px) !important;
+        transform: translateZ(-40px) !important;
 
         // opacity: .5;
         div.groove-home-tile.home-menu-selected {
-            transition: .25s cubic-bezier(.43, 1.25, .5, 1) !important;
-            transform: translateZ(10px) scale(1.05) !important;
+            transition: all .25s cubic-bezier(.43, 1.25, .5, 1), left 0s, top 0s, width 0s, height 0s !important;
 
+            &:not(.tile-size-change-anim-s):not(.tile-size-change-anim-m):not(.tile-size-change-anim-w):not(.tile-size-change-anim-l) {
+                transform: translateZ(10px) scale(1.05) !important;
+            }
+
+            &.tile-size-change-anim-s {
+                animation: tile-size-change-anim-s .25s forwards;
+
+                @keyframes tile-size-change-anim-s {
+                    from {
+                        transform: translateZ(10px) scale(1.05) scale(1.5);
+                    }
+
+                    to {
+                        transform: translateZ(10px) scale(1.05);
+                    }
+                }
+            }
+
+            &.tile-size-change-anim-m {
+                animation: tile-size-change-anim-m .25s forwards;
+
+                @keyframes tile-size-change-anim-m {
+                    from {
+                        transform: translateX(10%) translateZ(10px) scale(1.05);
+                    }
+
+                    to {
+                        transform: translateZ(10px) scale(1.05);
+                    }
+                }
+            }
+
+            &.tile-size-change-anim-m-2 {
+                animation: tile-size-change-anim-m-2 .25s forwards;
+
+                @keyframes tile-size-change-anim-m-2 {
+                    from {
+                        transform: translateZ(10px) scale(0.63);
+                    }
+
+                    to {
+                        transform: translateZ(10px) scale(1.05);
+                    }
+                }
+            }
+
+            &.tile-size-change-anim-w {
+                animation: tile-size-change-anim-w .25s forwards;
+
+                @keyframes tile-size-change-anim-w {
+                    from {
+                        transform: translateY(10%) translateZ(10px) scale(1.05);
+                    }
+
+                    to {
+                        transform: translateZ(10px) scale(1.05);
+                    }
+                }
+            }
+
+            &.tile-size-change-anim-w-2 {
+                animation: tile-size-change-anim-w .25s forwards;
+
+                @keyframes tile-size-change-anim-w {
+                    from {
+                        transform: translateX(-10%) translateZ(10px) scale(1.05);
+                    }
+
+                    to {
+                        transform: translateZ(10px) scale(1.05);
+                    }
+                }
+            }
+
+            &.tile-size-change-anim-l,
+            &.tile-size-change-anim-l-2 {
+                animation: tile-size-change-anim-l .25s forwards;
+
+                @keyframes tile-size-change-anim-l {
+                    from {
+                        transform: translateX(-10%) translateZ(10px) scale(.6);
+                    }
+
+                    to {
+                        transform: translateZ(10px) scale(1.05);
+                    }
+                }
+            }
+
+            /*animation: home-tile-selected-intro-end .25s cubic-bezier(.43, 1.25, .5, 1);
+            
+            @keyframes home-tile-selected-intro-end {
+                from {
+                    transform: translateZ(20px) scale(1.075);
+                }
+
+                to {
+                    transform: translateZ(10px) scale(1.05);
+
+                }
+            }*/
         }
 
 
         div.groove-home-tile:not(.home-menu-selected) {
+            transition: left .25s, top .25s;
             opacity: .6;
             --shake-easing: cubic-bezier(.25, 0, .53, 1);
 
@@ -185,6 +286,12 @@ div.groove-home-tile {
         }
     }
 
+    &.groove-element.grid-stack-item.grid-dragging {
+        transition: 0s !important;
+        transition-duration: 0s !important;
+        will-change: transform !important;
+    }
+
     &.delete-anim {
 
         div.groove-tile-menu {
@@ -254,6 +361,7 @@ div.groove-home-tile {
             bottom: 0px;
             margin: 10px 12px;
             font-size: 19px;
+            zoom: calc(1 / var(--tile-zoom));
         }
     }
 
@@ -362,8 +470,9 @@ div.groove-home-tile {
                 right: calc(-21px + 6px);
 
                 p {
+                    transition: .25s ease-in-out;
                     transform: rotate(0deg);
-                    transform-origin: 35% 45%;
+                    transform-origin: 35% 47%;
 
                 }
             }

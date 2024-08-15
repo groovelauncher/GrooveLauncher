@@ -1,19 +1,28 @@
 @font-face {
+  font-family: GrooveIcon;
+  src: url(./../assets/fonts/GrooveIcon.ttf);
+}
+
+@font-face {
   font-family: Selawik;
   src: url(./../assets/fonts/SelawikVF.ttf);
 }
+
 @font-face {
   font-family: NotoSans;
   src: url(./../assets/fonts/NotoSans.ttf);
 }
+
 @font-face {
   font-family: OpenSans;
   src: url(./../assets/fonts/OpenSans.ttf);
 }
+
 @font-face {
   font-family: IconGlyphs;
   src: url(./../assets/fonts/icons.ttf);
 }
+
 @font-face {
   font-family: SymbolsNerd;
   src: url(./../assets/fonts/SymbolsNerd.ttf);
@@ -107,4 +116,28 @@
   font-family: 'SegoeWP';
   src: url('./../assets/fonts/SegoeWP/SegoeWP.woff-iF6682b75a98629.ttf') format('truetype');
   font-weight: normal;
+}
+
+.iconpack0 {
+
+  .groove-app-tile-icon,
+  div.groove-home-inner-tile>p.groove-home-tile-icon {
+    font-family: IconGlyphs;
+  }
+}
+
+.iconpack1 {
+
+  .groove-app-tile-icon,
+  div.groove-home-inner-tile>p.groove-home-tile-icon {
+    font-family: SymbolsNerd;
+  }
+}
+
+.iconpack2 {
+
+  .groove-app-tile-icon,
+  div.groove-home-inner-tile>p.groove-home-tile-icon {
+    font-family: GrooveIcon;
+  }
 }

@@ -8,7 +8,6 @@ const GrooveElements = {
     wTileMenu: wTileMenu,
 }
 function wHomeTile(imageIcon = false, icon = "", title = "Unknown", packageName = "com.unknown", color = "default", supportedSizes) {
-    console.log("HOME TİLE GELDİ", supportedSizes)
     if (!supportedSizes) supportedSizes = ["s"]
     const homeTile = document.createElement("div")
     homeTile.classList.add("groove-element")
@@ -90,23 +89,17 @@ function wTileMenu(el) {
     const appSizeDictionary = { s: [1, 1], m: [2, 2], w: [4, 2], l: [4, 4] }
     var currentSize = () => { try { return Object.entries(appSizeDictionary).filter(e => e[1][0] == el.gridstackNode.w && e[1][1] == el.gridstackNode.h)[0][0] } catch { return "l" } }
 
-    console.log(currentSize())
     const supportedSizes = el.getAttribute("supportedsizes").split(",")
-    console.log("support size", supportedSizes)
     const tileMenu = document.createElement("div")
     var previousSize = () => {
         if (currentSize() == 0) {
-            console.log("prev1")
             return supportedSizes.slice(-1)[0]
         } else if (supportedSizes[supportedSizes.indexOf(currentSize()) - 1]) {
-            console.log("prev2")
             return supportedSizes[supportedSizes.indexOf(currentSize()) - 1]
         } else {
-            console.log("prev3")
             return supportedSizes.slice(-1)[0]
         }
     }
-    console.log("önceki", previousSize())
     tileMenu.classList.add("groove-element")
     tileMenu.classList.add("groove-tile-menu")
     tileMenu.setAttribute("packageName", el.getAttribute("packageName"))
@@ -124,8 +117,7 @@ function wTileMenu(el) {
         }, 200);
     })
     tileMenu.querySelector("div.groove-tile-menu-resize-button").addEventListener("flowClick", (e) => {
-        console.log("geçiyorum", previousSize())
-        GrooveBoard.BackendMethods.resizeTile(el, previousSize())
+        GrooveBoard.BackendMethods.resizeTile(el, previousSize(), true)
         updateButton()
     })
     function updateButton() {

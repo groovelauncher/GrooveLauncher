@@ -7,6 +7,7 @@
     "test:webpack": "npx webpack --watch",
     "test:scss": "sass --no-source-map --watch src/styles.scss www/dist/styles.css",
     "test:android": "npm run build:android & chokidar 'www/**/*' -c 'npm run build:android'",
+    "test:web": "npm run test:webpack & npm run test:scss",
     "build": "npm run build:webpack && npm run build:scss && npm run build:android",
     "build:webpack": "npx webpack",
     "build:scss": "sass --no-source-map src/styles.scss www/dist/styles.css",

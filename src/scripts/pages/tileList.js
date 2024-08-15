@@ -9,10 +9,22 @@ const grid = GridStack.init({
     column: 4,
     disableResize: true,
     disableDrag: true,
-    animate: false,
     float: false,
+    animate:false,
     margin: "10px"
+})
+grid.on('dragstart', function (event, el) {
+   // el.classList.add("grid-dragging")
+    setTimeout(() => {
+        scrollers.tile_page_scroller.scrollTo(null)
+    }, 1000);
+});
+grid.on('dragstop', function (event, el) {
+    //$("div.groove-home-tile.grid-dragging").removeClass("grid-dragging").css("transition", "")
+});
+window.addEventListener("finishLoading",()=>{
 
+  
 })
 window.tileListGrid = grid
 var homeTileEditEnabled = false
@@ -119,7 +131,7 @@ $(window).on("click", function (e) {
         }
 
     } else if (e.target == document.querySelector("#main-home-slider > div > div:nth-child(1)") || e.target.classList.contains("tile-list-container") || e.target.classList.contains("home-menu-back") || e.target.classList.contains("home-menu-back-intro") || e.target.classList.contains("app-page-icon-banner")) {
-        if (homeTileEditEnabled) homeTileEditSwitch.off()
+      //  if (homeTileEditEnabled) homeTileEditSwitch.off()
     }
 })
 
@@ -199,4 +211,18 @@ function appImmediateClose() {
         }
 
     })
+}
+
+for (let index = 0; index < 3; index++) {
+    GrooveBoard.BoardMethods.createHomeTile([2,2])
+    GrooveBoard.BoardMethods.createHomeTile([1,1])
+    GrooveBoard.BoardMethods.createHomeTile([1,1])
+    GrooveBoard.BoardMethods.createHomeTile([1,1])
+    GrooveBoard.BoardMethods.createHomeTile([1,1])
+    GrooveBoard.BoardMethods.createHomeTile([1,1])
+    GrooveBoard.BoardMethods.createHomeTile([1,1])
+    GrooveBoard.BoardMethods.createHomeTile([2,2])
+    GrooveBoard.BoardMethods.createHomeTile([1,1])
+    GrooveBoard.BoardMethods.createHomeTile([1,1])
+
 }

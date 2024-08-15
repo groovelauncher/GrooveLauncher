@@ -1,8 +1,9 @@
 const iconPackConverter = [
+  { apps: ["web.bmdominatezz.gravy"], icon: "󯣿", pack: 2 },
   {
-    apps: ["com.android.dialer", "com.samsung.android.incallui","com.samsung.android.dialer"],
+    apps: ["com.android.dialer", "com.google.android.dialer", "com.samsung.android.incallui", "com.samsung.android.dialer"],
     icon: "",
-    pack: 0,
+    pack: 0
   },
   {
     apps: [
@@ -13,8 +14,8 @@ const iconPackConverter = [
     icon: "",
     pack: 0,
   },
-  { apps: ["com.android.settings"], icon: "", pack: 1 },
-  { apps: ["com.discord","com.aliucord"], icon: "", pack: 0 },
+  { apps: ["com.android.settings","groove.internal.settings"], icon: "", pack: 1 },
+  { apps: ["com.discord", "com.aliucord"], icon: "", pack: 0 },
   { apps: ["com.android.chrome"], icon: "", pack: 1 },
   { apps: ["com.spotify.music"], icon: "", pack: 1 },
   { apps: ["com.reddit.frontpage"], icon: "", pack: 1 },
@@ -32,7 +33,7 @@ const iconPackConverter = [
   { apps: ["com.instagram.android"], icon: "", pack: 1 },
   { apps: ["org.krita"], icon: "", pack: 1 },
   { apps: ["com.netflix.mediaclient"], icon: "󰝆", pack: 1 },
-  { apps: ["app.revanced.android.youtube","com.google.android.youtube"], icon: "", pack: 1 },
+  { apps: ["app.revanced.android.youtube", "com.google.android.youtube"], icon: "", pack: 1 },
   { apps: ["com.google.android.apps.youtube.creator"], icon: "󰡇", pack: 1 },
   { apps: ["com.google.android.apps.maps"], icon: "", pack: 1 },
   { apps: ["com.whatsapp"], icon: "", pack: 1 },
@@ -41,7 +42,7 @@ const iconPackConverter = [
   { apps: ["org.torproject.torbrowser"], icon: "", pack: 1 },
   { apps: ["com.google.android.apps.translate"], icon: "󰗊", pack: 1 },
   { apps: ["com.samsung.android.app.tips"], icon: "󰌵", pack: 1 },
-  { apps: ["com.samsung.android.game.gamehome","com.google.android.play.games"], icon: "󰖺", pack: 1 },
+  { apps: ["com.samsung.android.game.gamehome", "com.google.android.play.games"], icon: "󰖺", pack: 1 },
   { apps: ["com.microsoft.teams"], icon: "󰊻", pack: 1 },
   { apps: ["com.skype.raider"], icon: "", pack: 1 },
   { apps: ["com.snapchat.android"], icon: "", pack: 1 },
@@ -49,8 +50,8 @@ const iconPackConverter = [
   { apps: ["com.microsoft.office.onenote"], icon: "󰝇", pack: 1 },
   { apps: ["com.microsoft.office.outlook"], icon: "󰴢", pack: 1 },
   { apps: ["com.microsoft.office.officehubrow"], icon: "󰏆", pack: 1 },
-  { apps: ["com.google.android.gm","com.samsung.android.email.provider"], icon: "󰏆", pack: 1 },
-  { apps: ["com.google.android.gm","com.samsung.android.email.provider"], icon: "󰏆", pack: 1 },
+  { apps: ["com.google.android.gm", "com.samsung.android.email.provider"], icon: "󰏆", pack: 1 },
+  { apps: ["com.google.android.gm", "com.samsung.android.email.provider"], icon: "󰏆", pack: 1 },
   { apps: ["com.android.vending"], icon: "", pack: 1 },
 
   { apps: ["com.sec.android.app.popupcalculator"], icon: "󰃬", pack: 1 },
@@ -59,6 +60,6 @@ const iconPackConverter = [
   { apps: ["com.android.stk"], icon: "󰒧", pack: 1 },
   { apps: ["com.sec.android.app.music"], icon: "", pack: 1 },
   { apps: ["com.google.android.apps.docs"], icon: "", pack: 1 },
-  
+
 ];
 export default iconPackConverter;

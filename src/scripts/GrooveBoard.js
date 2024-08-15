@@ -5,29 +5,28 @@ const BoardMethods = {
         try {
             $(window).trigger("finishedLoading")
             const loader = document.getElementById("loader")
+            loader.classList.add("finished")
             setTimeout(() => {
-                loader.classList.add("finished")
-                setTimeout(() => {
-                    loader.remove()
-                }, 500);
+                loader.remove()
+                appTransition.onResume(false, true)
             }, 500);
         } catch (error) {
 
         }
     },
-    createHomeTile: (size = [1, 1], options = {}) => {
+    createHomeTile: (size = [1, 1], options = {}, append = false) => {
         options = Object.assign({ imageIcon: false, icon: "", title: "Unknown", packageName: "com.unknown", supportedSizes: ["s", "m"] }, options)
         setTimeout(() => {
             scrollers.tile_page_scroller.refresh()
 
         }, 0);
-        console.log("created", options)
-        const widget = window.tileListGrid.addWidget(
-            GrooveElements.wHomeTile(options.imageIcon, options.icon, options.title, options.packageName, "", options.supportedSizes),
-            {
-                w: size[0],
-                h: size[1],
-            })
+
+        var config = {
+            w: size[0],
+            h: size[1],
+        }
+
+        const widget = window.tileListGrid.addWidget(GrooveElements.wHomeTile(options.imageIcon, options.icon, options.title, options.packageName, "", options.supportedSizes), config)
         if (window.scrollers) window.scrollers.tile_page_scroller.refresh()
         return widget
 
@@ -65,21 +64,21 @@ const BoardMethods = {
         const el = GrooveElements.wAppMenu(packageName, {
             "pin to start": () => {
                 const findTile = $(`div.inner-page.app-list-page > div.app-list > div.app-list-container > div.groove-element.groove-app-tile[packagename="${packageName}"]`)[0]
-                console.log("BUNDAN TİLE", findTile)
-
-                GrooveBoard.BoardMethods.createHomeTile([1, 1], {
+                const iconpack = findTile.classList.contains("iconpack0") ? 0 : findTile.classList.contains("iconpack1") ? 1 : 2
+                const el = GrooveBoard.BoardMethods.createHomeTile([1, 1], {
                     packageName: findTile.getAttribute("packagename"),
                     title: findTile.getAttribute("title"),
                     icon: findTile.getAttribute("icon"),
                     imageIcon: findTile.getAttribute("imageicon") == "true",
                     //  supportedSizes: ["s", "m", "w", "l"]
                     supportedSizes: ["s", "m", "w", "l"]
-                })
+                }, true)
+                el.classList.add("iconpack" + iconpack)
                 scrollers.tile_page_scroller.refresh()
                 setTimeout(() => {
                     scrollers.main_home_scroller.scrollTo(0, 0, 500)
                     setTimeout(() => {
-                        scrollers.tile_page_scroller.scrollTo(0, scrollers.tile_page_scroller.maxScrollY, 500)
+                        scrollers.tile_page_scroller.scrollTo(0, -el.offsetTop - el.offsetHeight / 2 + window.innerHeight / 2, 500)
 
                     }, 300);
                 }, 300);
@@ -154,29 +153,28 @@ function sortObjectsByKey(a, b) {
 const BackendMethods = {
     reloadApps: function (callback) {
         const apps = JSON.parse(Groove.retrieveApps())
-         let array = apps
-         array.sort(sortObjectsByLabel);
-         window["allappsarchive"] = array
-         array.forEach(entry => {
-             const labelSortCategory = getLabelSortCategory(entry.label)
-             if (!!!appSortCategories[labelSortCategory]) appSortCategories[labelSortCategory] = []
-             appSortCategories[labelSortCategory].push(entry)
+        let array = apps
+        array.sort(sortObjectsByLabel);
+        window["allappsarchive"] = array
+        array.forEach(entry => {
+            const labelSortCategory = getLabelSortCategory(entry.label)
+            if (!!!appSortCategories[labelSortCategory]) appSortCategories[labelSortCategory] = []
+            appSortCategories[labelSortCategory].push(entry)
 
-         });
-         appSortCategories = (Object.fromEntries(Object.entries(appSortCategories).sort(sortObjectsByKey)))
-         Object.keys(appSortCategories).forEach(labelSortCategory => {
-             let letter = BoardMethods.createLetterTile(labelSortCategory == "0-9" ? "#" : labelSortCategory == "&" ? "" : labelSortCategory.toLocaleLowerCase("en"))
-             appSortCategories[labelSortCategory].forEach(app => {
-                 const ipe = window.iconPackDB[app.packageName]
-                 const el = BoardMethods.createAppTile({ title: app.label, packageName: app.packageName, imageIcon: ipe ? false : true, icon: ipe ? ipe.icon : Groove.getAppIconURL(app.packageName) })
-                 if (ipe) { if (ipe.pack == 0) el.classList.add("iconpack0"); else el.classList.add("iconpack1") }
-             });
-         });
-         scrollers.app_page_scroller.refresh()
+        });
+        appSortCategories = (Object.fromEntries(Object.entries(appSortCategories).sort(sortObjectsByKey)))
+        Object.keys(appSortCategories).forEach(labelSortCategory => {
+            let letter = BoardMethods.createLetterTile(labelSortCategory == "0-9" ? "#" : labelSortCategory == "&" ? "" : labelSortCategory.toLocaleLowerCase("en"))
+            appSortCategories[labelSortCategory].forEach(app => {
+                const ipe = window.iconPackDB[app.packageName]
+                const el = BoardMethods.createAppTile({ title: app.label, packageName: app.packageName, imageIcon: ipe ? false : true, icon: ipe ? ipe.icon : Groove.getAppIconURL(app.packageName) })
+                if (ipe) { if (ipe.pack == 0) el.classList.add("iconpack0"); else if (ipe.pack == 1) el.classList.add("iconpack1"); else el.classList.add("iconpack2"); }
+            });
+        });
+        scrollers.app_page_scroller.refresh()
     },
     refreshInsets: () => {
         if (window.stopInsetUpdate) return;
-        console.log("tamam düzeltiyorum")
         window.windowInsets = JSON.parse(Groove.getSystemInsets());
         Object.keys(windowInsets).forEach((element) => {
             document.body.style.setProperty("--window-inset-" + element, windowInsets[element] + "px");
@@ -186,7 +184,6 @@ const BackendMethods = {
         history: [],
         push: (change, forwardAction, backAction) => {
             GrooveBoard.BackendMethods.navigation.invalidate(change)
-
             console.log("HISTORY PUSH", change)
             forwardAction()
             BackendMethods.navigation.history.push({ forwardAction: forwardAction, change: change, backAction })
@@ -195,7 +192,7 @@ const BackendMethods = {
         },
         back: (action = true) => {
             if (BackendMethods.navigation.history.length <= 1) return
-            if (action == false) BackendMethods.navigation.history.reverse()[0].backAction = () => { }
+            if (action == false) BackendMethods.navigation.lastPush.backAction = () => { }
             const act = BackendMethods.navigation.history.pop()
             console.log("HISTORY BACK", act.change)
             act.backAction()
@@ -224,8 +221,9 @@ const BackendMethods = {
         const scale = GrooveBoard.BackendMethods.getTileSize(1, 1)[0] / originalWidgetSizes[0]
         document.querySelector("div.tile-list-inner-container").style.setProperty("--tile-zoom", scale)
     },
-    resizeTile: function (el, size) {
+    resizeTile: function (el, size, animate) {
         const appSizeDictionary = { s: [1, 1], m: [2, 2], w: [4, 2], l: [4, 4] }
+        const supportedSizes = el.getAttribute("supportedsizes").split(",")
         if (!appSizeDictionary[size] || !el["gridstackNode"]) return
         const chosenSize = appSizeDictionary[size]
         if (size == "s") {
@@ -235,14 +233,26 @@ const BackendMethods = {
             el.setAttribute("gs-w", chosenSize[0])
             el.setAttribute("gs-h", chosenSize[1])
         }
+        const fitRightBorder = Math.min(0, tileListGrid.getColumn() - (chosenSize[0] + el.gridstackNode.x))
+        //tileListGrid.update(el.gridstackNode, { w: chosenSize[0], h: chosenSize[1] })
+        tileListGrid.moveNode(el.gridstackNode, { x: el.gridstackNode.x + fitRightBorder })
         tileListGrid.moveNode(el.gridstackNode, { w: chosenSize[0], h: chosenSize[1] })
+        console.log("supported size", supportedSizes.slice(-1)[0], size, supportedSizes.slice(-1)[0] == size)
+        const animClassName = "tile-size-change-anim-" + size + ((supportedSizes.slice(-1)[0] == size) ? "-2" : "")
+        el.classList.add(animClassName)
+        console.log("anim class", animClassName)
+        setTimeout(() => {
+            el.classList.remove(animClassName)
+        }, 250);
+    },
+    launchInternalApp: (packageName) => {
+        console.log("İNTERNAL APP AÇILACAK")
     }
 }
 function listHistory() {
-    console.log("%c " + GrooveBoard.BackendMethods.navigation.history.map(e => JSON.stringify(e)).join("\n"), 'background: #222; color: #bada55')
+    console.log("%c" + GrooveBoard.BackendMethods.navigation.history.map((e, index) => index - -1 + ": " + JSON.stringify(e)).join("\n"), 'background: #222; color: #bada55')
 }
 window.addEventListener("backButtonPress", function () {
-    console.log("back button press")
     BackendMethods.navigation.back()
 })
 export default { BoardMethods, BackendMethods }

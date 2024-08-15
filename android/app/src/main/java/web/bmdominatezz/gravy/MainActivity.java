@@ -64,9 +64,8 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
-        // Do nothing or provide a custom action to prevent closing the launcher
-        //super.onBackPressed();
         webEvents.dispatchEvent(WebEvents.events.backButtonPress, null);
+        //super.onBackPressed();
     }
 
 

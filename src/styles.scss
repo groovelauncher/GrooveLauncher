@@ -1,3 +1,5 @@
+@import "./styles/loader.scss";
+
 @import "./styles/pages/appList.scss";
 @import "./styles/pages/tileList.scss";
 @import "./styles/appTransition.scss";
@@ -27,7 +29,7 @@ img {
 }
 
 * {
-  font-family: SymbolsNerd, IconGlyphs, OpenSans, sans-serif;
+  font-family:  SymbolsNerd, IconGlyphs, OpenSans, sans-serif;
   word-spacing: -6px;
   letter-spacing: -.5px;
   touch-action: none;
@@ -72,38 +74,8 @@ img {
 .transform-3d {
   transform-style: preserve-3d !important;
 }
+
 .transform-flat {
   transform-style: flat;
 }
 
-#loader {
-  box-shadow: 0px 0px 0px 10000px black;
-  animation: 0.5s loader-show cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
-
-  @keyframes loader-show {
-    from {
-      color: black;
-      transform: translateX(100px) rotateY(45deg);
-    }
-
-    to {
-      color: white;
-    }
-  }
-
-  &.finished {
-    animation: loader-finished 0.5s cubic-bezier(1, 0, 0.5, 1) forwards;
-
-    @keyframes loader-finished {
-      from {
-        opacity: 1;
-        scale: 1;
-      }
-
-      to {
-        opacity: 0;
-        scale: 0.75;
-      }
-    }
-  }
-}

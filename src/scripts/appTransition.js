@@ -21,6 +21,9 @@ function removeAnimClasses() {
     mainHomeSlider.classList.remove("app-transition", "app-transition-back", "app-transition-on-resume", "app-transition-on-pause", "app-transition-tile-list", "app-transition-app-list")
 
 }
+function appPageOffset() {
+    return document.querySelector("div.tile-list-container").getBoundingClientRect().left
+}
 const indexElements = (page) => {
     document.querySelectorAll('div.app-list-container > div.groove-element.groove-app-tile, div.tile-list-inner-container > div.groove-element.groove-home-tile').forEach(element => {
         element.style.removeProperty("--app-animation-index")
@@ -31,6 +34,7 @@ const indexElements = (page) => {
     const visibleElements = Array.from(elements).filter(isElementVisible);
     if (page) {
         console.log(visibleElements)
+        visibleElements.unshift(document.getElementById("sticky-letter"))
         visibleElements.unshift(document.getElementById("search-icon"))
         visibleElements.reverse().forEach((element, index) => {
             element.style.setProperty("--app-animation-index", (index / (visibleElements.length - 1)).toFixed(2))
@@ -42,6 +46,7 @@ const indexElements = (page) => {
         visibleElements.reverse().forEach((element, index) => {
             element.style.setProperty("--app-animation-index", (index / (visibleElements.length - 1)).toFixed(2))
             element.style.setProperty("--app-animation-distance", -element.offsetLeft + "px")
+            element.style.setProperty("--app-page-distance", -appPageOffset() + "px")
 
             return
             const elementBoundingClientRect = element.getBoundingClientRect()
@@ -75,19 +80,21 @@ const appTransition = {
         clearTimeout(window.appTransitionLaunchError)
         window.appTransitionLaunchError = setTimeout(() => {
             appTransition.onResume(true)
-        }, 1000);
+        }, 2000);
         startAnim()
         setTimeout(() => {
-            document.querySelectorAll(".app-transition-selected").forEach(e=> e.classList.remove("app-transition-selected"))
+            document.querySelectorAll(".app-transition-selected").forEach(e => e.classList.remove("app-transition-selected"))
         }, 600);
     },
-    onResume: (back = false) => {
+    onResume: (back = false, firstintro = false) => {
         clearTimeout(window.appTransitionLaunchError)
         scrollers.main_home_scroller.scrollTo(0, 0)
         mainHomeSlider.classList.remove("app-transition-on-pause")
         mainHomeSlider.classList.add("app-transition-on-resume")
         startAnim()
         if (back) mainHomeSlider.classList.add("app-transition-back")
+        if (firstintro) mainHomeSlider.style.removeProperty("visibility")
+
         setTimeout(() => {
             removeAnimClasses()
         }, 850);

@@ -23,12 +23,14 @@ public class WebEvents {
     }
 
     public void dispatchEvent(String eventName, JSONObject arguments) {
-        webView.evaluateJavascript("window.dispatchEvent(new Event(\"systemInsetChange\")" +
-                (arguments != null ? "," + arguments.toString() : "")
-                + ")", null);
+        if (arguments == null) {
+            webView.evaluateJavascript("window.dispatchEvent(new Event(\"" + eventName + "\"))", null);
+        } else {
+            webView.evaluateJavascript("window.dispatchEvent(new Event(\"" + eventName + "\"), " + arguments.toString() + ")", null);
+        }
     }
 
-    public void dispatchEvent(events eventName,JSONObject arguments) {
-        dispatchEvent(eventName.toString(),arguments);
+    public void dispatchEvent(events eventName, JSONObject arguments) {
+        dispatchEvent(eventName.toString(), arguments);
     }
 }

@@ -41,5 +41,17 @@
         --metro-color-steel: #{$metro-color-steel};
         --metro-color-mauve: #{$metro-color-mauve};
         --metro-color-taupe: #{$metro-color-taupe};
-        --accent-color:var(--metro-color-cobalt);
+        --accent-color: var(--metro-color-cobalt);
+    }
+
+    //Default dark mode color palette
+    body:not(.light-mode) {
+        --metro-background: black;
+        --metro-foreground: white;
+    }
+
+    //Light mode color palette
+    body.light-mode {
+        --metro-background: white;
+        --metro-foreground: black;
     }

@@ -250,17 +250,7 @@ div.inner-page.app-list-page {
   margin: 0px;
   align-items: center;
 
-  &.iconpack0 {
-    .groove-app-tile-icon {
-      font-family: IconGlyphs;
-    }
-  }
 
-  &.iconpack1 {
-    .groove-app-tile-icon {
-      font-family: SymbolsNerd;
-    }
-  }
 
   .groove-app-tile-icon,
   .groove-app-tile-imageicon {
@@ -312,8 +302,20 @@ div.inner-page.app-list-page {
   }
 }
 
+#sticky-letter {
+  position: fixed;
+  left: 81px;
+  width: 100%;
+  top: calc(var(--window-inset-top));
+  background: black !important;
+  box-shadow: 0px calc(-6px - var(--window-inset-top)) 0px black;
+  z-index: 10;
+  opacity: 0;
+}
+
 .groove-element.groove-letter-tile {
   &.opaque {
+    visibility: hidden;
     background: black !important;
     box-shadow: 0px calc(-6px - var(--window-inset-top)) 0px black;
   }
@@ -384,6 +386,7 @@ div.letter-selector {
   width: 100%;
   height: 100%;
   padding: 18px;
+  padding-bottom: calc(18px + var(--window-inset-bottom));
   box-sizing: border-box;
   background: rgb(black, .5);
   background: transparent;
@@ -532,6 +535,7 @@ div.app-list-page {
 
   div.app-list,
   #search-icon,
+      #sticky-letter,
   input.app-list-search {
     transition: transform var(--flow-touch-up-transition) ease-out, opacity var(--flow-touch-up-transition) ease-out;
   }
@@ -548,6 +552,7 @@ div.app-list-page {
   &.app-menu-back-intro {
 
     #search-icon,
+    #sticky-letter,
     div.app-list,
     input.app-list-search {
       pointer-events: none !important;
@@ -565,6 +570,7 @@ div.app-list-page {
   &.app-menu-back {
 
     #search-icon,
+    #sticky-letter,
     div.app-list,
     input.app-list-search {
       pointer-events: none !important;

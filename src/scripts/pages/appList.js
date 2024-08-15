@@ -4,6 +4,7 @@ var $ = jQuery
 const appListPage = $("div.inner-page.app-list-page")
 const appListSearch = $("input.app-list-search")
 const letterSelector = $("div.letter-selector")
+const stickyLetterTile = $("#sticky-letter")
 $("div.groove-element.groove-app-tile.groove-letter-tile")
 const searchModeSwitch = {
     on: () => {
@@ -150,8 +151,8 @@ appListSearch.on("input", function (e) {
 
 })
 $("div.app-search-search-store").on("flowClick", () => {
-    window.open("https://play.google.com/store/search?q=" + appListSearch[0].value, "_blank")
-
+    //window.open("https://play.google.com/store/search?q=" + appListSearch[0].value, "_blank")
+    Groove.searchStore(appListSearch[0].value)
 })
 
 
@@ -321,12 +322,49 @@ function stickyLetter() {
 
     if (scroll != lastScroll) {
 
+        $("div.app-list-container > div.groove-element.groove-app-tile.groove-letter-tile").css("transition", " all 0s")
+        const topinset = windowInsets.top
+        const allLetterTiles = $("div.app-list-container > div.groove-element.groove-app-tile.groove-letter-tile")
+        allLetterTiles.each((index, element) => {
+            const elementScrollTop = element.offsetTop - topinset - scroll
+            const zone = elementScrollTop < -64 ? -1 : elementScrollTop < 0 ? 0 : elementScrollTop < 64 ? 1 : 2
+            if (index == 0 || index == 1) {
+                // console.log(elementScrollTop)
+            }
+            console.log(scroll)
+            if (zone == 0) {
+                stickyLetterTile.css({
+                    transition: " transform 0s",
+                    transform: `translateY(0px)`
+                }).attr("icon", element.getAttribute("icon")).children("p.groove-app-tile-icon").text(element.getAttribute("icon"))
+            } else if (zone == 1) {
+                console.log("heyo")
+                stickyLetterTile.css({
+                    transition: "transform 0s",
+                    transform: `translateY(${elementScrollTop - 64}px)`
+                })
+                if (allLetterTiles[index - 1]) stickyLetterTile.attr("icon", allLetterTiles[index - 1].getAttribute("icon")).children("p.groove-app-tile-icon").text(allLetterTiles[index - 1].getAttribute("icon"));
 
-        $("div.groove-element.groove-app-tile.groove-letter-tile").css("transition", " all 0s")
 
-        $("div.groove-element.groove-app-tile.groove-letter-tile").each((index, element) => {
-            const topinset = windowInsets.top
-            const minTop = element.offsetTop - topinset
+            } else {
+                stickyLetterTile.css({
+                    transition: " transform 0s",
+                    transform: `translateY(0px)`
+                })
+            }
+            if (scroll > 21) {
+                stickyLetterTile.css({
+                    opacity: 1
+                })
+            } else {
+                stickyLetterTile.css({
+                    opacity: 0
+                })
+            }
+
+            return;
+            //const topinset = windowInsets.top
+            //const minTop = element.offsetTop - topinset
             const next = $(element).nextAll(".groove-letter-tile")
             const maxTop = next.length ? (next[0].offsetTop - (64 + 0) - topinset) : 99999
             if (scroll < minTop) {
@@ -341,9 +379,10 @@ function stickyLetter() {
 
         })
     } else {
-        $("div.groove-element.groove-app-tile.groove-letter-tile").css("transition", "")
+        $("div.app-list-container > div.groove-element.groove-app-tile.groove-letter-tile").css("transition", "")
     }
     lastScroll = scroll
 
     requestAnimationFrame(stickyLetter)
 }
+

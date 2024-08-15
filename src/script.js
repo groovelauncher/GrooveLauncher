@@ -61,23 +61,7 @@ const scrollers = {
     })
 }
 function cancelScroll(scroller) {
-    const scrollContainer = scroller.wrapper
-
-    // To simulate a pointer up event
-    const touchEndEvent = new TouchEvent("touchend", {
-        bubbles: true,
-        cancelable: true,
-        view: window,
-    });
-    // To simulate a pointer up event
-    const mouseUpEvent = new MouseEvent("mouseup", {
-        bubbles: true,
-        cancelable: true,
-        view: window,
-    });
-    scrollContainer.dispatchEvent(mouseUpEvent);
-    scrollContainer.dispatchEvent(touchEndEvent);
-
+    scroller.scrollTo(null)
 }
 window.scrollers = scrollers
 window.cancelScroll = cancelScroll
@@ -240,7 +224,7 @@ function generateShakeAnimations() {
     styleSheet.classList.add("shake-anim-styles")
     document.head.appendChild(styleSheet);
     $("div.groove-home-tile").each((index, element) => {
-        element.style.setProperty("--shake-duration", (Math.floor(Math.random() * 2) + 1 * 6) + "s")
+        element.style.setProperty("--shake-duration", (Math.floor(Math.random() * 6) +  3) + "s")
     })
     for (let i = 0; i <= 5; i++) {
 

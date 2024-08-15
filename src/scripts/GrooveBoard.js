@@ -1,18 +1,18 @@
-
+import { grooveColors, grooveTileColumns, grooveThemes } from "./GrooveProperties";
+window.grooveTileColumns = grooveTileColumns
+window.grooveColors = grooveColors
+window.grooveThemes = grooveThemes
 import GrooveElements from "./GrooveElements";
-const BoardMethods = {
+const boardMethods = {
     finishLoading: () => {
-        try {
-            $(window).trigger("finishedLoading")
-            const loader = document.getElementById("loader")
-            loader.classList.add("finished")
-            setTimeout(() => {
-                loader.remove()
-                appTransition.onResume(false, true)
-            }, 500);
-        } catch (error) {
+        $(window).trigger("finishedLoading")
+        const loader = document.getElementById("loader")
+        loader.classList.add("finished")
+        setTimeout(() => {
+            loader.remove()
+            appTransition.onResume(false, true)
+        }, 500);
 
-        }
     },
     createHomeTile: (size = [1, 1], options = {}, append = false) => {
         options = Object.assign({ imageIcon: false, icon: "", title: "Unknown", packageName: "com.unknown", supportedSizes: ["s", "m"] }, options)
@@ -65,7 +65,7 @@ const BoardMethods = {
             "pin to start": () => {
                 const findTile = $(`div.inner-page.app-list-page > div.app-list > div.app-list-container > div.groove-element.groove-app-tile[packagename="${packageName}"]`)[0]
                 const iconpack = findTile.classList.contains("iconpack0") ? 0 : findTile.classList.contains("iconpack1") ? 1 : 2
-                const el = GrooveBoard.BoardMethods.createHomeTile([1, 1], {
+                const el = GrooveBoard.boardMethods.createHomeTile([1, 1], {
                     packageName: findTile.getAttribute("packagename"),
                     title: findTile.getAttribute("title"),
                     icon: findTile.getAttribute("icon"),
@@ -150,7 +150,7 @@ function sortObjectsByKey(a, b) {
 
 
 // Output: [{ label: "1" }, { label: "2" }, { label: "A" }, { label: "a" }, { label: "B" }, { label: "c" }, { label: "#" }, { label: "@" }]
-const BackendMethods = {
+const backendMethods = {
     reloadApps: function (callback) {
         const apps = JSON.parse(Groove.retrieveApps())
         let array = apps
@@ -164,10 +164,10 @@ const BackendMethods = {
         });
         appSortCategories = (Object.fromEntries(Object.entries(appSortCategories).sort(sortObjectsByKey)))
         Object.keys(appSortCategories).forEach(labelSortCategory => {
-            let letter = BoardMethods.createLetterTile(labelSortCategory == "0-9" ? "#" : labelSortCategory == "&" ? "" : labelSortCategory.toLocaleLowerCase("en"))
+            let letter = boardMethods.createLetterTile(labelSortCategory == "0-9" ? "#" : labelSortCategory == "&" ? "" : labelSortCategory.toLocaleLowerCase("en"))
             appSortCategories[labelSortCategory].forEach(app => {
                 const ipe = window.iconPackDB[app.packageName]
-                const el = BoardMethods.createAppTile({ title: app.label, packageName: app.packageName, imageIcon: ipe ? false : true, icon: ipe ? ipe.icon : Groove.getAppIconURL(app.packageName) })
+                const el = boardMethods.createAppTile({ title: app.label, packageName: app.packageName, imageIcon: ipe ? false : true, icon: ipe ? ipe.icon : Groove.getAppIconURL(app.packageName) })
                 if (ipe) { if (ipe.pack == 0) el.classList.add("iconpack0"); else if (ipe.pack == 1) el.classList.add("iconpack1"); else el.classList.add("iconpack2"); }
             });
         });
@@ -175,38 +175,43 @@ const BackendMethods = {
     },
     refreshInsets: () => {
         if (window.stopInsetUpdate) return;
-        window.windowInsets = JSON.parse(Groove.getSystemInsets());
-        Object.keys(windowInsets).forEach((element) => {
-            document.body.style.setProperty("--window-inset-" + element, windowInsets[element] + "px");
+        window.windowInsetsRaw = JSON.parse(Groove.getSystemInsets());
+        const uiScale = Number(getComputedStyle(document.body).getPropertyValue("--ui-scale"))
+        window.windowInsets = () => {
+            return { left: window.windowInsetsRaw.left / uiScale, right: window.windowInsetsRaw.right / uiScale, top: window.windowInsetsRaw.top / uiScale, bottom: window.windowInsetsRaw.bottom / uiScale }
+        }
+
+        Object.keys(windowInsetsRaw).forEach((element) => {
+            document.body.style.setProperty("--window-raw-inset-" + element, windowInsetsRaw[element] + "px");
         });
     },
     navigation: {
         history: [],
         push: (change, forwardAction, backAction) => {
-            GrooveBoard.BackendMethods.navigation.invalidate(change)
+            GrooveBoard.backendMethods.navigation.invalidate(change)
             console.log("HISTORY PUSH", change)
             forwardAction()
-            BackendMethods.navigation.history.push({ forwardAction: forwardAction, change: change, backAction })
+            backendMethods.navigation.history.push({ forwardAction: forwardAction, change: change, backAction })
             history.pushState(change, "", window.location.href); // Explicitly using the current URL
             listHistory()
         },
         back: (action = true) => {
-            if (BackendMethods.navigation.history.length <= 1) return
-            if (action == false) BackendMethods.navigation.lastPush.backAction = () => { }
-            const act = BackendMethods.navigation.history.pop()
+            if (backendMethods.navigation.history.length <= 1) return
+            if (action == false) backendMethods.navigation.lastPush.backAction = () => { }
+            const act = backendMethods.navigation.history.pop()
             console.log("HISTORY BACK", act.change)
             act.backAction()
             listHistory()
         },
         get lastPush() {
-            if (GrooveBoard.BackendMethods.navigation.history.length == 0) return undefined
-            return GrooveBoard.BackendMethods.navigation.history.slice(-1)[0]
+            if (GrooveBoard.backendMethods.navigation.history.length == 0) return undefined
+            return GrooveBoard.backendMethods.navigation.history.slice(-1)[0]
         },
         invalidate: (change) => {
-            if (GrooveBoard.BackendMethods.navigation.history.length == 0) return undefined
+            if (GrooveBoard.backendMethods.navigation.history.length == 0) return undefined
             console.log("HISTORY INVA", change)
-            if (GrooveBoard.BackendMethods.navigation.lastPush.change == change) {
-                GrooveBoard.BackendMethods.navigation.back(false)
+            if (GrooveBoard.backendMethods.navigation.lastPush.change == change) {
+                GrooveBoard.backendMethods.navigation.back(false)
             }
             listHistory()
         }
@@ -218,7 +223,7 @@ const BackendMethods = {
         return [w * base + (w - 1) * padding, h * base + (h - 1) * padding]
     },
     scaleTiles: function () {
-        const scale = GrooveBoard.BackendMethods.getTileSize(1, 1)[0] / originalWidgetSizes[0]
+        const scale = GrooveBoard.backendMethods.getTileSize(1, 1)[0] / originalWidgetSizes[0]
         document.querySelector("div.tile-list-inner-container").style.setProperty("--tile-zoom", scale)
     },
     resizeTile: function (el, size, animate) {
@@ -244,16 +249,50 @@ const BackendMethods = {
         setTimeout(() => {
             el.classList.remove(animClassName)
         }, 250);
-    },
-    launchInternalApp: (packageName) => {
+    }, launchInternalApp: (packageName) => {
         console.log("İNTERNAL APP AÇILACAK")
+    }, setTileColumns: (int) => {
+        if (Object.values(grooveTileColumns).includes(int)) {
+            tileListGrid.column(int, int < tileListGrid.getColumn() ? "compact" : "none")
+        } else {
+            console.error("Invalid tile size!")
+        }
+    }, setAccentColor: (color) => {
+        if (Object.values(grooveColors).includes(color)) {
+            document.body.style.setProperty("--accent-color", color)
+        } else {
+            console.error("Invalid color!")
+        }
+    }, setTheme: (theme) => {
+        if (Object.values(grooveThemes).includes(theme)) {
+            document.body.classList[theme ? "add" : "remove"]("light-mode")
+            Groove.setNavigationBarAppearance(theme ? "dark" : "light")
+            Groove.setStatusBarAppearance(theme ? "dark" : "light")
+        } else {
+            console.error("Invalid theme!")
+        }
+    }, setTileColumns: (int) => {
+        if (Object.values(grooveTileColumns).includes(int)) {
+            tileListGrid.column(int, int < tileListGrid.getColumn() ? "compact" : "none")
+        } else {
+            console.error("Invalid tile size!")
+        }
+    },
+    homeConfiguration: {
+        save: () => {
+            const config = []
+
+        },
+        load: () => {
+
+        }
     }
 }
 function listHistory() {
-    console.log("%c" + GrooveBoard.BackendMethods.navigation.history.map((e, index) => index - -1 + ": " + JSON.stringify(e)).join("\n"), 'background: #222; color: #bada55')
+    console.log("%c" + GrooveBoard.backendMethods.navigation.history.map((e, index) => index - -1 + ": " + JSON.stringify(e)).join("\n"), 'background: #222; color: #bada55')
 }
 window.addEventListener("backButtonPress", function () {
-    BackendMethods.navigation.back()
+    backendMethods.navigation.back()
 })
-export default { BoardMethods, BackendMethods }
+export default { boardMethods, backendMethods }
 

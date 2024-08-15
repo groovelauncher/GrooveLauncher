@@ -1,8 +1,13 @@
-:root {
-    --window-inset-left: 0px;
-    --window-inset-top: 0px;
-    --window-inset-right: 0px;
-    --window-inset-bottom: 0px;
+body {
+    --ui-scale: 1;
+    --window-raw-inset-left: 0px;
+    --window-raw-inset-top: 0px;
+    --window-raw-inset-right: 0px;
+    --window-raw-inset-bottom: 0px;
+    --window-inset-left: calc(var(--window-raw-inset-left) / var(--ui-scale));
+    --window-inset-top: calc(var(--window-raw-inset-top) / var(--ui-scale));
+    --window-inset-right: calc(var(--window-raw-inset-right) / var(--ui-scale));
+    --window-inset-bottom: calc(var(--window-raw-inset-bottom) / var(--ui-scale));
 }
 
 .system-bar {
@@ -12,7 +17,7 @@
     width: 100%;
     height: 0px;
 
-    &.system-status-bar{
+    &.system-status-bar {
         top: 0px;
         height: var(--window-inset-top);
     }
@@ -22,7 +27,8 @@
         height: var(--window-inset-bottom);
     }
 }
-.status-bar-mock{
+
+.status-bar-mock {
     position: fixed;
     z-index: 11;
     left: 0px;

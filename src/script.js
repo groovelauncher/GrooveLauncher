@@ -3,7 +3,7 @@ window.$ = jQuery
 import appTransition from "./scripts/appTransition.js";
 import clickDetectorConfig from "./scripts/clickDetector.js";
 import BScroll from "better-scroll";
-import { BoardMethods } from "./scripts/GrooveBoard";
+import { boardMethods } from "./scripts/GrooveBoard";
 import startUpSequence from "./scripts/startUpSequence";
 import detectDeviceType from "./scripts/detectDeviceType";
 import GrooveBoard from "./scripts/GrooveBoard";
@@ -15,6 +15,7 @@ window.normalizeDiacritics = (input = "") => {
     return normalizeSync(input)
 }
 import GrooveMock from "./scripts/GrooveMock.js";
+import { grooveThemes } from "./scripts/GrooveProperties.js";
 
 const GrooveMockInstance = !window.Groove
 if (GrooveMockInstance) {
@@ -90,106 +91,28 @@ window.console.image = function (url, size = 100) {
         };
     }
 };
-window.windowInsets = document.body.windowInsets = {
-    left: 0,
-    top: 0,
-    right: 0,
-    bottom: 0,
-};
-/* OLD BRIDGE EVENT REMOVE
-bridgeEvents.add((name, args) => {
-    console.log("WOWOWOWOWO", name, args)   // args will be strongly typed
-    if (name != "systemBarsWindowInsetsChanged") return;
-    //    console.log(args)
-    //GrooveBoard.BackendMethods.refreshInsets()
-});
-//GrooveBoard.BackendMethods.refreshInsets()
-*/
+
 $(window).on("systemInsetsChange", function () {
     console.log("ay hemen düzelt gülüm")
-    GrooveBoard.BackendMethods.refreshInsets()
+    GrooveBoard.backendMethods.refreshInsets()
 })
-GrooveBoard.BackendMethods.refreshInsets()
+GrooveBoard.backendMethods.refreshInsets()
 $(window).on("resize", () => {
     $(":root").css({ "--window-width": window.innerWidth + "px", "--window-height": window.innerHeight + "px", "--window-hypotenuse": (Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2))) + "px" })
 })
 $(":root").css({ "--window-width": window.innerWidth + "px", "--window-height": window.innerHeight + "px", "--window-hypotenuse": (Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2))) + "px" })
-startUpSequence([
-    (next) => {
-        setTimeout(next, 500);
-    },
-    (next) => {
-        window.iconPackDB = {}
-        iconPackConverter.forEach(icon => {
-            icon.apps.forEach(packageName => {
-                window.iconPackDB[packageName] = { icon: icon.icon, pack: icon.pack }
-            });
-        });
-        next()
-    },
-    (next) => {
-        detectDeviceType();
-        GrooveBoard.BackendMethods.reloadApps()
-        next()
-    },
-    (next) => {
-        window.scrollers.tile_page_scroller.refresh()
-        window.scrollers.app_page_scroller.refresh()
-        next()
-    },
-    (next) => {
-        const letter_selector_entries = ["#abcdefghijklmnopqrstuvwxyz"]
-        const groupedEntries = [];
-
-        for (let i = 0; i < letter_selector_entries[0].length; i += 4) {
-            groupedEntries.push(letter_selector_entries[0].slice(i, i + 4));
-        }
-
-        const letterSelectorDiv = $('.letter-selector');
-
-        groupedEntries.forEach(group => {
-            const $rowDiv = $('<div>', { class: 'letter-selector-row' });
-
-            for (let letter of group) {
-                const $letterDiv = $('<div>', { class: 'letter-selector-letter', text: letter });
-                $rowDiv.append($letterDiv);
-            }
-
-            letterSelectorDiv.append($rowDiv);
-        });
-        next()
-    }
-],
-    function () {
-        setTimeout(() => {
-            GrooveBoard.BoardMethods.finishLoading()
-        }, 100);
-    }
-)
 
 scrollers.main_home_scroller.on("slideWillChange", function (e) {
     if (e.pageX == 0) {
-        if (GrooveBoard.BackendMethods.navigation.lastPush.change == "appMenuOpened") {
-            GrooveBoard.BackendMethods.navigation.back()
+        if (GrooveBoard.backendMethods.navigation.lastPush.change == "appMenuOpened") {
+            GrooveBoard.backendMethods.navigation.back()
         }
     } else {
-        GrooveBoard.BackendMethods.navigation.push("appMenuOpened", () => { }, () => {
+        GrooveBoard.backendMethods.navigation.push("appMenuOpened", () => { }, () => {
             scrollers.main_home_scroller.scrollTo(0, 0, 500)
         })
     }
-    // history.pushState("applistopen", document.title, location.href);
 })
-/*
-window.addEventListener('popstate', function (event) {
-    console.log(event)
-    if (event.state != "applistopen") {
-        scrollers.main_home_scroller.scrollTo(0, 0, 500)
-    }
-    // scrollers.main_home_scroller.scrollTo(0,0,500)
-
-});
-*/
-GrooveBoard.BackendMethods.navigation.push("homescreen", () => { }, () => { })
 
 
 function getRandomMultiplier() {
@@ -218,13 +141,14 @@ function createShakeKeyframes(n) {
 }
 
 function generateShakeAnimations() {
+    return
     document.querySelectorAll("style.shake-anim-styles").forEach(i => i.remove())
 
     const styleSheet = document.createElement('style');
     styleSheet.classList.add("shake-anim-styles")
     document.head.appendChild(styleSheet);
     $("div.groove-home-tile").each((index, element) => {
-        element.style.setProperty("--shake-duration", (Math.floor(Math.random() * 6) +  3) + "s")
+        element.style.setProperty("--shake-duration", (Math.floor(Math.random() * 6) + 3) + "s")
     })
     for (let i = 0; i <= 5; i++) {
 
@@ -234,19 +158,8 @@ function generateShakeAnimations() {
     }
 }
 
-// Call the function to generate the CSS rules and keyframes
 window.generateShakeAnimations = generateShakeAnimations
-/* REMOVE ME
-bridgeEvents.add((name, args) => {
-    if (name == "beforePause") {
-        clearTimeout(window.appTransitionLaunchError)
-    } else if (name == "afterResume") {
-        setTimeout(() => {
-            appTransition.onResume()
-        }, 200);
-    }
-    else return;
-});*/
+
 window.addEventListener("activityPause", () => {
     clearTimeout(window.appTransitionLaunchError)
 })
@@ -255,3 +168,63 @@ window.addEventListener("activityResume", () => {
         appTransition.onResume()
     }, 200);
 })
+
+
+startUpSequence([
+    (next) => {
+        setTimeout(next, 500);
+        GrooveBoard.backendMethods.navigation.push("homescreen", () => { }, () => { })
+
+    },
+    (next) => {
+        window.iconPackDB = {}
+        iconPackConverter.forEach(icon => {
+            icon.apps.forEach(packageName => {
+                window.iconPackDB[packageName] = { icon: icon.icon, pack: icon.pack }
+            });
+        });
+        next()
+    },
+    (next) => {
+        detectDeviceType();
+        GrooveBoard.backendMethods.reloadApps()
+        next()
+    },
+    (next) => {
+        window.scrollers.tile_page_scroller.refresh()
+        window.scrollers.app_page_scroller.refresh()
+        next()
+    },
+    (next) => {
+        GrooveBoard.backendMethods.setTheme(grooveThemes.dark);
+        next()
+    },
+    (next) => {
+        const letter_selector_entries = ["#abcdefghijklmnopqrstuvwxyz"]
+        const groupedEntries = [];
+
+        for (let i = 0; i < letter_selector_entries[0].length; i += 4) {
+            groupedEntries.push(letter_selector_entries[0].slice(i, i + 4));
+        }
+
+        const letterSelectorDiv = $('.letter-selector');
+
+        groupedEntries.forEach(group => {
+            const $rowDiv = $('<div>', { class: 'letter-selector-row' });
+
+            for (let letter of group) {
+                const $letterDiv = $('<div>', { class: 'letter-selector-letter', text: letter });
+                $rowDiv.append($letterDiv);
+            }
+
+            letterSelectorDiv.append($rowDiv);
+        });
+        next()
+    }
+],
+    function () {
+        setTimeout(() => {
+            GrooveBoard.boardMethods.finishLoading()
+        }, 100);
+    }
+)

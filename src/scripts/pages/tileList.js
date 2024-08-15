@@ -30,12 +30,10 @@ window.tileListGrid = grid
 var homeTileEditEnabled = false
 const homeTileEditSwitch = {
     on: (immediate = false, callback = () => { }) => {
-
-        GrooveBoard.BackendMethods.navigation.push("homeTileMenuOn", () => { }, homeTileEditSwitch.off)
+        GrooveBoard.backendMethods.navigation.push("homeTileMenuOn", () => { }, homeTileEditSwitch.off)
         scrollers.main_home_scroller.enabled = false
         homeTileEditEnabled = true
         tileListGrid.enableMove(true)
-        console.log("first timeout")
         $("div.groove-home-tile").removeClass("home-menu-selected")
         $("div.tile-list-page").addClass("home-menu-back-intro")
         if (immediate) {
@@ -56,14 +54,13 @@ const homeTileEditSwitch = {
 
     },
     off: (immediate) => {
-        GrooveBoard.BackendMethods.navigation.invalidate("homeTileMenuOn")
+        GrooveBoard.backendMethods.navigation.invalidate("homeTileMenuOn")
         shakeDistanceModifier.off()
         $("div.groove-home-tile").removeClass("home-menu-selected")
 
         $("div.tile-list-page").addClass("home-menu-back-outro")
         scrollers.main_home_scroller.enabled = true
         homeTileEditEnabled = false
-        console.log("kapat dendi 2")
         tileListGrid.enableMove(false)
         clearTimeout(window.homeTileMenuCreationFirstTimeout)
         clearTimeout(window.homeTileMenuCreationSecondTimeout)
@@ -108,7 +105,7 @@ $("#app-page-icon").on("flowClick", function () {
 
 const resizeObserver = new ResizeObserver(entries => {
     for (let entry of entries) {
-        GrooveBoard.BackendMethods.scaleTiles()
+        GrooveBoard.backendMethods.scaleTiles()
         scrollers.tile_page_scroller.refresh()
 
     }
@@ -116,12 +113,11 @@ const resizeObserver = new ResizeObserver(entries => {
 resizeObserver.observe(document.querySelector("div.tile-list-inner-container"));
 
 $(window).on("click", function (e) {
-    console.log(e.target)
     if (e.target.classList.contains("groove-home-tile") && !e.target.classList.contains("groove-letter-tile")) {
         if ($("div.tile-list-page").hasClass("home-menu-back")) {
             $("div.groove-home-tile").removeClass("home-menu-selected")
             e.target.classList.add("home-menu-selected")
-            GrooveBoard.BoardMethods.createTileMenu(e.target)
+            GrooveBoard.boardMethods.createTileMenu(e.target)
         } else if (e.target.canClick) {
             e.target.classList.add("app-transition-selected")
             appTransition.onPause()
@@ -138,7 +134,6 @@ $(window).on("click", function (e) {
 
 $(window).on("pointerdown", function (e) {
     if (e.target.classList.contains("groove-home-tile") && !homeTileEditEnabled) {
-        console.log("first timeout")
 
         e.target.canClick = true
         e.target.homeTileMenuState = false
@@ -151,10 +146,9 @@ $(window).on("pointerdown", function (e) {
 
             homeTileEditSwitch.on(false, () => {
                 e.target.classList.add("home-menu-selected")
-                GrooveBoard.BoardMethods.createTileMenu(e.target)
+                GrooveBoard.boardMethods.createTileMenu(e.target)
                 generateShakeAnimations()
                 e.target.homeTileMenuState = true
-                console.log("ay")
                 setTimeout(() => {
 
                     $(e.target).trigger("mousedown", Object.assign(e, { target: e.target }))
@@ -165,7 +159,7 @@ $(window).on("pointerdown", function (e) {
     } else if (e.target.classList.contains("groove-home-tile") && homeTileEditEnabled) {
         $("div.groove-home-tile").removeClass("home-menu-selected")
         e.target.classList.add("home-menu-selected")
-        GrooveBoard.BoardMethods.createTileMenu(e.target)
+        GrooveBoard.boardMethods.createTileMenu(e.target)
 
     }
 })
@@ -192,7 +186,7 @@ $(window).on("pointerup", function (e) {
 
 function homeTileMenuClean() {
     document.querySelectorAll(".groove-tile-menu").forEach(i => i.remove())
-    // GrooveBoard.BackendMethods.navigation.invalidate("homeTileMenuOn")
+    // GrooveBoard.backendMethods.navigation.invalidate("homeTileMenuOn")
     $("div.groove-home-tile").removeClass("home-menu-selected")
     clearTimeout(window.homeTileMenuCreationFirstTimeout)
     clearTimeout(window.homeTileMenuCreationSecondTimeout)
@@ -214,15 +208,15 @@ function appImmediateClose() {
 }
 
 for (let index = 0; index < 3; index++) {
-    GrooveBoard.BoardMethods.createHomeTile([2,2])
-    GrooveBoard.BoardMethods.createHomeTile([1,1])
-    GrooveBoard.BoardMethods.createHomeTile([1,1])
-    GrooveBoard.BoardMethods.createHomeTile([1,1])
-    GrooveBoard.BoardMethods.createHomeTile([1,1])
-    GrooveBoard.BoardMethods.createHomeTile([1,1])
-    GrooveBoard.BoardMethods.createHomeTile([1,1])
-    GrooveBoard.BoardMethods.createHomeTile([2,2])
-    GrooveBoard.BoardMethods.createHomeTile([1,1])
-    GrooveBoard.BoardMethods.createHomeTile([1,1])
+    GrooveBoard.boardMethods.createHomeTile([2,2])
+    GrooveBoard.boardMethods.createHomeTile([1,1])
+    GrooveBoard.boardMethods.createHomeTile([1,1])
+    GrooveBoard.boardMethods.createHomeTile([1,1])
+    GrooveBoard.boardMethods.createHomeTile([1,1])
+    GrooveBoard.boardMethods.createHomeTile([1,1])
+    GrooveBoard.boardMethods.createHomeTile([1,1])
+    GrooveBoard.boardMethods.createHomeTile([2,2])
+    GrooveBoard.boardMethods.createHomeTile([1,1])
+    GrooveBoard.boardMethods.createHomeTile([1,1])
 
 }

@@ -117,8 +117,11 @@ public class WebInterface {
         return false;
     }
 
+    String statusBarAppearance = "light";
+
     @JavascriptInterface
     public void setStatusBarAppearance(String appearance) {
+        statusBarAppearance = appearance;
         Window window = mainActivity.getWindow();
         View decorView = window.getDecorView();
         try {
@@ -165,7 +168,15 @@ public class WebInterface {
     }
 
     @JavascriptInterface
+    public String getStatusBarAppearance() {
+        return statusBarAppearance;
+    }
+
+    String navigationBarAppearance = "light";
+
+    @JavascriptInterface
     public void setNavigationBarAppearance(String appearance) {
+        navigationBarAppearance = appearance;
         Window window = mainActivity.getWindow();
         View decorView = window.getDecorView();
         try {
@@ -211,6 +222,11 @@ public class WebInterface {
     }
 
     @JavascriptInterface
+    public String getNavigationBarAppearance() {
+        return navigationBarAppearance;
+    }
+
+    @JavascriptInterface
     public void searchStore(String appName) {
         Uri uri = Uri.parse("market://search?q=" + appName);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -218,6 +234,17 @@ public class WebInterface {
             mainActivity.startActivity(intent);
         } else {
         }
+    }
+
+    @JavascriptInterface
+    public void setUIScale(float scale) {
+        mainActivity.webView.post(new Runnable() {
+            @Override
+            public void run() {
+                mainActivity.webView.setInitialScale(Math.round(scale * 100 * getDevicePixelRatio()));
+                mainActivity.webView.evaluateJavascript("document.body.style.setProperty('--ui-scale'," + scale + ")", null);
+            }
+        });
     }
 
 }

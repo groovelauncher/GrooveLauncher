@@ -6,14 +6,14 @@
   top: calc(26px + var(--window-inset-top));
   width: 42px;
   height: 42px;
-  background-color: black;
   border-radius: 50%;
   box-sizing: border-box;
-  box-shadow: inset 0px 0px 0px 3px white;
+  box-shadow: inset 0px 0px 0px 3px var(--metro-foreground);
+  background-color: var(--metro-background);
 
   &.active {
-    background: white;
-    color: black;
+    background: var(--metro-foreground);
+    color: var(--metro-background);
   }
 
   p {
@@ -307,24 +307,18 @@ div.inner-page.app-list-page {
   left: 81px;
   width: 100%;
   top: calc(var(--window-inset-top));
-  background: black !important;
-  box-shadow: 0px calc(-6px - var(--window-inset-top)) 0px black;
+  background: var(--metro-background) !important;
+  box-shadow: 0px calc(-6px - var(--window-inset-top)) 0px var(--metro-background);
   z-index: 10;
   opacity: 0;
 }
 
 .groove-element.groove-letter-tile {
-  &.opaque {
-    visibility: hidden;
-    background: black !important;
-    box-shadow: 0px calc(-6px - var(--window-inset-top)) 0px black;
-  }
-
   margin-right: 100%;
   transform-style: flat;
 
   .groove-app-tile-icon {
-    background: black;
+    background: var(--metro-background);
     box-shadow: inset 0px 0px 0px 3px var(--accent-color);
     color: var(--accent-color);
     justify-content: start !important;
@@ -363,7 +357,7 @@ div.letter-selector {
   &.shown {
     opacity: 1;
     pointer-events: all;
-    background: rgb(black, .5);
+    background: var(--metro-transparent);
 
     .letter-selector-row {
       transform: perspective(calc(var(--flow-perspective) * 5)) rotateX(0deg);
@@ -406,7 +400,8 @@ div.letter-selector {
     div.letter-selector-letter {
 
       &.disabled {
-        background: #181c18 !important;
+        background: var(--metro-opaque) !important;
+        color: var(--metro-opaque-2);
         @include flow-touch-disabled;
       }
 
@@ -418,6 +413,7 @@ div.letter-selector {
       background: var(--accent-color);
       width: 0px;
       display: flex;
+      color: white;
       justify-content: start !important;
       align-items: end !important;
       padding: 5px 8px;

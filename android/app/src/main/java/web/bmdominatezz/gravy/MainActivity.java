@@ -125,35 +125,20 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     requestUri = Uri.parse(request.toString());
                 }
-                Log.d("groovelauncher", "shouldInterceptRequest: " + requestUri.toString());
-                if ("https://appassets.androidplatform.net/assets/drawable.png".equals(requestUri.toString())) {
-                    Log.d("groovelauncher", "shouldInterceptRequest: GELDİ BANA YOLLUYORUMRESMİ");
-                    // Load mipmap resource as InputStream
-
-                }
 
                 String path = requestUri.getPath(); // Get the path part of the URL
-                Log.d("groovelauncher", "shouldInterceptRequest: GET PATH" + path);
                 // Split the path into segments
                 String[] segments = path.split("/");
 
-                // Check if the path contains the specific subfolders
-
                 if (segments.length == 4 && "icons".equals(segments[2])) {
                     String iconFileName = segments[3];
-                    Log.d("groovelauncher", "shouldInterceptRequest: subfolder" + iconFileName);
                     if (iconFileName.length() > 5) {
-                        // Remove the last 4 characters
                         String iconPackageName = iconFileName.substring(0, iconFileName.length() - 5);
-
-
                         Intent intent = packageManager.getLaunchIntentForPackage(iconPackageName);
                         if (intent != null) {
                             ResolveInfo resolveInfo = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
                             if (resolveInfo != null) {
-
                                 Drawable appIcon = resolveInfo.activityInfo.loadIcon(packageManager);
-
                                 InputStream inputStream = loadDrawableAsStream(appIcon);
                                 if (inputStream != null) {
                                     return new WebResourceResponse("image/png", "UTF-8", inputStream);
@@ -180,11 +165,11 @@ public class MainActivity extends AppCompatActivity {
 
 
                     } else {
-                        System.out.println("String is too short to remove 4 characters.");
+
                     }
 
                 } else {
-                    System.out.println("The path does not contain the expected subfolders.");
+
                 }
 
                 return assetLoader.shouldInterceptRequest(requestUri);

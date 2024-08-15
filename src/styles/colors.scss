@@ -48,10 +48,16 @@
     body:not(.light-mode) {
         --metro-background: black;
         --metro-foreground: white;
+        --metro-opaque: #111511;
+        --metro-opaque-2: white;
+        --metro-transparent: rgb(0, 0, 0, .5);
     }
 
     //Light mode color palette
     body.light-mode {
         --metro-background: white;
         --metro-foreground: black;
+        --metro-opaque: #dfe0df;
+        --metro-opaque-2: #a6a8a7;
+        --metro-transparent: rgb(255, 255, 255, .5);
     }

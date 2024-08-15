@@ -11,8 +11,8 @@
 body,
 html {
   color-scheme: dark;
-  background: black;
-  color: white;
+  background: var(--metro-background);
+  color: var(--metro-foreground);
   perspective: var(--flow-perspective);
   position: fixed;
   left: 0px;
@@ -78,4 +78,3 @@ img {
 .transform-flat {
   transform-style: flat;
 }
-

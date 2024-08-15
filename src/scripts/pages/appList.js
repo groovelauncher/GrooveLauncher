@@ -5,10 +5,11 @@ const appListPage = $("div.inner-page.app-list-page")
 const appListSearch = $("input.app-list-search")
 const letterSelector = $("div.letter-selector")
 const stickyLetterTile = $("#sticky-letter")
+
 $("div.groove-element.groove-app-tile.groove-letter-tile")
 const searchModeSwitch = {
     on: () => {
-        GrooveBoard.BackendMethods.navigation.push("searchOn", () => { }, searchModeSwitch.off)
+        GrooveBoard.backendMethods.navigation.push("searchOn", () => { }, searchModeSwitch.off)
         setTimeout(() => {
             scrollers.main_home_scroller.enabled = false
         }, 0);
@@ -30,7 +31,7 @@ const searchModeSwitch = {
         $("div.app-search-search-store").css("visibility", "hidden")
     },
     off: () => {
-        GrooveBoard.BackendMethods.navigation.invalidate("searchOn")
+        GrooveBoard.backendMethods.navigation.invalidate("searchOn")
         scrollers.main_home_scroller.enabled = true
 
         appListPage.removeClass("search-mode")
@@ -55,7 +56,7 @@ const searchModeSwitch = {
 }
 const letterSelectorSwitch = {
     on: () => {
-        GrooveBoard.BackendMethods.navigation.push("letterSelectOn", () => { }, letterSelectorSwitch.off)
+        GrooveBoard.backendMethods.navigation.push("letterSelectOn", () => { }, letterSelectorSwitch.off)
         scrollers.main_home_scroller.enabled = false
         window.stopInsetUpdate = true
         const enabledones = Object.keys(window.appSortCategories).map(e => e == "0-9" ? "#" : e == "&" ? "" : e)
@@ -74,7 +75,7 @@ const letterSelectorSwitch = {
         })
     },
     off: () => {
-        GrooveBoard.BackendMethods.navigation.invalidate("letterSelectOn")
+        GrooveBoard.backendMethods.navigation.invalidate("letterSelectOn")
         scrollers.main_home_scroller.enabled = true
         Groove.setStatusBarAppearance("light")
         letterSelector.removeClass("shown").addClass("shown-animation").addClass("hidden")
@@ -88,13 +89,13 @@ const letterSelectorSwitch = {
 }
 
 appListSearch.on("focus", function () {
-    GrooveBoard.BackendMethods.navigation.push("searchBarFocus", () => { }, () => {
+    GrooveBoard.backendMethods.navigation.push("searchBarFocus", () => { }, () => {
         appListSearch.blur()
     })
 
 })
 appListSearch.on("blur", function () {
-    GrooveBoard.BackendMethods.navigation.invalidate("searchBarFocus")
+    GrooveBoard.backendMethods.navigation.invalidate("searchBarFocus")
 
 })
 $("#search-icon").on("flowClick", function () {
@@ -115,7 +116,7 @@ $(window).on("finishedLoading", () => {
     $("div.letter-selector-letter").on("flowClick", function (e) {
         if (e.target.classList.contains("disabled")) return
         letterSelectorSwitch.off()
-        scrollers.app_page_scroller.scrollTo(0, Math.max(scrollers.app_page_scroller.maxScrollY, window.windowInsets.top - document.querySelector(`div.groove-app-tile.groove-letter-tile[icon='${e.target.innerText}']`).offsetTop,), 0, "linear")
+        scrollers.app_page_scroller.scrollTo(0, Math.max(scrollers.app_page_scroller.maxScrollY, window.windowInsets().top - document.querySelector(`div.groove-app-tile.groove-letter-tile[icon='${e.target.innerText}']`).offsetTop,), 0, "linear")
         e.stopPropagation()
         e.stopImmediatePropagation()
         e.preventDefault()
@@ -190,7 +191,7 @@ $(window).on("pointerdown", function (e) {
             e.target.canClick = false
             scrollers.main_home_scroller.enabled = false
             $("div.app-list-page").addClass("app-menu-back-intro")
-            const appMenu = GrooveBoard.BoardMethods.createAppMenu(e.target.getAttribute("packagename"))
+            const appMenu = GrooveBoard.boardMethods.createAppMenu(e.target.getAttribute("packagename"))
             const optionalTop = (e.target.offsetTop + scrollers.app_page_scroller.y + 64)
             appMenu.style.top = (optionalTop + 154 >= window.innerHeight ? optionalTop - 64 : optionalTop) + "px"
             appMenu.style.setProperty("--pointerX", e.pageX - $("div.app-list-page").position().left + "px")
@@ -210,7 +211,7 @@ $(window).on("pointerdown", function (e) {
             if (optionalTop + 154 >= window.innerHeight) appMenu.classList.add("intro-bottom")
 
             e.target.appMenu = appMenu
-            GrooveBoard.BackendMethods.navigation.push("appMenuOn", () => { }, () => {
+            GrooveBoard.backendMethods.navigation.push("appMenuOn", () => { }, () => {
                 appMenuClose()
             })
 
@@ -242,8 +243,7 @@ $(window).on("pointerup", function (e) {
 
 })
 function appMenuClose() {
-    GrooveBoard.BackendMethods.navigation.invalidate("appMenuOn")
-    console.log("kapat dendi")
+    GrooveBoard.backendMethods.navigation.invalidate("appMenuOn")
     clearTimeout(window.appMenuCreationFirstTimeout)
     clearTimeout(window.appMenuCreationSecondTimeout)
     $("div.groove-app-menu").remove()
@@ -255,7 +255,7 @@ function appMenuClose() {
 
 }
 function appMenuClean() {
-    GrooveBoard.BackendMethods.navigation.invalidate("appMenuOn")
+    GrooveBoard.backendMethods.navigation.invalidate("appMenuOn")
 
     clearTimeout(window.appMenuCreationFirstTimeout)
     clearTimeout(window.appMenuCreationSecondTimeout)
@@ -307,7 +307,7 @@ function getTranslateY(element) {
     return 0;
 }
 function stickyLetter() {
-    const lastChange = GrooveBoard.BackendMethods.navigation.history.slice(-1)[0].change
+    const lastChange = GrooveBoard.backendMethods.navigation.history.slice(-1)[0].change
     if (lastChange != "appMenuOpened") {
         requestAnimationFrame(stickyLetter)
         return
@@ -323,7 +323,7 @@ function stickyLetter() {
     if (scroll != lastScroll) {
 
         $("div.app-list-container > div.groove-element.groove-app-tile.groove-letter-tile").css("transition", " all 0s")
-        const topinset = windowInsets.top
+        const topinset = windowInsets().top
         const allLetterTiles = $("div.app-list-container > div.groove-element.groove-app-tile.groove-letter-tile")
         allLetterTiles.each((index, element) => {
             const elementScrollTop = element.offsetTop - topinset - scroll
@@ -331,26 +331,23 @@ function stickyLetter() {
             if (index == 0 || index == 1) {
                 // console.log(elementScrollTop)
             }
-            console.log(scroll)
             if (zone == 0) {
+
                 stickyLetterTile.css({
                     transition: " transform 0s",
                     transform: `translateY(0px)`
                 }).attr("icon", element.getAttribute("icon")).children("p.groove-app-tile-icon").text(element.getAttribute("icon"))
             } else if (zone == 1) {
-                console.log("heyo")
                 stickyLetterTile.css({
                     transition: "transform 0s",
                     transform: `translateY(${elementScrollTop - 64}px)`
                 })
-                if (allLetterTiles[index - 1]) stickyLetterTile.attr("icon", allLetterTiles[index - 1].getAttribute("icon")).children("p.groove-app-tile-icon").text(allLetterTiles[index - 1].getAttribute("icon"));
-
-
+                if(allLetterTiles[index - 1]){
+                    stickyLetterTile.attr("icon", allLetterTiles[index - 1].getAttribute("icon")).children("p.groove-app-tile-icon").text(allLetterTiles[index - 1].getAttribute("icon"))
+                
+                }
             } else {
-                stickyLetterTile.css({
-                    transition: " transform 0s",
-                    transform: `translateY(0px)`
-                })
+
             }
             if (scroll > 21) {
                 stickyLetterTile.css({

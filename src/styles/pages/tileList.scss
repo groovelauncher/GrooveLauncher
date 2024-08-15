@@ -225,14 +225,14 @@ div.app-page-icon-banner {
         top: calc(26px - 6px + 5px);
         width: 42px;
         height: 42px;
-        background-color: black;
         border-radius: 50%;
         box-sizing: border-box;
-        box-shadow: inset 0px 0px 0px 3px white;
+        box-shadow: inset 0px 0px 0px 3px var(--metro-foreground);
+        background-color: var(--metro-background);
 
         &.active {
-            background: white;
-            color: black;
+            background: var(--metro-foreground);
+            color: var(--metro-background);
         }
 
         p {
@@ -319,7 +319,7 @@ div.groove-home-tile {
 
     div.groove-home-inner-tile {
         zoom: var(--tile-zoom);
-
+        color: white;
         position: absolute;
         left: 6px;
         top: 5px;
@@ -395,24 +395,32 @@ div.groove-home-tile {
             top: calc(26px - 6px + 5px);
             width: 42px;
             height: 42px;
-            background-color: black;
             border-radius: 50%;
             box-sizing: border-box;
-            box-shadow: inset 0px 0px 0px 3px white;
+            
+
+
+            box-shadow: inset 0px 0px 0px 3px var(--metro-foreground);
+            background-color: var(--metro-background);
+    
+            &.active {
+            }
+    
+
             display: flex;
 
             &.active {
-                background: white;
-                color: black;
-                box-shadow: inset 0px 0px 0px 3px black;
+                background: var(--metro-foreground);
+                color: var(--metro-background);
+                box-shadow: inset 0px 0px 0px 3px var(--metro-background);
 
                 &.groove-tile-menu-unpin-button {
                     &::before {
-                        background: black;
+                        background: var(--metro-background);
                     }
 
                     p {
-                        box-shadow: 0px 0px 0px 3px white;
+                        box-shadow: 0px 0px 0px 3px var(--metro-foreground);
                     }
                 }
 
@@ -446,7 +454,7 @@ div.groove-home-tile {
                     content: "";
                     width: 42px;
                     height: 3px;
-                    background: white;
+                    background: var(--metro-foreground);
                     position: absolute;
                     left: 0px;
                     top: calc(50% - 3px / 2);
@@ -454,7 +462,7 @@ div.groove-home-tile {
                 }
 
                 p {
-                    box-shadow: 0px 0px 0px 3px black;
+                    box-shadow: 0px 0px 0px 3px var(--metro-background);
 
                     font-size: 24px;
                     transform: rotate(45deg);
@@ -470,7 +478,7 @@ div.groove-home-tile {
                 right: calc(-21px + 6px);
 
                 p {
-                    transition: .25s ease-in-out;
+                    transition: transform .25s ease-in-out;
                     transform: rotate(0deg);
                     transform-origin: 35% 47%;
 

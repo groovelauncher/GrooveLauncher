@@ -117,7 +117,7 @@ function wTileMenu(el) {
         }, 200);
     })
     tileMenu.querySelector("div.groove-tile-menu-resize-button").addEventListener("flowClick", (e) => {
-        GrooveBoard.BackendMethods.resizeTile(el, previousSize(), true)
+        GrooveBoard.backendMethods.resizeTile(el, previousSize(), true)
         updateButton()
     })
     function updateButton() {

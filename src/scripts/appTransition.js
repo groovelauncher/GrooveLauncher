@@ -33,7 +33,6 @@ const indexElements = (page) => {
     elements = page ? document.querySelectorAll('div.app-list-container > div.groove-element.groove-app-tile') : tileListGrid.engine.nodes.map(e => e.el)
     const visibleElements = Array.from(elements).filter(isElementVisible);
     if (page) {
-        console.log(visibleElements)
         visibleElements.unshift(document.getElementById("sticky-letter"))
         visibleElements.unshift(document.getElementById("search-icon"))
         visibleElements.reverse().forEach((element, index) => {
@@ -41,7 +40,6 @@ const indexElements = (page) => {
             element.style.setProperty("--app-animation-distance", -element.offsetLeft + "px")
 
         });
-        console.log(visibleElements)
     } else {
         visibleElements.reverse().forEach((element, index) => {
             element.style.setProperty("--app-animation-index", (index / (visibleElements.length - 1)).toFixed(2))

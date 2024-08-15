@@ -1,63 +1,63 @@
-    $metro-color-lime: #A4C400;
-    $metro-color-green: #60A917;
-    $metro-color-emerald: #008A00;
-    $metro-color-teal: #00ABA9;
-    $metro-color-cyan: #1BA1E2;
-    $metro-color-cobalt: #0B6CF8;
-    $metro-color-indigo: #6A00FF;
-    $metro-color-violet: #AA00FF;
-    $metro-color-pink: #F472D0;
-    $metro-color-magenta: #D80073;
-    $metro-color-crimson: #A20025;
-    $metro-color-red: #E51400;
-    $metro-color-orange: #FA6800;
-    $metro-color-amber: #F0A30A;
-    $metro-color-yellow: #E3C800;
-    $metro-color-brown: #825A2C;
-    $metro-color-olive: #6D8764;
-    $metro-color-steel: #647687;
-    $metro-color-mauve: #76608A;
-    $metro-color-taupe: #87794E;
+$metro-color-lime: #A4C400; //#A4C400;
+$metro-color-green: #60A917; //#60A917;
+$metro-color-emerald: #008A00; //#008A00;
+$metro-color-teal: #00ABA9; //#00ABA9;
+$metro-color-cyan: #1BA1E2; //#1BA1E2;
+$metro-color-cobalt: #3E65FF; //#0B6CF8;
+$metro-color-indigo: #6A00FF; //#6A00FF;
+$metro-color-violet: #AA00FF; //#AA00FF;
+$metro-color-pink: #F472D0; //#F472D0;
+$metro-color-magenta: #D80073; //#D80073;
+$metro-color-crimson: #A20025; //#A20025;
+$metro-color-red: #E51400; //#E51400;
+$metro-color-orange: #FA6800; //#FA6800;
+$metro-color-amber: #F0A30A; //#F0A30A;
+$metro-color-yellow: #E3C800; //#E3C800;
+$metro-color-brown: #825A2C; //#825A2C;
+$metro-color-olive: #6d8764; //#6D8764;
+$metro-color-steel: #647687; //#647687;
+$metro-color-mauve: #76608A; //#76608A;
+$metro-color-taupe: #87794E; //#87794E;
 
-    // CSS :root variables
-    :root {
-        --metro-color-lime: #{$metro-color-lime};
-        --metro-color-green: #{$metro-color-green};
-        --metro-color-emerald: #{$metro-color-emerald};
-        --metro-color-teal: #{$metro-color-teal};
-        --metro-color-cyan: #{$metro-color-cyan};
-        --metro-color-cobalt: #{$metro-color-cobalt};
-        --metro-color-indigo: #{$metro-color-indigo};
-        --metro-color-violet: #{$metro-color-violet};
-        --metro-color-pink: #{$metro-color-pink};
-        --metro-color-magenta: #{$metro-color-magenta};
-        --metro-color-crimson: #{$metro-color-crimson};
-        --metro-color-red: #{$metro-color-red};
-        --metro-color-orange: #{$metro-color-orange};
-        --metro-color-amber: #{$metro-color-amber};
-        --metro-color-yellow: #{$metro-color-yellow};
-        --metro-color-brown: #{$metro-color-brown};
-        --metro-color-olive: #{$metro-color-olive};
-        --metro-color-steel: #{$metro-color-steel};
-        --metro-color-mauve: #{$metro-color-mauve};
-        --metro-color-taupe: #{$metro-color-taupe};
-        --accent-color: var(--metro-color-cobalt);
-    }
+// CSS :root variables
+:root {
+    --metro-color-lime: #{$metro-color-lime};
+    --metro-color-green: #{$metro-color-green};
+    --metro-color-emerald: #{$metro-color-emerald};
+    --metro-color-teal: #{$metro-color-teal};
+    --metro-color-cyan: #{$metro-color-cyan};
+    --metro-color-cobalt: #{$metro-color-cobalt};
+    --metro-color-indigo: #{$metro-color-indigo};
+    --metro-color-violet: #{$metro-color-violet};
+    --metro-color-pink: #{$metro-color-pink};
+    --metro-color-magenta: #{$metro-color-magenta};
+    --metro-color-crimson: #{$metro-color-crimson};
+    --metro-color-red: #{$metro-color-red};
+    --metro-color-orange: #{$metro-color-orange};
+    --metro-color-amber: #{$metro-color-amber};
+    --metro-color-yellow: #{$metro-color-yellow};
+    --metro-color-brown: #{$metro-color-brown};
+    --metro-color-olive: #{$metro-color-olive};
+    --metro-color-steel: #{$metro-color-steel};
+    --metro-color-mauve: #{$metro-color-mauve};
+    --metro-color-taupe: #{$metro-color-taupe};
+    --accent-color: var(--metro-color-cobalt);
+}
 
-    //Default dark mode color palette
-    body:not(.light-mode) {
-        --metro-background: black;
-        --metro-foreground: white;
-        --metro-opaque: #111511;
-        --metro-opaque-2: white;
-        --metro-transparent: rgb(0, 0, 0, .5);
-    }
+//Default dark mode color palette
+body:not(.light-mode) {
+    --metro-background: black;
+    --metro-foreground: white;
+    --metro-opaque: #111511;
+    --metro-opaque-2: white;
+    --metro-transparent: rgb(0, 0, 0, .5);
+}
 
-    //Light mode color palette
-    body.light-mode {
-        --metro-background: white;
-        --metro-foreground: black;
-        --metro-opaque: #dfe0df;
-        --metro-opaque-2: #a6a8a7;
-        --metro-transparent: rgb(255, 255, 255, .5);
-    }
+//Light mode color palette
+body.light-mode {
+    --metro-background: white;
+    --metro-foreground: black;
+    --metro-opaque: #dfe0df;
+    --metro-opaque-2: #a6a8a7;
+    --metro-transparent: rgb(255, 255, 255, .5);
+}

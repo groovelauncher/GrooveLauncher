@@ -10,6 +10,8 @@ $("div.groove-element.groove-app-tile.groove-letter-tile")
 const searchModeSwitch = {
     on: () => {
         GrooveBoard.backendMethods.navigation.push("searchOn", () => { }, searchModeSwitch.off)
+        appListSearch.focus()
+
         setTimeout(() => {
             scrollers.main_home_scroller.enabled = false
         }, 0);

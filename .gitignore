@@ -46,7 +46,7 @@ jspm_packages/
 
 # Temp testing directories
 temp_test
-temp_test
+temp_config
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/

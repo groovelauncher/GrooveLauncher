@@ -27,10 +27,14 @@ If you prefer to build the app yourself:
     git clone https://github.com/groovelauncher/GrooveLauncher.git
     ```
 
-2. Open the project in your preferred IDE.
-3. Build and run the app on your device/emulator.
+2. Navigate to the project directory and run the build script:
 
-Here's the updated **Usage** section:
+    ```bash
+    npm run build:production
+    ```
+
+3. Open the `./android` folder in Android Studio.
+4. Compile and run the app on your device/emulator.
 
 ## Usage
 

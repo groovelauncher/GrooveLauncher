@@ -4,7 +4,7 @@ const grooveColors = {
     emerald: "#008A00",
     teal: "#00ABA9",
     cyan: "#1BA1E2",
-    cobalt: "#0B6CF8",
+    cobalt: "#3E65FF",
     indigo: "#6A00FF",
     violet: "#AA00FF",
     pink: "#F472D0",

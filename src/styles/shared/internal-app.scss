@@ -1,0 +1,38 @@
+@import "./../colors.scss";
+@import "fonts.scss";
+@import "./../flowProperties.scss";
+
+body,
+html {
+  color-scheme: dark;
+  color: var(--metro-foreground);
+  perspective: var(--flow-perspective);
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100vw;
+  height: 100vh;
+  margin: 0px;
+  padding: 18px 22px;
+  box-sizing: border-box;
+}
+
+body {
+
+}
+img {
+  text-indent: -10000px
+}
+
+* {
+  font-family: SymbolsNerd, IconGlyphs, OpenSans, sans-serif;
+  //word-spacing: -6px;
+  //letter-spacing: -.5px;
+  touch-action: none;
+  user-select: none;
+  user-drag: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  outline: transparent;
+  cursor: default !important;
+}

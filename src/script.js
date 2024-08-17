@@ -11,11 +11,12 @@ import iconPackConverter from "./scripts/iconPack.js";
 import "./scripts/pages/appList.js"
 import "./scripts/pages/tileList.js"
 import { normalizeSync } from 'normalize-diacritics';
+import { grooveThemes } from "./scripts/GrooveProperties.js";
+import applyOverscroll from "./scripts/overscrollFramework.js";
 window.normalizeDiacritics = (input = "") => {
     return normalizeSync(input)
 }
 import GrooveMock from "./scripts/GrooveMock.js";
-import { grooveThemes } from "./scripts/GrooveProperties.js";
 
 const GrooveMockInstance = !window.Groove
 if (GrooveMockInstance) {
@@ -51,6 +52,9 @@ const scrollers = {
         disableMouse: false,
         disableTouch: false,
         HWCompositing: false,
+        bounceTime: 300,
+        swipeBounceTime: 200,
+        outOfBoundaryDampingFactor: 1
     }),
     app_page_scroller: new BScroll('#main-home-slider > div > div:nth-child(2) > div > div.app-list', {
         scrollX: false,
@@ -59,8 +63,13 @@ const scrollers = {
         disableMouse: false,
         disableTouch: false,
         HWCompositing: false,
+        bounceTime: 300,
+        swipeBounceTime: 200,
+        outOfBoundaryDampingFactor: 1
     })
 }
+applyOverscroll(scrollers.tile_page_scroller)
+applyOverscroll(scrollers.app_page_scroller)
 function cancelScroll(scroller) {
     scroller.scrollTo(null)
 }
@@ -196,10 +205,6 @@ startUpSequence([
         next()
     },
     (next) => {
-        GrooveBoard.backendMethods.setTheme(grooveThemes.dark);
-        next()
-    },
-    (next) => {
         const letter_selector_entries = ["#abcdefghijklmnopqrstuvwxyz"]
         const groupedEntries = [];
 
@@ -219,6 +224,17 @@ startUpSequence([
 
             letterSelectorDiv.append($rowDiv);
         });
+        next()
+    },
+    (next) => {
+        //Load customization
+        if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
+        if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
+        try {
+            GrooveBoard.backendMethods.homeConfiguration.load()
+        } catch (error) {
+            alert("Your home screen was reset because of a fatal error :( Please report this:\n" + error.message)
+        }
         next()
     }
 ],

@@ -179,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
         WebSettings webViewSettings = webView.getSettings();
         webViewSettings.setJavaScriptEnabled(true);
+        webViewSettings.setDomStorageEnabled(true);
 
         // Assets are hosted under http(s)://appassets.androidplatform.net/assets/... .
         webView.addJavascriptInterface(new WebInterface(this), "Groove");

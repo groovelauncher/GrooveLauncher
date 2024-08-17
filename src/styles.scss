@@ -29,9 +29,9 @@ img {
 }
 
 * {
-  font-family:  SymbolsNerd, IconGlyphs, OpenSans, sans-serif;
-  word-spacing: -6px;
-  letter-spacing: -.5px;
+  font-family:  SymbolsNerd, IconGlyphs, OpenSans;
+  //word-spacing: -6px;
+  //letter-spacing: -.5px;
   touch-action: none;
   user-select: none;
   user-drag: none;
@@ -77,4 +77,13 @@ img {
 
 .transform-flat {
   transform-style: flat;
+}
+iframe.groove-element.groove-app-view{
+  position: fixed;
+  z-index: 10;
+  border: none;
+  left: var(--window-inset-left);
+  top: var(--window-inset-top);
+  width: calc(100vw - var(--window-inset-left) - var(--window-inset-right));
+  height: calc(100vh - var(--window-inset-top) - var(--window-inset-bottom));
 }

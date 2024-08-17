@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body style="perspective: var(--flow-perspective)">
+  <div class="innerApp">
+    <img src="/temp_test/4.png" style="
+          z-index: 20;
+          position: fixed;
+          left: 0px;
+          top: -32px;
+          opacity: 0.25;
+          pointer-events: none;
+        " />
+
+    <h1 class="app-title">Settings</h1>
+    <div class="app-tabs">
+      <p class="active-tab">Theme</p>
+      <p>Advanced</p>
+      <p>About</p>
+    </div>
+    <div id="accent-color-picker">
+      <h1 class="app-title">Accent Color</h1>
+      <div class="accent-color-catalogue">
+        <div>
+          <div style="--index:0;">
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-lime);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-green);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-emerald);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-teal);"></div>
+          </div>
+          <div style="--index:1;">
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-cyan);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-cobalt);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-indigo);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-violet);"></div>
+          </div>
+          <div style="--index:2;">
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-pink);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-magenta);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-crimson);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-red);"></div>
+          </div>
+          <div style="--index:3;">
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-orange);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-amber);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-yellow);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-brown);"></div>
+          </div>
+          <div style="--index:4;">
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-olive);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-steel);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-mauve);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-taupe);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="settings-pages">
+      <div class="settings-pages-container">
+        <div class="settings-page active-page first-page">
+          <div>
+
+
+            <p class="text">
+              Change your device's background and
+              <span style="color: var(--accent-color)">accent color</span> to
+              match your mood today, this week, or all month.
+            </p>
+            <div class="group">
+              <p class="group-title">Background</p>
+              <div class="picker" selected="1">
+                <div class="picker-container">
+                  <div class="picker-option">Light</div>
+                  <div class="picker-option">Dark</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="group">
+              <p class="group-title">Accent color</p>
+              <div class="color-picker">
+                <div class="picker-example"></div>
+                <div class="picker-option">color</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="settings-page">Coming soon!</div>
+        <div class="settings-page">
+          <div class="scrollable article-f" style="perspective: var(--flow-perspective);">
+            <h1>Groove Launcher</h1>
+
+            <p>
+              <strong>Groove Launcher</strong> is a metro-styled launcher
+              designed for a customizable and sleek user experience. Users can
+              personalize their launcher by adjusting tile sizes, changing
+              tile positions, customizing the color theme, and setting their
+              favorite wallpapers.
+            </p>
+
+            <h2>Features</h2>
+
+            <ul>
+              <li>
+                <strong>Metro-Style Interface:</strong> A clean & modern
+                design inspired by Windows Phone 8.
+              </li>
+              <li>
+                <strong>Customizable Tiles:</strong> Drag and drop tiles,
+                adjust their sizes, and move them around to fit your unique
+                style.
+              </li>
+              <li>
+                <strong>Theme Customization:</strong> Change the color of the
+                launcher to match your mood or aesthetic.
+              </li>
+              <li>
+                <strong>Wallpaper Personalization:</strong> Choose and set
+                your own wallpapers to create a fully personalized setup.
+              </li>
+            </ul>
+
+            <h2>Contributing</h2>
+
+            <p>
+              Contributions are most welcome! Feel free to submit issues and
+              pull requests to help improve <strong>Groove Launcher</strong>.
+            </p>
+
+            <ol>
+              <li>Fork the repository.</li>
+              <li>Create a new branch for your feature or bugfix.</li>
+              <li>Submit a pull request when your code is ready.</li>
+            </ol>
+
+            <h2>License</h2>
+
+            <p>
+              This project is licensed under the MIT License - see the
+              <a
+                href="javascript:Groove.openURL('https://github.com/groovelauncher/GrooveLauncher?tab=MIT-1-ov-file')">LICENSE</a>
+              file for details.
+            </p>
+
+            <h2>Contact</h2>
+
+            <p>For any inquiries or feedback, feel free to reach out!</p>
+            <a href="javascript:Groove.openURL('https://buymeacoffee.com/berkaytumal')"
+              style="display:block; transform-style:  preserve-3d;"><img id="buymeacoffee"
+                src="./../../assets/default-yellow.png" class="flow-touch" alt="Buy Me A Coffee"
+                style="height: 60px !important; width: 217px !important;" /></a>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>

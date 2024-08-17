@@ -81,7 +81,7 @@ public class WebInterface {
             mainActivity.webView.post(new Runnable() {
                 @Override
                 public void run() {
-                    mainActivity.webView.evaluateJavascript("window.GrooveBoard.BackendMethods.launchInternalApp(\"" + packageName + "\")", null);
+                    mainActivity.webView.evaluateJavascript("window.GrooveBoard.backendMethods.launchInternalApp(\"" + packageName + "\")", null);
                 }
             });
             //mainActivity.webView.evaluateJavascript("window.GrooveBoard.BackendMethods.launchInternalApp(\"" + packageName + "\")", null);
@@ -245,6 +245,12 @@ public class WebInterface {
                 mainActivity.webView.evaluateJavascript("document.body.style.setProperty('--ui-scale'," + scale + ")", null);
             }
         });
+    }
+
+    @JavascriptInterface
+    public void openURL(String url){
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        mainActivity.startActivity(intent);
     }
 
 }

@@ -18,7 +18,7 @@ class GrooveMock {
 
     }
     getSystemInsets() {
-        return JSON.stringify({ left: 0, top: 0, right: 0, bottom: 0 })
+        return JSON.stringify({ left: 0, top: 32, right: 0, bottom: 0 })
     }
     retrieveApps() {
         return JSON.stringify(this.#retrievedApps)
@@ -28,7 +28,7 @@ class GrooveMock {
     }
     launchApp(packageName) {
         console.log("Start app:", packageName)
-        if (packageName.startsWith("groove.internal")) GrooveBoard.BackendMethods.launchInternalApp(packageName);
+        if (packageName.startsWith("groove.internal")) GrooveBoard.backendMethods.launchInternalApp(packageName);
         return true
     }
     uninstallApp(packageName) {
@@ -50,6 +50,9 @@ class GrooveMock {
     }
     setUIScale(scale) {
         console.log("setUIScale:", scale * 100 + "%")
+    }
+    openURL(url) {
+        window.open(url, "_blank")
     }
 }
 export default GrooveMock;

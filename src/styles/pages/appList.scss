@@ -429,8 +429,8 @@ div.groove-app-menu {
   left: 0px;
   top: 0px;
   width: 100%;
-  background: white;
-  color: black;
+  background: var(--metro-foreground);
+  color: var(--metro-background);
   padding: 12px;
   font-size: 30px;
   font-weight: 350;
@@ -448,7 +448,7 @@ div.groove-app-menu {
       height: 2px;
       left: 0px;
       top: 0px;
-      background-color: white;
+      background: var(--metro-foreground);
       transform-origin: var(--pointerX) 0%;
       animation: groove-app-menu-intro-after 1s ease-in;
 
@@ -524,6 +524,10 @@ div.groove-app-menu {
   div.groove-app-menu-entry {
     @include flow-touch;
     padding: 12px;
+    &:disabled{
+      pointer-events: none;
+      opacity: .5;
+    }
   }
 }
 

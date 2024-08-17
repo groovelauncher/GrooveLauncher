@@ -200,6 +200,19 @@ div.tile-list-inner-container {
 }
 
 div.tile-list-inner-container {
+    --wallpaper-scroll: 0px;
+    --wallpaper-scroll-transiton: 0ms;
+
+    &.wallpaper-behind {
+        div.groove-home-tile>div.groove-home-inner-tile {
+            transition: background-position var(--wallpaper-scroll-duration) cubic-bezier(0.165, 0.84, 0.44, 1);
+            background: var(--wallpaper-src);
+            will-change: background-position;
+            //background-size: calc(100vw / var(--tile-zoom)) calc(100vh / var(--tile-zoom));
+            background-position: calc(0px - var(--wallpaper-offset-x)) calc(0px - var(--wallpaper-offset-y) - var(--wallpaper-scroll));
+        }
+    }
+
     position: relative;
     left: 19px;
     top: calc(19px + var(--window-inset-top));
@@ -318,7 +331,7 @@ div.groove-home-tile {
 
 
     div.groove-home-inner-tile {
-        zoom: var(--tile-zoom);
+        //zoom: var(--tile-zoom);
         color: white;
         position: absolute;
         left: 6px;
@@ -361,7 +374,7 @@ div.groove-home-tile {
             bottom: 0px;
             margin: 10px 12px;
             font-size: 19px;
-            zoom: calc(1 / var(--tile-zoom));
+            //zoom: calc(1 / var(--tile-zoom));
         }
     }
 
@@ -397,15 +410,14 @@ div.groove-home-tile {
             height: 42px;
             border-radius: 50%;
             box-sizing: border-box;
-            
+
 
 
             box-shadow: inset 0px 0px 0px 3px var(--metro-foreground);
             background-color: var(--metro-background);
-    
-            &.active {
-            }
-    
+
+            &.active {}
+
 
             display: flex;
 

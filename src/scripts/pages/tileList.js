@@ -22,7 +22,6 @@ grid.on("dragstart", function (event, el) {
   }, 1000);
 });
 grid.on("dragstop", function (event, el) {
-  console.log("jksglj")
   setTimeout(() => {
     GrooveBoard.backendMethods.homeConfiguration.save()
   }, 500);

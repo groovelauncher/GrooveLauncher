@@ -1,6 +1,8 @@
 package web.bmdominatezz.gravy;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
@@ -248,9 +250,20 @@ public class WebInterface {
     }
 
     @JavascriptInterface
-    public void openURL(String url){
+    public void openURL(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         mainActivity.startActivity(intent);
+    }
+
+    @JavascriptInterface
+    public String getAppVersion() {
+        try {
+            PackageInfo packageInfo = mainActivity.packageManager.getPackageInfo(mainActivity.getPackageName(), 0);
+            return packageInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return "unknown";
+        }
     }
 
 }

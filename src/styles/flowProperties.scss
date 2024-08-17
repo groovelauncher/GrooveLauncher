@@ -39,3 +39,52 @@
 .flow-touch-container>* {
     @include flow-touch
 }
+
+.metro-button {
+    @include flow-touch;
+    padding: 10px 20px;
+    display: block;
+    margin: 5px;
+    background: var(--metro-background);
+    color: var(--metro-foreground);
+    border: none;
+    box-shadow: inset 0px 0px 0px 3px var(--metro-foreground);
+    font-size: 20px;
+    text-transform: lowercase;
+    text-align: left;
+    width: max-content;
+    height: min-content;
+    &.active {
+        background: var(--accent-color);
+        color: white;
+    }
+}
+
+.metro-toggle-switch {
+    --transition: 0;
+
+    &[checked] {
+        --transition: 1;
+    }
+
+    background: var(--metro-background);
+    display: block;
+    position: relative;
+    width: 93px;
+    height: 38px;
+    box-shadow: inset 0px 0px 0px 2px var(--metro-background),
+    inset 0px 0px 0px 5px var(--metro-foreground),
+    inset 0px 0px 0px 9px var(--metro-background);
+    background: linear-gradient(90deg, var(--accent-color) calc(9px + var(--transition) * 75px), var(--metro-background) calc(9px + var(--transition) * 75px));
+
+    &::after {
+        display: block;
+        content: "";
+        width: 20px;
+        height: 38px;
+        background: var(--metro-foreground);
+        box-shadow: 0px 0px 0px 4px var(--metro-background);
+        position: absolute;
+        left: calc(2px + var(--transition)* 69px);
+    }
+}

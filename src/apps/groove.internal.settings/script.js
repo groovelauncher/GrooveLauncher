@@ -1,8 +1,5 @@
 import { applyOverscroll, appViewEvents, grooveColors, grooveThemes, setAccentColor } from "../../scripts/shared/internal-app";
 import BScroll from "better-scroll";
-
-window.grooveColors = grooveColors
-console.log("hey")
 const settingsPages = document.getElementById("settings-pages")
 const appTabs = document.querySelector("div.app-tabs")
 const bs = new BScroll("#settings-pages", {
@@ -33,13 +30,10 @@ const allPages = [
 ]
 window.allPages = allPages
 allPages.forEach(e => e.classList.add("original"))
-console.log(allPages)
 function activeTabScroll() {
     var x = Math.round(bs.content.getBoundingClientRect().left - 22 + bs.wrapper.offsetWidth)
     x -= document.querySelector("div.innerApp").offsetLeft - 22
     if (x != lastX) {
-        //console.log(bs.getCurrentPage().pageX)
-        //x += settingsPages.offsetWidth
         var maxscroll = 0
         var scrollEl = []
         allTabs.forEach(e => { maxscroll += e.offsetWidth + 25; scrollEl.push(e.offsetWidth + 25) })
@@ -58,7 +52,6 @@ function activeTabScroll() {
                 allTabs[Math.floor(scroll + .5 - allTabs.length)].classList.add("active-tab")
                 //allPages[Math.floor(scroll + .5 - allTabs.length)].classList.add("active-page")
             } catch (error) {
-                console.log(Math.floor(scroll + .5 - allTabs.length))
             }
         }
 
@@ -67,41 +60,13 @@ function activeTabScroll() {
             if (scroll >= (index + 1)) { extra = maxscroll }
             e.style.transform = `translateX(${-transform + extra}px)`
             if (x <= 0) allPages[index].style.transform = scroll >= (index + 1) ? `translateX(${bs.content.offsetWidth - bs.wrapper.offsetWidth * 2}px)` : ""
-            // if (x >= 0) allPages[index].style.transform = scroll >= (index + 1) ? `translateX(${bs.content.offsetWidth - bs.wrapper.offsetWidth * 2  + (s.maxScrollX + bs.wrapper.offsetWidth)}px)` : ""
-
-            //console.log(scroll)
         })
         if (x > 0) { allPages.slice(-1)[0].style.transform = `translateX(${-100 * allPages.length}%)` }
-        console.log(x, scroll)
         lastX = x
     }
     requestAnimationFrame(activeTabScroll)
 }
 activeTabScroll()
-bs.on('slideWillChange', (page) => {
-    // Page about to switch
-    //console.log(page.pageX, page.pageY)
-})
-
-bs.scroller.animater.hooks.on('time', (duration) => {
-    //console.log("time", duration) // 800
-    // appTabs.style.setProperty("--duration", duration + "ms")
-})
-bs.scroller.translater.hooks.on('translate', (point) => {
-    //console.log(point) // { x: 0, y: 0 }
-    // activeTabScroll(point.x)
-})
-
-appTabs.addEventListener("pointerdown", (e) => {
-    bs.wrapper.dispatchEvent(new PointerEvent("pointerdown", e))
-})
-appTabs.addEventListener("pointermove", (e) => {
-    bs.wrapper.dispatchEvent(new PointerEvent("pointermove", e))
-})
-appTabs.addEventListener("pointerup", (e) => {
-    bs.wrapper.dispatchEvent(new PointerEvent("pointerup", e))
-})
-
 const scrollers = {
     theme: new BScroll("#settings-pages > div > div.settings-page:nth-child(2)", {
         bounceTime: 300,
@@ -124,7 +89,6 @@ setTimeout(() => {
     Object.values(scrollers).forEach(e => e.refresh())
 }, 600);
 document.querySelector("div.first-page > div > div.group > div.picker").addEventListener("flowClick", (e) => {
-    console.log("hey")
     if (e.target.classList.contains("clicked")) {
         e.target.classList.remove("clicked")
     } else {
@@ -139,7 +103,6 @@ window.addEventListener('click', function (event) {
 });
 document.querySelectorAll("div.first-page > div > div.group > div.picker div.picker-option").forEach(e => e.addEventListener("flowClick", (e) => {
     const index = Array.from(e.target.parentNode.children).indexOf(e.target)
-    console.log(index)
     setTimeout(() => {
         appViewEvents.setTheme(1 - index)
     }, 200);
@@ -148,7 +111,6 @@ document.querySelectorAll("div.first-page > div > div.group > div.picker div.pic
 }))
 const accentColorPicker = document.getElementById("accent-color-picker")
 document.querySelector("div.color-picker").addEventListener("flowClick", (e) => {
-    console.log("hey")
     clearTimeout(window.accentColorPickerTimeout)
     accentColorPicker.classList.add("shown-animation", "shown")
 })
@@ -173,7 +135,41 @@ if (!urlParams.has("accentColor")) {
 if (urlParams.has("theme")) {
     document.querySelector("div.first-page > div > div.group > div.picker").setAttribute("selected", urlParams.get("theme") == "light" ? 0 : 1)
 }
+
 document.querySelector("#buymeacoffee").addEventListener("flowClick", (e) => {
     Groove.openURL('https://www.buymeacoffee.com/berkaytumal')
 })
-console.log("dedead")
+
+
+document.querySelector("#device-placeholder > svg:nth-child(2)").classList.remove("selected")
+document.querySelector("#device-placeholder > svg:nth-child(3)").classList.remove("selected")
+if (urlParams.has("tileColumns")) {
+    document.querySelector("div.tile-selector > p").innerText = urlParams.get("tileColumns") == "4" ? "Off" : "On"
+    if (urlParams.get("tileColumns") != "4") {
+        document.querySelector("#tile-toggle-switch").setAttribute("checked", "")
+        document.querySelector("#device-placeholder > svg:nth-child(3)").classList.add("selected")
+    } else {
+        document.querySelector("#device-placeholder > svg:nth-child(2)").classList.add("selected")
+    }
+}
+document.querySelector("#tile-toggle-switch").addEventListener("checked", (e) => {
+    document.querySelector("#device-placeholder > svg:nth-child(2)").classList.remove("selected")
+    document.querySelector("#device-placeholder > svg:nth-child(3)").classList.remove("selected")
+    document.querySelector("div.tile-selector > p").innerText = e.target.hasAttribute("checked") ? "On" : "Off"
+    appViewEvents.setTileColumns(e.target.hasAttribute("checked") ? 6 : 4)
+    if (e.target.hasAttribute("checked")) {
+        document.querySelector("#device-placeholder > svg:nth-child(3)").classList.add("selected")
+    } else {
+        document.querySelector("#device-placeholder > svg:nth-child(2)").classList.add("selected")
+    }
+})
+document.querySelectorAll("div.settings-page:not(.original)").forEach(e => e.innerHTML = "")
+document.querySelector("#about-app-version").innerText = "Version: " + Groove.getAppVersion()
+
+document.querySelector("#advanced-tab > button:nth-child(1)").addEventListener("flowClick", () => {
+    navigator.clipboard.writeText(JSON.stringify(window.parent.allappsarchive));
+})
+document.querySelector("#advanced-tab > button:nth-child(2)").addEventListener("flowClick", () => {
+    window.localStorage.clear()
+    appViewEvents.reloadApp()
+})

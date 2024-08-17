@@ -13,7 +13,8 @@ body {
     background-color: transparent !important;
     display: flex;
     flex-direction: column;
-align-items: center;
+    align-items: center;
+
     @keyframes app-intro-animation {
         from {
             transform: perspective(var(--flow-perspective)) translateZ(-50px) rotateY(6deg);
@@ -245,10 +246,26 @@ p.text {
 
 
 }
-a{
+
+.tile-selector {
+    display: flex;
+    margin-bottom: 30px;
+
+    p {
+        flex-grow: 1;
+        font-size: 30px;
+        margin: 0px;
+        font-weight: 300;
+    }
+
+    div {}
+}
+
+a {
     text-decoration: none;
     color: var(--accent-color);
 }
+
 #accent-color-picker {
     pointer-events: none;
     background: transparent;
@@ -365,4 +382,54 @@ a{
             }
         }
     }
+}
+
+#device-placeholder {
+    width: 100%;
+    max-width: 430px;
+    height: min-content;
+    position: relative;
+
+    svg {
+        &:nth-child(1) {
+            body.light-mode & {
+                filter: invert(1);
+            }
+
+            width: 100%;
+            height: auto;
+        }
+
+        &:not(:nth-child(1)) {
+            position: absolute;
+            left: calc(40/430*100%);
+            bottom: 3px;
+            width: calc(350/430*100%);
+            height: auto;
+            visibility: hidden;
+
+            &.selected {
+                visibility: visible;
+            }
+        }
+    }
+}
+
+#settings-pages>div>div.settings-page.first-page.original.active-page>div {
+    perspective: var(--flow-perspective);
+}
+
+#about-app-name,
+#about-app-version {
+    font-weight: 300;
+}
+
+#about-app-name {
+
+    margin-bottom: 0px;
+}
+
+#about-app-version {
+    margin-top: 0px;
+    margin-bottom: 40px;
 }

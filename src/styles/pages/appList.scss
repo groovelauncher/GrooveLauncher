@@ -524,9 +524,9 @@ div.groove-app-menu {
   div.groove-app-menu-entry {
     @include flow-touch;
     padding: 12px;
-    &:disabled{
-      pointer-events: none;
-      opacity: .5;
+    &.disabled{
+      pointer-events: none !important;
+      opacity: .5 !important;
     }
   }
 }

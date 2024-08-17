@@ -167,8 +167,7 @@ const boardMethods = {
       },
     });
     document.querySelector("div.app-list-page").appendChild(el);
-    console.log("SAYI", document.querySelectorAll(`div.groove-home-tile[packagename="${packageName}"]`).length)
-    if (document.querySelectorAll(`div.groove-home-tile[packagename="${packageName}"]`).length) {
+    if (document.querySelectorAll(`div.groove-home-tile[packagename="${packageName}"]`).length > 1) {
       el.querySelector("div:nth-child(1)").classList.add("disabled")
     }
     return el;
@@ -314,7 +313,7 @@ const backendMethods = {
     history: [],
     push: (change, forwardAction, backAction) => {
       GrooveBoard.backendMethods.navigation.invalidate(change);
-      console.log("HISTORY PUSH", change);
+      //console.log("HISTORY PUSH", change);
       forwardAction();
       backendMethods.navigation.history.push({
         forwardAction: forwardAction,
@@ -329,7 +328,7 @@ const backendMethods = {
       if (action == false)
         backendMethods.navigation.lastPush.backAction = () => { };
       const act = backendMethods.navigation.history.pop();
-      console.log("HISTORY BACK", act.change);
+      //console.log("HISTORY BACK", act.change);
       act.backAction();
       listHistory();
     },
@@ -341,7 +340,7 @@ const backendMethods = {
     invalidate: (change) => {
       if (GrooveBoard.backendMethods.navigation.history.length == 0)
         return undefined;
-      console.log("HISTORY INVA", change);
+      //console.log("HISTORY INVA", change);
       if (GrooveBoard.backendMethods.navigation.lastPush.change == change) {
         GrooveBoard.backendMethods.navigation.back(false);
       }
@@ -396,18 +395,11 @@ const backendMethods = {
       w: chosenSize[0],
       h: chosenSize[1],
     });
-    console.log(
-      "supported size",
-      supportedSizes.slice(-1)[0],
-      size,
-      supportedSizes.slice(-1)[0] == size
-    );
     const animClassName =
       "tile-size-change-anim-" +
       size +
       (supportedSizes.slice(-1)[0] == size ? "-2" : "");
     el.classList.add(animClassName);
-    console.log("anim class", animClassName);
     setTimeout(() => {
       el.classList.remove(animClassName);
     }, 250);
@@ -421,7 +413,7 @@ const backendMethods = {
         url: './apps/' + packageName + '/index.html',
         type: 'HEAD',
         error: function () {
-          console.log("bu app yok")
+          console.log("This app doesn't exist!")
         },
         success: function () {
           backendMethods.navigation.push(
@@ -435,7 +427,7 @@ const backendMethods = {
           const appView = boardMethods.createAppView(packageName)
           window.launchedInternalApps.add(packageName);
           clearTimeout(window.appTransitionLaunchError)
-          console.log("Launch internal app:", packageName);
+          //console.log("Launch internal app:", packageName);
         }
       });
 
@@ -465,16 +457,6 @@ const backendMethods = {
       backendMethods.destroyInternalApp(packageName)
     }
   },
-  setTileColumns: (int) => {
-    if (Object.values(grooveTileColumns).includes(int)) {
-      tileListGrid.column(
-        int,
-        int < tileListGrid.getColumn() ? "compact" : "none"
-      );
-    } else {
-      console.error("Invalid tile size!");
-    }
-  },
   setAccentColor: (color, doNotSave = false) => {
     if (Object.values(grooveColors).includes(color)) {
       document.body.style.setProperty("--accent-color", color);
@@ -495,12 +477,14 @@ const backendMethods = {
       console.error("Invalid theme!");
     }
   },
-  setTileColumns: (int) => {
+  setTileColumns: (int, doNotSave) => {
     if (Object.values(grooveTileColumns).includes(int)) {
       tileListGrid.column(
         int,
         int < tileListGrid.getColumn() ? "compact" : "none"
       );
+      if (!doNotSave) localStorage.setItem("tileColumns", int)
+
     } else {
       console.error("Invalid tile size!");
     }
@@ -535,8 +519,47 @@ const backendMethods = {
       document.querySelectorAll("div.tile-list-inner-container > div.groove-home-tile").forEach(e => e.remove())
       tileListGrid.batchUpdate(true)
       const config = JSON.parse(localStorage.getItem("homeConfiguration")) || []
-      console.log(config)
-      
+
+      config.forEach(tile => {
+        if (document.querySelectorAll(`div.groove-home-tile[packagename="${tile.p}"]`).length > 0) return
+
+        const homeTile = GrooveElements.wHomeTile(tile.ii, tile.i, tile.t, tile.p, "", tile.s)
+        const el = window.tileListGrid.addWidget(
+          homeTile,
+          {
+            w: tile.w,
+            h: tile.h,
+            x: tile.l,
+            y: tile.t
+          }
+        );
+        el.setAttribute("gs-x", tile.l)
+        el.setAttribute("gs-y", tile.t)
+        el.setAttribute("gs-w", tile.w)
+        el.setAttribute("gs-h", tile.h)
+        tileListGrid.moveNode(el.gridstackNode, {
+          w: tile.w,
+          h: tile.h,
+          x: tile.x,
+          y: tile.y
+        })
+
+      })
+      /*
+            const loadData = {}
+            config.forEach(tile => {
+              console.log("tile",tile)
+              const homeTile = GrooveElements.wHomeTile(tile.ii, tile.i, tile.t, tile.p, "", tile.s)
+              loadData[tile.p] = {
+                w: tile.w,
+                h: tile.h,
+                x: tile.x,
+                y: tile.y,
+                content: homeTile.innerHTML
+              }
+            })
+            console.log(loadData)
+            tileListGrid.load(Object.values(loadData))*/
       tileListGrid.batchUpdate(false)
       window.cantSaveHomeConfig = false
     },
@@ -615,6 +638,7 @@ const backendMethods = {
   },
 };
 function listHistory() {
+  return
   console.log(
     "%c" +
     GrooveBoard.backendMethods.navigation.history
@@ -627,12 +651,16 @@ window.addEventListener("backButtonPress", function () {
   backendMethods.navigation.back();
 });
 window.addEventListener('message', (event) => {
-  console.log("Message received from iframe:", event.data);
   if (event.data["action"]) {
     if (event.data.action == "setTheme") {
       backendMethods.setTheme(event.data.argument);
     } else if (event.data.action == "setAccentColor") {
       backendMethods.setAccentColor(event.data.argument);
+    } else if (event.data.action == "setTileColumns") {
+      backendMethods.setTileColumns(event.data.argument);
+      backendMethods.homeConfiguration.save()
+    }else if (event.data.action == "reloadApp") {
+      window.location.reload()
     }
   }
 });

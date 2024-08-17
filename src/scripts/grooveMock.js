@@ -54,5 +54,8 @@ class GrooveMock {
     openURL(url) {
         window.open(url, "_blank")
     }
+    getAppVersion(){
+        return "web-test"
+    }
 }
 export default GrooveMock;

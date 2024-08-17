@@ -6,5 +6,5 @@ module.exports = {
     path: path.resolve(__dirname, './../www/apps/groove.internal.settings'),
     filename: 'script.js'
   },
-  mode: 'development'
+  mode: 'production'
 };

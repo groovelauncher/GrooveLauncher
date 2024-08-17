@@ -181,7 +181,7 @@ function wAppView(packageName) {
   appView.classList.add("groove-element");
   appView.classList.add("groove-app-view");
   appView.setAttribute("packageName", packageName);
-  appView.src = "./apps/" + packageName + "/index.html" + `?theme=${document.body.classList.contains("light-mode") ? "light" : "dark"}&accentColor=${getComputedStyle(document.body).getPropertyValue("--accent-color").slice(1)}`
+  appView.src = "./apps/" + packageName + "/index.html" + `?theme=${document.body.classList.contains("light-mode") ? "light" : "dark"}&accentColor=${getComputedStyle(document.body).getPropertyValue("--accent-color").slice(1)}&tileColumns=${tileListGrid.getColumn()}`
   return appView;
 }
 export default GrooveElements;

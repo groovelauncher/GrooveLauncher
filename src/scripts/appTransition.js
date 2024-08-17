@@ -41,6 +41,7 @@ const indexElements = (page) => {
 
         });
     } else {
+        visibleElements.push(document.querySelector("div.app-page-icon-banner"))
         visibleElements.reverse().forEach((element, index) => {
             element.style.setProperty("--app-animation-index", (index / (visibleElements.length - 1)).toFixed(2))
             element.style.setProperty("--app-animation-distance", -element.offsetLeft + "px")

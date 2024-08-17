@@ -330,9 +330,7 @@ function stickyLetter() {
         allLetterTiles.each((index, element) => {
             const elementScrollTop = element.offsetTop - topinset - scroll
             const zone = elementScrollTop < -64 ? -1 : elementScrollTop < 0 ? 0 : elementScrollTop < 64 ? 1 : 2
-            if (index == 0 || index == 1) {
-                // console.log(elementScrollTop)
-            }
+
             if (zone == 0) {
 
                 stickyLetterTile.css({

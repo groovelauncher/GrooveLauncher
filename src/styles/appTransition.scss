@@ -4,7 +4,7 @@
 
         &.app-transition-tile-list {
             &.app-transition-on-pause {
-                div.tile-list-inner-container>div.groove-home-tile {
+                div.tile-list-inner-container>div.groove-home-tile, div.app-page-icon-banner {
                     animation: tileListAppTransitionAnim0 .2s calc(var(--app-animation-index) * .15s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
 
                     &.app-transition-selected {
@@ -30,7 +30,7 @@
             &.app-transition-on-resume {
 
                 &:not(.app-transition-back) {
-                    div.tile-list-inner-container>div.groove-home-tile {
+                    div.tile-list-inner-container>div.groove-home-tile, div.app-page-icon-banner {
                         // animation: tileListAppTransitionAnim1 .4s calc(var(--app-animation-index) * .15s) cubic-bezier(0.00, 1.00, 0.51, 1.00) forwards;
                         animation: tileListAppTransitionAnim1 .75s calc(var(--app-animation-index) * .2s) cubic-bezier(.05, 1, .1, 1) forwards;
                         transform-origin: var(--app-animation-distance) 50%;
@@ -83,7 +83,7 @@
                 }
 
                 &.app-transition-back {
-                    div.tile-list-inner-container>div.groove-home-tile {
+                    div.tile-list-inner-container>div.groove-home-tile, div.app-page-icon-banner {
                         // animation: tileListAppTransitionAnim1 .4s calc(var(--app-animation-index) * .15s) cubic-bezier(0.00, 1.00, 0.51, 1.00) forwards;
                         animation: tileListAppTransitionAnim2 .75s calc(var(--app-animation-index) * .2s) cubic-bezier(.05, 1, .1, 1) forwards;
                         transform-origin: var(--app-animation-distance) 50%;

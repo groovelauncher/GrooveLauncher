@@ -11,7 +11,6 @@ if (GrooveMockInstance) {
 
 
 const setAccentColor = (color) => {
-  console.log("accentcolor set", color)
   if (Object.values(grooveColors).includes(color)) {
     document.body.style.setProperty("--accent-color", color);
   } else {
@@ -29,8 +28,6 @@ window.setAccentColor = setAccentColor;
 window.setTheme = setTheme;
 
 window.addEventListener("message", (event) => {
-  // Log the message for debugging
-  console.log("Message received in iframe:", event.data);
   if (event.data["action"]) {
     if (event.data.action == "setTheme") {
       setTheme(event.data.argument);
@@ -62,6 +59,14 @@ const appViewEvents = {
   },
   setTheme: (theme) => {
     const message = { action: "setTheme", argument: theme };
+    window.parent.postMessage(message, '*');
+  },
+  setTileColumns: (col) => {
+    const message = { action: "setTileColumns", argument: col };
+    window.parent.postMessage(message, '*');
+  },
+  reloadApp: () => {
+    const message = { action: "reloadApp"};
     window.parent.postMessage(message, '*');
   },
 }

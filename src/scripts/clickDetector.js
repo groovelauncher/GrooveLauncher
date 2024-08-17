@@ -1,4 +1,5 @@
 import jquery from "jquery"
+import easing from "./easings"
 const $ = jquery
 const clickDetectorConfig = {
     tapDistanceThreshold: 5,
@@ -59,6 +60,28 @@ window.addEventListener("pointerup", (e) => {
 
         if (hypotenuse <= clickDetectorConfig.tapDistanceThreshold) {
             const event = new CustomEvent("flowClick", { pageX: e.pageX, pageY: e.pageY, target: el });
+            if (el.classList.contains("metro-toggle-switch")) {
+                clearInterval(el.mtsanim)
+                clearTimeout(el.mtstime)
+                const isChecked = el.hasAttribute("checked")
+                const animstart = Date.now()
+                const duration = 200
+                if (isChecked) {
+                    el.removeAttribute("checked")
+                } else {
+                    el.setAttribute("checked", "")
+                }
+                el.mtsanim = setInterval(() => {
+                    var transition = (Date.now() - animstart) / duration
+                    transition = transition > 1 ? 1 : transition < 0 ? 0 : transition
+                    el.style.setProperty("--transition", isChecked ? easing.easeInExpo(1 - transition) : easing.easeOutExpo(transition))
+                }, 0)
+                el.mtstime = setTimeout(() => {
+                    clearInterval(el.mtsanim)
+                    el.style.removeProperty("--transition")
+                    el.dispatchEvent(new CustomEvent("checked", { isChecked: isChecked }))
+                }, duration)
+            }
             el.dispatchEvent(event);
         }
         el.classList.remove("active")

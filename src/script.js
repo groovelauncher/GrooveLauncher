@@ -54,7 +54,8 @@ const scrollers = {
         HWCompositing: false,
         bounceTime: 300,
         swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1
+        outOfBoundaryDampingFactor: 1,
+        useTransition:false
     }),
     app_page_scroller: new BScroll('#main-home-slider > div > div:nth-child(2) > div > div.app-list', {
         scrollX: false,
@@ -62,6 +63,7 @@ const scrollers = {
         mouseWheel: true,
         disableMouse: false,
         disableTouch: false,
+        HWCompositing: false,
         bounceTime: 300,
         swipeBounceTime: 200,
         outOfBoundaryDampingFactor: 1,
@@ -245,4 +247,4 @@ startUpSequence([
         }, 100);
     }
 )
-GrooveBoard.backendMethods.wallpaper.load("assets/wallpaper.jpg")
+//GrooveBoard.backendMethods.wallpaper.load("assets/wallpaper.jpg")

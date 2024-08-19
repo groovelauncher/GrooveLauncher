@@ -18,14 +18,15 @@
 
   p {
     transform: scale(-1, 1);
-
     pointer-events: none;
     position: relative;
-    left: -11px;
+    left: 13px;
     top: 10px;
     font-size: 20px;
     margin: 0px;
     padding: 0px;
+    width: min-content;
+    height: min-content;
   }
 }
 
@@ -198,6 +199,7 @@ div.inner-page.app-list-page {
   display: flex;
   flex-direction: column;
   perspective: var(--flow-perspective);
+  background: var(--metro-background);
 
   .app-list-container {
     will-change: transform;
@@ -524,7 +526,8 @@ div.groove-app-menu {
   div.groove-app-menu-entry {
     @include flow-touch;
     padding: 12px;
-    &.disabled{
+
+    &.disabled {
       pointer-events: none !important;
       opacity: .5 !important;
     }
@@ -535,7 +538,7 @@ div.app-list-page {
 
   div.app-list,
   #search-icon,
-      #sticky-letter,
+  #sticky-letter,
   input.app-list-search {
     transition: transform var(--flow-touch-up-transition) ease-out, opacity var(--flow-touch-up-transition) ease-out;
   }

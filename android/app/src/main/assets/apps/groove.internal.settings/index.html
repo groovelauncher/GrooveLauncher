@@ -13,6 +13,7 @@
     <h1 class="app-title">Settings</h1>
     <div class="app-tabs">
       <p class="active-tab">Theme</p>
+      <p>Display</p>
       <p>Advanced</p>
       <p>About</p>
     </div>
@@ -55,7 +56,7 @@
     </div>
     <div id="settings-pages">
       <div class="settings-pages-container">
-        <div class="settings-page active-page first-page">
+        <div class="settings-page active-page first-page" id="theme-tab">
           <div>
 
 
@@ -126,11 +127,15 @@
 
           </div>
         </div>
+        <div class="settings-page" id="display-tab">
+          <button class="metro-button">Dump Apps JSON</button>
+          <button class="metro-button">Reset Groove Launcher (No Confirmation!)</button>
+        </div>
         <div class="settings-page" id="advanced-tab">
           <button class="metro-button">Dump Apps JSON</button>
           <button class="metro-button">Reset Groove Launcher (No Confirmation!)</button>
         </div>
-        <div class="settings-page">
+        <div class="settings-page" id="about-tab">
           <div class="scrollable article-f" style="perspective: var(--flow-perspective);">
             <h1 id="about-app-name">Groove Launcher</h1>
             <h2 id="about-app-version">Version: Loading...</h2>

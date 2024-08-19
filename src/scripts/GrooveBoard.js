@@ -275,7 +275,7 @@ const backendMethods = {
         const el = boardMethods.createAppTile({
           title: app.label,
           packageName: app.packageName,
-          imageIcon: ipe ? false : true,
+          imageIcon: ipe ? false  : true,
           icon: ipe ? ipe.icon : Groove.getAppIconURL(app.packageName),
         });
         if (ipe) {
@@ -594,12 +594,14 @@ const backendMethods = {
       //document.querySelector("#wallpapertest").style.setProperty("background-image", `url(${rurl})`)
       window.lastClippedWallpaper = rurl;
       backendMethods.wallpaper.recalculateOffsets();
-      $("div.tile-list-inner-container")
-        .css("--wallpaper-src", `url(${rurl})`)
+ 
+      $("div.slide-page.slide-page-home")
+        .css("background", `url(${rurl})`)
         .addClass("wallpaper-behind");
       return rurl;
     },
     recalculateOffsets: (scrollpos) => {
+      return
       if (tileListInnerContainer.classList.contains("wallpaper-behind")) {
         const tileZoom =
           tileListInnerContainer.style.getPropertyValue("--tile-zoom");
@@ -631,8 +633,8 @@ const backendMethods = {
     remove: () => {
       if (window.lastClippedWallpaper)
         URL.revokeObjectURL(window.lastClippedWallpaper);
-      $("div.tile-list-inner-container")
-        .css("--wallpaper-src", "")
+      $("div.slide-page.slide-page-home")
+        .css("background", "")
         .removeClass("wallpaper-behind");
     },
   },
@@ -659,7 +661,7 @@ window.addEventListener('message', (event) => {
     } else if (event.data.action == "setTileColumns") {
       backendMethods.setTileColumns(event.data.argument);
       backendMethods.homeConfiguration.save()
-    }else if (event.data.action == "reloadApp") {
+    } else if (event.data.action == "reloadApp") {
       window.location.reload()
     }
   }

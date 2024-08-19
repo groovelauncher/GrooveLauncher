@@ -23,6 +23,7 @@
     "better-scroll": "^2.5.1",
     "bezier-easing": "^2.1.0",
     "bootstrap": "^5.3.3",
+    "clusterize.js": "^1.0.0",
     "gridstack": "^10.3.1",
     "jquery": "^3.7.1",
     "normalize-diacritics": "^5.0.0"

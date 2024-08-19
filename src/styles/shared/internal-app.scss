@@ -18,8 +18,11 @@ html {
 }
 
 body {
-
+  &.showBackground {
+    background-color: var(--metro-background) !important;
+  }
 }
+
 img {
   text-indent: -10000px
 }

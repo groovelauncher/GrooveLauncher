@@ -20,6 +20,7 @@ const setAccentColor = (color) => {
 const setTheme = (theme) => {
   if (Object.values(grooveThemes).includes(theme)) {
     document.body.classList[theme ? "add" : "remove"]("light-mode");
+    document.body.classList.add("showBackground")
   } else {
     console.error("Invalid theme!");
   }

@@ -96,8 +96,8 @@ div.app-tabs {
             overflow: hidden;
 
             &:not(.original) {
-                background: red;
-                opacity: 0 !important;
+                visibility: hidden;
+                //opacity: 0 !important;
             }
 
             &.active-page {
@@ -160,7 +160,7 @@ p.text {
     }
 
     &.clicked {
-        height: 103px;
+        height: 112px;
 
         &[selected="0"] {
             .picker-container .picker-option:nth-child(1) {
@@ -176,7 +176,8 @@ p.text {
 
         .picker-container>.picker-option {
             pointer-events: all !important;
-            margin: 15px 10px;
+            margin: 0px 10px;
+            height: 56px;
         }
     }
 
@@ -200,9 +201,12 @@ p.text {
 
         .picker-option {
             @include flow-touch;
-            transition: margin .2s ease-in;
+            transition: height .2s ease-in;
             font-size: 25px;
-            margin: 7px 10px;
+            margin: 0px 10px;
+            height: 48px;
+            display: flex;
+            align-items: center;
         }
 
 
@@ -240,7 +244,11 @@ p.text {
         transition: margin .2s ease-in;
         font-size: 25px;
         margin: 7px 3px;
-        pointer-events: none
+        pointer-events: none;
+
+        align-items: center;
+        display: flex;
+        flex-grow: 1;
     }
 
 

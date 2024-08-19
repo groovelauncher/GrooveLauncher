@@ -12,8 +12,6 @@ body {
 
 }
 
-div.tile-list-page {}
-
 div.tile-list-page {
     perspective: var(--flow-perspective);
 
@@ -156,42 +154,31 @@ div.tile-list-page {
 
 
         div.groove-home-tile:not(.home-menu-selected) {
-            transition: left .25s, top .25s;
+            transition: left .25s, top .25s, opacity .25s, transform .25s;
             opacity: .6;
+            --shake-x:0px;
+            --shake-y:0px;
+            transform: scale(.925) translate(var(--shake-x), var(--shake-y));
             --shake-easing: cubic-bezier(.25, 0, .53, 1);
-
-            &:nth-child(6n) {
-                animation: home-edit-mode-shake0 var(--shake-duration) var(--shake-easing) infinite;
-            }
-
-            &:nth-child(6n + 1) {
-                animation: home-edit-mode-shake1 var(--shake-duration) var(--shake-easing) infinite;
-            }
-
-            &:nth-child(6n + 2) {
-                animation: home-edit-mode-shake2 var(--shake-duration) var(--shake-easing) infinite;
-            }
-
-            &:nth-child(6n + 3) {
-                animation: home-edit-mode-shake3 var(--shake-duration) var(--shake-easing) infinite;
-            }
-
-            &:nth-child(6n + 4) {
-                animation: home-edit-mode-shake4 var(--shake-duration) var(--shake-easing) infinite;
-            }
-
-            &:nth-child(6n + 5) {
-                animation: home-edit-mode-shake5 var(--shake-duration) var(--shake-easing) infinite;
-            }
-
             will-change: left,
-            top;
+                top;
         }
 
         .app-page-icon-banner {
             visibility: hidden;
         }
     }
+
+    div.slide-page-home.wallpaper-behind>& {
+        background: var(--metro-background);
+        mix-blend-mode: hard-light;
+        box-shadow: 0px 0px 0px 1000px var(--metro-background);
+
+        .groove-home-inner-tile {
+            background: var(--metro-transparent-2);
+        }
+    }
+
 }
 
 div.tile-list-container,
@@ -331,7 +318,7 @@ div.groove-home-tile {
 
 
     div.groove-home-inner-tile {
-        //zoom: var(--tile-zoom);
+        zoom: var(--tile-zoom);
         color: white;
         position: absolute;
         left: 6px;

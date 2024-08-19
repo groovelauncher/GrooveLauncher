@@ -1,12 +1,16 @@
 import jQuery from "jquery";
 import GrooveBoard from "../GrooveBoard";
 const $ = jQuery;
+import perlin from "../perlin";
 
 import { GridStack } from "gridstack";
 window.GridStack = GridStack;
 const tileListInnerContainer = document.querySelector(
   "div.tile-list-inner-container"
 );
+Math.pow2 = (x, y) => {
+  return Math.pow(Math.abs(x), y) * (x > 0 ? 1 : -1)
+}
 const grid = GridStack.init({
   column: 4,
   disableResize: true,
@@ -29,11 +33,30 @@ grid.on("dragstop", function (event, el) {
 });
 window.tileListGrid = grid;
 var homeTileEditEnabled = false;
+function hashStringToNumber(str, max) {
+  try {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convert to a 32-bit integer
+    }
+    // Ensure the hash is positive
+    hash = Math.abs(hash);
+    // Map to a range between 0 and 500
+    return hash % (max || 100);
+  } catch (error) {
+    return 0
+  }
+}
 const homeTileEditSwitch = {
-  on: (immediate = false, callback = () => {}) => {
+  on: (immediate = false, callback = () => { }) => {
+    clearTimeout(window.homeTileEditTimeout)
+
+    window.homeTileEditTimeout = setTimeout(() => { homeTileEditSwitch.off() }, 30000);
     GrooveBoard.backendMethods.navigation.push(
       "homeTileMenuOn",
-      () => {},
+      () => { },
       homeTileEditSwitch.off
     );
     scrollers.main_home_scroller.enabled = false;
@@ -56,8 +79,30 @@ const homeTileEditSwitch = {
         shakeDistanceModifier.on();
       }, 500);
     }
+    perlin.seed()
+    const homeTileEditShakeStart = Date.now()
+    window.homeTileEditShake = setInterval(() => {
+
+      tileListGrid.engine.nodes.forEach(e => {
+        const packageName = e.el.getAttribute("packagename")
+        const distance = (Date.now() - homeTileEditShakeStart) /  (4000 + hashStringToNumber(packageName, 1000))
+        const hash = hashStringToNumber(e.el.getAttribute("packagename"), 500)
+        e.el.style.setProperty("--shake-x",
+          perlin.get(distance, hash) * 2 + Math.pow2(perlin.get(distance * 1.5, hash), .5)
+          * 5
+          + "px")
+        e.el.style.setProperty("--shake-y",
+          perlin.get(distance, hash + 1000) * 2 + Math.pow2(perlin.get(distance * 1.5, hash + 1000), .5)
+          * 5
+          + "px")
+      })
+
+    }, 0);
   },
   off: (immediate) => {
+    clearTimeout(window.homeTileEditTimeout)
+    clearInterval(window.homeTileEditShake)
+
     GrooveBoard.backendMethods.navigation.invalidate("homeTileMenuOn");
     shakeDistanceModifier.off();
     $("div.groove-home-tile").removeClass("home-menu-selected");
@@ -142,7 +187,7 @@ $(window).on("click", function (e) {
     }
   } else if (
     e.target ==
-      document.querySelector("#main-home-slider > div > div:nth-child(1)") ||
+    document.querySelector("#main-home-slider > div > div:nth-child(1)") ||
     e.target.classList.contains("tile-list-container") ||
     e.target.classList.contains("home-menu-back") ||
     e.target.classList.contains("home-menu-back-intro") ||
@@ -153,6 +198,10 @@ $(window).on("click", function (e) {
 });
 
 $(window).on("pointerdown", function (e) {
+  if (homeTileEditEnabled) {
+    clearTimeout(window.homeTileEditTimeout)
+    window.homeTileEditTimeout = setTimeout(() => { homeTileEditSwitch.off() }, 30000);
+  }
   if (e.target.classList.contains("groove-home-tile") && !homeTileEditEnabled) {
     e.target.canClick = true;
     e.target.homeTileMenuState = false;
@@ -233,11 +282,10 @@ $(window).on("finishedLoading", () => {
   );
   scrollers.tile_page_scroller.scroller.translater.hooks.on(
     "beforeTranslate",
-    (point,ee) => {
+    (point, ee) => {
       GrooveBoard.backendMethods.wallpaper.recalculateOffsets(ee);
     }
   );
 
   //GrooveBoard.backendMethods.wallpaper.load("./assets/wallpaper.jpg")
 });
-

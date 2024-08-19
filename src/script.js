@@ -62,7 +62,6 @@ const scrollers = {
         mouseWheel: true,
         disableMouse: false,
         disableTouch: false,
-        HWCompositing: false,
         bounceTime: 300,
         swipeBounceTime: 200,
         outOfBoundaryDampingFactor: 1
@@ -245,3 +244,4 @@ startUpSequence([
         }, 100);
     }
 )
+GrooveBoard.backendMethods.wallpaper.load("assets/wallpaper.jpg")

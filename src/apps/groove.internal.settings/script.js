@@ -1,7 +1,13 @@
+
 import { applyOverscroll, appViewEvents, grooveColors, grooveThemes, setAccentColor } from "../../scripts/shared/internal-app";
 import BScroll from "better-scroll";
 const settingsPages = document.getElementById("settings-pages")
 const appTabs = document.querySelector("div.app-tabs")
+
+var lastX = 0
+const allTabs = document.querySelectorAll("div.app-tabs > p")
+const allPages = Array.from(document.querySelectorAll("#settings-pages > div.settings-pages-container > div.settings-page"))
+
 const bs = new BScroll("#settings-pages", {
     scrollX: true,
     scrollY: false,
@@ -20,16 +26,15 @@ const bs = new BScroll("#settings-pages", {
         easing: "cubic-bezier(0.075, 0.82, 0.165, 1)"
     },
 })
-window.bs = bs
-var lastX = 0
-const allTabs = document.querySelectorAll("div.app-tabs > p")
-const allPages = [
-    document.querySelector("#settings-pages > div > div:nth-child(2)"),
-    document.querySelector("#settings-pages > div > div:nth-child(3)"),
-    document.querySelector("#settings-pages > div > div:nth-child(4)"),
-]
-window.allPages = allPages
 allPages.forEach(e => e.classList.add("original"))
+document.querySelectorAll("div.settings-page:not(.original)").forEach(e => {
+    e.innerHTML = "";
+    e.removeAttribute("id")
+})
+
+window.bs = bs
+
+window.allPages = allPages
 function activeTabScroll() {
     var x = Math.round(bs.content.getBoundingClientRect().left - 22 + bs.wrapper.offsetWidth)
     x -= document.querySelector("div.innerApp").offsetLeft - 22
@@ -163,7 +168,6 @@ document.querySelector("#tile-toggle-switch").addEventListener("checked", (e) =>
         document.querySelector("#device-placeholder > svg:nth-child(2)").classList.add("selected")
     }
 })
-document.querySelectorAll("div.settings-page:not(.original)").forEach(e => e.innerHTML = "")
 document.querySelector("#about-app-version").innerText = "Version: " + Groove.getAppVersion()
 
 document.querySelector("#advanced-tab > button:nth-child(1)").addEventListener("flowClick", () => {

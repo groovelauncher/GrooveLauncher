@@ -51,6 +51,7 @@ body:not(.light-mode) {
     --metro-opaque: #111511;
     --metro-opaque-2: white;
     --metro-transparent: rgb(0, 0, 0, .5);
+    --metro-transparent-2: rgb(255, 255, 255, .5);
 }
 
 //Light mode color palette
@@ -60,4 +61,5 @@ body.light-mode {
     --metro-opaque: #dfe0df;
     --metro-opaque-2: #a6a8a7;
     --metro-transparent: rgb(255, 255, 255, .5);
+    --metro-transparent-2: rgb(0, 0, 0, .5);
 }

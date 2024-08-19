@@ -64,7 +64,8 @@ const scrollers = {
         disableTouch: false,
         bounceTime: 300,
         swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1
+        outOfBoundaryDampingFactor: 1,
+        useTransition:false
     })
 }
 applyOverscroll(scrollers.tile_page_scroller)

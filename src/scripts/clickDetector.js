@@ -8,7 +8,7 @@ const clickDetectorConfig = {
 var pointerDownElements = {}
 const getElementFromPointerId = (pid) => Object.entries(pointerDownElements).filter(e => e[0] == String(pid))[0][1]
 window.pointerDownElements = pointerDownElements
-const usedProperties = ["pointerdown", "lastPointerPosition", "supportsFlowTouch", "deletePropertiesTimeout"]
+const usedProperties = ["pointerdown", "lastPointerPosition", "supportsFlowTouch", "deletePropertiesTimeout", "checked", "lastDragTransition"]
 const usedStyleProperties = ["flow-rotate-x", "flow-rotate-y"]
 function deleteProperties(el) {
     usedProperties.forEach(property => {
@@ -38,7 +38,9 @@ function flowTouchRotate(el, pageX, pageY) {
     }
 }
 window.addEventListener("pointerdown", (e) => {
+
     const el = e.target
+    if (el.classList.contains("metro-toggle-switch")) metroToggleSwitch.pointerDown(el);
     clearTimeout(el.deletePropertiesTimeout)
     el.supportsFlowTouch = window.getComputedStyle(el).getPropertyValue("--flow-touch") == "true"
     el.classList.add("active")
@@ -60,29 +62,12 @@ window.addEventListener("pointerup", (e) => {
 
         if (hypotenuse <= clickDetectorConfig.tapDistanceThreshold) {
             const event = new CustomEvent("flowClick", { pageX: e.pageX, pageY: e.pageY, target: el });
-            if (el.classList.contains("metro-toggle-switch")) {
-                clearInterval(el.mtsanim)
-                clearTimeout(el.mtstime)
-                const isChecked = el.hasAttribute("checked")
-                const animstart = Date.now()
-                const duration = 200
-                if (isChecked) {
-                    el.removeAttribute("checked")
-                } else {
-                    el.setAttribute("checked", "")
-                }
-                el.mtsanim = setInterval(() => {
-                    var transition = (Date.now() - animstart) / duration
-                    transition = transition > 1 ? 1 : transition < 0 ? 0 : transition
-                    el.style.setProperty("--transition", isChecked ? easing.easeInExpo(1 - transition) : easing.easeOutExpo(transition))
-                }, 0)
-                el.mtstime = setTimeout(() => {
-                    clearInterval(el.mtsanim)
-                    el.style.removeProperty("--transition")
-                    el.dispatchEvent(new CustomEvent("checked", { isChecked: isChecked }))
-                }, duration)
-            }
             el.dispatchEvent(event);
+            if (el.classList.contains("metro-toggle-switch")) {
+            }
+            if (el.classList.contains("metro-toggle-switch")) metroToggleSwitch.pointerUp(el, true)
+        } else {
+            if (el.classList.contains("metro-toggle-switch")) metroToggleSwitch.pointerUp(el, false)
         }
         el.classList.remove("active")
         el.deletePropertiesTimeout = setTimeout(() => {
@@ -103,7 +88,64 @@ window.addEventListener("pointermove", (e) => {
         deleteProperties(el)
         delete pointerDownElements[e.pointerId]
     }
+
+    if (el.classList.contains("metro-toggle-switch")) metroToggleSwitch.pointerMove(el, e)
+
 })
 
 
+const metroToggleSwitch = {
+    animate: (el, from, to) => {
+        clearInterval(el.mtsanim)
+        clearTimeout(el.mtstime)
+        const isChecked = true //!el.hasAttribute("checked")
+        const animstart = Date.now()
+        const duration = 200
+        el.mtsanim = setInterval(() => {
+            var transition = from + (to - from) * easing.easeOutExpo((Date.now() - animstart) / duration)
+            // (to - from) + ((Date.now() - animstart) / duration) * to
+            transition = transition > 1 ? 1 : transition < 0 ? 0 : transition
+            el.style.setProperty("--transition", (transition))
+        }, 0)
+        el.mtstime = setTimeout(() => {
+            clearInterval(el.mtsanim)
+            el.style.removeProperty("--transition")
+            el.dispatchEvent(new CustomEvent("checked", { isChecked: el.hasAttribute("checked") }))
+        }, duration)
+    },
+    toggle: (el) => {
+        if (el.hasAttribute("checked")) metroToggleSwitch.uncheck(el); else metroToggleSwitch.check(el);
+    },
+    check: (el) => {
+        console.log("check")
+        el.setAttribute("checked", "")
+        metroToggleSwitch.animate(el, el.lastDragTransition || 0, 1)
+    },
+    uncheck: (el) => {
+        console.log("uncheck")
+        el.removeAttribute("checked")
+        metroToggleSwitch.animate(el, el.lastDragTransition || 1, 0)
+    },
+    pointerDown: (el) => {
+        console.log("down")
+    },
+    pointerMove: (el, e) => {
+        const drag = e.pageX - el.lastPointerPosition[0]
+        var transition = (el.hasAttribute("checked") ? 1 : 0) + drag / (el.offsetWidth - 20)
+        transition = transition > 1 ? 1 : transition < 0 ? 0 : transition
+        el.lastDragTransition = transition == 0 ? 0.001 : transition
+        el.style.setProperty("--transition", (transition))
+        //console.log(transition)
+    },
+    pointerUp: (el, click) => {
+        if (click) {
+            metroToggleSwitch.toggle(el)
+        } else {
+            metroToggleSwitch.toggle(el)
+        }
+        console.log("up", click)
+    }
+}
 export default clickDetectorConfig;
+
+

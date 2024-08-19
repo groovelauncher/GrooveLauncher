@@ -49,6 +49,14 @@ function applyOverscroll(bs) {
       }
     );
 }
+function cancelScroll(scroller) {
+  jQuery(window).one("pointerup", () => {
+    requestAnimationFrame(() => {
+      scroller.enable()
+    })
+  })
+  scroller.disable()
+}
 function GrooveScroll(selector, options = {}) {
   const scroller = new BScroll(selector, Object.assign({
     disableMouse: false,
@@ -60,16 +68,7 @@ function GrooveScroll(selector, options = {}) {
     useTransition: false
   }, options))
   applyOverscroll(scroller)
-  scroller.cancelScroll = () => {
-    console.log("cancel scroll")
-    $(window).one("pointerup", () => {
-      scroller.enable()
-      console.log("scroll enable")
-
-    })
-    console.log("scroll disable")
-    scroller.disable()
-  }
+  scroller.cancelScroll = () => { cancelScroll(scroller) }
   return scroller
 }
 function GrooveSlide(selector, options = {}) {
@@ -88,10 +87,7 @@ function GrooveSlide(selector, options = {}) {
       easing: "cubic-bezier(0.075, 0.82, 0.165, 1)"
     }
   }, options))
-  scroller.cancelScroll = () => {
-    jQuery(window).one("pointerup", scroller.enable)
-    scroller.disable()
-  }
+  scroller.cancelScroll = () => { cancelScroll(scroller) }
   return scroller
 }
 export { GrooveScroll, GrooveSlide, applyOverscroll };

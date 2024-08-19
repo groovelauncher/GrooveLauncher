@@ -90,7 +90,6 @@ const scrollers = {
         HWCompositing: false
     })
 }
-Object.values(scrollers).forEach(e => applyOverscroll(e))
 setTimeout(() => {
     Object.values(scrollers).forEach(e => e.refresh())
 }, 600);
@@ -168,6 +167,9 @@ document.querySelector("#tile-toggle-switch").addEventListener("checked", (e) =>
     } else {
         document.querySelector("#device-placeholder > svg:nth-child(2)").classList.add("selected")
     }
+})
+document.querySelector("#tile-toggle-switch").addEventListener("pointerdown", (e) => {
+    bs.cancelScroll()
 })
 document.querySelector("#about-app-version").innerText = "Version: " + Groove.getAppVersion()
 

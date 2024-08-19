@@ -1,6 +1,6 @@
 
 import { applyOverscroll, appViewEvents, grooveColors, grooveThemes, setAccentColor } from "../../scripts/shared/internal-app";
-import BScroll from "better-scroll";
+import { GrooveScroll, GrooveSlide } from "../../scripts/overscrollFramework";
 const settingsPages = document.getElementById("settings-pages")
 const appTabs = document.querySelector("div.app-tabs")
 
@@ -8,7 +8,7 @@ var lastX = 0
 const allTabs = document.querySelectorAll("div.app-tabs > p")
 const allPages = Array.from(document.querySelectorAll("#settings-pages > div.settings-pages-container > div.settings-page"))
 
-const bs = new BScroll("#settings-pages", {
+const bs = new GrooveSlide("#settings-pages", {
     scrollX: true,
     scrollY: false,
     click: true,
@@ -73,20 +73,21 @@ function activeTabScroll() {
 }
 activeTabScroll()
 const scrollers = {
-    theme: new BScroll("#settings-pages > div > div.settings-page:nth-child(2)", {
+    theme: new GrooveScroll("#theme-tab", {
         bounceTime: 300,
         swipeBounceTime: 200,
         outOfBoundaryDampingFactor: 1
     }),
-    about: new BScroll("#settings-pages > div > div.settings-page:nth-child(4)", {
+    about: new GrooveScroll("#about-tab", {
         bounceTime: 300,
         swipeBounceTime: 200,
         outOfBoundaryDampingFactor: 1
     }),
-    accentCatalogue: new BScroll("div.accent-color-catalogue", {
+    accentCatalogue: new GrooveScroll("div.accent-color-catalogue", {
         bounceTime: 300,
         swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1
+        outOfBoundaryDampingFactor: 1,
+        HWCompositing: false
     })
 }
 Object.values(scrollers).forEach(e => applyOverscroll(e))

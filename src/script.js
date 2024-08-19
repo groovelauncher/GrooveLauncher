@@ -2,8 +2,9 @@ import jQuery from "jquery";
 window.$ = jQuery
 import appTransition from "./scripts/appTransition.js";
 import clickDetectorConfig from "./scripts/clickDetector.js";
-import BScroll from "better-scroll";
+import { GrooveScroll, GrooveSlide } from "./scripts/overscrollFramework.js";
 import { boardMethods } from "./scripts/GrooveBoard";
+import imageStore from "./scripts/imageStore.js";
 import startUpSequence from "./scripts/startUpSequence";
 import detectDeviceType from "./scripts/detectDeviceType";
 import GrooveBoard from "./scripts/GrooveBoard";
@@ -17,7 +18,8 @@ window.normalizeDiacritics = (input = "") => {
     return normalizeSync(input)
 }
 import GrooveMock from "./scripts/GrooveMock.js";
-
+import BScroll from "better-scroll";
+window.imageStore = imageStore
 const GrooveMockInstance = !window.Groove
 if (GrooveMockInstance) {
     window.Groove = new GrooveMock("./mock/apps.json")
@@ -28,55 +30,25 @@ window["allappsarchive"] = allappsarchive
 window.appTransition = appTransition
 window.GrooveBoard = GrooveBoard
 const scrollers = {
-    main_home_scroller: new BScroll('#main-home-slider', {
+    main_home_scroller: new GrooveSlide('#main-home-slider', {
         scrollX: true,
-        scrollY: false,
-        click: true,
-        tap: true,
-        bounce: false,
-        disableMouse: false,
-        disableTouch: false,
-        HWCompositing: false,
-        slide: {
-            threshold: 100,
-            loop: false,
-            interval: false,
-            autoplay: false,
-            easing: "cubic-bezier(0.075, 0.82, 0.165, 1)"
-        },
+        scrollY: false
     }),
-    tile_page_scroller: new BScroll('#main-home-slider > div > div:nth-child(1) > div.inner-page', {
+    tile_page_scroller: new GrooveScroll('#main-home-slider > div > div:nth-child(1) > div.inner-page', {
         scrollX: false,
         scrollY: true,
         mouseWheel: true,
-        disableMouse: false,
-        disableTouch: false,
-        HWCompositing: false,
-        bounceTime: 300,
-        swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1,
-        useTransition:false
+
     }),
-    app_page_scroller: new BScroll('#main-home-slider > div > div:nth-child(2) > div > div.app-list', {
+    app_page_scroller: new GrooveScroll('#main-home-slider > div > div:nth-child(2) > div > div.app-list', {
         scrollX: false,
         scrollY: true,
         mouseWheel: true,
-        disableMouse: false,
-        disableTouch: false,
-        HWCompositing: false,
-        bounceTime: 300,
-        swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1,
-        useTransition:false
+
     })
 }
-applyOverscroll(scrollers.tile_page_scroller)
-applyOverscroll(scrollers.app_page_scroller)
-function cancelScroll(scroller) {
-    scroller.scrollTo(null)
-}
+
 window.scrollers = scrollers
-window.cancelScroll = cancelScroll
 
 window.console.image = function (url, size = 100) {
     if (typeof url == "string") {

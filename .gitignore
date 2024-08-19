@@ -139,3 +139,4 @@ dist
 # Uncompiled apps
 www/apps
 android/app/src/main/assets/*
+android/.idea/deploymentTargetSelector.xml

@@ -220,9 +220,9 @@ $(window).on("pointerdown", function (e) {
             window.appMenuCreationSecondTimeout = setTimeout(() => {
                 $("div.app-list-page").addClass("app-menu-back").removeClass("app-menu-back-intro")
                 e.target.appMenuState = true
-                cancelScroll(scrollers.app_page_scroller)
+                scrollers.app_page_scroller.cancelScroll()
 
-            }, 500);
+            }, 375);
 
         }, 500);
     }
@@ -309,6 +309,7 @@ function getTranslateY(element) {
     return 0;
 }
 function stickyLetter() {
+    return
     const lastChange = GrooveBoard.backendMethods.navigation.history.slice(-1)[0].change
     if (lastChange != "appMenuOpened") {
         requestAnimationFrame(stickyLetter)
@@ -342,9 +343,9 @@ function stickyLetter() {
                     transition: "transform 0s",
                     transform: `translateY(${elementScrollTop - 64}px)`
                 })
-                if(allLetterTiles[index - 1]){
+                if (allLetterTiles[index - 1]) {
                     stickyLetterTile.attr("icon", allLetterTiles[index - 1].getAttribute("icon")).children("p.groove-app-tile-icon").text(allLetterTiles[index - 1].getAttribute("icon"))
-                
+
                 }
             } else {
 

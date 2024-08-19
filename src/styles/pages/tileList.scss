@@ -263,7 +263,7 @@ div.app-page-icon-banner {
 
 div.groove-home-tile {
     @include flow-touch;
-    --flow-rotate-scale: .25;
+    --flow-rotate-scale: .1;
 
     * {
         pointer-events: none;

@@ -427,6 +427,7 @@ div.letter-selector {
 }
 
 div.groove-app-menu {
+  filter: blur(0px);
   position: absolute;
   left: 0px;
   top: 0px;
@@ -452,7 +453,7 @@ div.groove-app-menu {
       top: 0px;
       background: var(--metro-foreground);
       transform-origin: var(--pointerX) 0%;
-      animation: groove-app-menu-intro-after 1s ease-in;
+      animation: groove-app-menu-intro-after .75s ease-in;
 
       @keyframes groove-app-menu-intro-after {
         0% {
@@ -471,53 +472,58 @@ div.groove-app-menu {
     }
 
     min-height: 0px;
-    animation: groove-app-menu-intro 1s cubic-bezier(0.075, 0.82, 0.165, 1);
-
+    animation: groove-app-menu-intro .75s cubic-bezier(0.075, 0.82, 0.165, 1);
+    transform-origin: 50% 0%;
     @keyframes groove-app-menu-intro {
       0% {
         height: 0px;
+        transform: scaleY(1);
         background: transparent;
       }
 
       50% {
         height: 0px;
+        transform: scaleY(1);
         background: transparent;
       }
 
       51% {
-        background: white;
+        height: 154px;
+        transform: scaleY(0);
+        background: var(--metro-foreground);
       }
 
       100% {
         height: 154px;
+        transform: scaleX(1);
       }
     }
 
     &.intro-bottom {
-      animation: groove-app-menu-intro-bottom 1s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+      animation: groove-app-menu-intro-bottom .75s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
 
       @keyframes groove-app-menu-intro-bottom {
         0% {
           height: 0px;
+          transform: scaleY(1) translateY(0%);
           background: transparent;
-          transform: translateY(0%);
         }
-
+  
         50% {
           height: 0px;
+          transform: scaleY(1) translateY(0%);
           background: transparent;
-          transform: translateY(0%);
         }
-
+  
         51% {
-          background: white;
-          transform: translateY(-100%);
+          height: 154px;
+          transform: scaleY(0) translateY(-100%);
+          background: var(--metro-foreground);
         }
-
+  
         100% {
           height: 154px;
-          transform: translateY(-100%);
-
+          transform: scaleX(1) translateY(-100%);
         }
       }
     }
@@ -582,7 +588,7 @@ div.app-list-page {
         pointer-events: none !important;
       }
 
-      transition: .25s ease-out !important;
+      transition: .35s ease-out !important;
       transform: translateZ(-10px) !important;
       opacity: .5;
     }

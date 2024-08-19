@@ -21,9 +21,7 @@ const grid = GridStack.init({
 });
 grid.on("dragstart", function (event, el) {
   // el.classList.add("grid-dragging")
-  setTimeout(() => {
-    scrollers.tile_page_scroller.scrollTo(null);
-  }, 1000);
+  scrollers.tile_page_scroller.cancelScroll()
 });
 grid.on("dragstop", function (event, el) {
   setTimeout(() => {
@@ -89,11 +87,11 @@ const homeTileEditSwitch = {
         const hash = hashStringToNumber(e.el.getAttribute("packagename"), 500)
         e.el.style.setProperty("--shake-x",
           perlin.get(distance, hash) * 2 + Math.pow2(perlin.get(distance * 1.5, hash), .5)
-          * 5
+          * 10
           + "px")
         e.el.style.setProperty("--shake-y",
           perlin.get(distance, hash + 1000) * 2 + Math.pow2(perlin.get(distance * 1.5, hash + 1000), .5)
-          * 5
+          * 10
           + "px")
       })
 

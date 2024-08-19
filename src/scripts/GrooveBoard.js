@@ -5,6 +5,7 @@ import {
 } from "./GrooveProperties";
 import appViewEvents from "./appViewEvents"
 import canvasImageFit from "./canvasImageFit";
+import imageStore from "./imageStore";
 window.grooveTileColumns = grooveTileColumns;
 window.grooveColors = grooveColors;
 window.grooveThemes = grooveThemes;
@@ -135,14 +136,14 @@ const boardMethods = {
             ? 1
             : 2;
         const el = GrooveBoard.boardMethods.createHomeTile(
-          [1, 1],
+          [2, 2],
           {
             packageName: findTile.getAttribute("packagename"),
             title: findTile.getAttribute("title"),
             icon: findTile.getAttribute("icon"),
             imageIcon: findTile.getAttribute("imageicon") == "true",
             //  supportedSizes: ["s", "m", "w", "l"]
-            supportedSizes: ["s", "m", "w", "l"],
+            supportedSizes: ["s", "m", "w"],
           },
           true
         );
@@ -275,7 +276,7 @@ const backendMethods = {
         const el = boardMethods.createAppTile({
           title: app.label,
           packageName: app.packageName,
-          imageIcon: ipe ? false  : true,
+          imageIcon: ipe ? false : true,
           icon: ipe ? ipe.icon : Groove.getAppIconURL(app.packageName),
         });
         if (ipe) {
@@ -569,15 +570,15 @@ const backendMethods = {
       window.innerWidth,
       window.innerHeight + 50
     ).getContext("2d"),
-    load: async (url) => {
+    load: async (image, doNotSave = false) => {
       if (window.lastClippedWallpaper)
         URL.revokeObjectURL(window.lastClippedWallpaper);
-      const image = await new Promise((resolve, reject) => {
+      /*const image = await new Promise((resolve, reject) => {
         let img = new Image();
         img.onload = () => resolve(img);
         img.onerror = reject;
         img.src = url;
-      });
+      });*/
       let ctx = backendMethods.wallpaper.context;
       ctx.canvas.width = window.innerWidth;
       ctx.canvas.height = window.innerHeight + 50;
@@ -594,10 +595,11 @@ const backendMethods = {
       //document.querySelector("#wallpapertest").style.setProperty("background-image", `url(${rurl})`)
       window.lastClippedWallpaper = rurl;
       backendMethods.wallpaper.recalculateOffsets();
- 
+
       $("div.slide-page.slide-page-home")
         .css("background", `url(${rurl})`)
         .addClass("wallpaper-behind");
+      if (!doNotSave) imageStore.saveImage("wallpaper", image)
       return rurl;
     },
     recalculateOffsets: (scrollpos) => {

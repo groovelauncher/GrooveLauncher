@@ -67,11 +67,9 @@
             </p>
             <div class="group">
               <p class="group-title">Background</p>
-              <div class="picker" selected="1">
-                <div class="picker-container">
-                  <div class="picker-option">Light</div>
-                  <div class="picker-option">Dark</div>
-                </div>
+              <div class="metro-dropdown-menu" selected="1">
+                <div class="metro-dropdown-option">Light</div>
+                <div class="metro-dropdown-option">Dark</div>
               </div>
             </div>
 
@@ -128,8 +126,24 @@
           </div>
         </div>
         <div class="settings-page" id="display-tab">
-          <button class="metro-button">Dump Apps JSON</button>
-          <button class="metro-button">Reset Groove Launcher (No Confirmation!)</button>
+          <div class="group">
+            <p class="group-title">Scaling</p>
+            <div id="display-scaling-chooser" class="metro-dropdown-menu" selected="2">
+              <div class="metro-dropdown-option">80%</div>
+              <div class="metro-dropdown-option">90%</div>
+              <div class="metro-dropdown-option">100%</div>
+              <div class="metro-dropdown-option">110%</div>
+              <div class="metro-dropdown-option">125%</div>
+            </div>
+          </div>
+          <div class="group">
+            <p class="group-title">Font</p>
+            <div id="font-chooser" class="metro-dropdown-menu" selected="0">
+              <div class="metro-dropdown-option">Open Sans</div>
+              <div class="metro-dropdown-option">Noto Sans</div>
+              <div class="metro-dropdown-option">Choose...<input hidden type="file" accept=".ttf" /></div>
+            </div>
+          </div>
         </div>
         <div class="settings-page" id="advanced-tab">
           <button class="metro-button">Dump Apps JSON</button>

@@ -156,8 +156,8 @@ div.tile-list-page {
         div.groove-home-tile:not(.home-menu-selected) {
             transition: left .25s, top .25s, opacity .25s, transform .25s;
             opacity: .6;
-            --shake-x:0px;
-            --shake-y:0px;
+            --shake-x: 0px;
+            --shake-y: 0px;
             transform: scale(.925) translate(var(--shake-x), var(--shake-y));
             --shake-easing: cubic-bezier(.25, 0, .53, 1);
             will-change: left,
@@ -269,12 +269,27 @@ div.groove-home-tile {
         pointer-events: none;
     }
 
+    &:not([gs-w][gs-h]) {
+        img.groove-home-tile-imageicon {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            object-fit: fill;
+        }
+    }
+
     &[gs-w="2"],
     &[gs-h="2"],
     &[gs-w="4"],
     &[gs-h="4"] {
         div.groove-home-inner-tile {
-            img.groove-home-tile-imageicon {}
+            img.groove-home-tile-imageicon {
+                width: 60%;
+                height: 60%;
+                position: absolute;
+                left: 20%;
+                top: 20%;
+            }
 
             p.groove-home-tile-icon {
                 font-size: 100px;
@@ -329,8 +344,8 @@ div.groove-home-tile {
         background: var(--accent-color);
 
         img.groove-home-tile-imageicon {
-            filter: saturate(0) brightness(0.6) contrast(10);
-            mix-blend-mode: plus-lighter;
+            //filter: saturate(0) brightness(0.6) contrast(10);
+            //mix-blend-mode: plus-lighter;
             position: absolute;
             left: 0px;
             top: 0px;

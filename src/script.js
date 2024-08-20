@@ -145,10 +145,13 @@ window.generateShakeAnimations = generateShakeAnimations
 
 window.addEventListener("activityPause", () => {
     clearTimeout(window.appTransitionLaunchError)
+    document.body.style.visibility = "hidden"
 })
 window.addEventListener("activityResume", () => {
     setTimeout(() => {
+        document.body.style.removeProperty("visibility")
         appTransition.onResume()
+
     }, 200);
 })
 

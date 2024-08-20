@@ -54,6 +54,7 @@
     text-align: left;
     width: max-content;
     height: min-content;
+
     &.active {
         background: var(--accent-color);
         color: white;
@@ -87,4 +88,57 @@
         position: absolute;
         left: calc(2px + var(--transition)* 69px);
     }
+}
+
+.metro-dropdown-menu {
+    height: 48px;
+    text-transform: lowercase;
+    overflow: hidden;
+
+    perspective: var(--flow-perspective);
+
+    &.active,
+    &.clicked {
+        box-shadow: inset 0px 0px 0px 3px var(--accent-color);
+        background-color: white;
+        color: black;
+    }
+
+    @include flow-touch;
+    box-shadow: inset 0px 0px 0px 3px var(--metro-foreground);
+    position: relative;
+
+    &:not(.active) {
+        transition: transform var(--flow-touch-up-transition) ease-out, height .2s ease-in !important;
+    }
+
+    &.clicked {
+        height: 112px;
+
+
+        .metro-dropdown-option {
+            pointer-events: all !important;
+            margin: 0px 10px;
+            height: 56px;
+        }
+    }
+
+    &:not(.clicked) {
+        .metro-dropdown-option {
+            pointer-events: none;
+        }
+    }
+
+    .metro-dropdown-option {
+        @include flow-touch;
+        transition: height .2s ease-in, margin-top .2s ease-in;
+        font-size: 25px;
+        margin: 0px 10px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+    }
+
+
+
 }

@@ -69,6 +69,7 @@ function GrooveScroll(selector, options = {}) {
   }, options))
   applyOverscroll(scroller)
   scroller.cancelScroll = () => { cancelScroll(scroller) }
+  scroller.content.style.setProperty("will-change","transform")
   return scroller
 }
 function GrooveSlide(selector, options = {}) {

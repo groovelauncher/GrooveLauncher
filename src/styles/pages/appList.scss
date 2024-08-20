@@ -274,8 +274,8 @@ div.inner-page.app-list-page {
     left: 0px;
     top: 0px;
     background: transparent;
-    filter: saturate(0) brightness(0.6) contrast(10);
-    mix-blend-mode: plus-lighter;
+    //filter: saturate(0) brightness(0.6) contrast(10);
+    //mix-blend-mode: plus-lighter;
   }
 
   p.groove-app-tile-icon {
@@ -312,7 +312,7 @@ div.inner-page.app-list-page {
   background: var(--metro-background) !important;
   box-shadow: 0px calc(-6px - var(--window-inset-top)) 0px var(--metro-background);
   z-index: 10;
-  opacity: 0;
+  visibility: hidden;
 }
 
 .groove-element.groove-letter-tile {
@@ -474,6 +474,7 @@ div.groove-app-menu {
     min-height: 0px;
     animation: groove-app-menu-intro .75s cubic-bezier(0.075, 0.82, 0.165, 1);
     transform-origin: 50% 0%;
+
     @keyframes groove-app-menu-intro {
       0% {
         height: 0px;
@@ -508,19 +509,19 @@ div.groove-app-menu {
           transform: scaleY(1) translateY(0%);
           background: transparent;
         }
-  
+
         50% {
           height: 0px;
           transform: scaleY(1) translateY(0%);
           background: transparent;
         }
-  
+
         51% {
           height: 154px;
           transform: scaleY(0) translateY(-100%);
           background: var(--metro-foreground);
         }
-  
+
         100% {
           height: 154px;
           transform: scaleX(1) translateY(-100%);

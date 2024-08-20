@@ -51,6 +51,11 @@ window.addEventListener("pointerdown", (e) => {
         el.style.setProperty("--flow-rotate-y", "0deg")
         el.style.setProperty("--flow-rotate-z", "0deg")
     }
+    if (focusedElements.length) {
+        focusedElements.forEach(element => {
+            if (element !== event.target && !element.contains(event.target)) element.blurElement()
+        });
+    }
     pointerDownElements[e.pointerId] = el
     flowTouchRotate(el, e.pageX, e.pageY)
 
@@ -63,8 +68,9 @@ window.addEventListener("pointerup", (e) => {
         if (hypotenuse <= clickDetectorConfig.tapDistanceThreshold) {
             const event = new CustomEvent("flowClick", { pageX: e.pageX, pageY: e.pageY, target: el });
             el.dispatchEvent(event);
-            if (el.classList.contains("metro-toggle-switch")) {
-            }
+
+            if (el.classList.contains("metro-dropdown-menu")) { metroDropdownMenu.click(el) }
+            if (el.classList.contains("metro-dropdown-option")) { metroDropdownMenu.select($(el).parent()[0], $(el).index()) }
             if (el.classList.contains("metro-toggle-switch")) metroToggleSwitch.pointerUp(el, true)
         } else {
             if (el.classList.contains("metro-toggle-switch")) metroToggleSwitch.pointerUp(el, false)
@@ -110,7 +116,7 @@ const metroToggleSwitch = {
         el.mtstime = setTimeout(() => {
             clearInterval(el.mtsanim)
             el.style.removeProperty("--transition")
-            el.dispatchEvent(new CustomEvent("checked", { isChecked: el.hasAttribute("checked") }))
+            el.dispatchEvent(new CustomEvent("checked", { detail: { isChecked: el.hasAttribute("checked") } }))
         }, duration)
     },
     toggle: (el) => {
@@ -146,6 +152,67 @@ const metroToggleSwitch = {
         console.log("up", click)
     }
 }
+var focusedElements = new Set()
+const metroDropdownMenu = {
+    click: (el) => {
+        el.blurElement = () => { metroDropdownMenu.blur(el) }
+        focusedElements.add("el")
+        el.classList.add("clicked")
+        el.querySelector("div.metro-dropdown-option").style.marginTop = 0
+        const children = el.querySelectorAll("div.metro-dropdown-option")
+        el.style.height = children.length * 56 + "px"
+        children[el.getAttribute("selected")].style.color = "var(--accent-color)"
+    },
+    blur: (el) => {
+        if (focusedElements.has(el)) {
+            focusedElements.remove(el)
+            el.classList.remove("clicked")
+        } else {
+            el.classList.remove("clicked")
+        }
+        el.style.removeProperty("height")
+        el.querySelectorAll("div.metro-dropdown-option").forEach(el => { el.style.removeProperty("color") })
+    },
+    select: (el, index, event = true) => {
+        const lastIndex = el.getAttribute("selected")
+
+        console.log("select", el, index)
+        el.setAttribute("selected", index)
+        metroDropdownMenu.blur(el)
+        const children = el.querySelectorAll("div.metro-dropdown-option")
+        el.querySelector("div.metro-dropdown-option").style.marginTop = index * -48 + "px"
+        if (event) setTimeout(() => { el.dispatchEvent(new CustomEvent("selected", { detail: { index: index,prevIndex:lastIndex } })) }, 200);
+    }
+}
+document.querySelectorAll("div.metro-dropdown-menu").forEach(el => {
+    const index = el.getAttribute("selected") || 0
+    el.selectOption = (index) => {
+        metroDropdownMenu.select(el, index, false)
+    }
+    metroDropdownMenu.select(el, index, false)
+})
+
 export default clickDetectorConfig;
 
 
+/*document.querySelector("div.first-page > div > div.group > div.picker").addEventListener("flowClick", (e) => {
+    if (e.target.classList.contains("clicked")) {
+        e.target.classList.remove("clicked")
+    } else {
+        e.target.classList.add("clicked")
+    }
+})
+
+window.addEventListener('click', function (event) {
+    if (!document.querySelector("div.first-page > div > div.group > div.picker").contains(event.target)) {
+        document.querySelector("div.first-page > div > div.group > div.picker").classList.remove("clicked")
+    }
+});
+document.querySelectorAll("div.first-page > div > div.group > div.picker div.picker-option").forEach(e => e.addEventListener("flowClick", (e) => {
+    const index = Array.from(e.target.parentNode.children).indexOf(e.target)
+    setTimeout(() => {
+        appViewEvents.setTheme(1 - index)
+    }, 200);
+    document.querySelector("div.first-page > div > div.group > div.picker").setAttribute("selected", index)
+    document.querySelector("div.first-page > div > div.group > div.picker").classList.remove("clicked")
+}))*/

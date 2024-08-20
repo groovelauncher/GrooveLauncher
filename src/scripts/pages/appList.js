@@ -114,7 +114,9 @@ $(window).on("finishedLoading", () => {
         scrollers.tile_page_scroller.refresh()
         scrollers.app_page_scroller.refresh()
     })
-
+    window.scrollers.app_page_scroller.scroller.translater.hooks.on('translate', (point) => {
+        stickyLetter(-point.y)
+    })
     $("div.letter-selector-letter").on("flowClick", function (e) {
         if (e.target.classList.contains("disabled")) return
         letterSelectorSwitch.off()
@@ -285,10 +287,9 @@ window.appMenuClose = appMenuClose
 $(window).on("finishedLoading", () => {
     scrollers.app_page_scroller.scroller.hooks.on('scrollStart', appImmediateClose)
     scrollers.main_home_scroller.scroller.hooks.on('scrollStart', appImmediateClose)
-    stickyLetter()
+    stickyLetter(0)
 })
-window.stickyLetter = stickyLetter
-var lastScroll = 0
+
 
 function getTranslateY(element) {
     // Get the computed style of the element
@@ -308,21 +309,30 @@ function getTranslateY(element) {
     // Return 0 if there is no transform or translateY is not found
     return 0;
 }
-function stickyLetter() {
+
+var lastScroll = 0
+function stickyLetter(scroll) {
+    scroll = Math.max(Math.min(scroll, -window.scrollers.app_page_scroller.maxScrollY), -window.scrollers.app_page_scroller.minScrollY)
+    clearTimeout(window.stickyLetterTimeout)
+    var stickyEl
+    var overthrowingEl
+    const wInsets = windowInsets()
+    const allLetterTiles = $("div.app-list-container > div.groove-element.groove-app-tile.groove-letter-tile")
+    Array.from(allLetterTiles).reverse().forEach((element, index) => {
+        const scrollTop = element.offsetTop - scroll - wInsets.top
+        if (scrollTop < 0 && !stickyEl) stickyEl = element; else if (0 <= scrollTop && scrollTop < 64 && !overthrowingEl) overthrowingEl = element;
+    })
+    if (stickyEl) {
+        stickyLetterTile.css({ visibility: "visible", transition: "0s", transform: overthrowingEl ? `translateY(${overthrowingEl.offsetTop - scroll - wInsets.top - 64}px)` : "" })
+        stickyLetterTile.children("p.groove-app-tile-icon").text(stickyEl.getAttribute("icon"))
+    } else {
+        stickyLetterTile.css({ visibility: "hidden" })
+    }
+    console.log(stickyEl, overthrowingEl)
+    window.stickyLetterTimeout = setTimeout(() => {
+
+    }, 10);
     return
-    const lastChange = GrooveBoard.backendMethods.navigation.history.slice(-1)[0].change
-    if (lastChange != "appMenuOpened") {
-        requestAnimationFrame(stickyLetter)
-        return
-
-    }
-    var scroll
-    try {
-        scroll = - $("div.app-list-container").offset().top
-    } catch (error) {
-        scroll = 0
-    }
-
     if (scroll != lastScroll) {
 
         $("div.app-list-container > div.groove-element.groove-app-tile.groove-letter-tile").css("transition", " all 0s")

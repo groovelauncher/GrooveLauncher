@@ -46,19 +46,19 @@ public class WebInterface {
     @JavascriptInterface
     public String getSystemInsets() throws JSONException {
         JSONObject systemInsets = new JSONObject();
-        systemInsets.put("left", (mainActivity.lastInsets == null) ? 0 : mainActivity.lastInsets.left / getDevicePixelRatio());
-        systemInsets.put("top", (mainActivity.lastInsets == null) ? 0 : mainActivity.lastInsets.top / getDevicePixelRatio());
-        systemInsets.put("right", (mainActivity.lastInsets == null) ? 0 : mainActivity.lastInsets.right / getDevicePixelRatio());
-        systemInsets.put("bottom", (mainActivity.lastInsets == null) ? 0 : mainActivity.lastInsets.bottom / getDevicePixelRatio());
+        systemInsets.put("left", (mainActivity.webView.lastInsets == null) ? 0 : mainActivity.webView.lastInsets.left / getDevicePixelRatio());
+        systemInsets.put("top", (mainActivity.webView.lastInsets == null) ? 0 : mainActivity.webView.lastInsets.top / getDevicePixelRatio());
+        systemInsets.put("right", (mainActivity.webView.lastInsets == null) ? 0 : mainActivity.webView.lastInsets.right / getDevicePixelRatio());
+        systemInsets.put("bottom", (mainActivity.webView.lastInsets == null) ? 0 : mainActivity.webView.lastInsets.bottom / getDevicePixelRatio());
         return systemInsets.toString();
     }
 
     @JavascriptInterface
     public String retrieveApps() throws JSONException {
-        mainActivity.retrieveApps();
-        Log.d("groovelauncher", "retrieveApps: " + mainActivity.retrievedApps.toString());
+        mainActivity.webView.retrieveApps();
+        Log.d("groovelauncher", "retrieveApps: " + mainActivity.webView.retrievedApps.toString());
         JSONArray retrievedApps = new JSONArray();
-        for (ResolveInfo resolveInfo : mainActivity.retrievedApps) {
+        for (ResolveInfo resolveInfo : mainActivity.webView.retrievedApps) {
             JSONObject appInfo = new JSONObject();
             appInfo.put("packageName", resolveInfo.activityInfo.packageName);
             appInfo.put("label", resolveInfo.loadLabel(mainActivity.packageManager).toString());

@@ -93,27 +93,6 @@ const scrollers = {
 setTimeout(() => {
     Object.values(scrollers).forEach(e => e.refresh())
 }, 600);
-document.querySelector("div.first-page > div > div.group > div.picker").addEventListener("flowClick", (e) => {
-    if (e.target.classList.contains("clicked")) {
-        e.target.classList.remove("clicked")
-    } else {
-        e.target.classList.add("clicked")
-    }
-})
-
-window.addEventListener('click', function (event) {
-    if (!document.querySelector("div.first-page > div > div.group > div.picker").contains(event.target)) {
-        document.querySelector("div.first-page > div > div.group > div.picker").classList.remove("clicked")
-    }
-});
-document.querySelectorAll("div.first-page > div > div.group > div.picker div.picker-option").forEach(e => e.addEventListener("flowClick", (e) => {
-    const index = Array.from(e.target.parentNode.children).indexOf(e.target)
-    setTimeout(() => {
-        appViewEvents.setTheme(1 - index)
-    }, 200);
-    document.querySelector("div.first-page > div > div.group > div.picker").setAttribute("selected", index)
-    document.querySelector("div.first-page > div > div.group > div.picker").classList.remove("clicked")
-}))
 const accentColorPicker = document.getElementById("accent-color-picker")
 document.querySelector("div.color-picker").addEventListener("flowClick", (e) => {
     clearTimeout(window.accentColorPickerTimeout)
@@ -180,3 +159,44 @@ document.querySelector("#advanced-tab > button:nth-child(2)").addEventListener("
     window.localStorage.clear()
     appViewEvents.reloadApp()
 })
+
+function handleFileInput(event) {
+    const fileInput = event.target;
+    const files = fileInput.files;
+
+    if (files.length === 0) {
+        // User clicked cancel or didn't select a file
+        alert('File selection was canceled.');
+    } else {
+        const file = files[0]; // Get the selected file
+
+        if (file.type === 'font/ttf') {
+            // Save the font to IndexedDB (using the saveFont function from before)
+            saveFont('myFont', file)
+                .then(() => {
+                    alert('Font saved successfully!');
+                })
+                .catch((error) => {
+                    alert('Error saving font: ' + error.message);
+                });
+        } else {
+            alert('Please select a valid TTF font file.');
+        }
+    }
+}
+
+// Attach the event listener to the file input
+document.getElementById("display-scaling-chooser").addEventListener("selected", (e) => {
+    console.log("srlected", e)
+})
+document.getElementById("font-chooser").addEventListener("selected", (e) => {
+    const index = e.detail.index
+    const lastOne = index == document.getElementById("font-chooser").children.length - 1
+    if (lastOne) {
+        document.getElementById("font-chooser").selectOption(e.detail.prevIndex)
+        document.getElementById("font-chooser").querySelector("input").dispatchEvent(new MouseEvent("click"))
+    }
+    console.log("selectd,", e.detail.index)
+})
+
+document.getElementById("font-chooser").querySelector("input").addEventListener('change', handleFileInput);

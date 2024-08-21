@@ -324,14 +324,26 @@ const backendMethods = {
       history.pushState(change, "", window.location.href); // Explicitly using the current URL
       listHistory();
     },
-    back: (action = true) => {
+    back: (action = true, homeBack = false) => {
       if (backendMethods.navigation.history.length <= 1) return;
       if (action == false)
         backendMethods.navigation.lastPush.backAction = () => { };
       const act = backendMethods.navigation.history.pop();
       //console.log("HISTORY BACK", act.change);
-      act.backAction();
+      act.backAction(homeBack);
       listHistory();
+    },
+    home: () => {
+      const actions = backendMethods.navigation.history.slice(1).reverse()
+      let count = actions.length - 1;
+
+      const countdown = setInterval(() => {
+        backendMethods.navigation.back(true, true)
+        count--;
+        if (count < 0) {
+          clearInterval(countdown);
+        }
+      }, 100);
     },
     get lastPush() {
       if (GrooveBoard.backendMethods.navigation.history.length == 0)
@@ -420,8 +432,8 @@ const backendMethods = {
           backendMethods.navigation.push(
             "appOpened/" + packageName,
             () => { },
-            () => {
-              backendMethods.closeInternalApp(packageName)
+            (homeBack = false) => {
+              backendMethods.closeInternalApp(packageName, homeBack)
             }
           );
 
@@ -434,11 +446,11 @@ const backendMethods = {
 
     }
   },
-  destroyInternalApp: (packageName) => {
+  destroyInternalApp: (packageName, homeBack = false) => {
     if (!window.launchedInternalApps) window.launchedInternalApps = new Set();
     if (window.launchedInternalApps.has(packageName)) {
       document.querySelectorAll(`iframe.groove-element.groove-app-view[packageName="${packageName}"]`).forEach(e => e.remove())
-      appTransition.onResume(true)
+      appTransition.onResume(!homeBack)
       window.launchedInternalApps.delete(packageName)
     } else {
       console.log("App is not open!")
@@ -446,16 +458,16 @@ const backendMethods = {
     }
 
   },
-  closeInternalApp: (packageName) => {
+  closeInternalApp: (packageName, homeBack = false) => {
     //Alert app
     try {
-      appViewEvents.softExit(document.querySelector(`iframe.groove-element.groove-app-view[packageName="${packageName}"]`))
+      appViewEvents.softExit(document.querySelector(`iframe.groove-element.groove-app-view[packageName="${packageName}"]`), homeBack)
       setTimeout(() => {
-        backendMethods.destroyInternalApp(packageName)
+        backendMethods.destroyInternalApp(packageName, homeBack)
       }, 250);
     } catch (error) {
       console.log("Soft exit failed! Destroying process")
-      backendMethods.destroyInternalApp(packageName)
+      backendMethods.destroyInternalApp(packageName, homeBack)
     }
   },
   setAccentColor: (color, doNotSave = false) => {
@@ -478,7 +490,7 @@ const backendMethods = {
       console.error("Invalid theme!");
     }
   },
-  setTileColumns: (int, doNotSave) => {
+  setTileColumns: (int, doNotSave = false) => {
     if (Object.values(grooveTileColumns).includes(int)) {
       tileListGrid.column(
         int,
@@ -489,6 +501,11 @@ const backendMethods = {
     } else {
       console.error("Invalid tile size!");
     }
+  },
+  setUIScale: (scale, doNotSave = false) => {
+    scale = scale < .25 ? .25 : scale > 4 ? 4 : scale
+    Groove.setUIScale(scale)
+    if (!doNotSave) localStorage.setItem("UIScale", scale)
   },
   homeConfiguration: {
     save: () => {
@@ -580,8 +597,8 @@ const backendMethods = {
         img.src = url;
       });*/
       let ctx = backendMethods.wallpaper.context;
-      ctx.canvas.width = window.innerWidth;
-      ctx.canvas.height = window.innerHeight + 50;
+      ctx.canvas.width = Math.max(window.innerWidth, window.innerHeight) + 100;
+      ctx.canvas.height = Math.max(window.innerWidth, window.innerHeight) + 100;
       ctx.filter = "brightness(.8)";
       canvasImageFit.cover(
         ctx,
@@ -591,15 +608,25 @@ const backendMethods = {
         ctx.canvas.width,
         ctx.canvas.height
       );
-      const rurl = await URL.createObjectURL(await ctx.canvas.convertToBlob());
+      const blob = await ctx.canvas.convertToBlob()
+      const rurl = await backendMethods.wallpaper.loadBlob(blob)
+      if (!doNotSave) {
+        await imageStore.saveImage("wallpaper", blob);
+      }
+      return rurl;
+    },
+    loadBlob: async (blob) => {
+      const rurl = await URL.createObjectURL(blob);
       //document.querySelector("#wallpapertest").style.setProperty("background-image", `url(${rurl})`)
       window.lastClippedWallpaper = rurl;
       backendMethods.wallpaper.recalculateOffsets();
 
       $("div.slide-page.slide-page-home")
-        .css("background", `url(${rurl})`)
+        .css("background-image", `url(${rurl})`)
         .addClass("wallpaper-behind");
-      if (!doNotSave) imageStore.saveImage("wallpaper", image)
+      setTimeout(() => {
+        window.canPressHomeButton = true
+      }, 200);
       return rurl;
     },
     recalculateOffsets: (scrollpos) => {
@@ -632,12 +659,13 @@ const backendMethods = {
         );
       }
     },
-    remove: () => {
+    remove: async () => {
       if (window.lastClippedWallpaper)
         URL.revokeObjectURL(window.lastClippedWallpaper);
       $("div.slide-page.slide-page-home")
         .css("background", "")
         .removeClass("wallpaper-behind");
+      if (await imageStore.hasImage("wallpaper")) imageStore.removeImage("wallpaper")
     },
   },
 };
@@ -654,6 +682,10 @@ function listHistory() {
 window.addEventListener("backButtonPress", function () {
   backendMethods.navigation.back();
 });
+window.addEventListener("homeButtonPress", function () {
+  //if(!!window.canPressHomeButton)
+  backendMethods.navigation.home();
+});
 window.addEventListener('message', (event) => {
   if (event.data["action"]) {
     if (event.data.action == "setTheme") {
@@ -663,6 +695,8 @@ window.addEventListener('message', (event) => {
     } else if (event.data.action == "setTileColumns") {
       backendMethods.setTileColumns(event.data.argument);
       backendMethods.homeConfiguration.save()
+    } else if (event.data.action == "setUIScale") {
+      backendMethods.setUIScale(event.data.argument);
     } else if (event.data.action == "reloadApp") {
       window.location.reload()
     }

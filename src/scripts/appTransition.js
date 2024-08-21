@@ -25,7 +25,7 @@ function appPageOffset() {
     return document.querySelector("div.tile-list-container").getBoundingClientRect().left
 }
 const indexElements = (page) => {
-    document.querySelectorAll('div.app-list-container > div.groove-element.groove-app-tile, div.tile-list-inner-container > div.groove-element.groove-home-tile').forEach(element => {
+    document.querySelectorAll('div.app-list-container > div.groove-element.groove-app-tile:not(.search-hidden), div.tile-list-inner-container > div.groove-element.groove-home-tile').forEach(element => {
         element.style.removeProperty("--app-animation-index")
         element.style.removeProperty("--app-animation-distance")
     });

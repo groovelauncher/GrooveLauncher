@@ -2,9 +2,9 @@ const iconPackConverter = [
   //Calculator
   { apps: ["com.sec.android.app.popupcalculator", "com.android.calculator", "com.android.calculator2"], icon: "󰃬", pack: 1 },
   //Camera
-  { apps: ["com.sec.android.app.camera", "com.samsung.android.app.cameraassistant", "org.lineageos.aperture"], icon: "󰄀", pack: 1 },
+  { apps: ["com.sec.android.app.camera", "com.samsung.android.app.cameraassistant", "org.lineageos.aperture", "com.android.camera2"], icon: "󰄀", pack: 1 },
   //People
-  { apps: ["com.samsung.android.app.contacts", "com.android.contacts"], icon: "", pack: 1 },
+  { apps: ["com.samsung.android.app.contacts", "com.android.contacts", "com.google.android.contacts"], icon: "", pack: 1 },
 
   //Phone
   {
@@ -28,11 +28,11 @@ const iconPackConverter = [
   //Browser
   { apps: ["com.metro.browser", "org.lineageos.jelly"], icon: "", pack: 1 },
   //Calendar
-  { apps: ["com.samsung.android.calendar", "org.lineageos.etar"], icon: "󰸗", pack: 1 },
+  { apps: ["com.samsung.android.calendar", "org.lineageos.etar", "com.google.android.calendar"], icon: "󰸗", pack: 1 },
   //Clock
-  { apps: ["com.sec.android.app.clockpackage", "com.android.deskclock"], icon: "󰀠", pack: 1 },
+  { apps: ["com.sec.android.app.clockpackage", "com.android.deskclock", "com.google.android.deskclock"], icon: "󰀠", pack: 1 },
   //Files
-  { apps: ["com.sec.android.app.myfiles'", "com.android.documentsui"], icon: "", pack: 1 },
+  { apps: ["com.sec.android.app.myfiles'", "com.android.documentsui", "com.google.android.documentsui"], icon: "", pack: 1 },
   //Photos
   { apps: ["com.android.gallery3d", "com.sec.android.gallery3d"], icon: "󰥶", pack: 1 },
   //Music
@@ -69,7 +69,7 @@ const iconPackConverter = [
   { apps: ["com.instagram.android"], icon: "", pack: 1 },
   { apps: ["org.krita"], icon: "", pack: 1 },
   { apps: ["com.netflix.mediaclient"], icon: "󰝆", pack: 1 },
-  { apps: ["app.revanced.android.youtube", "com.google.android.youtube"], icon: "", pack: 1 },
+  { apps: ["app.revanced.android.youtube", "com.google.android.youtube", "app.rvx.android.youtube"], icon: "", pack: 1 },
   { apps: ["com.google.android.apps.youtube.creator"], icon: "󰡇", pack: 1 },
   { apps: ["com.google.android.apps.maps"], icon: "", pack: 1 },
   { apps: ["com.whatsapp"], icon: "", pack: 1 },

@@ -266,4 +266,25 @@ public class WebInterface {
         }
     }
 
+    @JavascriptInterface
+    public String getWebViewVersion() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // API Level 26
+            PackageInfo webViewPackageInfo = mainActivity.webView.getCurrentWebViewPackage();
+            if (webViewPackageInfo != null) {
+                String versionName = webViewPackageInfo.versionName;
+                int versionCode = webViewPackageInfo.versionCode;
+                // Use versionName and versionCode as needed
+                System.out.println("WebView version: " + versionName + " (code: " + versionCode + ")");
+                return versionName + " (code: " + versionCode + ")";
+            } else {
+                System.out.println("WebView package info is not available");
+                return "Unknown";
+            }
+        } else {
+            // Fallback for older Android versions
+            System.out.println("API level is lower than 26. WebView version not directly accessible.");
+            return "Unknown";
+        }
+    }
+
 }

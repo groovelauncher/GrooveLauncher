@@ -6,7 +6,7 @@ import GrooveMock from "./../GrooveMock.js";
 
 const GrooveMockInstance = !window.Groove
 if (GrooveMockInstance) {
-    window.Groove = new GrooveMock("./../../mock/apps.json")
+  window.Groove = new GrooveMock("./../../mock/apps.json")
 }
 
 
@@ -34,24 +34,20 @@ window.addEventListener("message", (event) => {
       setTheme(event.data.argument);
     } else if (event.data.action == "setAccentColor") {
       setAccentColor(event.data.argument);
-    }else if(event.data.action == "softExit"){
-      document.body.classList.add("soft-exit")
+    } else if (event.data.action == "softExit") {
+      if(event.data.argument){
+        document.body.classList.add("soft-exit-home")
+      }else{
+        document.body.classList.add("soft-exit")
+      }
+    
     }
   }
 });
 
 const urlParams = new URLSearchParams(window.location.search);
-
-if (!urlParams.has("accentColor")) {
-  setAccentColor(grooveColors.cobalt);
-} else {
-  setAccentColor("#" + urlParams.get("accentColor"));
-}
-if (!urlParams.has("theme")) {
-  setTheme(grooveThemes.dark);
-} else {
-  setTheme(urlParams.get("theme") == "dark" ? 0 : 1);
-}
+setAccentColor(localStorage["accentColor"] || grooveColors.cobalt);
+setTheme(Number(localStorage["theme"]) || grooveThemes.dark);
 
 const appViewEvents = {
   setAccentColor: (color) => {
@@ -66,12 +62,16 @@ const appViewEvents = {
     const message = { action: "setTileColumns", argument: col };
     window.parent.postMessage(message, '*');
   },
+  setUIScale: (scale) => {
+    const message = { action: "setUIScale", argument: scale };
+    window.parent.postMessage(message, '*');
+  },
   reloadApp: () => {
-    const message = { action: "reloadApp"};
+    const message = { action: "reloadApp" };
     window.parent.postMessage(message, '*');
   },
 }
 
 export {
-  appViewEvents, grooveColors, grooveThemes, setAccentColor, setTheme,applyOverscroll
+  appViewEvents, grooveColors, grooveThemes, setAccentColor, setTheme, applyOverscroll
 };

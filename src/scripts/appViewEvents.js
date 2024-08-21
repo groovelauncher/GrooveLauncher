@@ -1,6 +1,6 @@
 const appViewEvents = {
-    softExit: (iframe) => {
-        const message = { action: "softExit" };
+    softExit: (iframe, homeBack) => {
+        const message = { action: "softExit", argument: homeBack };
         iframe.contentWindow.postMessage(message, '*');
     },
     setTheme: (iframe, theme) => {

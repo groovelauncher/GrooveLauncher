@@ -83,7 +83,7 @@ const homeTileEditSwitch = {
 
       tileListGrid.engine.nodes.forEach(e => {
         const packageName = e.el.getAttribute("packagename")
-        const distance = (Date.now() - homeTileEditShakeStart) /  (4000 + hashStringToNumber(packageName, 1000))
+        const distance = (Date.now() - homeTileEditShakeStart) / (4000 + hashStringToNumber(packageName, 1000))
         const hash = hashStringToNumber(e.el.getAttribute("packagename"), 500)
         e.el.style.setProperty("--shake-x",
           perlin.get(distance, hash) * 2 + Math.pow2(perlin.get(distance * 1.5, hash), .5)
@@ -287,3 +287,39 @@ $(window).on("finishedLoading", () => {
 
   //GrooveBoard.backendMethods.wallpaper.load("./assets/wallpaper.jpg")
 });
+var wallpaperLastScroll = 0
+var wallpaperScroll = 0
+$(window).on("finishedLoading", () => {
+  window.scrollers.tile_page_scroller.scroller.translater.hooks.on('translate', (e) => {
+    const deltaY = wallpaperLastScroll - e.y
+    wallpaperScroll += deltaY / 300
+    wallpaperScroll = wallpaperScroll < 0 ? 0 : wallpaperScroll > 1 ? 1 : wallpaperScroll
+    document.querySelector("div.slide-page-home.wallpaper-behind").style.setProperty("background-position", `0px ${(wallpaperScroll) * -100}px`)
+    wallpaperLastScroll = e.y
+
+
+    $("div.groove-home-tile").each((index, element) => {
+      if (element["homeTileMenuState"] == false) {
+        if (element["homeTileMenu"]) element["homeTileMenu"].remove();
+        delete element["homeTileMenuState"];
+        delete element["homeTileMenu"];
+        delete element["appRect"];
+        homeTileEditSwitch.off();
+      } else if (element["homeTileMenuState"] == true) {
+      }
+    });
+  })
+  window.scrollers.main_home_scroller.scroller.translater.hooks.on('translate', (e) => {
+
+    $("div.groove-home-tile").each((index, element) => {
+      if (element["homeTileMenuState"] == false) {
+        if (element["homeTileMenu"]) element["homeTileMenu"].remove();
+        delete element["homeTileMenuState"];
+        delete element["homeTileMenu"];
+        delete element["appRect"];
+        homeTileEditSwitch.off();
+      } else if (element["homeTileMenuState"] == true) {
+      }
+    });
+  })
+})

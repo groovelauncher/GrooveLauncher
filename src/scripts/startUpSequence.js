@@ -25,7 +25,6 @@ const startUpSequence = function (loaders, finish) {
 
     var lastindex = 0
     timeouttimer = setTimeout(() => {
-        console.log("bitti", lastindex, loaders.length)
         onError({ message: "System took too long to launch" })
     }, timeout);
     const next = (index) => {

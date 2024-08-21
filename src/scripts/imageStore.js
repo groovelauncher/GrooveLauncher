@@ -60,11 +60,22 @@ async function hasImage(id) {
     request.onerror = (event) => reject(event.target.error);
   });
 }
+async function removeImage(id) {
+  const db = await openDB();
+  const transaction = db.transaction(storeName, 'readwrite');
+  const store = transaction.objectStore(storeName);
+  const request = store.delete(id);
 
+  await new Promise((resolve, reject) => {
+    request.onsuccess = () => resolve();
+    request.onerror = (event) => reject(event.target.error);
+  });
+}
 const imageStore = {
   saveImage,
   loadImage,
-  hasImage
+  hasImage,
+  removeImage
 }
-export { saveImage, loadImage, hasImage };
+export { saveImage, loadImage, hasImage, removeImage };
 export default imageStore;

@@ -57,5 +57,8 @@ class GrooveMock {
     getAppVersion(){
         return "web-test"
     }
+    getWebViewVersion(){
+        return "chrome"
+    }
 }
 export default GrooveMock;

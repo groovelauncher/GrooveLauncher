@@ -59,6 +59,17 @@
         background: var(--accent-color);
         color: white;
     }
+
+    &.link {
+        box-shadow: none !important;
+        text-decoration: underline;
+        background: transparent !important;
+        color: var(--metro-foreground) !important;
+        &.active{
+            color: var(--accent-color) !important;
+        }
+    }
+
 }
 
 .metro-toggle-switch {

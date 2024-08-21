@@ -76,7 +76,6 @@ window.console.image = function (url, size = 100) {
 };
 
 $(window).on("systemInsetsChange", function () {
-    console.log("ay hemen düzelt gülüm")
     GrooveBoard.backendMethods.refreshInsets()
 })
 GrooveBoard.backendMethods.refreshInsets()
@@ -208,10 +207,18 @@ startUpSequence([
         if (!!localStorage.getItem("tileColumns")) GrooveBoard.backendMethods.setTileColumns(Number(localStorage.getItem("tileColumns")), true)
         if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
         if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
+        if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true)
         try {
             GrooveBoard.backendMethods.homeConfiguration.load()
         } catch (error) {
             alert("Your home screen was reset because of a fatal error :( Please report this:\n" + error.message)
+        }
+        next()
+    },
+    async (next) => {
+        const wallpaper = await imageStore.hasImage("wallpaper")
+        if (wallpaper) {
+            GrooveBoard.backendMethods.wallpaper.loadBlob(await imageStore.loadImage("wallpaper"))
         }
         next()
     }

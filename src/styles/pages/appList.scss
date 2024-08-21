@@ -75,6 +75,9 @@ div.app-search-no-result {
   font-size: 25px;
   font-weight: 300;
   color: rgb(white, .75);
+  body.light-mode &{
+    color: rgb(black, .75);
+  }
   display: none;
   order: 10;
 }
@@ -305,6 +308,9 @@ div.inner-page.app-list-page {
 }
 
 #sticky-letter {
+  div.app-list-page.search-mode &,div.app-list-page.search-mode-animations &{
+    display: none;
+  }
   position: fixed;
   left: 81px;
   width: 100%;

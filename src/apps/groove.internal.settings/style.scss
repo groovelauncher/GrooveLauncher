@@ -31,6 +31,10 @@ body {
         animation: app-outro-animation .25s cubic-bezier(0.83, 0.00, 0.92, 0.18) forwards;
     }
 
+    &.soft-exit-home {
+        animation: app-outro-animation-2 .25s cubic-bezier(0.83, 0.00, 0.92, 0.18) forwards;
+    }
+
     @keyframes app-outro-animation {
         to {
             transform: perspective(var(--flow-perspective)) translateZ(-50px) rotateY(6deg);
@@ -40,6 +44,18 @@ body {
         from {
             transform: perspective(var(--flow-perspective)) translateZ(0px);
 
+        }
+    }
+
+    @keyframes app-outro-animation-2 {
+        from {
+            transform: perspective(var(--flow-perspective)) translateZ(0px);
+            opacity: 1;
+        }
+
+        to {
+            transform: perspective(var(--flow-perspective)) translateZ(50px) rotateY(-6deg) translateX(-50px);
+            opacity: 0;
         }
     }
 }
@@ -121,9 +137,10 @@ p.text {
 }
 
 .group {
+    position: relative;
     display: flex;
     flex-direction: column;
-    padding: 0px 2px;
+    padding: 0px 0px;
     transform-style: preserve-3d;
 
     p.group-title {
@@ -354,7 +371,8 @@ a {
 }
 
 #about-app-name,
-#about-app-version {
+#about-app-version,
+#about-webview-version {
     font-weight: 300;
 }
 
@@ -364,6 +382,35 @@ a {
 }
 
 #about-app-version {
+    margin: 0px;
+}
+
+#about-webview-version {
     margin-top: 0px;
     margin-bottom: 40px;
+}
+
+#wallpaper-group {
+    margin-top: 45px;
+    margin-bottom: 65px;
+
+    p.group-title {
+        margin-left: 5px;
+    }
+
+    button.metro-button.link {
+        padding: 0px;
+    }
+
+    padding-left: 170px;
+}
+
+#wallpaper-thumbnail {
+    position: absolute;
+    left: 0px;
+    width: 160px;
+    height: 160px;
+    background: rgb(127, 127, 127, .4);
+    background-position: center;
+    background-size: cover;
 }

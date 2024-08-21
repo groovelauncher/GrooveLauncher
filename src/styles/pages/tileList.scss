@@ -180,7 +180,11 @@ div.tile-list-page {
     }
 
 }
-
+div.slide-page-home.wallpaper-behind{
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    background-size: cover;
+}
 div.tile-list-container,
 div.tile-list-inner-container {
     transform-style: preserve-3d;

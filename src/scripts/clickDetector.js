@@ -123,17 +123,14 @@ const metroToggleSwitch = {
         if (el.hasAttribute("checked")) metroToggleSwitch.uncheck(el); else metroToggleSwitch.check(el);
     },
     check: (el) => {
-        console.log("check")
         el.setAttribute("checked", "")
         metroToggleSwitch.animate(el, el.lastDragTransition || 0, 1)
     },
     uncheck: (el) => {
-        console.log("uncheck")
         el.removeAttribute("checked")
         metroToggleSwitch.animate(el, el.lastDragTransition || 1, 0)
     },
     pointerDown: (el) => {
-        console.log("down")
     },
     pointerMove: (el, e) => {
         const drag = e.pageX - el.lastPointerPosition[0]
@@ -149,7 +146,6 @@ const metroToggleSwitch = {
         } else {
             metroToggleSwitch.toggle(el)
         }
-        console.log("up", click)
     }
 }
 var focusedElements = new Set()
@@ -173,21 +169,27 @@ const metroDropdownMenu = {
         el.style.removeProperty("height")
         el.querySelectorAll("div.metro-dropdown-option").forEach(el => { el.style.removeProperty("color") })
     },
-    select: (el, index, event = true) => {
+    select: (el, index, event = true, animate = true) => {
         const lastIndex = el.getAttribute("selected")
-
-        console.log("select", el, index)
         el.setAttribute("selected", index)
         metroDropdownMenu.blur(el)
         const children = el.querySelectorAll("div.metro-dropdown-option")
+        if (animate) {
+            el.querySelector("div.metro-dropdown-option").style.removeProperty("transition")
+        } else {
+            el.querySelector("div.metro-dropdown-option").style.setProperty("transition", "0s")
+        }
         el.querySelector("div.metro-dropdown-option").style.marginTop = index * -48 + "px"
-        if (event) setTimeout(() => { el.dispatchEvent(new CustomEvent("selected", { detail: { index: index,prevIndex:lastIndex } })) }, 200);
+        setTimeout(() => {
+            el.querySelector("div.metro-dropdown-option").style.removeProperty("transition")
+        }, 10);
+        if (event) setTimeout(() => { el.dispatchEvent(new CustomEvent("selected", { detail: { index: index, prevIndex: lastIndex } })) }, 200);
     }
 }
 document.querySelectorAll("div.metro-dropdown-menu").forEach(el => {
     const index = el.getAttribute("selected") || 0
     el.selectOption = (index) => {
-        metroDropdownMenu.select(el, index, false)
+        metroDropdownMenu.select(el, index, false, false)
     }
     metroDropdownMenu.select(el, index, false)
 })

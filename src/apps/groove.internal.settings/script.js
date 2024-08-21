@@ -1,6 +1,7 @@
 
 import { applyOverscroll, appViewEvents, grooveColors, grooveThemes, setAccentColor } from "../../scripts/shared/internal-app";
 import { GrooveScroll, GrooveSlide } from "../../scripts/overscrollFramework";
+import imageStore from "../../scripts/imageStore";
 const settingsPages = document.getElementById("settings-pages")
 const appTabs = document.querySelector("div.app-tabs")
 
@@ -111,13 +112,14 @@ document.querySelectorAll("div.accent-color-catalogue-item").forEach(e => e.addE
 }))
 window.appViewEvents = appViewEvents
 const urlParams = new URLSearchParams(window.location.search);
+
 if (!urlParams.has("accentColor")) {
     document.querySelector("div.color-picker > div.picker-option").innerText = "cobalt"
 } else {
     document.querySelector("div.color-picker > div.picker-option").innerText = Object.keys(grooveColors).find(key => grooveColors[key] === "#" + urlParams.get("accentColor"));
 }
 if (urlParams.has("theme")) {
-    document.querySelector("div.first-page > div > div.group > div.picker").setAttribute("selected", urlParams.get("theme") == "light" ? 0 : 1)
+    document.querySelector("#theme-chooser").setAttribute("selected", urlParams.get("theme") == "light" ? 0 : 1)
 }
 
 document.querySelector("#buymeacoffee").addEventListener("flowClick", (e) => {
@@ -151,7 +153,24 @@ document.querySelector("#tile-toggle-switch").addEventListener("pointerdown", (e
     bs.cancelScroll()
 })
 document.querySelector("#about-app-version").innerText = "Version: " + Groove.getAppVersion()
-
+document.querySelector("#about-webview-version").innerText = "WebView Version: " + Groove.getWebViewVersion()
+function incompatibleWebViewVersion(compatible = false) {
+    if(compatible){
+        document.querySelector("#about-webview-version").innerHTML += " <span style='color:var(--metro-color-green);'>(compatible)</span>"
+    }else{
+        document.querySelector("#about-webview-version").innerHTML += " <span style='color:var(--metro-color-red);'>(incompatible)</span>"
+    }
+}
+try {
+    var majorVersion = Number(Groove.getWebViewVersion().split(".")[0])
+    if (majorVersion < 125 || String(majorVersion) == "NaN") {
+        incompatibleWebViewVersion()
+    }else{
+        incompatibleWebViewVersion(true)
+    }
+} catch (error) {
+    incompatibleWebViewVersion()
+}
 document.querySelector("#advanced-tab > button:nth-child(1)").addEventListener("flowClick", () => {
     navigator.clipboard.writeText(JSON.stringify(window.parent.allappsarchive));
 })
@@ -159,6 +178,9 @@ document.querySelector("#advanced-tab > button:nth-child(2)").addEventListener("
     window.localStorage.clear()
     appViewEvents.reloadApp()
 })
+document.getElementById("theme-chooser").addEventListener('selected', (e) => {
+    appViewEvents.setTheme(e.detail.index == 0 ? grooveThemes.light : grooveThemes.dark)
+});
 
 function handleFileInput(event) {
     const fileInput = event.target;
@@ -187,7 +209,8 @@ function handleFileInput(event) {
 
 // Attach the event listener to the file input
 document.getElementById("display-scaling-chooser").addEventListener("selected", (e) => {
-    console.log("srlected", e)
+    const options = [.8, .9, 1, 1.1, 1.25]
+    appViewEvents.setUIScale(options[e.detail.index])
 })
 document.getElementById("font-chooser").addEventListener("selected", (e) => {
     const index = e.detail.index
@@ -196,7 +219,59 @@ document.getElementById("font-chooser").addEventListener("selected", (e) => {
         document.getElementById("font-chooser").selectOption(e.detail.prevIndex)
         document.getElementById("font-chooser").querySelector("input").dispatchEvent(new MouseEvent("click"))
     }
-    console.log("selectd,", e.detail.index)
 })
-
+requestAnimationFrame(() => {
+    if (!!localStorage.getItem("UIScale")) {
+        const uiscale = Number(localStorage.getItem("UIScale"))
+        document.getElementById("display-scaling-chooser").selectOption(uiscale == .8 ? 0 : uiscale == .9 ? 1 : uiscale == 1 ? 2 : uiscale == 1.1 ? 3 : 4)
+    }
+    if (!!localStorage.getItem("theme")) {
+        const theme = Number(localStorage.getItem("theme"))
+        document.getElementById("theme-chooser").selectOption(1 - theme)
+    }
+})
 document.getElementById("font-chooser").querySelector("input").addEventListener('change', handleFileInput);
+
+
+document.getElementById("choose-wallpaper").querySelector("input").addEventListener('change', (event) => {
+    window.parent.canPressHomeButton = false
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = new Image();
+            img.onload = function () {
+                document.getElementById("remove-wallpaper").style.removeProperty("visibility")
+
+                window.parent.GrooveBoard.backendMethods.wallpaper.load(img)
+            };
+            document.getElementById("wallpaper-thumbnail").style.backgroundImage = `url(${e.target.result})`
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+document.getElementById("choose-wallpaper").addEventListener("flowClick", (e) => {
+    window.canPressHomeButton = false
+    e.target.querySelector("input").dispatchEvent(new MouseEvent("click"))
+
+})
+const detectWallpaper = async () => {
+
+    if (await imageStore.hasImage("wallpaper")) {
+        document.getElementById("wallpaper-thumbnail").style.backgroundImage = `url(${window.parent.lastClippedWallpaper})`
+
+    } else {
+
+        document.getElementById("remove-wallpaper").style.visibility = "hidden";
+    }
+}
+detectWallpaper();
+
+document.getElementById("remove-wallpaper").addEventListener("flowClick", (e) => {
+    document.getElementById("wallpaper-thumbnail").style.removeProperty("background-image")
+    document.getElementById("remove-wallpaper").style.visibility = "hidden"
+    window.parent.GrooveBoard.backendMethods.wallpaper.remove()
+
+})

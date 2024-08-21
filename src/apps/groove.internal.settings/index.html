@@ -67,7 +67,7 @@
             </p>
             <div class="group">
               <p class="group-title">Background</p>
-              <div class="metro-dropdown-menu" selected="1">
+              <div class="metro-dropdown-menu" id="theme-chooser" selected="1">
                 <div class="metro-dropdown-option">Light</div>
                 <div class="metro-dropdown-option">Dark</div>
               </div>
@@ -79,6 +79,15 @@
                 <div class="picker-example"></div>
                 <div class="picker-option">color</div>
               </div>
+            </div>
+            <div class="group" id="wallpaper-group">
+              <div id="wallpaper-thumbnail"></div>
+              <p class="group-title">Home background</p>
+              <button class="metro-button" id="choose-wallpaper">
+                choose photo
+                <input hidden type="file" accept="image/*" />
+              </button>
+              <button class="metro-button link" id="remove-wallpaper">remove</button>
             </div>
             <p class="text" style="margin-top: 40px;">
               You can change the size and number of tiles available on your home screen.
@@ -136,7 +145,7 @@
               <div class="metro-dropdown-option">125%</div>
             </div>
           </div>
-          <div class="group">
+          <div class="group" style="display:none;">
             <p class="group-title">Font</p>
             <div id="font-chooser" class="metro-dropdown-menu" selected="0">
               <div class="metro-dropdown-option">Open Sans</div>
@@ -153,6 +162,7 @@
           <div class="scrollable article-f" style="perspective: var(--flow-perspective);">
             <h1 id="about-app-name">Groove Launcher</h1>
             <h2 id="about-app-version">Version: Loading...</h2>
+            <h2 id="about-webview-version">WebView Version: Loading...</h2>
             <p>
               <strong>Groove Launcher</strong> is a metro-styled launcher
               designed for a customizable and sleek user experience. Users can

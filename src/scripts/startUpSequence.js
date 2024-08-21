@@ -1,4 +1,4 @@
-const timeout = 5000
+const timeout = 10000
 
 const startUpSequence = function (loaders, finish) {
     var timeouttimer

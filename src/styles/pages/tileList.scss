@@ -182,8 +182,8 @@ div.tile-list-page {
 }
 div.slide-page-home.wallpaper-behind{
     background-repeat: no-repeat;
-    background-position: 0px 0px;
-    background-size: cover;
+    background-position: 50% 0px;
+    background-size: auto calc(100% + 100px);
 }
 div.tile-list-container,
 div.tile-list-inner-container {

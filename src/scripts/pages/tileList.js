@@ -291,10 +291,12 @@ var wallpaperLastScroll = 0
 var wallpaperScroll = 0
 $(window).on("finishedLoading", () => {
   window.scrollers.tile_page_scroller.scroller.translater.hooks.on('translate', (e) => {
+    if(!document.querySelector("div.slide-page-home.wallpaper-behind")) return;
     const deltaY = wallpaperLastScroll - e.y
     wallpaperScroll += deltaY / 300
     wallpaperScroll = wallpaperScroll < 0 ? 0 : wallpaperScroll > 1 ? 1 : wallpaperScroll
-    document.querySelector("div.slide-page-home.wallpaper-behind").style.setProperty("background-position", `0px ${(wallpaperScroll) * -100}px`)
+   
+    document.querySelector("div.slide-page-home.wallpaper-behind").style.setProperty("background-position", `50% ${(wallpaperScroll) * -100}px`)
     wallpaperLastScroll = e.y
 
 

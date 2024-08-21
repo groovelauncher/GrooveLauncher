@@ -59,10 +59,12 @@ public class WebInterface {
         Log.d("groovelauncher", "retrieveApps: " + mainActivity.webView.retrievedApps.toString());
         JSONArray retrievedApps = new JSONArray();
         for (ResolveInfo resolveInfo : mainActivity.webView.retrievedApps) {
-            JSONObject appInfo = new JSONObject();
-            appInfo.put("packageName", resolveInfo.activityInfo.packageName);
-            appInfo.put("label", resolveInfo.loadLabel(mainActivity.packageManager).toString());
-            retrievedApps.put(appInfo);
+            if (!resolveInfo.activityInfo.packageName.equals("web.bmdominatezz.gravy")) {
+                JSONObject appInfo = new JSONObject();
+                appInfo.put("packageName", resolveInfo.activityInfo.packageName);
+                appInfo.put("label", resolveInfo.loadLabel(mainActivity.packageManager).toString());
+                retrievedApps.put(appInfo);
+            }
         }
         JSONObject grooveSettings = new JSONObject();
         grooveSettings.put("packageName", "groove.internal.settings");

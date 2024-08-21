@@ -11,7 +11,7 @@ class GrooveMock {
         var retrievedApps = this.#retrievedApps
         $.getJSON(mockURL, function (data) {
             data.apps.forEach(app => {
-                retrievedApps.push({ packageName: app.packageName, label: app.label })
+                if (app.packageName != "web.bmdominatezz.gravy") retrievedApps.push({ packageName: app.packageName, label: app.label })
             });
             retrievedApps.push({ packageName: "groove.internal.settings", label: "Groove Settings" })
         });
@@ -54,10 +54,10 @@ class GrooveMock {
     openURL(url) {
         window.open(url, "_blank")
     }
-    getAppVersion(){
+    getAppVersion() {
         return "web-test"
     }
-    getWebViewVersion(){
+    getWebViewVersion() {
         return "chrome"
     }
 }

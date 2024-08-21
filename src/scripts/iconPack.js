@@ -42,7 +42,7 @@ const iconPackConverter = [
   //Sim Menu
   { apps: ["com.android.stk"], icon: "", pack: 1 },
   //Mail
-  { apps: ["com.google.android.gm", "com.samsung.android.email.provider"], icon: "󰏆", pack: 1 },
+  { apps: ["com.google.android.gm", "com.samsung.android.email.provider"], icon: "", pack: 1 },
   //FM Radio
   { apps: ["com.android.app.fm", "com.sec.android.app.fm"], icon: "󰐹", pack: 1 },
   //Health

@@ -23,6 +23,9 @@ class GrooveMock {
     retrieveApps() {
         return JSON.stringify(this.#retrievedApps)
     }
+    getAppLabel(){
+        return "App"
+    }
     getAppIconURL(packageName = "undefined") {
         return new URL("./mock/apps.json", window.location.href.toString()).href.split("/").slice(0, -1).join("/") + "/icons/default/" + packageName + ".png"
     }

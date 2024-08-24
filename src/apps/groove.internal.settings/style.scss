@@ -6,7 +6,7 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    animation: app-intro-animation .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+    opacity: 0;
 }
 
 body {
@@ -17,12 +17,16 @@ body {
 
     @keyframes app-intro-animation {
         from {
-            transform: perspective(var(--flow-perspective)) translateZ(-50px) rotateY(6deg);
+            transform: translateX(100px) rotateY(30deg);
+            transform-origin: -22px 50%;
             opacity: 0;
+
         }
 
         to {
-            transform: perspective(var(--flow-perspective)) translateZ(0px);
+            transform: rotateY(0deg);
+            transform-origin: -22px 50%;
+
             opacity: 1;
         }
     }
@@ -37,25 +41,33 @@ body {
 
     @keyframes app-outro-animation {
         to {
-            transform: perspective(var(--flow-perspective)) translateZ(-50px) rotateY(6deg);
+            transform: translateX(100px) rotateY(30deg);
+            transform-origin: -22px 50%;
             opacity: 0;
+
         }
 
         from {
-            transform: perspective(var(--flow-perspective)) translateZ(0px);
+            transform: rotateY(0deg);
+            transform-origin: -22px 50%;
 
+            opacity: 1;
         }
     }
 
     @keyframes app-outro-animation-2 {
-        from {
-            transform: perspective(var(--flow-perspective)) translateZ(0px);
-            opacity: 1;
+        to {
+            transform: translateX(-100px) rotateY(-20deg);
+            transform-origin: -22px 50%;
+            opacity: 0;
+
         }
 
-        to {
-            transform: perspective(var(--flow-perspective)) translateZ(50px) rotateY(-6deg) translateX(-50px);
-            opacity: 0;
+        from {
+            transform: rotateY(0deg);
+            transform-origin: -22px 50%;
+
+            opacity: 1;
         }
     }
 }
@@ -220,7 +232,11 @@ a {
 #accent-color-picker {
     pointer-events: none;
     background: transparent;
-
+    left: -22px;
+    position: fixed;
+    top: -18px;
+    width: calc(100% + 44px);
+    height: calc(100% + 36px);
     * {
         color: transparent;
     }
@@ -292,10 +308,7 @@ a {
     flex-direction: column;
     box-sizing: border-box;
     position: fixed;
-    left: 0px;
-    top: 0px;
-    width: 100%;
-    height: 100%;
+   
     z-index: 2;
     padding: 18px 22px;
     align-items: center;

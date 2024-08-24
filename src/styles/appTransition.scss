@@ -42,18 +42,17 @@
                     div.tile-list-inner-container>div.groove-home-tile,
                     div.app-page-icon-banner {
                         // animation: tileListAppTransitionAnim1 .4s calc(var(--app-animation-index) * .15s) cubic-bezier(0.00, 1.00, 0.51, 1.00) forwards;
-                        animation: tileListAppTransitionAnim1 .75s calc(var(--app-animation-index) * .2s) cubic-bezier(.05, 1, .1, 1) forwards;
+                        animation: tileListAppTransitionAnim1 .75s calc(var(--app-animation-index) * .2s) cubic-bezier(.2, 1, .2, 1) forwards;
                         transform-origin: var(--app-animation-distance) 50%;
                         opacity: 0;
-
+                        transform-style: preserve-3d;
                         @keyframes tileListAppTransitionAnim1 {
                             0% {
-                                transform: translateX(-100px) rotateY(20deg) translateZ(-0px) translateX(150px);
-
+                                // transform: translateX(-100px) rotateY(20deg) translateZ(-0px) translateX(150px);
+                                transform: translateX(0px) rotateY(45deg) translateZ(-0px) translateX(0px);
                                 opacity: 0;
 
                             }
-
                             50% {
                                 opacity: 1;
                             }
@@ -64,6 +63,24 @@
                             }
 
 
+                        }
+
+                        &>div.groove-home-inner-tile {
+                            animation: innerTileListAppTransitionAnim0 .75s calc(var(--app-animation-index) * .2s) cubic-bezier(0,.2,0,1) forwards;
+                            transform-style: preserve-3d;
+
+                            @keyframes innerTileListAppTransitionAnim0 {
+                                0% {
+                                    // transform: translateX(-100px) rotateY(20deg) translateZ(-0px) translateX(150px);
+                                    transform:  rotateY(30deg) translateX(200px);
+                                }
+                           
+                                100% {
+                                    transform: translateX(0px);
+
+                                }
+
+                            }
                         }
                     }
 

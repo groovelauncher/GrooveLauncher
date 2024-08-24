@@ -1,8 +1,12 @@
 package web.bmdominatezz.gravy;
 
+import web.bmdominatezz.gravy.TimerUtils;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -31,23 +35,32 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Time;
 import java.util.Date;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
     public WebEvents webEvents;
     public GrooveWebView webView;
     public PackageManager packageManager;
-    private static final int INPUT_FILE_REQUEST_CODE = 66;
-    private static final int FILECHOOSER_RESULTCODE = 66;
     private Handler handler;
     private Runnable pauseRunnable;
-    private ValueCallback<Uri> mUploadMessage;
-    private Uri mCapturedImageURI = null;
-    private ValueCallback<Uri[]> mFilePathCallback;
-    private String mCameraPhotoPath;
-    private final static String TAG = "groovelauncher";
+    public final static String TAG = "groovelauncher";
     Boolean activityPaused = false;
-    Boolean activityDispatchEvent = true;
+    public Boolean activityDispatchEvent = true;
+    public Boolean activityDispatchHomeEvent = true;
+    AppChangeReceiver appChangeReceiver;
+    public static final int INPUT_FILE_REQUEST_CODE = 1;
+    public static final int FILECHOOSER_RESULTCODE = 1;
+    public ValueCallback<Uri> mUploadMessage;
+    public Uri mCapturedImageURI = null;
+    public ValueCallback<Uri[]> mFilePathCallback;
+    public String mCameraPhotoPath;
+
 
     @Override
     protected void onPause() {
@@ -73,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     webEvents.dispatchEvent(WebEvents.events.activityResume, null);
                 activityPaused = false;
             }
-            webEvents.dispatchEvent(WebEvents.events.homeButtonPress, null);
+            if(activityDispatchHomeEvent) webEvents.dispatchEvent(WebEvents.events.homeButtonPress, null);
             Log.d("groovelauncher", "homeButtonPress: ");
         } else {
             if (activityDispatchEvent)
@@ -100,8 +113,8 @@ public class MainActivity extends AppCompatActivity {
         packageManager = getPackageManager();
         handler = new Handler();
         webView.init(packageManager, this);
-        webView.setWebChromeClient(new ChromeClient());
-
+        //webView.setWebChromeClient(new ChromeClient());
+        appChangeReceiver = new AppChangeReceiver(this);
         webEvents = webView.webEvents;
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -113,8 +126,29 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    Handler activityDispatchEventTimeout;
+    public void activityDispatchEventAutoTimeout(){
+        Log.d(TAG, "activityDispatchEventAutoTimeout: false");
+        activityDispatchHomeEvent = false;
+        activityDispatchEvent = false;
+        if (activityDispatchEventTimeout != null) {
+            TimerUtils.clearTimeout(activityDispatchEventTimeout);
+        }
+        TimerUtils.setTimeout(new Runnable() {
+            @Override
+            public void run() {
+                activityDispatchHomeEvent = true;
+                activityDispatchEvent = true;
+                Log.d(TAG, "activityDispatchEventAutoTimeout: true");
+            }
+        }, 100);
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult: ");
+
+      activityDispatchEventAutoTimeout();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (requestCode != INPUT_FILE_REQUEST_CODE || mFilePathCallback == null) {
                 super.onActivityResult(requestCode, resultCode, data);
@@ -163,116 +197,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return;
-    }
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        File imageFile = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        return imageFile;
-    }
-
-    public class ChromeClient extends WebChromeClient {
-        // For Android 5.0
-        public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> filePath, WebChromeClient.FileChooserParams fileChooserParams) {
-            // Double check that we don't have any existing callbacks
-            if (mFilePathCallback != null) {
-                mFilePathCallback.onReceiveValue(null);
-            }
-            mFilePathCallback = filePath;
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                // Create the File where the photo should go
-                File photoFile = null;
-                try {
-                    photoFile = createImageFile();
-                    takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
-                } catch (IOException ex) {
-                    // Error occurred while creating the File
-                    Log.e(TAG, "Unable to create Image File", ex);
-                }
-                // Continue only if the File was successfully created
-                if (photoFile != null) {
-                    mCameraPhotoPath = "file:" + photoFile.getAbsolutePath();
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                            Uri.fromFile(photoFile));
-                } else {
-                    takePictureIntent = null;
-                }
-            }
-            Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
-            contentSelectionIntent.setType("image/*");
-            Intent[] intentArray;
-            if (takePictureIntent != null) {
-                intentArray = new Intent[]{takePictureIntent};
-            } else {
-                intentArray = new Intent[0];
-            }
-            Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
-            chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
-            chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
-            activityDispatchEvent = false;
-            startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
-            activityDispatchEvent = true;
-            return true;
-        }
-
-        // openFileChooser for Android 3.0+
-        public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType) {
-            mUploadMessage = uploadMsg;
-            // Create AndroidExampleFolder at sdcard
-            // Create AndroidExampleFolder at sdcard
-            File imageStorageDir = new File(
-                    Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_PICTURES)
-                    , "AndroidExampleFolder");
-            if (!imageStorageDir.exists()) {
-                // Create AndroidExampleFolder at sdcard
-                imageStorageDir.mkdirs();
-            }
-            // Create camera captured image file path and name
-            File file = new File(
-                    imageStorageDir + File.separator + "IMG_"
-                            + String.valueOf(System.currentTimeMillis())
-                            + ".jpg");
-            mCapturedImageURI = Uri.fromFile(file);
-            // Camera capture image intent
-            final Intent captureIntent = new Intent(
-                    android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCapturedImageURI);
-            Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-            i.addCategory(Intent.CATEGORY_OPENABLE);
-            i.setType("image/*");
-            // Create file chooser intent
-            Intent chooserIntent = Intent.createChooser(i, "Image Chooser");
-            // Set camera intent to file chooser
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS
-                    , new Parcelable[]{captureIntent});
-            // On select image call onActivityResult method of activity
-            activityDispatchEvent = false;
-            startActivityForResult(chooserIntent, FILECHOOSER_RESULTCODE);
-            activityDispatchEvent = true;
-        }
-
-        // openFileChooser for Android < 3.0
-        public void openFileChooser(ValueCallback<Uri> uploadMsg) {
-            openFileChooser(uploadMsg, "");
-        }
-
-        //openFileChooser for other Android versions
-        public void openFileChooser(ValueCallback<Uri> uploadMsg,
-                                    String acceptType,
-                                    String capture) {
-            openFileChooser(uploadMsg, acceptType);
-        }
     }
 }

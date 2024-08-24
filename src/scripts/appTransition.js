@@ -19,7 +19,7 @@ function getElementCenter(el) {
 }
 function removeAnimClasses() {
     mainHomeSlider.classList.remove("app-transition", "app-transition-back", "app-transition-on-resume", "app-transition-on-pause", "app-transition-tile-list", "app-transition-app-list")
-
+    document.querySelectorAll(".groove-home-tile").forEach(e => e.classList.remove("active"))
 }
 function appPageOffset() {
     return document.querySelector("div.tile-list-container").getBoundingClientRect().left
@@ -96,7 +96,7 @@ const appTransition = {
 
         setTimeout(() => {
             removeAnimClasses()
-        }, 850);
+        }, 1000);
     }
 }
 

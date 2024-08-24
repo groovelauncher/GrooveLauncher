@@ -174,17 +174,33 @@ div.tile-list-page {
         mix-blend-mode: hard-light;
         box-shadow: 0px 0px 0px 1000px var(--metro-background);
 
+
+
         .groove-home-inner-tile {
             background: var(--metro-transparent-2);
         }
     }
 
 }
-div.slide-page-home.wallpaper-behind{
+
+#main-home-slider.app-transition-on-resume {
+    div.slide-page-home.wallpaper-behind {
+
+
+        .groove-home-tile,
+        .app-page-icon-banner {
+            background: var(--metro-background);
+        }
+
+    }
+}
+
+div.slide-page-home.wallpaper-behind {
     background-repeat: no-repeat;
     background-position: 50% 0px;
     background-size: auto calc(100% + 100px);
 }
+
 div.tile-list-container,
 div.tile-list-inner-container {
     transform-style: preserve-3d;
@@ -264,10 +280,12 @@ div.app-page-icon-banner {
         top: var(--window-inset-top);
     }
 }
-div.placeholder-content{
+
+div.placeholder-content {
     display: none;
     visibility: hidden;
 }
+
 div.groove-home-tile {
     @include flow-touch;
     --flow-rotate-scale: .1;

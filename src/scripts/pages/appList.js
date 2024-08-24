@@ -10,7 +10,7 @@ const stickyLetterTile = $("#sticky-letter")
 var isSearchModeOn = false
 $("div.groove-element.groove-app-tile.groove-letter-tile")
 function searchResultClick(e) {
-    $("div.groove-app-tile").off("flowClick",searchResultClick)
+    $("div.groove-app-tile").off("flowClick", searchResultClick)
     e.target.classList.add("app-transition-selected")
     appTransition.onPause()
     setTimeout(() => {
@@ -19,15 +19,15 @@ function searchResultClick(e) {
             searchModeSwitch.off()
         }, 100);
     }, 1000);
-    
-   
+
+
 }
 const searchModeSwitch = {
     on: () => {
         isSearchModeOn = true
         GrooveBoard.backendMethods.navigation.push("searchOn", () => { }, searchModeSwitch.off)
         appListSearch.focus()
-        $("div.groove-app-tile").on("flowClick",searchResultClick)
+        $("div.groove-app-tile").on("flowClick", searchResultClick)
 
         setTimeout(() => {
             scrollers.main_home_scroller.enabled = false
@@ -55,7 +55,7 @@ const searchModeSwitch = {
         appListContainer.css("transition", "")
         GrooveBoard.backendMethods.navigation.invalidate("searchOn")
         scrollers.main_home_scroller.enabled = true
-        $("div.groove-app-tile").off("flowClick",searchResultClick)
+        $("div.groove-app-tile").off("flowClick", searchResultClick)
 
         appListPage.removeClass("search-mode")
         appListPage[0].searchModeOffTimeout = setTimeout(() => {
@@ -335,6 +335,7 @@ function getTranslateY(element) {
     return 0;
 }
 function stickyLetter(scroll) {
+    if (document.querySelector("div.inner-page.app-list-page").classList.contains("app-menu-back") || document.querySelector("div.inner-page.app-list-page").classList.contains("app-menu-back-intro")) return;
     scroll = Math.max(Math.min(scroll, -window.scrollers.app_page_scroller.maxScrollY), -window.scrollers.app_page_scroller.minScrollY)
     clearTimeout(window.stickyLetterTimeout)
     var stickyEl

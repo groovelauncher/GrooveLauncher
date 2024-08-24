@@ -37,6 +37,7 @@ window.bs = bs
 
 window.allPages = allPages
 function activeTabScroll() {
+    if (document.body.classList.contains("soft-exit") || document.body.classList.contains("soft-exit-home")) return;
     var x = Math.round(bs.content.getBoundingClientRect().left - 22 + bs.wrapper.offsetWidth)
     x -= document.querySelector("div.innerApp").offsetLeft - 22
     if (x != lastX) {
@@ -72,7 +73,6 @@ function activeTabScroll() {
     }
     requestAnimationFrame(activeTabScroll)
 }
-activeTabScroll()
 const scrollers = {
     theme: new GrooveScroll("#theme-tab", {
         bounceTime: 300,
@@ -155,9 +155,9 @@ document.querySelector("#tile-toggle-switch").addEventListener("pointerdown", (e
 document.querySelector("#about-app-version").innerText = "Version: " + Groove.getAppVersion()
 document.querySelector("#about-webview-version").innerText = "WebView Version: " + Groove.getWebViewVersion()
 function incompatibleWebViewVersion(compatible = false) {
-    if(compatible){
+    if (compatible) {
         document.querySelector("#about-webview-version").innerHTML += " <span style='color:var(--metro-color-green);'>(compatible)</span>"
-    }else{
+    } else {
         document.querySelector("#about-webview-version").innerHTML += " <span style='color:var(--metro-color-red);'>(incompatible)</span>"
     }
 }
@@ -165,7 +165,7 @@ try {
     var majorVersion = Number(Groove.getWebViewVersion().split(".")[0])
     if (majorVersion < 125 || String(majorVersion) == "NaN") {
         incompatibleWebViewVersion()
-    }else{
+    } else {
         incompatibleWebViewVersion(true)
     }
 } catch (error) {
@@ -275,3 +275,7 @@ document.getElementById("remove-wallpaper").addEventListener("flowClick", (e) =>
     window.parent.GrooveBoard.backendMethods.wallpaper.remove()
 
 })
+document.querySelector(".innerApp").style.animation = "app-intro-animation .5s cubic-bezier(0.075, 0.82, 0.165, 1) forwards, app-intro-skew .5s cubic-bezier(0.075, 0.82, 0.165, 1) forwards"
+setTimeout(() => {
+    activeTabScroll()
+}, 500);

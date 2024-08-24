@@ -1,6 +1,7 @@
 package web.bmdominatezz.gravy;
 
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -72,7 +73,16 @@ public class WebInterface {
         retrievedApps.put(grooveSettings);
         return retrievedApps.toString();
     }
-
+    @JavascriptInterface
+    public String getAppLabel(String packageName){
+        try {
+            ApplicationInfo appInfo = mainActivity.packageManager.getApplicationInfo(packageName, 0);
+            return mainActivity.packageManager.getApplicationLabel(appInfo).toString();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return null; // Or return a default value
+        }
+    }
     @JavascriptInterface
     public String getAppIconURL(String packageName) {
         return "https://appassets.androidplatform.net/assets/icons/" + (packageName == null ? "undefined" : packageName) + ".webp";

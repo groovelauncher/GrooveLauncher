@@ -264,7 +264,10 @@ div.app-page-icon-banner {
         top: var(--window-inset-top);
     }
 }
-
+div.placeholder-content{
+    display: none;
+    visibility: hidden;
+}
 div.groove-home-tile {
     @include flow-touch;
     --flow-rotate-scale: .1;

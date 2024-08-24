@@ -7,14 +7,14 @@
     "test:webpack": "npx webpack --watch",
     "test:scss": "sass --no-source-map --watch src/styles.scss www/dist/styles.css",
     "test:android": "npm run build:android & chokidar 'www/**/*' -c 'npm run build:android'",
-    "test:internal-apps": "sh build-internal-apps.sh & chokidar 'src/apps/**/*' -c 'npm run build:internal-apps'",
+    "test:internal-apps": "node build-internal-apps.js & chokidar 'src/apps/**/*' -c 'npm run build:internal-apps'",
     "test:web": "npm run test:webpack & npm run test:scss & npm run test:internal-apps",
     "build": "npm run build:webpack && npm run build:scss && npm run build:internal-apps && npm run build:android",
     "build:webpack": "npx webpack",
     "build:scss": "sass --no-source-map src/styles.scss www/dist/styles.css",
     "build:android": "cp -R www/* android/app/src/main/assets/",
-    "build:internal-apps": "sh build-internal-apps.sh",
-    "build:production": "rm -rf android/app/src/main/assets/* && npx webpack --env production && sass --no-source-map --style=compressed src/styles.scss www/dist/styles.css && sh build-internal-apps.sh --production && npm run build:android"
+    "build:internal-apps": "node build-internal-apps.js",
+    "build:production": "rm -rf android/app/src/main/assets/* && npx webpack --env production && sass --no-source-map --style=compressed src/styles.scss www/dist/styles.css && node build-internal-apps.js --production && npm run build:android"
   },
   "author": "",
   "license": "UNLICENSED",

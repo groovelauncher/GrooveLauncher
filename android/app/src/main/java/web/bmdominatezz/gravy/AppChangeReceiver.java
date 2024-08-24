@@ -1,7 +1,5 @@
 package web.bmdominatezz.gravy;
 
-import static androidx.core.content.ContextCompat.registerReceiver;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

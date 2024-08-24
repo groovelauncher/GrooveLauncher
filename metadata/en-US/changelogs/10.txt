@@ -1,0 +1,1 @@
+Full Changelog: https://github.com/groovelauncher/GrooveLauncher/commits/0.1.0-beta.1

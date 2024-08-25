@@ -22,7 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class WebInterface {
-    private MainActivity mainActivity;
+    private final MainActivity mainActivity;
 
     WebInterface(MainActivity mainActivity) {
         this.mainActivity = mainActivity;

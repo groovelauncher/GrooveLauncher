@@ -75,9 +75,11 @@ div.app-search-no-result {
   font-size: 25px;
   font-weight: 300;
   color: rgb(white, .75);
-  body.light-mode &{
+
+  body.light-mode & {
     color: rgb(black, .75);
   }
+
   display: none;
   order: 10;
 }
@@ -308,9 +310,12 @@ div.inner-page.app-list-page {
 }
 
 #sticky-letter {
-  div.app-list-page.search-mode &,div.app-list-page.search-mode-animations &{
+
+  div.app-list-page.search-mode &,
+  div.app-list-page.search-mode-animations & {
     display: none;
   }
+
   position: fixed;
   left: 81px;
   width: 100%;
@@ -366,6 +371,7 @@ div.letter-selector {
     opacity: 1;
     pointer-events: all;
     background: var(--metro-transparent);
+    box-shadow: 0px 0px 0px 9000px var(--metro-transparent);
 
     .letter-selector-row {
       transform: perspective(calc(var(--flow-perspective) * 5)) rotateX(0deg);
@@ -383,14 +389,16 @@ div.letter-selector {
   }
 
   position: absolute;
-  left: 0px;
+  left:50%;
+  transform: translateX(-50%);
   top: 0px;
   width: 100%;
   height: 100%;
+  max-width: 500px;
   padding: 18px;
   padding-bottom: calc(18px + var(--window-inset-bottom));
   box-sizing: border-box;
-  background: rgb(black, .5);
+  background: rgb(#000000, .5);
   background: transparent;
   z-index: 99;
   display: flex;
@@ -398,6 +406,7 @@ div.letter-selector {
   perspective: var(--flow-perspective);
   overflow-y: auto;
   overflow-x: hidden;
+  overflow: hidden;
 
   div.letter-selector-row {
     display: flex;
@@ -422,6 +431,7 @@ div.letter-selector {
       width: 0px;
       display: flex;
       color: white;
+      aspect-ratio: 1;
       justify-content: start !important;
       align-items: end !important;
       padding: 5px 8px;
@@ -601,4 +611,25 @@ div.app-list-page {
     }
   }
 
+}
+
+div.app-list-page {
+  width: calc(100% - var(--window-inset-left) - var(--window-inset-right)) !important;
+  left: calc(var(--window-inset-left) - (var(--window-inset-right) + var(--window-inset-left)) / 2);
+}
+
+div.letter-selector {
+  height: calc(100% - var(--window-inset-bottom) - var(--window-inset-top) * 2);
+  overflow: visible;
+  top: var(--window-inset-top);
+  &::before {
+    content: "";
+    display: block;
+    position: fixed;
+    --m: 100vw;
+    left: calc(0px - var(--m));
+    top: calc(0px - var(--m));
+    width: calc(100% + var(--m)* 2);
+    height: calc(100% + var(--m)* 2);
+  }
 }

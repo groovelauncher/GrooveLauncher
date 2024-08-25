@@ -542,6 +542,11 @@ const backendMethods = {
         if (document.querySelectorAll(`div.groove-home-tile[packagename="${tile.p}"]`).length > 0) return
 
         const homeTile = GrooveElements.wHomeTile(tile.ii, tile.i, tile.t, tile.p, "", tile.s)
+        if(iconPackDB[tile.p]){
+          if(iconPackDB[tile.p].pack == 0){
+            homeTile.classList.add("iconpack0")
+          }
+        }
         const el = window.tileListGrid.addWidget(
           homeTile,
           {
@@ -583,10 +588,10 @@ const backendMethods = {
     },
   },
   wallpaper: {
-    context: new OffscreenCanvas(
+    context: window["OffscreenCanvas"] ? new OffscreenCanvas(
       window.innerWidth,
       window.innerHeight + 50
-    ).getContext("2d"),
+    ).getContext("2d") : document.createElement("canvas"),
     load: async (image, doNotSave = false) => {
       if (window.lastClippedWallpaper)
         URL.revokeObjectURL(window.lastClippedWallpaper);
@@ -608,7 +613,7 @@ const backendMethods = {
         ctx.canvas.width,
         ctx.canvas.height
       );
-      const blob = await ctx.canvas.convertToBlob()
+      const blob = await getCanvasBlob(ctx.canvas)
       const rurl = await backendMethods.wallpaper.loadBlob(blob)
       if (!doNotSave) {
         await imageStore.saveImage("wallpaper", blob);
@@ -668,6 +673,13 @@ const backendMethods = {
       if (await imageStore.hasImage("wallpaper")) imageStore.removeImage("wallpaper")
     },
   },
+  appInstall: (packagename) => {
+    GrooveBoard.backendMethods.reloadApps()
+  },
+  appUninstall: (packagename) => {
+    tileListGrid.removeWidget(document.querySelector(`div.groove-home-tile[packagename="${packagename}"]`))
+    GrooveBoard.backendMethods.reloadApps()
+  }
 };
 function listHistory() {
   return
@@ -686,6 +698,12 @@ window.addEventListener("homeButtonPress", function () {
   //if(!!window.canPressHomeButton)
   backendMethods.navigation.home();
 });
+window.addEventListener("appInstall", function (e) {
+  backendMethods.appInstall(e.detail.packagename)
+});
+window.addEventListener("appUninstall", function (e) {
+  backendMethods.appUninstall(e.detail.packagename)
+});
 window.addEventListener('message', (event) => {
   if (event.data["action"]) {
     if (event.data.action == "setTheme") {
@@ -702,5 +720,24 @@ window.addEventListener('message', (event) => {
     }
   }
 });
+function getCanvasBlob(canvas, mimeType = 'image/png') {
+  if (canvas["convertToBlob"]) {
+    // If the canvas is an OffscreenCanvas, use convertToBlob
+    return canvas.convertToBlob({ type: mimeType });
+  } else if (canvas instanceof HTMLCanvasElement) {
+    // If the canvas is a regular HTMLCanvasElement, use toBlob
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(blob => {
+        if (blob) {
+          resolve(blob);
+        } else {
+          reject(new Error('Failed to convert canvas to blob'));
+        }
+      }, mimeType);
+    });
+  } else {
+    return Promise.reject(new Error('Invalid canvas type'));
+  }
+}
 
 export default { boardMethods, backendMethods };

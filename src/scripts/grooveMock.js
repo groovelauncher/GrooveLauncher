@@ -18,7 +18,7 @@ class GrooveMock {
 
     }
     getSystemInsets() {
-        return JSON.stringify({ left: 0, top: 102, right: 0, bottom: 50 })
+        return JSON.stringify({ left: 0, top: 20, right: 0, bottom: 50 })
     }
     retrieveApps() {
         return JSON.stringify(this.#retrievedApps)

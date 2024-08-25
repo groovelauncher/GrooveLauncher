@@ -24,6 +24,7 @@
     </div>
     <div class="system-bar system-status-bar"></div>
     <div class="system-bar system-navigation-bar"></div>
+    <div class="system-bar system-bar-preview"></div>
     <div class="tiles-app"></div>
     <div id="main-home-slider" class="slide-wrapper" style="visibility: hidden;">
         <div class="slide-content">
@@ -49,7 +50,7 @@
 
                     <input type="search" class="app-list-search" placeholder="search">
                     <div class="letter-selector">
-
+                        <div></div>
                     </div>
 
                     <div class="app-list">
@@ -66,6 +67,32 @@
             </div>
         </div>
     </div>
+    <script>
+        window.throwError = function throwError(e, old = false, action = false) {
+            // console.error(e.message)
+            const loader = document.getElementById("loader")
+            loader.classList.add("error")
+            const errormessage = document.createElement("span")
+            loader.append(errormessage)
+            console.log("hey")
+            errormessage.style.display = "contents"
+            errormessage.style.fontSize = "30px"
+            errormessage.innerText = e.message
+            loader.innerText = ":(\n" + e.message
+            if (action || old) loader.style.flexDirection = "column"
+            if (action) loader.innerHTML += `<button class='metro-button'>${action.title}</button>`
+            if (action) loader.querySelector("button").addEventListener("click", action.action)
+            throw e;
+
+        }
+        if (!window["OffscreenCanvas"]) throwError(new Error("WebView is too old!"), true, {
+            title: "update webview", action: () => {
+                alert("hey")
+                const url = "https://www.apkmirror.com/apk/google-inc/android-system-webview/"
+                if (window["Groove"]) Groove.openURL(url); else window.open(url,"_blank")
+            }
+        })
+    </script>
     <script src="dist/script.js"></script>
 </body>
 

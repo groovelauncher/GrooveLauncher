@@ -1,3 +1,11 @@
+import GrooveMock from "./scripts/GrooveMock.js";
+
+const GrooveMockInstance = !window.Groove
+if (GrooveMockInstance) {
+    window.Groove = new GrooveMock("./mock/apps.json")
+    document.body.classList.add("groove-mock")
+}
+import startUpSequence from "./scripts/startUpSequence";
 import jQuery from "jquery";
 window.$ = jQuery
 import appTransition from "./scripts/appTransition.js";
@@ -5,7 +13,6 @@ import clickDetectorConfig from "./scripts/clickDetector.js";
 import { GrooveScroll, GrooveSlide } from "./scripts/overscrollFramework.js";
 import { boardMethods } from "./scripts/GrooveBoard";
 import imageStore from "./scripts/imageStore.js";
-import startUpSequence from "./scripts/startUpSequence";
 import detectDeviceType from "./scripts/detectDeviceType";
 import GrooveBoard from "./scripts/GrooveBoard";
 import iconPackConverter from "./scripts/iconPack.js";
@@ -17,13 +24,10 @@ import applyOverscroll from "./scripts/overscrollFramework.js";
 window.normalizeDiacritics = (input = "") => {
     return normalizeSync(input)
 }
-import GrooveMock from "./scripts/GrooveMock.js";
 import BScroll from "better-scroll";
+
 window.imageStore = imageStore
-const GrooveMockInstance = !window.Groove
-if (GrooveMockInstance) {
-    window.Groove = new GrooveMock("./mock/apps.json")
-}
+
 var allappsarchive = []
 window["allappsarchive"] = allappsarchive
 
@@ -38,14 +42,17 @@ const scrollers = {
         scrollX: false,
         scrollY: true,
         mouseWheel: true,
-
     }),
     app_page_scroller: new GrooveScroll('#main-home-slider > div > div:nth-child(2) > div > div.app-list', {
         scrollX: false,
         scrollY: true,
         mouseWheel: true,
-
-    })
+    }),
+    letter_selector_scroller: new GrooveScroll('div.letter-selector', {
+        scrollX: false,
+        scrollY: true,
+        mouseWheel: true,
+    }),
 }
 
 window.scrollers = scrollers
@@ -188,7 +195,7 @@ startUpSequence([
             groupedEntries.push(letter_selector_entries[0].slice(i, i + 4));
         }
 
-        const letterSelectorDiv = $('.letter-selector');
+        const letterSelectorDiv = $('.letter-selector > div');
 
         groupedEntries.forEach(group => {
             const $rowDiv = $('<div>', { class: 'letter-selector-row' });

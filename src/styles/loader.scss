@@ -25,9 +25,7 @@
             }
         }
     }
-}
 
-#loader {
     position: fixed;
     z-index: 999;
     left: 0px;
@@ -86,6 +84,25 @@
                     opacity: 0;
                     transform: translateX(-200%);
                 }
+            }
+        }
+    }
+
+    &.error {
+        background-color: #3163AD;
+        justify-content: start;
+        padding-left: 30px;
+        padding-top: 100px;
+        button {
+            position: absolute;
+            left: 20px;
+            bottom: 120px;
+            background: transparent;
+            &:active{
+                background-color: white;
+                color: black;
+                transform: scale(.95);
+                transition: 0s;
             }
         }
     }

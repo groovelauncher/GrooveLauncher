@@ -1,6 +1,7 @@
 package web.bmdominatezz.gravy;
 
 import android.content.Context;
+import android.util.Log;
 import android.webkit.WebView;
 
 import org.json.JSONObject;
@@ -14,7 +15,9 @@ public class WebEvents {
         backButtonPress,
         homeButtonPress,
         activityPause,
-        activityResume
+        activityResume,
+        appInstall,
+        appUninstall
     }
 
     WebEvents(Context c, WebView w) {
@@ -23,11 +26,14 @@ public class WebEvents {
     }
 
     public void dispatchEvent(String eventName, JSONObject arguments) {
+        String script = "";
         if (arguments == null) {
-            webView.evaluateJavascript("window.dispatchEvent(new Event(\"" + eventName + "\"))", null);
+            script = "window.dispatchEvent(new CustomEvent(\"" + eventName + "\"))";
         } else {
-            webView.evaluateJavascript("window.dispatchEvent(new Event(\"" + eventName + "\"), " + arguments.toString() + ")", null);
+           script = "window.dispatchEvent(new CustomEvent(\"" + eventName + "\", {detail:" + arguments.toString() + "}))";
         }
+        Log.d("groovelauncher", "dispatchEventScript: " + script);
+        webView.evaluateJavascript(script, null);
     }
 
     public void dispatchEvent(events eventName, JSONObject arguments) {

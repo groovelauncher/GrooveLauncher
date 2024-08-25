@@ -7,9 +7,12 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class AppChangeReceiver {
-    MainActivity mainActivity;
+    static MainActivity mainActivity;
 
     AppChangeReceiver(MainActivity m) {
         this.mainActivity = m;
@@ -30,12 +33,26 @@ public class AppChangeReceiver {
                 Uri data = intent.getData();
                 String packageName = data != null ? data.getSchemeSpecificPart() : null;
                 // Handle the app install here
+                JSONObject argument = new JSONObject();
+                try {
+                    argument.put("packagename", packageName);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                mainActivity.webEvents.dispatchEvent(WebEvents.events.appInstall, argument);
                 Log.d("TAG", "onReceive: APP INSTALL");
             } else if (Intent.ACTION_PACKAGE_REMOVED.equals(action)) {
                 // App uninstalled
                 Uri data = intent.getData();
                 String packageName = data != null ? data.getSchemeSpecificPart() : null;
                 // Handle the app uninstall here
+                JSONObject argument = new JSONObject();
+                try {
+                    argument.put("packagename", packageName);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                mainActivity.webEvents.dispatchEvent(WebEvents.events.appUninstall, argument);
                 Log.d("TAG", "onReceive: APP UNINSTALL");
             }
         }

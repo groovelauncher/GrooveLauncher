@@ -82,10 +82,14 @@ const appTransition = {
         }, 2000);
         startAnim()
         setTimeout(() => {
+            scrollers.main_home_scroller.scrollTo(0,0)
+            mainHomeSlider.style.visibility = "hidden"
+            console.log("hey")
             document.querySelectorAll(".app-transition-selected").forEach(e => e.classList.remove("app-transition-selected"))
         }, 600);
     },
     onResume: (back = false, firstintro = false) => {
+        mainHomeSlider.style.removeProperty("visibility")
         clearTimeout(window.appTransitionLaunchError)
         scrollers.main_home_scroller.scrollTo(0, 0)
         mainHomeSlider.classList.remove("app-transition-on-pause")

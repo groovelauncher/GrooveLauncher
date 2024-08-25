@@ -17,6 +17,7 @@ body {
     width: 100%;
     height: 0px;
     pointer-events: none;
+
     &.system-status-bar {
         top: 0px;
         height: var(--window-inset-top);
@@ -25,6 +26,23 @@ body {
     &.system-navigation-bar {
         bottom: 0px;
         height: var(--window-inset-bottom);
+    }
+
+    &.system-bar-preview {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 999999;
+        body.groove-mock & {
+            background-color: rgb(red, 0.5);
+        }
+        --left: var(--window-inset-left);
+        --top: var(--window-inset-top);
+        --right: var(--window-inset-right);
+        --bottom: var(--window-inset-bottom);
+        clip-path: polygon(0% 0%, 0% 100%, var(--left) 100%, var(--left) var(--top), calc(100% - var(--right)) var(--top), calc(100% - var(--right)) calc(100% - var(--bottom)), var(--left) calc(100% - var(--bottom)), var(--left) 100%, 100% 100%, 100% 0%);
     }
 }
 

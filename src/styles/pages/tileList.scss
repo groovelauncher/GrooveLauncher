@@ -526,3 +526,7 @@ div.groove-home-tile {
         }
     }
 }
+div.tile-list-container{
+    padding-left: var(--window-inset-left);
+    padding-right: var(--window-inset-right);
+}

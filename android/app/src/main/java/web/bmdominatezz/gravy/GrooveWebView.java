@@ -5,7 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.AdaptiveIconDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Build;
@@ -21,6 +26,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -42,6 +48,47 @@ public class GrooveWebView extends WebView {
     PackageManager packageManager;
     public Insets lastInsets;
     WebEvents webEvents;
+
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static Bitmap getAppIcon(PackageManager mPackageManager, String packageName) {
+        Drawable drawable = null;
+        try {
+            drawable = mPackageManager.getApplicationIcon(packageName);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d("groovelauncher", "getAppIcon:  OLMADI " + packageName);
+            throw new RuntimeException(e);
+        }
+
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        } else if (drawable instanceof AdaptiveIconDrawable) {
+            Drawable backgroundDr = ((AdaptiveIconDrawable) drawable).getBackground();
+            Drawable foregroundDr = ((AdaptiveIconDrawable) drawable).getForeground();
+
+            Drawable[] drr = new Drawable[2];
+            drr[0] = backgroundDr;
+            drr[1] = foregroundDr;
+
+            LayerDrawable layerDrawable = new LayerDrawable(drr);
+
+            int width = layerDrawable.getIntrinsicWidth();
+            int height = layerDrawable.getIntrinsicHeight();
+
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+            Canvas canvas = new Canvas(bitmap);
+
+            layerDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            layerDrawable.draw(canvas);
+
+            return bitmap;
+        }
+        Log.d("groovalauncher", "getAppIcon: invalid " + packageName);
+        return null;
+
+
+    }
 
     public GrooveWebView(Context context) {
         super(context);
@@ -97,13 +144,15 @@ public class GrooveWebView extends WebView {
                         if (intent != null) {
                             ResolveInfo resolveInfo = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
                             if (resolveInfo != null) {
-                                Drawable appIcon = resolveInfo.loadIcon(packageManager);
-                                AdaptiveIconGenerator generator = new AdaptiveIconGenerator(m_context, appIcon);
+                                // Drawable appIcon = resolveInfo.loadIcon(packageManager);
+                                // AdaptiveIconGenerator generator = new AdaptiveIconGenerator(m_context, appIcon);
                                 // Generate the adaptive icon
-                                Drawable resultDrawable = generator.generateIcon();
-                                InputStream inputStream = Utils.loadDrawableAsStream(resultDrawable);
+                                // Drawable resultDrawable = generator.generateIcon();
+                                InputStream inputStream = null;
+                                Bitmap dra = getAppIcon(packageManager, iconPackageName);
+                                if (dra != null) inputStream = Utils.loadBitmapAsStream(dra);
                                 if (inputStream != null) {
-                                    return new WebResourceResponse("image/png", "UTF-8", inputStream);
+                                    return new WebResourceResponse("image/webp", "UTF-8", inputStream);
                                 }
                             } else {
                                 Log.d("ResolveInfo", "No resolve info found.");
@@ -173,7 +222,7 @@ public class GrooveWebView extends WebView {
                 contentSelectionIntent.setType("image/*");
                 Intent[] intentArray;
                 if (takePictureIntent != null) {
-                    intentArray = new Intent[] { takePictureIntent };
+                    intentArray = new Intent[]{takePictureIntent};
                 } else {
                     intentArray = new Intent[0];
                 }
@@ -208,7 +257,7 @@ public class GrooveWebView extends WebView {
                 mainActivity.mCapturedImageURI = Uri.fromFile(file);
                 // Camera capture image intent
                 final Intent captureIntent = new Intent(
-                        android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                        MediaStore.ACTION_IMAGE_CAPTURE);
                 captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mainActivity.mCapturedImageURI);
                 Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                 i.addCategory(Intent.CATEGORY_OPENABLE);
@@ -216,7 +265,7 @@ public class GrooveWebView extends WebView {
                 // Create file chooser intent
                 Intent chooserIntent = Intent.createChooser(i, "Image Chooser");
                 // Set camera intent to file chooser
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Parcelable[] { captureIntent });
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Parcelable[]{captureIntent});
                 // On select image call onActivityResult method of activity
                 mainActivity.startActivityForResult(chooserIntent, mainActivity.FILECHOOSER_RESULTCODE);
             }
@@ -244,6 +293,7 @@ public class GrooveWebView extends WebView {
         this.loadUrl("https://appassets.androidplatform.net/assets/index.html");
         retrieveApps();
     }
+
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());

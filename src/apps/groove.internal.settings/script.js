@@ -27,6 +27,41 @@ const bs = new GrooveSlide("#settings-pages", {
         easing: "cubic-bezier(0.075, 0.82, 0.165, 1)"
     },
 })
+var scrollStartPageIndex = undefined
+var scrollStartX = undefined
+bs.on('beforeScrollStart', (e) => {
+    scrollStartPageIndex = Math.round(-1 - bs.x / scrollWidth())
+    scrollStartX = (-1 - bs.x / scrollWidth())
+})
+function handlePageAnim(index = 0, next = true, scroll = 0) {
+    document.querySelectorAll("div.app-tabs > p").forEach(e => e.classList.remove("active-tab"))
+    document.querySelectorAll("div.app-tabs > p")[index].classList.add("active-tab")
+    document.querySelectorAll("div.settings-pages-container > div.settings-page").forEach(e => e.classList.remove("active-page"))
+    document.querySelectorAll("div.settings-pages-container > div.settings-page")[index + 1].style.setProperty("--page-swipe-translate", (next ? scroll : -scroll) + "px")
+    document.querySelectorAll("div.settings-pages-container > div.settings-page")[index + 1].classList.add("active-page")
+}
+const scrollWidth = () => { return Math.min(window.innerWidth, 768) }
+window.scrollWidth = scrollWidth
+window.addEventListener("pointermove", () => {
+    //  console.log(-window.asfasf - window.innerWidth - bs.x)
+})
+bs.on('flick', () => {
+    const next = (-1 - bs.x / scrollWidth()) > scrollStartX
+    var index = next ? (scrollStartPageIndex + 1) : (scrollStartPageIndex - 1)
+    index = index < 0 ? allPages.length - 1 : index > (allPages.length - 1) ? 0 : index
+    handlePageAnim(index, next, Math.abs(scrollStartX - (-1 - bs.x / scrollWidth())) * scrollWidth() * 2)
+})
+bs.on('touchEnd', (e) => {
+    if (Math.abs(scrollStartX - (-1 - bs.x / scrollWidth())) * scrollWidth() > 100) {
+        const next = (-1 - bs.x / scrollWidth()) > scrollStartX
+        var index = next ? (scrollStartPageIndex + 1) : (scrollStartPageIndex - 1)
+        index = index < 0 ? allPages.length - 1 : index > (allPages.length - 1) ? 0 : index
+        handlePageAnim(index, next, Math.abs(scrollStartX - (-1 - bs.x / scrollWidth())) * scrollWidth() * 2)
+    }
+})
+bs.on('scrollEnd', (e) => {
+    //console.log("scroll", e.x)
+})
 allPages.forEach(e => e.classList.add("original"))
 document.querySelectorAll("div.settings-page:not(.original)").forEach(e => {
     e.innerHTML = "";
@@ -34,6 +69,46 @@ document.querySelectorAll("div.settings-page:not(.original)").forEach(e => {
 })
 
 window.bs = bs
+
+// Select the target element where you want to dispatch the events
+const targetElement = bs.wrapper
+// Event listeners for pointer events
+appTabs.addEventListener('pointerdown', (e) => {
+    appTabs.pointerDown = [e.x, e.y]
+    appTabs.lastX = bs.x
+    appTabs.lastPointerDown = [e.x, e.y]
+
+    appTabs.startScrolling = false
+});
+
+appTabs.addEventListener('pointermove', (e) => {
+    if (appTabs.pointerDown) {
+        appTabs.lastPointerDown = [e.x, e.y]
+        bs.scrollTo(appTabs.lastX + appTabs.lastPointerDown[0] - appTabs.pointerDown[0], 0, 0)
+    }
+});
+
+window.addEventListener('pointerup', (e) => {
+    if (appTabs.pointerDown) {
+        if (Math.hypot(appTabs.pointerDown[0] - appTabs.lastPointerDown[0], appTabs.pointerDown[1] - appTabs.lastPointerDown[1]) <= 10) {
+            if (e.target.matches("div.app-tabs > p")) {
+                const index = Array.from(document.querySelectorAll("div.app-tabs > p")).indexOf(e.target)
+                bs.goToPage(index, 0)
+                handlePageAnim(index, true, 0)
+            }
+        } else {
+            var page = Math.round((appTabs.lastX + appTabs.lastPointerDown[0] - appTabs.pointerDown[0]) / -scrollWidth() - 1)
+            page = page < 0 ? appTabs.length - 1 : page > (appTabs.length - 1) ? 0 : page
+            page = page || 0
+            bs.goToPage(page, 0)
+            handlePageAnim(page)
+        }
+    }
+
+    appTabs.pointerDown = false
+    appTabs.startScrolling = false
+});
+
 
 window.allPages = allPages
 function activeTabScroll() {
@@ -49,26 +124,26 @@ function activeTabScroll() {
         var transform = 0
         scrollEl.slice(0, Math.floor(scroll)).forEach(e => transform += e)
         transform += scrollEl[Math.floor(scroll)] * (scroll % 1)
-        allTabs.forEach(e => e.classList.remove("active-tab"))
-        allPages.forEach(e => e.classList.remove("active-page"))
-        try {
-            allTabs[Math.floor(scroll + .5)].classList.add("active-tab")
-            allPages[Math.floor(scroll + .5)].classList.add("active-page")
-        } catch (error) {
-            try {
-                allTabs[Math.floor(scroll + .5 - allTabs.length)].classList.add("active-tab")
-                //allPages[Math.floor(scroll + .5 - allTabs.length)].classList.add("active-page")
-            } catch (error) {
-            }
-        }
+        /* allTabs.forEach(e => e.classList.remove("active-tab"))
+         allPages.forEach(e => e.classList.remove("active-page"))
+         try {
+             allTabs[Math.floor(scroll + .5)].classList.add("active-tab")
+             allPages[Math.floor(scroll + .5)].classList.add("active-page")
+         } catch (error) {
+             try {
+                 allTabs[Math.floor(scroll + .5 - allTabs.length)].classList.add("active-tab")
+                 //allPages[Math.floor(scroll + .5 - allTabs.length)].classList.add("active-page")
+             } catch (error) {
+             }
+         }*/
 
         allTabs.forEach((e, index) => {
             var extra = 0
             if (scroll >= (index + 1)) { extra = maxscroll }
             e.style.transform = `translateX(${-transform + extra}px)`
-            if (x <= 0) allPages[index].style.transform = scroll >= (index + 1) ? `translateX(${bs.content.offsetWidth - bs.wrapper.offsetWidth * 2}px)` : ""
+         //   if (x <= 0) allPages[index].style.transform = scroll >= (index + 1) ? `translateX(${bs.content.offsetWidth - bs.wrapper.offsetWidth * 2}px)` : ""
         })
-        if (x > 0) { allPages.slice(-1)[0].style.transform = `translateX(${-100 * allPages.length}%)` }
+      //  if (x > 0) { allPages.slice(-1)[0].style.transform = `translateX(${-100 * allPages.length}%)` }
         lastX = x
     }
     requestAnimationFrame(activeTabScroll)

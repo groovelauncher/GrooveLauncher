@@ -1,16 +1,15 @@
 :root {
-    --flow-touch-distance: -3px;
-    --flow-rotate-scale: .06;
+    --flow-touch-distance: -10px;
+    --flow-rotate-scale: .25;
     --flow-touch-down-transition: .025s;
     --flow-touch-up-transition: .25s;
-    --flow-perspective: 250px; //calc(min(100vw, 100vh));
+    --flow-perspective: 600px; //calc(min(100vw, 100vh));
 }
 
 
 @mixin flow-touch {
     transition: transform var(--flow-touch-up-transition) ease-out;
     --flow-touch: true;
-    --flow-rotate-scale: .1;
     --flow-before-translate: 0px, 0px;
     --flow-after-translate: 0px, 0px;
     --flow-rotate-x: 0deg;

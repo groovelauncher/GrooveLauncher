@@ -28,7 +28,8 @@ div.tile-list-page {
         // opacity: .9;
         div.groove-home-tile.home-menu-selected {
             transition: .5s ease-in !important;
-            transform: translateZ(20px) scale(1.075) !important;
+            transform: translateZ(10px) scale(1.12) !important;
+            scale:1; 
         }
 
         div.groove-home-tile:not(.home-menu-selected) {
@@ -43,26 +44,29 @@ div.tile-list-page {
 
     &.home-menu-back {
         transition: .75s cubic-bezier(0.075, 0.82, 0.165, 1), --shake-distance 1s !important;
-        transform: translateZ(-40px) !important;
+        transform: translateZ(-50px) !important;
 
         // opacity: .5;
         div.groove-home-tile.home-menu-selected {
-            transition: all .25s cubic-bezier(.43, 1.25, .5, 1), left 0s, top 0s, width 0s, height 0s !important;
-
+            transition: all .25s cubic-bezier(.43, 1.5, .5, 1), left .1s, top .1s, width .1s, height .1s, scale .25s cubic-bezier(.43, 2, .5, 1) !important;
+            &.e_active{
+                transition: all .25s cubic-bezier(.43, 1.5, .5, 1), left 0s, top 0s, width 0s, height 0s, scale .25s cubic-bezier(.43, 2, .5, 1) !important;
+            }
             &:not(.tile-size-change-anim-s):not(.tile-size-change-anim-m):not(.tile-size-change-anim-w):not(.tile-size-change-anim-l) {
-                transform: translateZ(10px) scale(1.05) !important;
+                transform: translateZ(10px) scale(1) !important;
+                scale: 1.05;
             }
 
             &.tile-size-change-anim-s {
                 animation: tile-size-change-anim-s .25s forwards;
 
                 @keyframes tile-size-change-anim-s {
-                    from {
-                        transform: translateZ(10px) scale(1.05) scale(1.5);
+                    0% {
+                        transform: translateZ(10px) scale(1.05) scale(1);
                     }
-
-                    to {
+                    100% {
                         transform: translateZ(10px) scale(1.05);
+                        
                     }
                 }
             }
@@ -154,7 +158,7 @@ div.tile-list-page {
 
 
         div.groove-home-tile:not(.home-menu-selected) {
-            transition: left .25s, top .25s, opacity .25s, transform .25s;
+            transition: left .25s, top .25s, opacity .25s, transform .1s;
             opacity: .6;
             --shake-x: 0px;
             --shake-y: 0px;
@@ -288,7 +292,6 @@ div.placeholder-content {
 
 div.groove-home-tile {
     @include flow-touch;
-    --flow-rotate-scale: .1;
 
     * {
         pointer-events: none;

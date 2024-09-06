@@ -16,17 +16,48 @@ const grid = GridStack.init({
   disableResize: true,
   disableDrag: true,
   float: false,
-  animate: false,
-  margin: "10px",
+  animate: false
 });
+var isDragging
+var lastDragEl
 grid.on("dragstart", function (event, el) {
   // el.classList.add("grid-dragging")
   scrollers.tile_page_scroller.cancelScroll()
+  lastDragEl = el
+  console.log(el)
+
+  isDragging = true
+  $(el).css({
+    left: $(el).position().left + 15,
+    top: $(el).position().top + 15
+  })
 });
+grid.on('drag', function (event, el) {
+
+  console.log("başladı drag")
+});
+grid.on('change', function (event, items) {
+  console.log("ofafa")
+});
+window.addEventListener("pointermove", (e) => {
+  if (isDragging && false) {
+
+    requestAnimationFrame(() => {
+      $(lastDragEl).css({
+        left: $(lastDragEl).position().left + 15,
+        top: $(lastDragEl).position().top + 15
+      })
+    })
+    lastDragEl.style.removeProperty("width")
+    lastDragEl.style.removeProperty("height")
+  }
+})
 grid.on("dragstop", function (event, el) {
   setTimeout(() => {
     GrooveBoard.backendMethods.homeConfiguration.save()
   }, 500);
+  isDragging = false
+  console.log("bitti")
   //$("div.groove-home-tile.grid-dragging").removeClass("grid-dragging").css("transition", "")
 });
 window.tileListGrid = grid;
@@ -83,14 +114,14 @@ const homeTileEditSwitch = {
 
       tileListGrid.engine.nodes.forEach(e => {
         const packageName = e.el.getAttribute("packagename")
-        const distance = (Date.now() - homeTileEditShakeStart) / (4000 + hashStringToNumber(packageName, 1000))
+        const distance = (Date.now() - homeTileEditShakeStart) / (2000 + hashStringToNumber(packageName, 1000))
         const hash = hashStringToNumber(e.el.getAttribute("packagename"), 500)
         e.el.style.setProperty("--shake-x",
-          perlin.get(distance, hash) * 2 + Math.pow2(perlin.get(distance * 1.5, hash), .5)
+          perlin.get(distance, hash) * 2
           * 10
           + "px")
         e.el.style.setProperty("--shake-y",
-          perlin.get(distance, hash + 1000) * 2 + Math.pow2(perlin.get(distance * 1.5, hash + 1000), .5)
+          perlin.get(distance, hash + 1000) * 2
           * 10
           + "px")
       })

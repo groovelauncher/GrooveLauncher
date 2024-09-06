@@ -247,7 +247,6 @@ div.inner-page.app-list-page {
 
 .groove-element.groove-app-tile {
   @include flow-touch;
-  --flow-rotate-scale: 0.06;
   transition: transform 0.5s,
     background-color 0.5s;
   display: flex;
@@ -348,7 +347,7 @@ div.letter-selector {
   pointer-events: none;
 
   .letter-selector-row {
-    transform: perspective(calc(var(--flow-perspective) * 5)) rotateX(90deg);
+    transform: perspective(calc(var(--flow-perspective) * 1)) rotateX(90deg);
   }
 
   &.shown-animation {
@@ -374,7 +373,7 @@ div.letter-selector {
     box-shadow: 0px 0px 0px 9000px var(--metro-transparent);
 
     .letter-selector-row {
-      transform: perspective(calc(var(--flow-perspective) * 5)) rotateX(0deg);
+      transform: perspective(calc(var(--flow-perspective) * 1)) rotateX(0deg);
     }
   }
 
@@ -423,10 +422,11 @@ div.letter-selector {
       }
 
       @include flow-touch;
-      --flow-rotate-scale: .4;
 
       flex-grow: 1;
       margin: 6px;
+      --flow-touch-distance: -20px;
+      --flow-rotate-scale: 1;
       background: var(--accent-color);
       width: 0px;
       display: flex;
@@ -588,7 +588,7 @@ div.app-list-page {
       }
 
       transition: .5s ease-in !important;
-      transform: translateZ(-3px) !important;
+      transform: translateZ(-5px) !important;
       opacity: .9;
     }
   }
@@ -606,8 +606,13 @@ div.app-list-page {
       }
 
       transition: .35s ease-out !important;
-      transform: translateZ(-10px) !important;
+      transform: translateZ(-20px) !important;
       opacity: .5;
+    }
+
+    #sticky-letter {
+      opacity: 1 !important;
+      filter: brightness(.5);
     }
   }
 
@@ -622,6 +627,7 @@ div.letter-selector {
   height: calc(100% - var(--window-inset-bottom) - var(--window-inset-top) * 2);
   overflow: visible;
   top: var(--window-inset-top);
+
   &::before {
     content: "";
     display: block;

@@ -32,11 +32,11 @@ body {
     }
 
     &.soft-exit {
-        animation: app-outro-animation .25s cubic-bezier(0.83, 0.00, 0.92, 0.18) forwards;
+        animation: app-outro-animation .15s cubic-bezier(0.83, 0.00, 0.92, 0.18) forwards;
     }
 
     &.soft-exit-home {
-        animation: app-outro-animation-2 .25s cubic-bezier(0.83, 0.00, 0.92, 0.18) forwards;
+        animation: app-outro-animation-2 .15s cubic-bezier(0.83, 0.00, 0.92, 0.18) forwards;
     }
 
     @keyframes app-outro-animation {
@@ -116,7 +116,7 @@ div.app-tabs {
 
         .settings-page {
             perspective: var(--flow-perspective);
-            transition: opacity .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+            transition: opacity .25s cubic-bezier(0.075, 0.82, 0.165, 1);
             height: 100%;
             float: left;
             width: calc(100vw - 22px * 2);
@@ -129,6 +129,19 @@ div.app-tabs {
             }
 
             &.active-page {
+                --page-swipe-translate: 0px;
+                animation: page-swipe-translate .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+                @keyframes page-swipe-translate {
+                    from {
+                        transform: translate(var(--page-swipe-translate));
+                    }
+
+                    to {
+                        transform: translate(0px);
+                    }
+                }
+
                 opacity: 1;
             }
         }
@@ -237,6 +250,7 @@ a {
     top: -18px;
     width: calc(100% + 44px);
     height: calc(100% + 36px);
+
     * {
         color: transparent;
     }
@@ -308,7 +322,7 @@ a {
     flex-direction: column;
     box-sizing: border-box;
     position: fixed;
-   
+
     z-index: 2;
     padding: 18px 22px;
     align-items: center;

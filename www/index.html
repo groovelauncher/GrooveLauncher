@@ -23,7 +23,11 @@
         </div>
     </div>
     <div class="system-bar system-status-bar"></div>
-    <div class="system-bar system-navigation-bar"></div>
+    <div class="system-bar system-navigation-bar">
+        <button style="background-image: url(../temp_test/b1.png);" onclick="GrooveBoard.backendMethods.navigation.back()"></button>
+        <button style="background-image: url(../temp_test/b2.png);" onclick="GrooveBoard.backendMethods.navigation.home()"></button>
+        <button style="background-image: url(../temp_test/b3.png);"></button>
+    </div>
     <div class="system-bar system-bar-preview"></div>
     <div class="tiles-app"></div>
     <div id="main-home-slider" class="slide-wrapper" style="visibility: hidden;">
@@ -89,7 +93,7 @@
             title: "update webview", action: () => {
                 alert("hey")
                 const url = "https://www.apkmirror.com/apk/google-inc/android-system-webview/"
-                if (window["Groove"]) Groove.openURL(url); else window.open(url,"_blank")
+                if (window["Groove"]) Groove.openURL(url); else window.open(url, "_blank")
             }
         })
     </script>

@@ -164,11 +164,6 @@ window.addEventListener("activityResume", () => {
 
 startUpSequence([
     (next) => {
-        setTimeout(next, 500);
-        GrooveBoard.backendMethods.navigation.push("homescreen", () => { }, () => { })
-
-    },
-    (next) => {
         window.iconPackDB = {}
         iconPackConverter.forEach(icon => {
             icon.apps.forEach(packageName => {
@@ -178,11 +173,24 @@ startUpSequence([
         next()
     },
     (next) => {
-        detectDeviceType();
-        GrooveBoard.backendMethods.reloadApps()
+        //Load customization
+        if (!!localStorage.getItem("tileColumns")) GrooveBoard.backendMethods.setTileColumns(Number(localStorage.getItem("tileColumns")), true)
+        if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
+        if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
+        if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true)
         next()
     },
     (next) => {
+        GrooveBoard.backendMethods.navigation.push("homescreen", () => { }, () => { })
+        if (Groove.constructor.toString().includes("GrooveMock")) {
+            setTimeout(next, 500);
+        } else {
+            next()
+        }
+    },
+    (next) => {
+        detectDeviceType();
+        GrooveBoard.backendMethods.reloadApps()
         window.scrollers.tile_page_scroller.refresh()
         window.scrollers.app_page_scroller.refresh()
         next()
@@ -190,31 +198,21 @@ startUpSequence([
     (next) => {
         const letter_selector_entries = ["#abcdefghijklmnopqrstuvwxyz"]
         const groupedEntries = [];
-
         for (let i = 0; i < letter_selector_entries[0].length; i += 4) {
             groupedEntries.push(letter_selector_entries[0].slice(i, i + 4));
         }
-
         const letterSelectorDiv = $('.letter-selector > div');
-
         groupedEntries.forEach(group => {
             const $rowDiv = $('<div>', { class: 'letter-selector-row' });
-
             for (let letter of group) {
                 const $letterDiv = $('<div>', { class: 'letter-selector-letter', text: letter });
                 $rowDiv.append($letterDiv);
             }
-
             letterSelectorDiv.append($rowDiv);
         });
         next()
     },
     (next) => {
-        //Load customization
-        if (!!localStorage.getItem("tileColumns")) GrooveBoard.backendMethods.setTileColumns(Number(localStorage.getItem("tileColumns")), true)
-        if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
-        if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
-        if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true)
         try {
             GrooveBoard.backendMethods.homeConfiguration.load()
         } catch (error) {

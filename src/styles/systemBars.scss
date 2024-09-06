@@ -26,6 +26,22 @@ body {
     &.system-navigation-bar {
         bottom: 0px;
         height: var(--window-inset-bottom);
+        display: flex;
+        pointer-events: all !important;
+        z-index: 9999999;
+        padding: 0px 20px;
+        box-sizing: border-box;
+        button {
+            flex-grow: 1;
+            background-size: auto 75% !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            border: none;
+            background-color: transparent;
+            &:active{
+                opacity: .5;
+            }
+        }
     }
 
     &.system-bar-preview {
@@ -35,9 +51,11 @@ body {
         width: 100%;
         height: 100%;
         z-index: 999999;
+
         body.groove-mock & {
             background-color: rgb(red, 0.5);
         }
+
         --left: var(--window-inset-left);
         --top: var(--window-inset-top);
         --right: var(--window-inset-right);

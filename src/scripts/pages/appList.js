@@ -108,7 +108,7 @@ const letterSelectorSwitch = {
             delete window.stopInsetUpdate
 
             if (letterSelector.hasClass("hidden")) letterSelector.removeClass("shown-animation").removeClass("hidden")
-
+          
         }, 500);
     }
 }
@@ -277,6 +277,7 @@ function appMenuClose() {
     $("div.app-list-page").removeClass("app-menu-back app-menu-back-intro")
     setTimeout(() => {
         appMenuClean()
+        stickyLetter(-scrollers.app_page_scroller.y)
     }, 500);
     scrollers.main_home_scroller.enabled = true
 
@@ -347,7 +348,7 @@ function stickyLetter(scroll) {
         if (scrollTop < 0 && !stickyEl) stickyEl = element; else if (0 <= scrollTop && scrollTop < 64 && !overthrowingEl) overthrowingEl = element;
     })
     if (stickyEl) {
-        stickyLetterTile.css({ visibility: "visible", transition: "0s", transform: overthrowingEl ? `translateY(${overthrowingEl.offsetTop - scroll - wInsets.top - 64}px)` : "" })
+        stickyLetterTile.css({ visibility: "visible", top: `calc(${overthrowingEl ? overthrowingEl.offsetTop - scroll - wInsets.top - 64 : 0}px + var(--window-inset-top))`, "--transform": overthrowingEl ? overthrowingEl.offsetTop - scroll - wInsets.top - 64 + "px" : "0px" })
         stickyLetterTile.children("p.groove-app-tile-icon").text(stickyEl.getAttribute("icon"))
     } else {
         stickyLetterTile.css({ visibility: "hidden" })

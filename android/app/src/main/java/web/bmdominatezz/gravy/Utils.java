@@ -41,4 +41,12 @@ public class Utils {
         InputStream inputStream = new ByteArrayInputStream(byteArray);
         return inputStream;
     }
+
+    public static InputStream loadBitmapAsStream(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        // Compress the bitmap (you can change the format and quality)
+        bitmap.compress(Bitmap.CompressFormat.WEBP, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        return new ByteArrayInputStream(byteArray);
+    }
 }

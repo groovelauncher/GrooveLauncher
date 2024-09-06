@@ -344,6 +344,7 @@ const backendMethods = {
           clearInterval(countdown);
         }
       }, 100);
+      scrollers.tile_page_scroller.scrollTo(0,0,500)
     },
     get lastPush() {
       if (GrooveBoard.backendMethods.navigation.history.length == 0)
@@ -464,7 +465,7 @@ const backendMethods = {
       appViewEvents.softExit(document.querySelector(`iframe.groove-element.groove-app-view[packageName="${packageName}"]`), homeBack)
       setTimeout(() => {
         backendMethods.destroyInternalApp(packageName, homeBack)
-      }, 250);
+      }, 150);
     } catch (error) {
       console.log("Soft exit failed! Destroying process")
       backendMethods.destroyInternalApp(packageName, homeBack)

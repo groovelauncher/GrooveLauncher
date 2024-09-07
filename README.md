@@ -18,21 +18,32 @@ You can download the latest prebuilt APK from the [Releases](https://github.com/
 2. Download the APK file.
 3. Install it on your Android device.
 
+## Screenshots
+
+<table>
+    <tr>
+        <td><img src="metadata/screenshots/00.gif" title="Edit Mode"></td>
+        <td><img src="metadata/screenshots/01.gif" title="Launch Animation"></td>
+        <td><img src="metadata/screenshots/02.gif" title="Alphabetical Sort"></td>
+        <td><img src="metadata/screenshots/03.gif" title="App Search"></td>
+    </tr>
+</table>
+
 ## Installation
 
 If you prefer to build the app yourself:
 
 1. Clone the repository:
 
-    ```bash
-    git clone https://github.com/groovelauncher/GrooveLauncher.git
-    ```
+   ```bash
+   git clone https://github.com/groovelauncher/GrooveLauncher.git
+   ```
 
 2. Navigate to the project directory and run the build script:
 
-    ```bash
-    npm run build:production
-    ```
+   ```bash
+   npm run build:production
+   ```
 
 3. Open the `./android` folder in Android Studio.
 4. Compile and run the app on your device/emulator.

@@ -38,6 +38,10 @@ body {
             background-repeat: no-repeat !important;
             border: none;
             background-color: transparent;
+            &:nth-child(2){
+                filter: contrast(0) brightness(2);
+                background-size: auto 60% !important;
+            }
             &:active{
                 opacity: .5;
             }
@@ -53,7 +57,7 @@ body {
         z-index: 999999;
 
         body.groove-mock & {
-            background-color: rgb(red, 0.5);
+            background-color: rgb(black, 0.5);
         }
 
         --left: var(--window-inset-left);

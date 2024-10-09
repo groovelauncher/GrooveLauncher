@@ -10,8 +10,8 @@ android {
         applicationId = "web.bmdominatezz.gravy"
         minSdk = 26
         targetSdk = 34
-        versionCode = 23 //011
-        versionName = "0.2.3-beta.2"
+        versionCode = 26 //011
+        versionName = "0.2.6-beta.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,6 +39,9 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.webkit)
+    implementation("org.nanohttpd:nanohttpd:2.3.1")
+    implementation("dev.rikka.shizuku:api:13.1.5")
+    implementation("dev.rikka.shizuku:provider:13.1.5")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

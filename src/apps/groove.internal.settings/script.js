@@ -141,9 +141,9 @@ function activeTabScroll() {
             var extra = 0
             if (scroll >= (index + 1)) { extra = maxscroll }
             e.style.transform = `translateX(${-transform + extra}px)`
-         //   if (x <= 0) allPages[index].style.transform = scroll >= (index + 1) ? `translateX(${bs.content.offsetWidth - bs.wrapper.offsetWidth * 2}px)` : ""
+            //   if (x <= 0) allPages[index].style.transform = scroll >= (index + 1) ? `translateX(${bs.content.offsetWidth - bs.wrapper.offsetWidth * 2}px)` : ""
         })
-      //  if (x > 0) { allPages.slice(-1)[0].style.transform = `translateX(${-100 * allPages.length}%)` }
+        //  if (x > 0) { allPages.slice(-1)[0].style.transform = `translateX(${-100 * allPages.length}%)` }
         lastX = x
     }
     requestAnimationFrame(activeTabScroll)
@@ -246,12 +246,21 @@ try {
 } catch (error) {
     incompatibleWebViewVersion()
 }
-document.querySelector("#advanced-tab > button:nth-child(1)").addEventListener("flowClick", () => {
+document.querySelector("#dumpbtn").addEventListener("flowClick", () => {
     navigator.clipboard.writeText(JSON.stringify(window.parent.allappsarchive));
 })
-document.querySelector("#advanced-tab > button:nth-child(2)").addEventListener("flowClick", () => {
-    window.localStorage.clear()
-    appViewEvents.reloadApp()
+document.querySelector("#resetbtn").addEventListener("flowClick", () => {
+
+    window.parent.GrooveBoard.alert(
+        "Reset Groove Launcher?",
+        "This will reset your launcher to its default settings. All customizations will be lost.",
+        [{
+            title: "Yes", style: "default", inline: true, action: () => {
+                window.localStorage.clear()
+                appViewEvents.reloadApp()
+            }
+        }, { title: "No", style: "default", inline: true, action: () => { } }]
+    );
 })
 document.getElementById("theme-chooser").addEventListener('selected', (e) => {
     appViewEvents.setTheme(e.detail.index == 0 ? grooveThemes.light : grooveThemes.dark)
@@ -304,6 +313,7 @@ requestAnimationFrame(() => {
         const theme = Number(localStorage.getItem("theme"))
         document.getElementById("theme-chooser").selectOption(1 - theme)
     }
+    document.getElementById("pm-chooser").selectOption(parent.GrooveBoard.backendMethods.packageManagerProvider.get())
 })
 document.getElementById("font-chooser").querySelector("input").addEventListener('change', handleFileInput);
 
@@ -354,3 +364,59 @@ document.querySelector(".innerApp").style.animation = "app-intro-animation .5s c
 setTimeout(() => {
     activeTabScroll()
 }, 500);
+
+const pmtryagaian = {
+    root: () => {
+        var firstanswer = Groove.isDeviceRooted()
+        setTimeout(() => {
+            var secondanswer = Groove.isDeviceRooted()
+            if (secondanswer) {
+                parent.GrooveBoard.backendMethods.packageManagerProvider.set(1)
+            } else {
+                parent.GrooveBoard.alert(
+                    "Root Access Required",
+                    "Root access is required to perform this action. Please grant root access to continue.",
+                    [{
+                        title: "Try again", style: "default", inline: true, action: () => {
+                            pmtryagaian.root()
+                        }
+                    }, { title: "Ok", style: "default", inline: true, action: () => { } }]
+                );
+                document.getElementById("pm-chooser").selectOption(parent.GrooveBoard.backendMethods.packageManagerProvider.get())
+            }
+        }, 1000);
+    },
+    shizuku: () => {
+        var firstanswer = Groove.isShizukuAvailable()
+        setTimeout(() => {
+            var secondanswer = Groove.isShizukuAvailable()
+            if (secondanswer) {
+                parent.GrooveBoard.backendMethods.packageManagerProvider.set(2)
+            } else {
+                parent.GrooveBoard.alert(
+                    "Shizuku Permission Required",
+                    "Shizuku permission is required to perform this action. Please grant Shizuku permission to continue.",
+                    [{
+                        title: "Try again", style: "default", inline: true, action: () => {
+                            pmtryagaian.shizuku()
+                        }
+                    }, { title: "Ok", style: "default", inline: true, action: () => { } }]
+                );
+                document.getElementById("pm-chooser").selectOption(parent.GrooveBoard.backendMethods.packageManagerProvider.get())
+            }
+        }, 1000);
+    }
+}
+document.getElementById("pm-chooser").addEventListener('selected', (e) => {
+    switch (e.detail.index) {
+        case 0:
+            parent.GrooveBoard.backendMethods.packageManagerProvider.set(0)
+            break;
+        case 1:
+            pmtryagaian.root()
+            break;
+        case 2:
+            pmtryagaian.shizuku()
+            break;
+    }
+});

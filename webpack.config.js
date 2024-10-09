@@ -9,12 +9,14 @@ module.exports = env => {
   return {
     mode: env.production ? "production" : "development",
     entry: {
-      main: path.resolve(__dirname, './src/script.js'),
+      script: path.resolve(__dirname, './src/script.js'),
+      welcome: path.resolve(__dirname, './src/welcome.js'), // add this
     },
     output: {
       path: path.resolve(__dirname, './www/dist/'),
-      filename: 'script.js',
-    }, externals: {
+      filename: '[name].js', // output filename based on entry point name
+    },
+    externals: {
       'webpackVariables': `${JSON.stringify(webpackVariables)}`,
     },
   }

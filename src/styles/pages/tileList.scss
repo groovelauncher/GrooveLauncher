@@ -303,6 +303,12 @@ div.groove-home-tile {
             height: 100%;
             position: absolute;
             object-fit: fill;
+
+            width: 60%;
+            height: 60%;
+            position: absolute;
+            left: 20%;
+            top: 20%;
         }
     }
 
@@ -312,11 +318,11 @@ div.groove-home-tile {
     &[gs-h="4"] {
         div.groove-home-inner-tile {
             img.groove-home-tile-imageicon {
-                width: 60%;
-                height: 60%;
+                width: 55%;
+                height: 55%;
                 position: absolute;
-                left: 20%;
-                top: 20%;
+                left: 22.5%;
+                top: 22.5%;
             }
 
             p.groove-home-tile-icon {
@@ -370,7 +376,7 @@ div.groove-home-tile {
         right: 6px;
         bottom: 6px;
         background: var(--accent-color);
-
+        background-size: 100% 100% !important;
         img.groove-home-tile-imageicon {
             //filter: saturate(0) brightness(0.6) contrast(10);
             //mix-blend-mode: plus-lighter;
@@ -380,6 +386,12 @@ div.groove-home-tile {
             width: 100%;
             height: 100%;
             object-fit: contain;
+            
+            width: 50%;
+            height: 50%;
+            position: absolute;
+            left: 25%;
+            top: 25%;
         }
 
         p.groove-home-tile-icon {

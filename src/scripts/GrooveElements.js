@@ -7,10 +7,12 @@ const GrooveElements = {
   wAppMenu: wAppMenu,
   wTileMenu: wTileMenu,
   wAppView: wAppView,
+  wAlertView: wAlertView
 };
 function wHomeTile(
-  imageIcon = false,
+  // imageIcon = false,
   icon = "",
+  iconbg = "none",
   title = "Unknown",
   packageName = "com.unknown",
   color = "default",
@@ -20,8 +22,9 @@ function wHomeTile(
   const homeTile = document.createElement("div");
   homeTile.classList.add("groove-element");
   homeTile.classList.add("groove-home-tile");
-  homeTile.setAttribute("imageIcon", imageIcon);
+  //homeTile.setAttribute("imageIcon", imageIcon);
   homeTile.setAttribute("icon", icon);
+  homeTile.setAttribute("icon-bg", iconbg);
   homeTile.setAttribute("title", title);
   homeTile.setAttribute("packageName", packageName);
   homeTile.setAttribute("color", color);
@@ -29,56 +32,64 @@ function wHomeTile(
   homeTile.style.backgroundColor = color;
   homeTile.innerHTML = `
     <div class="groove-element groove-home-inner-tile">
-    ${imageIcon
-      ? `
+    ${//imageIcon ?
+    `
             <img class="groove-element groove-home-tile-imageicon" src="">
         `
-      : `
-            <p class="groove-element groove-home-tile-icon"></p>
-        `
+    /*: `
+          <p class="groove-element groove-home-tile-icon"></p>
+      `*/
     }
         <p class="groove-element groove-home-tile-title"></>
     </div>
     `;
-  if (!imageIcon)
-    homeTile.querySelector("p.groove-home-tile-icon").innerText = icon;
-  else homeTile.querySelector("img.groove-home-tile-imageicon").src = icon;
+  //if (!imageIcon)
+  //homeTile.querySelector("p.groove-home-tile-icon").innerText = icon;
+  //else 
+  homeTile.querySelector("img.groove-home-tile-imageicon").src = icon;
   homeTile.querySelector("p.groove-home-tile-title").innerText = title;
+  if (iconbg) homeTile.querySelector(".groove-home-inner-tile").style.backgroundImage = " url(" + iconbg + ")";
+
   return homeTile;
 }
 function wAppTile(
-  imageIcon = false,
+  //imageIcon = false,
   icon = "",
+  iconbg = "none",
   title = "Unknown",
-  packageName = "com.unknown"
+  packageName = "com.unknown",
+  letterTile = false
 ) {
   const appTile = document.createElement("div");
   appTile.innerHTML = `
-    ${imageIcon
-      ? `
+    ${!letterTile ?
+      `
             <div class="groove-element groove-app-tile-icon"><img class="groove-element groove-app-tile-imageicon" src=""></div>
         `
       : `
-            <p class="groove-element groove-app-tile-icon"></p>
-        `
+          <p class="groove-element groove-app-tile-icon"></p>
+      `
     }
         <p class="groove-element groove-app-tile-title"></>
     `;
   appTile.classList.add("groove-element");
   appTile.classList.add("groove-app-tile");
-  appTile.setAttribute("imageIcon", imageIcon);
+  //appTile.setAttribute("imageIcon", imageIcon);
   appTile.setAttribute("icon", icon);
+  appTile.setAttribute("icon-bg", iconbg);
+  console.log(packageName, iconbg)
   appTile.setAttribute("title", title);
   appTile.setAttribute("packageName", packageName);
   appTile.querySelector("p.groove-app-tile-title").innerText = title;
-  if (imageIcon)
-    appTile.querySelector("img.groove-app-tile-imageicon").src = icon;
+  if (!letterTile) appTile.querySelector("img.groove-app-tile-imageicon").src = icon; else appTile.querySelector("p.groove-app-tile-icon").innerText = icon;
+  if (iconbg && iconbg != "none") appTile.querySelector(".groove-app-tile-imageicon").style.background = "url('" + iconbg + "')";
   else appTile.querySelector("p.groove-app-tile-icon").innerText = icon;
+  console.log("apply", appTile.querySelector(".groove-app-tile-icon"), "url('" + iconbg + "')")
 
   return appTile;
 }
 function wLetterTile(letter) {
-  const el = wAppTile(false, letter, "", "");
+  const el = wAppTile(letter, "", "", "", true);
   el.querySelector(".groove-app-tile-title").remove();
   el.classList.add("groove-letter-tile");
   el.removeAttribute("title");
@@ -183,5 +194,28 @@ function wAppView(packageName) {
   appView.setAttribute("packageName", packageName);
   appView.src = "./apps/" + packageName + "/index.html" + `?theme=${document.body.classList.contains("light-mode") ? "light" : "dark"}&accentColor=${getComputedStyle(document.body).getPropertyValue("--accent-color").slice(1)}&tileColumns=${tileListGrid.getColumn()}`
   return appView;
+}
+function wAlertView(title, body, actions, unsafe = false) {
+  const alertView = document.createElement("div")
+  alertView.classList.add("groove-element");
+  alertView.classList.add("groove-alert-view");
+  alertView.append(`<div class="groove-element groove-alert-foreground">
+      <h1 class="groove-alert-title"></h1>
+      <${unsafe ? "div" : "p"} class="groove-alert-body"></${unsafe ? "div" : "p"}>
+      <div class="groove-alert-actions"></div>
+    </div>
+    <div class="groove-element groove-alert-background"></div>`)
+  alertView.querySelector(".groove-alert-title").innerText = title
+  alertView.querySelector(".groove-alert-body")[unsafe ? "innerHTML" : "innerText"] = body
+  Object.entries(actions).forEach(entry => {
+    const button = document.createElement("button")
+    button.classList.add("groove-element");
+    button.classList.add("groove-alert-action");
+    button.innerText = entry[0]
+    button.addEventListener("flowClick", entry[0])
+    alertView.querySelector(".groove-alert-actions").append(button)
+  })
+  alertView.querySelector(".groove-alert-actions")
+  return alertView
 }
 export default GrooveElements;

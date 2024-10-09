@@ -1,90 +1,387 @@
 const iconPackConverter = [
-  //Calculator
-  { apps: ["com.sec.android.app.popupcalculator", "com.android.calculator", "com.android.calculator2"], icon: "󰃬", pack: 1 },
-  //Camera
-  { apps: ["com.sec.android.app.camera", "com.samsung.android.app.cameraassistant", "org.lineageos.aperture", "com.android.camera2"], icon: "󰄀", pack: 1 },
-  //People
-  { apps: ["com.samsung.android.app.contacts", "com.android.contacts", "com.google.android.contacts"], icon: "", pack: 1 },
-
-  //Phone
   {
-    apps: ["com.android.dialer", "com.google.android.dialer", "com.samsung.android.incallui", "com.samsung.android.dialer"],
-    icon: "",
-    pack: 0
+    //CALCULATOR
+    "apps": [
+      "com.sec.android.app.popupcalculator",
+      "com.android.calculator",
+      "com.android.calculator2"
+    ],
+    "icon": "calculator"
   },
-  //Messaging
+  //CAMERA
   {
-    apps: [
+    "apps": [
+      "com.sec.android.app.camera",
+      "com.samsung.android.app.cameraassistant",
+      "org.lineageos.aperture",
+      "com.android.camera2"
+    ],
+    "icon": "camera"
+  },
+  //CONTACTS
+  {
+    "apps": [
+      "com.samsung.android.app.contacts",
+      "com.android.contacts",
+      "com.google.android.contacts"
+    ],
+    "icon": "people"
+  },
+  //PHONE
+  {
+    "apps": [
+      "com.android.dialer",
+      "com.google.android.dialer",
+      "com.samsung.android.incallui",
+      "com.samsung.android.dialer"
+    ],
+    "icon": "phone"
+  },
+  //MESSAGES
+  {
+    "apps": [
       "com.google.android.apps.messaging",
       "com.android.apps.messaging",
       "com.samsung.android.messaging",
       "com.android.messaging"
     ],
-    icon: "",
-    pack: 0,
+    "icon": "messages"
   },
-  //Store
-  { apps: ["com.android.vending", "com.sec.android.app.samsungapps", "com.aurora.store"], icon: "", pack: 1 },
-  //Browser
-  { apps: ["com.metro.browser", "org.lineageos.jelly"], icon: "", pack: 1 },
-  //Calendar
-  { apps: ["com.samsung.android.calendar", "org.lineageos.etar", "com.google.android.calendar"], icon: "󰸗", pack: 1 },
-  //Clock
-  { apps: ["com.sec.android.app.clockpackage", "com.android.deskclock", "com.google.android.deskclock"], icon: "󰀠", pack: 1 },
-  //Files
-  { apps: ["com.sec.android.app.myfiles'", "com.android.documentsui", "com.google.android.documentsui"], icon: "", pack: 1 },
-  //Photos
-  { apps: ["com.android.gallery3d", "com.sec.android.gallery3d"], icon: "󰥶", pack: 1 },
-  //Music
-  { apps: ["com.sec.android.app.music", "org.lineageos.eleven"], icon: "", pack: 1 },
-  //Voice Recorder
-  { apps: ["com.sec.android.app.voicenote", "org.lineageos.recorder"], icon: "󰍬", pack: 1 },
-  //Sim Menu
-  { apps: ["com.android.stk"], icon: "", pack: 1 },
-  //Mail
-  { apps: ["com.google.android.gm", "com.samsung.android.email.provider"], icon: "", pack: 1 },
-  //FM Radio
-  { apps: ["com.android.app.fm", "com.sec.android.app.fm"], icon: "󰐹", pack: 1 },
-  //Health
-  { apps: ["com.google.android.apps.fitness", "com.sec.android.app.shealth"], icon: "", pack: 1, accent: "rgb(210,71,38)" },
-
-  //Third party apps:
-  { apps: ["web.bmdominatezz.gravy"], icon: "󯣿", pack: 2 },
-  { apps: ["com.android.settings", "groove.internal.settings"], icon: "", pack: 1 },
-  { apps: ["com.discord", "com.aliucord"], icon: "", pack: 0 },
-  { apps: ["com.android.chrome"], icon: "", pack: 1 },
-  { apps: ["com.spotify.music"], icon: "", pack: 1 },
-  { apps: ["com.reddit.frontpage"], icon: "", pack: 1 },
-  { apps: ["com.google.android.googlequicksearchbox"], icon: "", pack: 1 },
-  { apps: ["com.valvesoftware.android.steam.community"], icon: "", pack: 1 },
-  { apps: ["com.pinterest"], icon: "", pack: 1 },
-  { apps: ["com.linkedin.android"], icon: "", pack: 1 },
-  { apps: ["com.facebook.katana"], icon: "", pack: 1 },
-  { apps: ["com.facebook.orca"], icon: "", pack: 1 },
-  { apps: ["com.chess"], icon: "󰡙", pack: 1 },
-  { apps: ["org.lichess.mobileapp"], icon: "", pack: 1 },
-  { apps: ["com.ebay.mobile"], icon: "", pack: 1 },
-  { apps: ["org.mozilla.firefox"], icon: "󰈹", pack: 1 },
-  { apps: ["com.google.android.apps.fitness"], icon: "󰥬", pack: 1 },
-  { apps: ["com.instagram.android"], icon: "", pack: 1 },
-  { apps: ["org.krita"], icon: "", pack: 1 },
-  { apps: ["com.netflix.mediaclient"], icon: "󰝆", pack: 1 },
-  { apps: ["app.revanced.android.youtube", "com.google.android.youtube", "app.rvx.android.youtube"], icon: "", pack: 1 },
-  { apps: ["com.google.android.apps.youtube.creator"], icon: "󰡇", pack: 1 },
-  { apps: ["com.google.android.apps.maps"], icon: "", pack: 1 },
-  { apps: ["com.whatsapp"], icon: "", pack: 1 },
-  { apps: ["org.telegram.messenger"], icon: "", pack: 1 },
-  { apps: ["org.torproject.torbrowser"], icon: "", pack: 1 },
-  { apps: ["com.google.android.apps.translate"], icon: "󰗊", pack: 1 },
-  { apps: ["com.samsung.android.app.tips"], icon: "󰌵", pack: 1 },
-  { apps: ["com.samsung.android.game.gamehome", "com.google.android.play.games"], icon: "󰖺", pack: 1 },
-  { apps: ["com.microsoft.teams"], icon: "󰊻", pack: 1 },
-  { apps: ["com.skype.raider"], icon: "", pack: 1 },
-  { apps: ["com.snapchat.android"], icon: "", pack: 1 },
-  { apps: ["com.microsoft.skydrive"], icon: "", pack: 1 },
-  { apps: ["com.microsoft.office.onenote"], icon: "󰝇", pack: 1 },
-  { apps: ["com.microsoft.office.outlook"], icon: "󰴢", pack: 1 },
-  { apps: ["com.microsoft.office.officehubrow"], icon: "󰏆", pack: 1 },
-  { apps: ["com.google.android.apps.docs"], icon: "", pack: 1 },
-];
+  //STORE
+  {
+    "apps": [
+      "com.android.vending",
+      "com.sec.android.app.samsungapps",
+      "com.aurora.store"
+    ],
+    "icon": "store"
+  },
+  //BROWSER
+  {
+    "apps": [
+      "com.metro.browser",
+      "org.lineageos.jelly"
+    ],
+    "icon": "browser"
+  },
+  //CALENDAR
+  {
+    "apps": [
+      "com.samsung.android.calendar",
+      "org.lineageos.etar",
+      "com.google.android.calendar"
+    ],
+    "icon": "calendar"
+  },
+  //ALARM
+  {
+    "apps": [
+      "com.sec.android.app.clockpackage",
+      "com.android.deskclock",
+      "com.google.android.deskclock"
+    ],
+    "icon": "alarms"
+  },
+  //FILES
+  {
+    "apps": [
+      "com.sec.android.app.myfiles'",
+      "com.android.documentsui",
+      "com.google.android.documentsui"
+    ],
+    "icon": "files"
+  },
+  //PHOTOS
+  {
+    "apps": [
+      "com.android.gallery3d",
+      "com.sec.android.gallery3d"
+    ],
+    "icon": "photos"
+  },
+  //MUSIC
+  {
+    "apps": [
+      "com.sec.android.app.music",
+      "org.lineageos.eleven"
+    ],
+    "icon": "music",
+    "accent": "emerald"
+  },
+  //VOICE RECORDER
+  {
+    "apps": [
+      "com.sec.android.app.voicenote",
+      "org.lineageos.recorder"
+    ],
+    "icon": "podcasts"
+  },
+  //SETTINGS
+  {
+    "apps": [
+      "com.android.settings",
+      "groove.internal.settings"
+    ],
+    "icon": "settings"
+  },
+  //GAMES
+  {
+    "apps": [
+      "com.samsung.android.game.gamehome",
+      "com.google.android.play.games"
+    ],
+    "icon": "games",
+    "accent": "emerald"
+  },
+  //HEALTH
+  {
+    "apps": [
+      "com.google.android.apps.fitness",
+      "com.sec.android.app.shealth"
+    ],
+    "icon": "health",
+    "accent": "orange"
+  },
+  /* {
+       "apps": [
+           "com.android.stk"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.google.android.gm",
+           "com.samsung.android.email.provider"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.android.app.fm",
+           "com.sec.android.app.fm"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.google.android.apps.fitness",
+           "com.sec.android.app.shealth"
+       ],
+       "icon": "",
+       "accent": "rgb(210,71,38)"
+   },
+   {
+       "apps": [
+           "web.bmdominatezz.gravy"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.discord",
+           "com.aliucord"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.android.chrome"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.spotify.music"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.reddit.frontpage"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.google.android.googlequicksearchbox"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.valvesoftware.android.steam.community"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.pinterest"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.linkedin.android"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.facebook.katana"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.facebook.orca"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.chess"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "org.lichess.mobileapp"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.ebay.mobile"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "org.mozilla.firefox"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.google.android.apps.fitness"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.instagram.android"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "org.krita"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.netflix.mediaclient"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "app.revanced.android.youtube",
+           "com.google.android.youtube",
+           "app.rvx.android.youtube"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.google.android.apps.youtube.creator"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.google.android.apps.maps"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.whatsapp"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "org.telegram.messenger"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "org.torproject.torbrowser"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.google.android.apps.translate"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.samsung.android.app.tips"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.microsoft.teams"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.skype.raider"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.snapchat.android"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.microsoft.skydrive"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.microsoft.office.onenote"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.microsoft.office.outlook"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.microsoft.office.officehubrow"
+       ],
+       "icon": ""
+   },
+   {
+       "apps": [
+           "com.google.android.apps.docs"
+       ],
+       "icon": ""
+   }*/
+]
 export default iconPackConverter;

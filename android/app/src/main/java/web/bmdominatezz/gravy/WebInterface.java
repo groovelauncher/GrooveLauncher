@@ -1,5 +1,6 @@
 package web.bmdominatezz.gravy;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -7,6 +8,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.IBinder;
+import android.os.Parcel;
+import android.os.RemoteException;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -21,11 +25,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Method;
+
+import rikka.shizuku.Shizuku;
+import rikka.shizuku.ShizukuApiConstants;
+import rikka.shizuku.ShizukuBinderWrapper;
+import rikka.shizuku.SystemServiceHelper;
+
 public class WebInterface {
     private final MainActivity mainActivity;
+    private final GrooveWebView webView;
 
-    WebInterface(MainActivity mainActivity) {
+    WebInterface(MainActivity mainActivity, GrooveWebView webView) {
         this.mainActivity = mainActivity;
+        this.webView = webView;
     }
 
     public float getDevicePixelRatio() {
@@ -64,17 +80,24 @@ public class WebInterface {
                 JSONObject appInfo = new JSONObject();
                 appInfo.put("packageName", resolveInfo.activityInfo.packageName);
                 appInfo.put("label", resolveInfo.loadLabel(mainActivity.packageManager).toString());
+                if ((resolveInfo.activityInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
+                    appInfo.put("type", 0);
+                } else {
+                    appInfo.put("type", 1);
+                }
                 retrievedApps.put(appInfo);
             }
         }
         JSONObject grooveSettings = new JSONObject();
         grooveSettings.put("packageName", "groove.internal.settings");
         grooveSettings.put("label", "Groove Settings");
+        grooveSettings.put("type", 0);
         retrievedApps.put(grooveSettings);
         return retrievedApps.toString();
     }
+
     @JavascriptInterface
-    public String getAppLabel(String packageName){
+    public String getAppLabel(String packageName) {
         try {
             ApplicationInfo appInfo = mainActivity.packageManager.getApplicationInfo(packageName, 0);
             return mainActivity.packageManager.getApplicationLabel(appInfo).toString();
@@ -83,9 +106,15 @@ public class WebInterface {
             return null; // Or return a default value
         }
     }
+
     @JavascriptInterface
-    public String getAppIconURL(String packageName) {
-        return "https://appassets.androidplatform.net/assets/icons/" + (packageName == null ? "undefined" : packageName) + ".webp";
+    public String getAppIconURL(String packageName) throws JSONException {
+        // '{"foreground":"http://localhost:5500/www/mock/icons/default/.png","background":"data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\"/>"}
+        JSONObject appicon = new JSONObject();
+        appicon.put("foreground", "https://appassets.androidplatform.net/assets/icons/" + (packageName == null ? "undefined" : packageName) + ".webp");
+        appicon.put("background", "https://appassets.androidplatform.net/assets/icons-bg/" + (packageName == null ? "undefined" : packageName) + ".webp");
+        return appicon.toString();
+        //return "https://appassets.androidplatform.net/assets/icons/" + (packageName == null ? "undefined" : packageName) + ".webp";
     }
 
     @JavascriptInterface
@@ -107,14 +136,84 @@ public class WebInterface {
         return false;
     }
 
+    String TAG = "groovelauncher";
+
+    public boolean uninstallAppWithShizuku(String packageName) {
+        String command = "su pm uninstall " + packageName;
+        Log.d(TAG, "Uninstall command: " + command);
+        try {
+            ShizukuBinderWrapper binder = new ShizukuBinderWrapper(Shizuku.getBinder());
+            binder.transact(IBinder.FIRST_CALL_TRANSACTION, Parcel.obtain(), Parcel.obtain(), 0);
+            Process process = Runtime.getRuntime().exec(command);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Log.d(TAG, "Command output: " + line);
+            }
+
+            int exitCode = process.waitFor();
+            Log.d(TAG, "Command exit code: " + exitCode);
+        } catch (RemoteException | IOException | InterruptedException e) {
+            Log.e(TAG, "Error executing uninstall command", e);
+        }
+        return true;
+    }
+
+    public boolean uninstallAppWithRoot(String packageName) {
+        try {
+            // Run the uninstall command as root
+            Process process = Runtime.getRuntime().exec(new String[]{"pm uninstall " + packageName});
+
+            // Optional: read output if you need to handle success or failure
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder output = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+            }
+            reader.close();
+
+            // Wait for the process to finish
+            process.waitFor();
+
+            // Check for success (exit code 0 means success)
+            if (process.exitValue() == 0) {
+                Log.d("RootUninstall", "Uninstall successful for " + packageName);
+                return true;
+            } else {
+                Log.e("RootUninstall", "Uninstall failed for " + packageName);
+            }
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            Log.e("RootUninstall", "Error executing root command: " + e.getMessage());
+        }
+        return false;
+    }
+
     @JavascriptInterface
     public boolean uninstallApp(String packageName) {
-        Intent appIntent = mainActivity.packageManager.getLaunchIntentForPackage(packageName);
-        Intent intent = new Intent(Intent.ACTION_DELETE);
-        intent.setData(Uri.parse("package:" + packageName));
-        if (appIntent != null) {
-            mainActivity.startActivity(intent);
-            return true;
+        return uninstallApp(packageName, 0);
+    }
+
+    @JavascriptInterface
+    public boolean uninstallApp(String packageName, int packageManagerProvider) {
+        Log.d("groovelaauncher", "uninstallApp pm provider: " + packageManagerProvider);
+        switch (packageManagerProvider) {
+            case 0:
+                Intent appIntent = mainActivity.packageManager.getLaunchIntentForPackage(packageName);
+                Intent intent = new Intent(Intent.ACTION_DELETE);
+                intent.setData(Uri.parse("package:" + packageName));
+                if (appIntent != null) {
+                    mainActivity.startActivity(intent);
+                    return true;
+                }
+                return false;
+            case 1:
+                return uninstallAppWithRoot(packageName);
+            case 2:
+                return uninstallAppWithShizuku(packageName);
         }
         return false;
     }
@@ -299,4 +398,36 @@ public class WebInterface {
         }
     }
 
+    @JavascriptInterface
+    public boolean isShizukuAvailable() {
+        // Check if Shizuku service is available (Shizuku is running on the device)
+        if (!Shizuku.pingBinder()) {
+            // Shizuku is not available
+            return false;
+        }
+        // Check if the app has permission to use Shizuku
+        if (Shizuku.checkSelfPermission() != PackageManager.PERMISSION_GRANTED) {
+            // Request Shizuku permission
+            int shizukuRequestCode = 1234;
+            Shizuku.requestPermission(shizukuRequestCode);
+            return false;
+        }
+        // Shizuku is available and permission is granted
+        return true;
+    }
+
+    @JavascriptInterface
+    public boolean isDeviceRooted() {
+        try {
+            // Try executing 'su' command to check for root access
+            Process process = Runtime.getRuntime().exec("su");
+            // Wait for the process to complete
+            process.waitFor();
+            // If the exit value is 0, root access is available
+            return (process.exitValue() == 0);
+        } catch (Exception e) {
+            // Root access denied or unavailable
+            return false;
+        }
+    }
 }

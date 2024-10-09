@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 62 62" xmlns="http://www.w3.org/2000/svg">
+  <line style="fill: rgb(216, 216, 216); stroke-linecap: round; stroke-linejoin: round; stroke-width: 4px; stroke: rgb(255, 255, 255);" x1="31" y1="25" x2="31" y2="33"/>
+  <line style="fill: rgb(216, 216, 216); stroke-linecap: round; stroke-linejoin: round; stroke-width: 4px; stroke: rgb(255, 255, 255);" x1="25.3" y1="38.657" x2="31" y2="33"/>
+  <path d="M 49.5 18 C 49.5 19.71 48.928 21.286 47.964 22.548 C 47.137 21.153 46.179 19.895 45.142 18.858 C 42.838 16.553 39.446 14.643 35.87 13.678 C 37.228 11.756 39.467 10.5 42 10.5 C 46.142 10.5 49.5 13.858 49.5 18 Z M 12.5 18 C 12.5 13.858 15.858 10.5 20 10.5 C 22.533 10.5 24.772 11.756 26.13 13.678 C 22.554 14.643 19.162 16.553 16.858 18.858 C 15.821 19.895 14.863 21.153 14.036 22.548 C 13.072 21.286 12.5 19.71 12.5 18 Z" style="fill: rgb(255, 255, 255);"/>
+  <ellipse style="fill: none; stroke-width: 4px; stroke: rgb(255, 255, 255);" cx="31" cy="33" rx="15" ry="15"/>
+</svg>

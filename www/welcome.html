@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groove Launcher</title>
+    <link rel="icon" type="image/x-icon" href="./assets/icon-foreground.png">
+    <link rel="stylesheet" href="dist/styles.css">
+</head>
+
+<body id="welcome-app">
+    <div id="background"></div>
+    <div id="welcome-page">
+        <div class="setup-pages">
+            <div class="setup-page" style="opacity: 1;" id="page-welcome">
+                <div class="setup-body">
+                    <h1 style="    text-transform: none;
+                    font-size: 70px; margin-bottom: 20px;
+                    font-weight: 200; transform: translateZ(100px) translate(20px, 30px) !important;">Welcome!</h1>
+                    <p style="margin: 0px;"><img src="./assets/icon-foreground.png" width="30"
+                            style="filter: contrast(0) brightness(2);    transform: translateY(6px); padding-right: 8px;">Groove
+                        Launcher
+                    </p>
+                    <p>Let's setup your experience in a few short steps.</p>
+
+                </div>
+                <div class="setup-footer">
+                    <p style="text-transform: uppercase;position: absolute;bottom: 80px;opacity: .75;">Warning: This is
+                        pre-release software and may contain bugs.</p>
+                    <button class="right-btn"
+                        onclick="if(localStorage.length && !localStorage['lastVersion'] || localStorage['lastVersion'] != Groove.getAppVersion() ) goToPage(1); else if(!localStorage['accentColor']) goToPage(3); else goToPage(4)">next</button>
+                </div>
+            </div>
+
+            <div class="setup-page" id="page-wizard">
+                <div class="setup-body">
+                    <h1>Update Wizard</h1>
+                    <p>Let's ensure your data is moved across safely! Click next to continue.</p>
+                </div>
+                <div class="setup-footer">
+                    <button class="left-btn" onclick="goToPage(0)">back</button>
+                    <button class="right-btn" onclick='goToPage(2);setTimeout(() => {
+                        const loader = document.getElementById("update-loader");
+                        loader.classList.add("finished");
+                        document.querySelector("#update-loading p").innerText = "All done!"
+                        document.querySelector("#update-loading div.setup-footer").style.removeProperty("display")
+                        $("#update-loading").addClass("active").addClass("button-anim")
+                        localStorage.setItem("lastVersion",Groove.getAppVersion())
+        setTimeout(() => {
+            $("#update-loading").removeClass("button-anim")
+        }, 500);
+                    }, 2000);'>next</button>
+                </div>
+            </div>
+            <div class="setup-page" id="update-loading">
+                <div class="setup-body">
+                    <h1>Update Wizard</h1>
+                    <p>Please wait...</p>
+                    <div id="update-loader" class="loader"
+                        style="background: transparent; box-shadow: none; pointer-events: none;">
+                        <div class="loader-animation">
+                            <span style="--index:0"></span>
+                            <span style="--index:1"></span>
+                            <span style="--index:2"></span>
+                            <span style="--index:3"></span>
+                            <span style="--index:4"></span>
+                            <span style="--index:5"></span>
+                            <span style="--index:6"></span>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="setup-footer" style="display: none;">
+                    <button class="right-btn" onclick="goToPage(3)">next</button>
+                </div>
+            </div>
+            <div class="setup-page" id="accent-color-picker">
+                <div class="setup-body">
+                    <h1>Choose Your Color</h1>
+                    <p>Pick a color that matches your mood.</p>
+                    <div class="accent-color-catalogue" style="overflow: hidden;position: relative;margin: 0px;">
+
+
+                        <div>
+                            <div style="--index:0;">
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-lime);">
+                                </div>
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-green);">
+                                </div>
+                                <div class="accent-color-catalogue-item"
+                                    style="background: var(--metro-color-emerald);"></div>
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-teal);">
+                                </div>
+                            </div>
+                            <div style="--index:1;">
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-cyan);">
+                                </div>
+                                <div class="accent-color-catalogue-item selected"
+                                    style="background: var(--metro-color-cobalt);">
+                                </div>
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-indigo);">
+                                </div>
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-violet);">
+                                </div>
+                            </div>
+                            <div style="--index:2;">
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-pink);">
+                                </div>
+                                <div class="accent-color-catalogue-item"
+                                    style="background: var(--metro-color-magenta);"></div>
+                                <div class="accent-color-catalogue-item"
+                                    style="background: var(--metro-color-crimson);"></div>
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-red);">
+                                </div>
+                            </div>
+                            <div style="--index:3;">
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-orange);">
+                                </div>
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-amber);">
+                                </div>
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-yellow);">
+                                </div>
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-brown);">
+                                </div>
+                            </div>
+                            <div style="--index:4;">
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-olive);">
+                                </div>
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-steel);">
+                                </div>
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-mauve);">
+                                </div>
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-taupe);">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="setup-footer">
+                    <button class="left-btn" onclick="goToPage(0)">back</button>
+                    <button class="right-btn" onclick="goToPage(4);
+                    
+                    setTimeout(() => {
+                        goToPage(5)
+                       setTimeout(() => {
+                        location.href='/www' }, 500); }, 2000);">next</button>
+                </div>
+            </div>
+            <div class="setup-page" id="page-readme">
+                <div class="setup-body">
+                    <h1>What's New?</h1>
+
+                </div>
+                <div class="setup-footer" style="display: none;">
+                    <button class="right-btn" onclick="goToPage(3)">next</button>
+                </div>
+            </div>
+            <div class="setup-page" id="page-finish">
+                <div class="setup-body">
+                    <h1>Get ready to Groove</h1>
+                    <p>Your setup is done. Time to dive in!</p>
+                </div>
+                <div class="setup-footer">
+                </div>
+            </div>
+            <div class="setup-page" id="page-void">
+                <div class="setup-body">
+
+                </div>
+                <div class="setup-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="dist/welcome.js"></script>
+</body>
+
+</html>

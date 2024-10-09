@@ -16,16 +16,17 @@ body {
     align-items: center;
 
     @keyframes app-intro-animation {
-        from {
-            transform: translateX(100px) rotateY(30deg);
-            transform-origin: -22px 50%;
+        0% {
+            transform: rotateY(30deg) translateX(50px);
+            transform-origin: 0px 50%;
             opacity: 0;
 
         }
 
-        to {
-            transform: rotateY(0deg);
-            transform-origin: -22px 50%;
+        100% {
+            transform: rotateY(0deg) translateX(0px);
+            ;
+            transform-origin: 0px 50%;
 
             opacity: 1;
         }
@@ -41,15 +42,15 @@ body {
 
     @keyframes app-outro-animation {
         to {
-            transform: translateX(100px) rotateY(30deg);
-            transform-origin: -22px 50%;
+            transform: rotateY(30deg) translateX(50px);
+            transform-origin: 0px 50%;
             opacity: 0;
 
         }
 
         from {
             transform: rotateY(0deg);
-            transform-origin: -22px 50%;
+            transform-origin: 0px 50%;
 
             opacity: 1;
         }
@@ -57,15 +58,15 @@ body {
 
     @keyframes app-outro-animation-2 {
         to {
-            transform: translateX(-100px) rotateY(-20deg);
-            transform-origin: -22px 50%;
+            transform: translateX(-25vw) rotateY(-30deg);
+            transform-origin: 0px 50%;
             opacity: 0;
 
         }
 
         from {
             transform: rotateY(0deg);
-            transform-origin: -22px 50%;
+            transform-origin: 0px 50%;
 
             opacity: 1;
         }
@@ -261,7 +262,7 @@ a {
 
     &.shown-animation {
         &>div.accent-color-catalogue>div>div {
-            transition: .15s calc(var(--index)*.02s) ease-out;
+            transition: .075s calc(var(--index)*.02s) ease-out;
         }
 
         &.shown {
@@ -440,4 +441,7 @@ a {
     background: rgb(127, 127, 127, .4);
     background-position: center;
     background-size: cover;
+}
+div.group{
+    margin-top: 22px;
 }

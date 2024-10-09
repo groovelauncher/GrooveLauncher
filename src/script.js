@@ -167,17 +167,27 @@ startUpSequence([
         window.iconPackDB = {}
         iconPackConverter.forEach(icon => {
             icon.apps.forEach(packageName => {
-                window.iconPackDB[packageName] = { icon: icon.icon, pack: icon.pack }
+                window.iconPackDB[packageName] = { icon: icon.icon, accent: icon["accent"] }
             });
         });
         next()
     },
+    /*    (next) => {
+    
+            GrooveBoard.alert(
+                "Warning!",
+                "WebView you are using is old/unsupported!",
+                [{ title: "Ok", style: "default", action: next }]
+            );
+    
+        },*/
     (next) => {
         //Load customization
         if (!!localStorage.getItem("tileColumns")) GrooveBoard.backendMethods.setTileColumns(Number(localStorage.getItem("tileColumns")), true)
         if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
         if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
         if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true)
+        //if (!!localStorage.getItem("packageManagerProvider")) GrooveBoard.backendMethods.packageManagerProvider.set(Number(localStorage.getItem("packageManagerProvider")), true)
         next()
     },
     (next) => {
@@ -229,9 +239,6 @@ startUpSequence([
     }
 ],
     function () {
-        setTimeout(() => {
-            GrooveBoard.boardMethods.finishLoading()
-        }, 100);
+        GrooveBoard.boardMethods.finishLoading()
     }
 )
-//GrooveBoard.backendMethods.wallpaper.load("assets/wallpaper.jpg")

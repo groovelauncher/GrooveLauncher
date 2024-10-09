@@ -12,8 +12,76 @@ window.grooveThemes = grooveThemes;
 const tileListInnerContainer = document.querySelector(
   "div.tile-list-inner-container"
 );
+import jQuery from "jquery";
+var $ = jQuery
+function hexToRgb(hex) {
+  // Remove the hash at the start if it's there
+  hex = hex.replace(/^#/, '');
 
+  // Parse the hex string
+  let r = parseInt(hex.slice(0, 2), 16);
+  let g = parseInt(hex.slice(2, 4), 16);
+  let b = parseInt(hex.slice(4, 6), 16);
+
+  // Return the RGB string
+  return `rgb(${r}, ${g}, ${b})`;
+}
 import GrooveElements from "./GrooveElements";
+
+function alert(title = "Alert!", message = "Message", actions = [{ title: "" }]) {
+  var items = ""
+  actions.forEach(element => {
+    if (!element["style"]) element.style = "cancel"
+    items += `<button class="groove-element groove-element-alert-action${element["style"] == "default" ? " default" : element["style"] == "destructive" ? " destructive" : ""}">
+        ${element.title}
+      </button>`
+
+  });
+  $("body").append(`
+    <div class="groove-element groove-element-alert">
+      <p class="groove-element-alert-title">${title}</p>
+      <p class="groove-element-alert-body">${message}</p>
+      ${items}
+  </div>`)
+  if ($("div.groove-element-alert-layer:not(.taken)").length == 0) {
+    $("body").append(`
+    <div class="groove-element groove-element-alert-layer">
+     
+  </div>`)
+  }
+  var alertmenu = $("div.groove-element.groove-element-alert").last()
+  if (actions.length <= 2) alertmenu.addClass("inline")
+  actions.forEach((element, index) => {
+    console.log("index", index)
+    if (element["action"]) {
+      if (typeof element["action"] == "function") {
+        alertmenu.children("button.groove-element-alert-action").eq(index).on("click", function () {
+          setTimeout(() => {
+            actions[index].action()
+          }, 200);
+        })
+      }
+    }
+  });
+  function closeW(params) {
+    if ($("div.groove-element.groove-element-alert").length == 1) {
+      var layer = $("div.groove-element-alert-layer").addClass("taken")
+      layer.addClass("exit")
+      setTimeout(() => {
+        layer.remove()
+      }, 200);
+    }
+    alertmenu.addClass("exit")
+    setTimeout(() => {
+      alertmenu.remove()
+    }, 200);
+  }
+  alertmenu.click(function (e) {
+    if (e.target == this) closeW()
+  })
+  alertmenu.children("button").click(closeW)
+  return alertmenu[0]
+}
 const boardMethods = {
   finishLoading: () => {
     $(window).trigger("finishedLoading");
@@ -29,6 +97,7 @@ const boardMethods = {
       {
         imageIcon: false,
         icon: "",
+        iconbg: "none",
         title: "Unknown",
         packageName: "com.unknown",
         supportedSizes: ["s", "m"],
@@ -46,8 +115,8 @@ const boardMethods = {
 
     const widget = window.tileListGrid.addWidget(
       GrooveElements.wHomeTile(
-        options.imageIcon,
         options.icon,
+        options.iconbg,
         options.title,
         options.packageName,
         "",
@@ -97,14 +166,15 @@ const boardMethods = {
       {
         imageIcon: false,
         icon: "",
+        iconbg: "none",
         title: "Unknown",
         packageName: "com.unknown",
       },
       options
     );
     const el = GrooveElements.wAppTile(
-      options.imageIcon,
       options.icon,
+      options.iconbg,
       options.title,
       options.packageName
     );
@@ -141,6 +211,7 @@ const boardMethods = {
             packageName: findTile.getAttribute("packagename"),
             title: findTile.getAttribute("title"),
             icon: findTile.getAttribute("icon"),
+            iconbg: findTile.getAttribute("icon-bg"),
             imageIcon: findTile.getAttribute("imageicon") == "true",
             //  supportedSizes: ["s", "m", "w", "l"]
             supportedSizes: ["s", "m", "w"],
@@ -164,12 +235,33 @@ const boardMethods = {
         backendMethods.homeConfiguration.save()
       },
       uninstall: () => {
-        Groove.uninstallApp(packageName);
+        if (GrooveBoard.backendMethods.packageManagerProvider.get() == 0) {
+          Groove.uninstallApp(packageName, 0);
+        } else {
+          parent.GrooveBoard.alert(
+            "Uninstall this app?",
+            "This app, plus any information it contains, will be deleted from your device.",
+            [{
+              title: "Yes", style: "default", inline: true, action: () => {
+                Groove.uninstallApp(packageName, GrooveBoard.backendMethods.packageManagerProvider.get());
+              }
+            }, { title: "No", style: "default", inline: true, action: () => { } }]
+          );
+        }
+
+
+
+
       },
     });
     document.querySelector("div.app-list-page").appendChild(el);
-    if (document.querySelectorAll(`div.groove-home-tile[packagename="${packageName}"]`).length > 1) {
+    if (document.querySelectorAll(`div.groove-home-tile[packagename="${packageName}"]`).length > 0) {
       el.querySelector("div:nth-child(1)").classList.add("disabled")
+    }
+    console.log("dfgsd", window.allappsarchive, packageName)
+    if (allappsarchive.filter(e => e.packageName == packageName)[0].type == 0) {
+      el.querySelector("div:nth-child(2)").remove()
+      el.style.setProperty("--full-height", "89px")
     }
     return el;
   },
@@ -185,8 +277,7 @@ const boardMethods = {
     return appView;
   },
 };
-var appSortCategories = {};
-window.appSortCategories = appSortCategories;
+window.appSortCategories = {};
 function getLabelRank(char) {
   if (/^\d+$/.test(char)) {
     return 1; // Numbers
@@ -246,15 +337,17 @@ function sortObjectsByKey(a, b) {
     return rankA - rankB;
   }
 }
-
+console.log(appSortCategories, "spp")
 // Output: [{ label: "1" }, { label: "2" }, { label: "A" }, { label: "a" }, { label: "B" }, { label: "c" }, { label: "#" }, { label: "@" }]
 const backendMethods = {
   reloadApps: function (callback) {
-    const apps = JSON.parse(Groove.retrieveApps());
-    let array = apps;
-    array.sort(sortObjectsByLabel);
-    window["allappsarchive"] = array;
-    array.forEach((entry) => {
+    document.querySelector("#main-home-slider > div > div:nth-child(2) > div > div.app-list > div.app-list-container").querySelectorAll(".groove-letter-tile, .groove-app-tile").forEach(e => e.remove())
+    //appSortCategories = {}
+    Object.keys(appSortCategories).forEach(key => {
+      delete appSortCategories[key];
+    })
+    var apps = backendMethods.reloadAppDatabase()
+    apps.forEach((entry) => {
       const labelSortCategory = getLabelSortCategory(entry.label);
       if (!!!appSortCategories[labelSortCategory])
         appSortCategories[labelSortCategory] = [];
@@ -273,20 +366,59 @@ const backendMethods = {
       );
       appSortCategories[labelSortCategory].forEach((app) => {
         const ipe = window.iconPackDB[app.packageName];
+        const iconurl = JSON.parse(Groove.getAppIconURL(app.packageName))
+        const appdetail = backendMethods.getAppDetails(app.packageName)
+        // console.log("bavk",appdetail.icon.background)
+
         const el = boardMethods.createAppTile({
-          title: app.label,
+          title: appdetail.label,
           packageName: app.packageName,
-          imageIcon: ipe ? false : true,
-          icon: ipe ? ipe.icon : Groove.getAppIconURL(app.packageName),
+          imageIcon: true,
+          icon: appdetail.icon.foreground,
+          iconbg: appdetail.icon.background,
         });
-        if (ipe) {
-          if (ipe.pack == 0) el.classList.add("iconpack0");
-          else if (ipe.pack == 1) el.classList.add("iconpack1");
-          else el.classList.add("iconpack2");
-        }
+        /* if (ipe) if (ipe["accent"]) {
+           el.querySelector("img.groove-app-tile-imageicon").style.backgroundColor = `var(--metro-color-${ipe.accent})`
+         }
+         console.log("ipe", ipe)
+         console.log("el", el)*/
+
       });
     });
+    console.log("new ", appSortCategories)
     scrollers.app_page_scroller.refresh();
+  },
+  getAppDetails: (packageName) => {
+    if (window["allappsarchive"].length == 0) reloadAppDatabase();
+    const search = window["allappsarchive"].filter(e => e.packageName == packageName)[0]
+    const icon = JSON.parse(Groove.getAppIconURL(packageName))
+    var returnee = { packageName: "com.unknown." + Math.random().toFixed(4) * 10000, label: "Unknown", type: 0, icon: icon }
+    if (search) returnee = Object.assign(returnee, search)
+    if (Object.keys(iconPackDB).includes(packageName)) {
+      //          icon: ipe ? (new URL("./assets/defaulticonpack/" + ipe.icon + ".svg", window.location.href.toString()).toString()) : iconurl.foreground,
+      const idb = iconPackDB[packageName]
+      returnee.icon.foreground = new URL("./assets/defaulticonpack/" + idb.icon + ".svg", window.location.href.toString())
+      returnee.icon.background = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>`
+      if (idb["accent"]) {
+        var color = "transparent"
+        if (grooveColors[idb.accent]) color = grooveColors[idb.accent]; else color = idb.accent;
+        if (color.startsWith("#")) try {
+          color = hexToRgb(color)
+        } catch (error) {
+
+        };
+        returnee.icon.background = `data:image/svg+xml,<svg viewBox="0 0 62 62" xmlns="http://www.w3.org/2000/svg">  <rect width="62" height="62" style="fill: ${color};"></rect></svg>`//`data:image/svg+xml,<svg viewBox="0 0 1 1" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" style="fill: red;"></rect></svg>`
+        //el.querySelector("img.groove-app-tile-imageicon").style.backgroundColor = `var(--metro-color-${idb.accent})`
+        //<svg viewBox="0 0 1 1" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" style="fill: rgb(255, 0, 0);"></rect></svg>
+      }
+    }
+    return returnee;
+  },
+  reloadAppDatabase: () => {
+    var apps = JSON.parse(Groove.retrieveApps());
+    apps.sort(sortObjectsByLabel);
+    window["allappsarchive"] = apps;
+    return apps
   },
   refreshInsets: () => {
     if (window.stopInsetUpdate) return;
@@ -344,7 +476,7 @@ const backendMethods = {
           clearInterval(countdown);
         }
       }, 100);
-      scrollers.tile_page_scroller.scrollTo(0,0,500)
+      scrollers.tile_page_scroller.scrollTo(0, 0, 500)
     },
     get lastPush() {
       if (GrooveBoard.backendMethods.navigation.history.length == 0)
@@ -508,6 +640,15 @@ const backendMethods = {
     Groove.setUIScale(scale)
     if (!doNotSave) localStorage.setItem("UIScale", scale)
   },
+  packageManagerProvider: {
+    set: (id, doNotSave = false) => {
+      id = (id == 0 || id == 1 || id == 2) ? id : 0
+      if (!doNotSave) localStorage.setItem("packageManagerProvider", id)
+    },
+    get: () => {
+      return (!localStorage["packageManagerProvider"] || localStorage["packageManagerProvider"] == "0") ? 0 : localStorage["packageManagerProvider"] == "1" ? 1 : 2
+    }
+  },
   homeConfiguration: {
     save: () => {
       if (window.cantSaveHomeConfig) return;
@@ -520,6 +661,7 @@ const backendMethods = {
               t: el.getAttribute("title"),              // title
               ii: el.getAttribute("imageicon") == "true", // imageIcon
               i: el.getAttribute("icon"),               // icon
+              ib: el.getAttribute("icon-bg"),            // icon background
               s: el.getAttribute("supportedsizes").split(","),     // supportedSizes
               w: el.gridstackNode.w,                    // width
               h: el.gridstackNode.h,                    // height
@@ -542,9 +684,9 @@ const backendMethods = {
       config.forEach(tile => {
         if (document.querySelectorAll(`div.groove-home-tile[packagename="${tile.p}"]`).length > 0) return
 
-        const homeTile = GrooveElements.wHomeTile(tile.ii, tile.i, tile.t, tile.p, "", tile.s)
-        if(iconPackDB[tile.p]){
-          if(iconPackDB[tile.p].pack == 0){
+        const homeTile = GrooveElements.wHomeTile(tile.i, tile.ib, tile.t, tile.p, "", tile.s)
+        if (iconPackDB[tile.p]) {
+          if (iconPackDB[tile.p].pack == 0) {
             homeTile.classList.add("iconpack0")
           }
         }
@@ -678,8 +820,16 @@ const backendMethods = {
     GrooveBoard.backendMethods.reloadApps()
   },
   appUninstall: (packagename) => {
-    tileListGrid.removeWidget(document.querySelector(`div.groove-home-tile[packagename="${packagename}"]`))
+    const tileElem = document.querySelector(`div.groove-home-tile[packagename="${packagename}"]`)
+    if (tileElem) tileListGrid.removeWidget(tileElem)
     GrooveBoard.backendMethods.reloadApps()
+  },
+  serveConfig: () => {
+    var response = { "uiscale": "1", "theme": "1", "accentcolor": "#3E65FF" }
+    if (localStorage["UIScale"]) response.uiscale = localStorage.UIScale
+    if (localStorage["accentColor"]) response.accentcolor = localStorage.accentColor
+    if (localStorage["theme"]) response.theme = localStorage.theme
+    return response;
   }
 };
 function listHistory() {
@@ -741,4 +891,4 @@ function getCanvasBlob(canvas, mimeType = 'image/png') {
   }
 }
 
-export default { boardMethods, backendMethods };
+export default { boardMethods, backendMethods, alert };

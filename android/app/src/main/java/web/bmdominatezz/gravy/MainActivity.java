@@ -42,6 +42,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import fi.iki.elonen.NanoHTTPD;
 
 public class MainActivity extends AppCompatActivity {
     public WebEvents webEvents;
@@ -60,8 +61,30 @@ public class MainActivity extends AppCompatActivity {
     public Uri mCapturedImageURI = null;
     public ValueCallback<Uri[]> mFilePathCallback;
     public String mCameraPhotoPath;
+    private MyLocalServer myServer;
 
+    public class MyLocalServer extends NanoHTTPD {
+        public MyLocalServer(int port) throws IOException {
+            super(port);
+            start(SOCKET_READ_TIMEOUT, false);
+            System.out.println("Server started on port: " + port);
+        }
 
+        @Override
+        public Response serve(IHTTPSession session) {
+            String response = "Error";
+            try {
+                response = webView.evaluateJavascriptSync("GrooveBoard.backendMethods.serveConfig()");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            Response res = newFixedLengthResponse(response);
+            res.addHeader("Access-Control-Allow-Origin", "*"); // Allow all origins
+            res.addHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); // Allow specific methods
+            res.addHeader("Access-Control-Allow-Headers", "Content-Type"); // Allow specific headers
+            return res;
+        }
+    }
     @Override
     protected void onPause() {
         pauseRunnable = new Runnable() {
@@ -124,6 +147,12 @@ public class MainActivity extends AppCompatActivity {
             webView.lastInsets = systemBars;
             return insets;
         });
+
+        try {
+            myServer = new MyLocalServer(49666); // Choose your port
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     Handler activityDispatchEventTimeout;
@@ -197,5 +226,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return;
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (myServer != null) {
+            myServer.stop();
+        }
     }
 }

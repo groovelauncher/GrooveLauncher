@@ -1,4 +1,5 @@
-#loader {
+#loader,
+.loader {
     box-shadow: 0px 0px 0px 10000px black;
     animation: 0.5s loader-show cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
 
@@ -41,7 +42,7 @@
     box-sizing: border-box;
 
     div.loader-animation {
-        width: calc(min(80vh, 80vw));
+        width: calc(min(30vh, 30vw));
         max-width: 75;
         height: 30px;
         display: flex;
@@ -52,7 +53,7 @@
             display: block;
             flex-grow: 1;
             background: var(--accent-color);
-            clip-path: circle(4px);
+            clip-path: circle(2px);
             opacity: 0;
             animation: loader-span-anim 3s calc(var(--index) * .1s + 1s) infinite;
 
@@ -93,12 +94,14 @@
         justify-content: start;
         padding-left: 30px;
         padding-top: 100px;
+
         button {
             position: absolute;
             left: 20px;
             bottom: 120px;
             background: transparent;
-            &:active{
+
+            &:active {
                 background-color: white;
                 color: black;
                 transform: scale(.95);

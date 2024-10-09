@@ -257,7 +257,9 @@ div.inner-page.app-list-page {
   align-items: center;
 
 
-
+  .groove-app-tile-icon{
+    background-size: 100% 100% !important;
+  }
   .groove-app-tile-icon,
   .groove-app-tile-imageicon {
     margin: 5px;
@@ -269,6 +271,7 @@ div.inner-page.app-list-page {
     min-width: 52px;
     min-height: 52px;
     pointer-events: none;
+    background-size: 100% 100% !important;
   }
 
   .groove-app-tile-imageicon {
@@ -320,7 +323,11 @@ div.inner-page.app-list-page {
   width: 100%;
   top: calc(var(--window-inset-top));
   background: var(--metro-background) !important;
-  box-shadow: 0px calc(-6px - var(--window-inset-top)) 0px var(--metro-background);
+  box-shadow: 0px calc(-6px - var(--window-inset-top)) 0px var(--metro-background),
+  var(--metro-background) -10px 0px 0px,
+  var(--metro-background) -10px -50px 0px;
+  ;
+
   z-index: 10;
   visibility: hidden;
 }
@@ -361,7 +368,7 @@ div.letter-selector {
     }
 
     .letter-selector-row {
-      transition: .15s calc(var(--index)*.02s) ease-out;
+      transition: .075s calc(var(--index)*.02s) ease-out;
     }
 
   }
@@ -455,7 +462,7 @@ div.groove-app-menu {
   font-weight: 350;
   perspective: var(--flow-perspective);
   box-sizing: border-box;
-
+  --full-height:154px;
   &.intro {
     overflow: hidden;
 
@@ -505,13 +512,13 @@ div.groove-app-menu {
       }
 
       51% {
-        height: 154px;
+        height: var(--full-height);
         transform: scaleY(0);
         background: var(--metro-foreground);
       }
 
       100% {
-        height: 154px;
+        height: var(--full-height);
         transform: scaleX(1);
       }
     }
@@ -533,13 +540,13 @@ div.groove-app-menu {
         }
 
         51% {
-          height: 154px;
+          height: var(--full-height);
           transform: scaleY(0) translateY(-100%);
           background: var(--metro-foreground);
         }
 
         100% {
-          height: 154px;
+          height: var(--full-height);
           transform: scaleX(1) translateY(-100%);
         }
       }
@@ -566,6 +573,11 @@ div.app-list-page {
     transition: transform var(--flow-touch-up-transition) ease-out, opacity var(--flow-touch-up-transition) ease-out;
   }
 
+  #sticky-letter {
+    p.groove-app-tile-icon {
+      transition: transform var(--flow-touch-up-transition) ease-out, opacity var(--flow-touch-up-transition) ease-out;
+    }
+  }
 
   div.app-tile-clone {
     position: fixed;
@@ -591,6 +603,15 @@ div.app-list-page {
       transform: translateZ(-5px) !important;
       opacity: .9;
     }
+
+    #sticky-letter {
+      opacity: 1 !important;
+
+      p.groove-app-tile-icon {
+        transition: .5s ease-out !important;
+        opacity: .9;
+      }
+    }
   }
 
   &.app-menu-back {
@@ -612,7 +633,11 @@ div.app-list-page {
 
     #sticky-letter {
       opacity: 1 !important;
-      filter: brightness(.5);
+
+      p.groove-app-tile-icon {
+        transition: .35s ease-out !important;
+        opacity: .5;
+      }
     }
   }
 

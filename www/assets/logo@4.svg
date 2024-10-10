@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 500 500" width="210mm" height="210mm" xmlns="http://www.w3.org/2000/svg">
+  <g style="" transform="matrix(0.995076, 0, 0, 1.00054, 1.230909, -0.135073)">
+    <path id="rect922" style="stroke-width: 0.0953171; stroke-linecap: round; stroke-miterlimit: 6.3; fill-opacity: 1; fill: rgb(170, 0, 255);" d="M 501.237 161.284 L 300.847 171.277 L 300.847 28.292 C 362.427 19.64 429.016 10.284 501.237 0.135 L 501.237 161.284 Z"/>
+    <path id="rect924" style="stroke-width: 0.0953171; stroke-linecap: round; stroke-miterlimit: 6.3; fill-opacity: 1; fill: rgb(170, 0, 255);" d="M 126.665 313.604 L -1.237 307.806 L -1.237 192.194 L 126.665 186.396 L 126.665 313.604 Z"/>
+    <path id="rect926" style="stroke-width: 0.0953171; stroke-linecap: round; stroke-miterlimit: 6.3; fill-opacity: 1; fill: rgb(170, 0, 255);" d="M 501.237 499.865 L 300.847 471.708 L 300.847 328.723 L 501.237 338.716 L 501.237 499.865 Z"/>
+    <path id="rect928" style="stroke-width: 0.134799; stroke-linecap: round; stroke-miterlimit: 6.3; fill-opacity: 1; fill: rgb(51, 0, 76);" d="M 133.815 313.926 L 501.237 330.572 L 501.237 169.428 L 133.815 186.074 L 133.815 313.926 Z"/>
+    <path id="rect930" style="stroke-width: 0.134799; stroke-linecap: round; stroke-miterlimit: 6.3; fill-opacity: 1; fill: rgb(102, 0, 153);" d="M -1.237 429.267 L 291.909 470.452 L 291.909 328.276 L -1.237 313.649 L -1.237 429.267 Z"/>
+    <path id="rect932" style="stroke-width: 0.134799; stroke-linecap: round; stroke-miterlimit: 6.3; fill-opacity: 1; fill: rgb(102, 0, 153);" d="M -1.237 186.35 L 291.909 171.724 L 291.909 29.548 L -1.237 70.733 L -1.237 186.35 Z"/>
+  </g>
+</svg>

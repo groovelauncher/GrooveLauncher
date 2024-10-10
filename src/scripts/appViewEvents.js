@@ -11,6 +11,10 @@ const appViewEvents = {
         const message = { action: "setAccentColor", argument: color };
         iframe.contentWindow.postMessage(message, '*');
     },
+    setFont: (iframe, font) => {
+        const message = { action: "setFont", argument: font };
+        iframe.contentWindow.postMessage(message, '*');
+    }
 }
 
 export default appViewEvents;

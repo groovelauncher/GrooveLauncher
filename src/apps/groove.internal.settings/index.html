@@ -150,13 +150,14 @@
             <div id="font-chooser" class="metro-dropdown-menu" selected="0">
               <div class="metro-dropdown-option">Open Sans</div>
               <div class="metro-dropdown-option">Noto Sans</div>
-              <div class="metro-dropdown-option">Choose...<input hidden type="file" accept=".ttf" /></div>
+              <div class="metro-dropdown-option"><span style="pointer-events: none;" class="name">Choose...</span><input hidden type="file" accept=".ttf" /></div>
             </div>
+            <button class="metro-button" id="clearfont">Remove Font</button>
           </div>
         </div>
         <div class="settings-page" id="advanced-tab">
           <div class="group">
-            <p class="group-title">Package manager</p>
+            <p class="group-title">Package manager (EXPERIMENTAL)</p>
             <div class="metro-dropdown-menu" id="pm-chooser" selected="0">
               <div class="metro-dropdown-option">System</div>
               <div class="metro-dropdown-option">Root</div>
@@ -169,11 +170,11 @@
           </div>
         </div>
         <div class="settings-page" id="about-tab">
-          <div class="scrollable article-f" style="perspective: var(--flow-perspective);">
+          <div class="scrollable article-f" style="perspective: var(--flow-perspective); padding-bottom: 50px;">
             <h1 id="about-app-name">Groove Launcher</h1>
             <h2 id="about-app-version">Version: Loading...</h2>
-            <h2 id="about-webview-version">WebView Version: Loading...</h2>
-            <button class="metro-button" id="resetbtn">Reset Groove Launcher</button>
+            <h2 id="about-webview-version" style="margin-bottom: 20px;">WebView Version: Loading...</h2>
+            <button class="metro-button" id="resetbtn" style="margin-bottom: 30px;">Reset Groove Launcher</button>
             <p>
               <strong>Groove Launcher</strong> is a metro-styled launcher
               designed for a customizable and sleek user experience. Users can
@@ -233,7 +234,15 @@
               style="display:block; transform-style:  preserve-3d;"><img id="buymeacoffee"
                 src="./../../assets/default-yellow.png" class="flow-touch" alt="Buy Me A Coffee"
                 style="height: 60px !important; width: 217px !important;" /></a>
-
+            <h2>Team Groove</h2>
+            <div class="credit-item">
+              <p>Nathan Tool<span>(Logo Design)</span></p>
+              <p url="https://reddit.com/u/NateTool"> u/NateTool</p>
+            </div>
+            <div class="credit-item">
+              <p>Berkay Tumal<span>(Developer)</span></p>
+              <p url="https://github.com/berkaytumal"> berkaytumal</p>
+            </div>
           </div>
         </div>
       </div>

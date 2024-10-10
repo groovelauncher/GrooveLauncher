@@ -1,6 +1,7 @@
 import GrooveMock from "./scripts/GrooveMock.js";
 
 const GrooveMockInstance = !window.Groove
+window.GrooveMockInstance = GrooveMockInstance
 if (GrooveMockInstance) {
     window.Groove = new GrooveMock("./mock/apps.json")
     document.body.classList.add("groove-mock")
@@ -47,6 +48,7 @@ const scrollers = {
         scrollX: false,
         scrollY: true,
         mouseWheel: true,
+        scrollbar: true
     }),
     letter_selector_scroller: new GrooveScroll('div.letter-selector', {
         scrollX: false,
@@ -164,6 +166,17 @@ window.addEventListener("activityResume", () => {
 
 startUpSequence([
     (next) => {
+        if (GrooveBoard.backendMethods.setupNeeded()) {
+            location.href = !GrooveMockInstance ? '/assets/welcome.html' : '/www/welcome.html'
+        } else {
+            next()
+        }
+    },
+    (next) => {
+        GrooveBoard.backendMethods.reloadAppDatabase()
+        next()
+    },
+    (next) => {
         window.iconPackDB = {}
         iconPackConverter.forEach(icon => {
             icon.apps.forEach(packageName => {
@@ -187,6 +200,7 @@ startUpSequence([
         if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
         if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
         if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true)
+        if (!!localStorage.getItem("font")) GrooveBoard.backendMethods.font.set(localStorage.getItem("font"), true)
         //if (!!localStorage.getItem("packageManagerProvider")) GrooveBoard.backendMethods.packageManagerProvider.set(Number(localStorage.getItem("packageManagerProvider")), true)
         next()
     },

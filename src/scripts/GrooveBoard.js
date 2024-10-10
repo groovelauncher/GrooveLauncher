@@ -1,11 +1,17 @@
+import { normalizeSync } from 'normalize-diacritics';
+window.normalizeDiacritics = (input = "") => {
+  return normalizeSync(input)
+}
+
 import {
   grooveColors,
   grooveTileColumns,
   grooveThemes,
 } from "./GrooveProperties";
 import appViewEvents from "./appViewEvents"
-import canvasImageFit from "./canvasImageFit";
+import canvasImageFit, { contain } from "./canvasImageFit";
 import imageStore from "./imageStore";
+import fontStore from "./fontStore";
 window.grooveTileColumns = grooveTileColumns;
 window.grooveColors = grooveColors;
 window.grooveThemes = grooveThemes;
@@ -52,7 +58,6 @@ function alert(title = "Alert!", message = "Message", actions = [{ title: "" }])
   var alertmenu = $("div.groove-element.groove-element-alert").last()
   if (actions.length <= 2) alertmenu.addClass("inline")
   actions.forEach((element, index) => {
-    console.log("index", index)
     if (element["action"]) {
       if (typeof element["action"] == "function") {
         alertmenu.children("button.groove-element-alert-action").eq(index).on("click", function () {
@@ -196,7 +201,7 @@ const boardMethods = {
   },
   createAppMenu: (packageName) => {
     const el = GrooveElements.wAppMenu(packageName, {
-      "pin to start": () => {
+      "pin to home": () => {
         const findTile = $(
           `div.inner-page.app-list-page > div.app-list > div.app-list-container > div.groove-element.groove-app-tile[packagename="${packageName}"]`
         )[0];
@@ -258,7 +263,6 @@ const boardMethods = {
     if (document.querySelectorAll(`div.groove-home-tile[packagename="${packageName}"]`).length > 0) {
       el.querySelector("div:nth-child(1)").classList.add("disabled")
     }
-    console.log("dfgsd", window.allappsarchive, packageName)
     if (allappsarchive.filter(e => e.packageName == packageName)[0].type == 0) {
       el.querySelector("div:nth-child(2)").remove()
       el.style.setProperty("--full-height", "89px")
@@ -337,9 +341,20 @@ function sortObjectsByKey(a, b) {
     return rankA - rankB;
   }
 }
-console.log(appSortCategories, "spp")
 // Output: [{ label: "1" }, { label: "2" }, { label: "A" }, { label: "a" }, { label: "B" }, { label: "c" }, { label: "#" }, { label: "@" }]
 const backendMethods = {
+  reset: async () => {
+    try {
+      const databases = await indexedDB.databases();
+      for (const db of databases) {
+        await indexedDB.deleteDatabase(db.name);
+        console.log(`Deleted database: ${db.name}`);
+      }
+    } catch (error) {
+      console.error('Error accessing databases: ', error);
+    }
+    localStorage.clear()
+  },
   reloadApps: function (callback) {
     document.querySelector("#main-home-slider > div > div:nth-child(2) > div > div.app-list > div.app-list-container").querySelectorAll(".groove-letter-tile, .groove-app-tile").forEach(e => e.remove())
     //appSortCategories = {}
@@ -385,11 +400,10 @@ const backendMethods = {
 
       });
     });
-    console.log("new ", appSortCategories)
     scrollers.app_page_scroller.refresh();
   },
   getAppDetails: (packageName) => {
-    if (window["allappsarchive"].length == 0) reloadAppDatabase();
+    if (!window["allappsarchive"]) backendMethods.reloadAppDatabase(); else if (window["allappsarchive"].length == 0) backendMethods.reloadAppDatabase();
     const search = window["allappsarchive"].filter(e => e.packageName == packageName)[0]
     const icon = JSON.parse(Groove.getAppIconURL(packageName))
     var returnee = { packageName: "com.unknown." + Math.random().toFixed(4) * 10000, label: "Unknown", type: 0, icon: icon }
@@ -816,6 +830,38 @@ const backendMethods = {
       if (await imageStore.hasImage("wallpaper")) imageStore.removeImage("wallpaper")
     },
   },
+  font: {
+    get: () => { Number(localStorage["font"] || 0) },
+    set: async (font, doNotSave = false) => {
+      font = Number(font)
+      font = font < 0 ? 0 : font > 2 ? 2 : font
+      document.body.classList.remove("font-1")
+      document.body.classList.remove("font-2")
+      var resultFont = 0
+      console.log("font set ", font)
+      switch (font) {
+        case 0:
+          resultFont = 0
+          break;
+        case 1:
+          resultFont = 1
+          document.body.classList.add("font-1")
+          break;
+        case 2:
+          if (fontStore.hasFont()) {
+            resultFont = 2
+            document.body.classList.add("font-2")
+          }
+          break;
+      }
+      if (!doNotSave) localStorage.setItem("font", resultFont)
+      fontStore.loadFont()
+      document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setFont(e, font))
+    },
+    remove: () => {
+      fontStore.clearFont()
+    }
+  },
   appInstall: (packagename) => {
     GrooveBoard.backendMethods.reloadApps()
   },
@@ -830,6 +876,11 @@ const backendMethods = {
     if (localStorage["accentColor"]) response.accentcolor = localStorage.accentColor
     if (localStorage["theme"]) response.theme = localStorage.theme
     return response;
+  },
+  setupNeeded: () => {
+    if (localStorage["lastVersion"] == undefined) return true;
+    else if (localStorage["lastVersion"] != Groove.getAppVersion()) return true;
+    else return false;
   }
 };
 function listHistory() {

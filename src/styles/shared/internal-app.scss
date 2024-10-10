@@ -29,6 +29,15 @@ img {
 
 * {
   font-family: SymbolsNerd, OpenSans;
+
+  body.font-1 & {
+    font-family: SymbolsNerd, NotoSans;
+  }
+
+  body.font-2 & {
+    font-family: SymbolsNerd, CustomFont, OpenSans;
+  }
+
   //word-spacing: -6px;
   //letter-spacing: -.5px;
   touch-action: none;

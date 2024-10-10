@@ -68,6 +68,9 @@ function GrooveScroll(selector, options = {}) {
     useTransition: false
   }, options))
   applyOverscroll(scroller)
+  setTimeout(() => {
+    scroller.refresh()
+  }, 500);
   scroller.cancelScroll = () => { cancelScroll(scroller) }
   scroller.content.style.setProperty("will-change","transform")
   return scroller
@@ -88,6 +91,7 @@ function GrooveSlide(selector, options = {}) {
       easing: "cubic-bezier(0.075, 0.82, 0.165, 1)"
     }
   }, options))
+
   scroller.cancelScroll = () => { cancelScroll(scroller) }
   return scroller
 }

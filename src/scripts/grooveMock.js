@@ -19,7 +19,10 @@ class GrooveMock {
 
     }
     getSystemInsets() {
-        return JSON.stringify({ left: 0, top: 32, right: 0, bottom: 50 })
+        return JSON.stringify({
+            left: 0, top: 32, right: 0, bottom:
+                0//50
+        })
     }
     retrieveApps() {
         var retrievedApps = this.#retrievedApps
@@ -76,5 +79,17 @@ class GrooveMock {
     }
     isDeviceRooted() { return false }
     isShizukuAvailable() { return true }
+    getDefaultApps() {
+        return JSON.stringify({
+            "phoneApp": "com.google.android.dialer",
+            "messageApp": "com.google.android.apps.messaging",
+            "browserApp": "com.android.chrome",
+            "mailApp": "com.google.android.gm",
+            "storeApp": "com.android.vending",
+            "contactsApp": "com.google.android.contacts",
+            "musicApp": "com.google.android.apps.youtube.music",
+            "galleryApp": "com.google.android.apps.photos"
+        })
+    }
 }
 export default GrooveMock;

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Groove Launcher</title>
-    <link rel="icon" type="image/x-icon" href="./assets/icon-foreground.png">
+    <link rel="icon" type="image/x-icon" href="./assets/logo-w@.5.svg">
     <link rel="stylesheet" href="dist/styles.css">
 </head>
 
@@ -15,10 +15,8 @@
         <div class="setup-pages">
             <div class="setup-page" style="opacity: 1;" id="page-welcome">
                 <div class="setup-body">
-                    <h1 style="    text-transform: none;
-                    font-size: 70px; margin-bottom: 20px;
-                    font-weight: 200; transform: translateZ(100px) translate(20px, 30px) !important;">Welcome!</h1>
-                    <p style="margin: 0px;"><img src="./assets/icon-foreground.png" width="30"
+                    <h1>Welcome</h1>
+                    <p style="margin: 0px;"><img src="./assets/logo@.5.svg" width="30"
                             style="filter: contrast(0) brightness(2);    transform: translateY(6px); padding-right: 8px;">Groove
                         Launcher
                     </p>
@@ -28,8 +26,7 @@
                 <div class="setup-footer">
                     <p style="text-transform: uppercase;position: absolute;bottom: 80px;opacity: .75;">Warning: This is
                         pre-release software and may contain bugs.</p>
-                    <button class="right-btn"
-                        onclick="if(localStorage.length && !localStorage['lastVersion'] || localStorage['lastVersion'] != Groove.getAppVersion() ) goToPage(1); else if(!localStorage['accentColor']) goToPage(3); else goToPage(4)">next</button>
+                    <button class="right-btn">next</button>
                 </div>
             </div>
 
@@ -39,18 +36,8 @@
                     <p>Let's ensure your data is moved across safely! Click next to continue.</p>
                 </div>
                 <div class="setup-footer">
-                    <button class="left-btn" onclick="goToPage(0)">back</button>
-                    <button class="right-btn" onclick='goToPage(2);setTimeout(() => {
-                        const loader = document.getElementById("update-loader");
-                        loader.classList.add("finished");
-                        document.querySelector("#update-loading p").innerText = "All done!"
-                        document.querySelector("#update-loading div.setup-footer").style.removeProperty("display")
-                        $("#update-loading").addClass("active").addClass("button-anim")
-                        localStorage.setItem("lastVersion",Groove.getAppVersion())
-        setTimeout(() => {
-            $("#update-loading").removeClass("button-anim")
-        }, 500);
-                    }, 2000);'>next</button>
+                    <button class="left-btn">previous</button>
+                    <button class="right-btn">next</button>
                 </div>
             </div>
             <div class="setup-page" id="update-loading">
@@ -72,13 +59,44 @@
                     </div>
                 </div>
                 <div class="setup-footer" style="display: none;">
-                    <button class="right-btn" onclick="goToPage(3)">next</button>
+                    <button class="right-btn">next</button>
+                </div>
+            </div>
+            <div class="setup-page" id="page-access">
+                <div class="setup-body">
+                    <h1>Ease of Access</h1>
+                    <p style="display: none;">Customize your experience to ensure that everything feels just right.</p>
+                    <div class="scroller" style="margin: 0px;">
+                        <div>
+                            <div class="group">
+                                <p class="group-title">Background</p>
+                                <div class="metro-dropdown-menu" id="theme-chooser" selected="1">
+                                    <div class="metro-dropdown-option">Light</div>
+                                    <div class="metro-dropdown-option">Dark</div>
+                                </div>
+                            </div>
+                            <div class="group">
+                                <p class="group-title">Scaling</p>
+                                <div id="display-scaling-chooser" class="metro-dropdown-menu" selected="2">
+                                    <div class="metro-dropdown-option">80%</div>
+                                    <div class="metro-dropdown-option">90%</div>
+                                    <div class="metro-dropdown-option">100%</div>
+                                    <div class="metro-dropdown-option">110%</div>
+                                    <div class="metro-dropdown-option">125%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="setup-footer">
+                    <button class="left-btn">previous</button>
+                    <button class="right-btn">next</button>
                 </div>
             </div>
             <div class="setup-page" id="accent-color-picker">
                 <div class="setup-body">
-                    <h1>Choose Your Color</h1>
-                    <p>Pick a color that matches your mood.</p>
+                    <h1>Choose your color</h1>
+                    <p style="display: none;">Pick a color that matches your mood.</p>
                     <div class="accent-color-catalogue" style="overflow: hidden;position: relative;margin: 0px;">
 
 
@@ -96,12 +114,12 @@
                             <div style="--index:1;">
                                 <div class="accent-color-catalogue-item" style="background: var(--metro-color-cyan);">
                                 </div>
-                                <div class="accent-color-catalogue-item selected"
-                                    style="background: var(--metro-color-cobalt);">
+                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-cobalt);">
                                 </div>
                                 <div class="accent-color-catalogue-item" style="background: var(--metro-color-indigo);">
                                 </div>
-                                <div class="accent-color-catalogue-item" style="background: var(--metro-color-violet);">
+                                <div class="accent-color-catalogue-item selected"
+                                    style="background: var(--metro-color-violet);">
                                 </div>
                             </div>
                             <div style="--index:2;">
@@ -139,22 +157,40 @@
                     </div>
                 </div>
                 <div class="setup-footer">
-                    <button class="left-btn" onclick="goToPage(0)">back</button>
-                    <button class="right-btn" onclick="goToPage(4);
-                    
-                    setTimeout(() => {
-                        goToPage(5)
-                       setTimeout(() => {
-                        location.href='/www' }, 500); }, 2000);">next</button>
+                    <button class="left-btn">previous</button>
+                    <button class="right-btn">next</button>
                 </div>
             </div>
             <div class="setup-page" id="page-readme">
                 <div class="setup-body">
                     <h1>What's New?</h1>
+                    <div class="scroller" style="overflow: hidden;position: relative;margin: 0px;">
 
+                        <div>
+                            <ul>
+                                <li><strong>Resolved Duplicate App Listings:</strong> Your app drawer now functions
+                                    flawlessly
+                                    with no repeated entries.</li>
+                                <li><strong>Extended Adaptive Icon Support:</strong> Enhanced compatibility for adaptive
+                                    icons,
+                                    ensuring a uniform look and feel across all apps.</li>
+                                <li><strong>Font Selector Improvements:</strong> The font chooser now works seamlessly,
+                                    providing greater personalization for your interface.</li>
+                                <li><strong>Enhanced Confirmation Dialogs:</strong> Sleek new message boxes elevate the
+                                    user
+                                    experience with refined, modern visuals.</li>
+                                <li><strong>Welcome & Setup Experience:</strong> A streamlined onboarding process
+                                    introduces
+                                    new
+                                    users to the Metro experience with ease.</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="setup-footer" style="display: none;">
-                    <button class="right-btn" onclick="goToPage(3)">next</button>
+                <div class="setup-footer">
+                    <button class="left-btn">previous</button>
+                    <button class="right-btn">next</button>
+
                 </div>
             </div>
             <div class="setup-page" id="page-finish">

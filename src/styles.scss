@@ -31,6 +31,15 @@ img {
 
 * {
   font-family: SymbolsNerd, OpenSans;
+
+  body.font-1 & {
+    font-family: SymbolsNerd, NotoSans;
+  }
+
+  body.font-2 & {
+    font-family: SymbolsNerd, CustomFont, OpenSans;
+  }
+
   //word-spacing: -6px;
   //letter-spacing: -.5px;
   touch-action: none;
@@ -89,4 +98,19 @@ iframe.groove-element.groove-app-view {
   box-shadow: 0px calc(var(--window-inset-top) * -1) var(--metro-background), 0px var(--window-inset-bottom) var(--metro-background);
   width: calc(100vw - var(--window-inset-left) - var(--window-inset-right));
   height: calc(100vh - var(--window-inset-top) - var(--window-inset-bottom));
+}
+
+div.bscroll-vertical-scrollbar {
+  width: 3px !important;
+  right: 2px !important;
+
+  div.bscroll-indicator {
+    border: none !important;
+    background: #666666 !important;
+
+    body.light-mode & {
+      background: #A6A6A6 !important;
+
+    }
+  }
 }

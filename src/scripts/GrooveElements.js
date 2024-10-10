@@ -34,7 +34,7 @@ function wHomeTile(
     <div class="groove-element groove-home-inner-tile">
     ${//imageIcon ?
     `
-            <img class="groove-element groove-home-tile-imageicon" src="">
+            <img loading="lazy" class="groove-element groove-home-tile-imageicon" src="">
         `
     /*: `
           <p class="groove-element groove-home-tile-icon"></p>
@@ -64,7 +64,7 @@ function wAppTile(
   appTile.innerHTML = `
     ${!letterTile ?
       `
-            <div class="groove-element groove-app-tile-icon"><img class="groove-element groove-app-tile-imageicon" src=""></div>
+            <div class="groove-element groove-app-tile-icon"><img loading="lazy" class="groove-element groove-app-tile-imageicon" src=""></div>
         `
       : `
           <p class="groove-element groove-app-tile-icon"></p>
@@ -77,14 +77,12 @@ function wAppTile(
   //appTile.setAttribute("imageIcon", imageIcon);
   appTile.setAttribute("icon", icon);
   appTile.setAttribute("icon-bg", iconbg);
-  console.log(packageName, iconbg)
   appTile.setAttribute("title", title);
   appTile.setAttribute("packageName", packageName);
   appTile.querySelector("p.groove-app-tile-title").innerText = title;
   if (!letterTile) appTile.querySelector("img.groove-app-tile-imageicon").src = icon; else appTile.querySelector("p.groove-app-tile-icon").innerText = icon;
   if (iconbg && iconbg != "none") appTile.querySelector(".groove-app-tile-imageicon").style.background = "url('" + iconbg + "')";
   else appTile.querySelector("p.groove-app-tile-icon").innerText = icon;
-  console.log("apply", appTile.querySelector(".groove-app-tile-icon"), "url('" + iconbg + "')")
 
   return appTile;
 }

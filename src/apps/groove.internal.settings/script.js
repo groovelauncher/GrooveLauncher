@@ -2,6 +2,8 @@
 import { applyOverscroll, appViewEvents, grooveColors, grooveThemes, setAccentColor } from "../../scripts/shared/internal-app";
 import { GrooveScroll, GrooveSlide } from "../../scripts/overscrollFramework";
 import imageStore from "../../scripts/imageStore";
+import fontStore from "../../scripts/fontStore";
+window.fontStore = fontStore
 const settingsPages = document.getElementById("settings-pages")
 const appTabs = document.querySelector("div.app-tabs")
 
@@ -148,16 +150,19 @@ function activeTabScroll() {
     }
     requestAnimationFrame(activeTabScroll)
 }
+window.activeTabScroll = activeTabScroll
 const scrollers = {
     theme: new GrooveScroll("#theme-tab", {
         bounceTime: 300,
         swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1
+        outOfBoundaryDampingFactor: 1,
+        scrollbar: true
     }),
     about: new GrooveScroll("#about-tab", {
         bounceTime: 300,
         swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1
+        outOfBoundaryDampingFactor: 1,
+        scrollbar: true
     }),
     accentCatalogue: new GrooveScroll("div.accent-color-catalogue", {
         bounceTime: 300,
@@ -189,7 +194,7 @@ window.appViewEvents = appViewEvents
 const urlParams = new URLSearchParams(window.location.search);
 
 if (!urlParams.has("accentColor")) {
-    document.querySelector("div.color-picker > div.picker-option").innerText = "cobalt"
+    document.querySelector("div.color-picker > div.picker-option").innerText = "violet"
 } else {
     document.querySelector("div.color-picker > div.picker-option").innerText = Object.keys(grooveColors).find(key => grooveColors[key] === "#" + urlParams.get("accentColor"));
 }
@@ -255,8 +260,8 @@ document.querySelector("#resetbtn").addEventListener("flowClick", () => {
         "Reset Groove Launcher?",
         "This will reset your launcher to its default settings. All customizations will be lost.",
         [{
-            title: "Yes", style: "default", inline: true, action: () => {
-                window.localStorage.clear()
+            title: "Yes", style: "default", inline: true, action: async () => {
+                await window.parent.GrooveBoard.backendMethods.reset()
                 appViewEvents.reloadApp()
             }
         }, { title: "No", style: "default", inline: true, action: () => { } }]
@@ -266,28 +271,42 @@ document.getElementById("theme-chooser").addEventListener('selected', (e) => {
     appViewEvents.setTheme(e.detail.index == 0 ? grooveThemes.light : grooveThemes.dark)
 });
 
+
 function handleFileInput(event) {
-    const fileInput = event.target;
-    const files = fileInput.files;
+    const file = event.target.files[0];
+    if (file && file.name.endsWith('.ttf')) {
+        const reader = new FileReader();
 
-    if (files.length === 0) {
-        // User clicked cancel or didn't select a file
-        alert('File selection was canceled.');
+        reader.onload = function (e) {
+            const fontData = new Uint8Array(e.target.result);
+            fontStore.saveFont(file.name, fontData).then(() => {
+                //alert('Font saved successfully!');
+                document.getElementById("font-chooser").selectOption(2)
+                parent.GrooveBoard.backendMethods.font.set(2)
+                document.getElementById("clearfont").style.visibility = "visible"
+                document.querySelector("#font-chooser > div:nth-child(3) > span.name").innerText = localStorage["customFontName"] || "custom font"
+                lastX = -9999
+                setTimeout(() => {
+                    lastX = -9999
+                }, 100);
+            });
+        };
+
+        reader.onerror = function () {
+            parent.GrooveBoard.alert(
+                "Can’t load font",
+                "We couldn’t read the font file. Only .ttf fonts are supported. Please try a different file.",
+                [, { title: "Ok", style: "default", inline: true, action: () => { } }]
+            );
+        };
+
+        reader.readAsArrayBuffer(file);
     } else {
-        const file = files[0]; // Get the selected file
-
-        if (file.type === 'font/ttf') {
-            // Save the font to IndexedDB (using the saveFont function from before)
-            saveFont('myFont', file)
-                .then(() => {
-                    alert('Font saved successfully!');
-                })
-                .catch((error) => {
-                    alert('Error saving font: ' + error.message);
-                });
-        } else {
-            alert('Please select a valid TTF font file.');
-        }
+        parent.GrooveBoard.alert(
+            "Unsupported file format",
+            "The font file isn’t valid. Make sure it’s a .ttf file and try uploading again.",
+            [, { title: "Ok", style: "default", inline: true, action: () => { } }]
+        );
     }
 }
 
@@ -300,9 +319,21 @@ document.getElementById("font-chooser").addEventListener("selected", (e) => {
     const index = e.detail.index
     const lastOne = index == document.getElementById("font-chooser").children.length - 1
     if (lastOne) {
-        document.getElementById("font-chooser").selectOption(e.detail.prevIndex)
-        document.getElementById("font-chooser").querySelector("input").dispatchEvent(new MouseEvent("click"))
+        fontStore.hasFont().then(value => {
+            if (value) {
+                parent.GrooveBoard.backendMethods.font.set(2)
+            } else {
+                document.getElementById("font-chooser").selectOption(e.detail.prevIndex)
+                document.getElementById("font-chooser").querySelector("input").dispatchEvent(new MouseEvent("click"))
+            }
+        })
+    } else {
+        parent.GrooveBoard.backendMethods.font.set(index)
     }
+    lastX = -9999
+    setTimeout(() => {
+        lastX = -9999
+    }, 100);
 })
 requestAnimationFrame(() => {
     if (!!localStorage.getItem("UIScale")) {
@@ -313,10 +344,36 @@ requestAnimationFrame(() => {
         const theme = Number(localStorage.getItem("theme"))
         document.getElementById("theme-chooser").selectOption(1 - theme)
     }
+    if (!!localStorage.getItem("font")) {
+        const font = Number(localStorage.getItem("font"))
+        document.getElementById("font-chooser").selectOption(font)
+        setFont(font)
+        fontStore.hasFont().then((value) => {
+            if (value) {
+                document.getElementById("clearfont").style.visibility = "visible"
+                document.querySelector("#font-chooser > div:nth-child(3) > span.name").innerText = localStorage["customFontName"] || "custom font"
+
+            } else {
+                document.getElementById("clearfont").style.visibility = "hidden"
+            }
+        });
+    }
+
     document.getElementById("pm-chooser").selectOption(parent.GrooveBoard.backendMethods.packageManagerProvider.get())
 })
 document.getElementById("font-chooser").querySelector("input").addEventListener('change', handleFileInput);
-
+document.getElementById("clearfont").addEventListener("flowClick", () => {
+    fontStore.clearFont()
+    document.querySelector("#font-chooser > div:nth-child(3) > span.name").innerText = "choose..."
+    document.getElementById("clearfont").style.visibility = "hidden"
+    setFont(0)
+    document.getElementById("font-chooser").selectOption(0)
+    parent.GrooveBoard.backendMethods.font.set(0)
+    lastX = -9999
+    setTimeout(() => {
+        lastX = -9999
+    }, 100);
+})
 
 document.getElementById("choose-wallpaper").querySelector("input").addEventListener('change', (event) => {
     window.parent.canPressHomeButton = false
@@ -420,3 +477,7 @@ document.getElementById("pm-chooser").addEventListener('selected', (e) => {
             break;
     }
 });
+
+document.querySelectorAll("div.credit-item > p:nth-child(2)").forEach(e => e.addEventListener("flowClick", function (event) {
+    Groove.openURL(e.getAttribute("url"))
+}))

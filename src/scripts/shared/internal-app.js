@@ -1,7 +1,7 @@
 import { grooveColors, grooveThemes } from "../GrooveProperties";
 import clickDetectorConfig from "../clickDetector.js";
 import applyOverscroll from "../overscrollFramework.js";
-
+import fontStore from "../fontStore.js";
 import GrooveMock from "./../GrooveMock.js";
 
 const GrooveMockInstance = !window.Groove
@@ -25,28 +25,56 @@ const setTheme = (theme) => {
     console.error("Invalid theme!");
   }
 };
+const setFont = (font) => {
+  font = Number(font)
+  font = font < 0 ? 0 : font > 2 ? 2 : font
+  document.body.classList.remove("font-1")
+  document.body.classList.remove("font-2")
+  var resultFont = 0
+  console.log("font set ", font)
+  switch (font) {
+    case 0:
+      resultFont = 0
+      break;
+    case 1:
+      resultFont = 1
+      document.body.classList.add("font-1")
+      break;
+    case 2:
+      if (fontStore.hasFont()) {
+        fontStore.loadFont()
+        resultFont = 2
+        document.body.classList.add("font-2")
+        
+      }
+      break;
+  }
+}
 window.setAccentColor = setAccentColor;
 window.setTheme = setTheme;
+window.setFont = setFont;
 
 window.addEventListener("message", (event) => {
   if (event.data["action"]) {
     if (event.data.action == "setTheme") {
       setTheme(event.data.argument);
+    } if (event.data.action == "setFont") {
+      setFont(event.data.argument);
     } else if (event.data.action == "setAccentColor") {
       setAccentColor(event.data.argument);
     } else if (event.data.action == "softExit") {
-      if(event.data.argument){
+      if (event.data.argument) {
         document.body.classList.add("soft-exit-home")
-      }else{
+      } else {
         document.body.classList.add("soft-exit")
       }
-    
+
     }
   }
 });
 
 const urlParams = new URLSearchParams(window.location.search);
-setAccentColor(localStorage["accentColor"] || grooveColors.cobalt);
+setAccentColor(localStorage["accentColor"] || grooveColors.violet);
 setTheme(Number(localStorage["theme"]) || grooveThemes.dark);
 
 const appViewEvents = {

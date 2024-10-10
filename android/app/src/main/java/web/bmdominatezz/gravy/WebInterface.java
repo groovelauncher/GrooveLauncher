@@ -430,4 +430,53 @@ public class WebInterface {
             return false;
         }
     }
+    @JavascriptInterface
+    public String getDefaultApps() {
+        JSONObject json = new JSONObject();
+        String[] actions = {
+                Intent.ACTION_DIAL,
+                Intent.ACTION_SENDTO,
+                Intent.ACTION_VIEW,
+                Intent.ACTION_SENDTO,
+                Intent.ACTION_VIEW,
+                Intent.ACTION_VIEW,
+                Intent.ACTION_VIEW,
+                Intent.ACTION_VIEW
+        };
+        String[] data = {
+                null,
+                "smsto:",
+                "http://",
+                "mailto:",
+                "market:",
+                "content://contacts/",
+                "music://",
+                "content://media/external/images/media"
+        };
+        String[] keys = {
+                "phoneApp",
+                "messageApp",
+                "browserApp",
+                "mailApp",
+                "storeApp",
+                "contactsApp",
+                "musicApp",
+                "galleryApp"
+        };
+
+        try {
+            for (int i = 0; i < actions.length; i++) {
+                Intent intent = new Intent(actions[i]);
+                if (data[i] != null) {
+                    intent.setData(Uri.parse(data[i]));
+                }
+                ResolveInfo resolveInfo = mainActivity.packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                json.put(keys[i], resolveInfo != null ? resolveInfo.activityInfo.packageName : null);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return json.toString();
+    }
 }

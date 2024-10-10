@@ -1,3 +1,20 @@
+body {
+    &.fade-out {
+        transition: .25s;
+        filter: brightness(0);
+
+        #background {
+            background-image: none !important;
+            background-color: var(--metro-background);
+            transition: .25s;
+
+            filter: brightness(0);
+            opacity: 1;
+        }
+    }
+
+}
+
 #welcome-app {
     perspective: var(--flow-perspective);
 
@@ -54,15 +71,37 @@
                     pointer-events: none !important;
                     animation: page-enter-0 .5s .25s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
                     transform: translateX(100%);
-                    opacity: 1 !important;
 
                     @keyframes page-enter-0 {
                         from {
                             transform: translateX(100%);
+                            opacity: 1;
                         }
 
                         to {
                             transform: translateX(0%);
+                            opacity: 1;
+                        }
+                    }
+
+                    h1 {
+                        animation: page-enter-0-title .75s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+
+                        @keyframes page-enter-0-title {
+
+                            0% {
+                                transform: translateX(300vw);
+                                opacity: 0;
+                            }
+
+                            40% {
+                                opacity: 0;
+                            }
+
+                            100% {
+                                opacity: 1;
+                                transform: translateX(0%);
+                            }
                         }
                     }
                 }
@@ -73,11 +112,17 @@
                     opacity: 1 !important;
 
                     @keyframes page-leave-0 {
-                        to {
+                        100% {
                             transform: translateX(-100%);
+                            filter: opacity(0);
                         }
 
-                        from {
+                        99% {
+                            filter: opacity(1);
+                        }
+
+                        0% {
+                            filter: opacity(1);
                             transform: translateX(0%);
                         }
                     }
@@ -87,15 +132,16 @@
                     pointer-events: none !important;
                     animation: page-enter-1 .5s .25s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
                     transform: translateX(-100%);
-                    opacity: 1 !important;
 
                     @keyframes page-enter-1 {
-                        from {
+                        0% {
                             transform: translateX(-100%);
+                            opacity: 1;
                         }
 
-                        to {
+                        100% {
                             transform: translateX(0%);
+                            opacity: 1;
                         }
                     }
                 }
@@ -106,11 +152,17 @@
                     opacity: 1 !important;
 
                     @keyframes page-leave-1 {
-                        to {
+                        100% {
                             transform: translateX(100%);
+                            filter: opacity(0);
                         }
 
-                        from {
+                        99% {
+                            filter: opacity(1);
+                        }
+
+                        0% {
+                            filter: opacity(1);
                             transform: translateX(0%);
                         }
                     }
@@ -194,11 +246,27 @@
                         margin: 0px;
                         font-size: 23px;
                         font-weight: 400;
+
+                        text-transform: none;
+                        font-size: 64px;
+                        margin-bottom: 20px;
+                        margin-top: 35px;
+                        font-weight: 200;
+                        //transform: translateZ(100px) translate(20px, 30px) !important;
                     }
 
-                    p {
+                    p,
+                    ul {
+                        font-weight: 300;
                         margin: 22px 0px;
                         font-size: 22px;
+                        padding: 0px;
+
+                        li {
+                            margin-bottom: 20px;
+                            list-style-type: none;
+
+                        }
                     }
                 }
 
@@ -377,8 +445,15 @@
                         transition: transform .1s ease-out;
                         pointer-events: none;
                         content: "󰄬";
+
                         background: white;
                         color: black;
+
+                        body.light-mode & {
+                            background: black;
+                            color: white;
+                        }
+
                         position: absolute;
                         right: 0px;
                         top: 0px;
@@ -395,6 +470,12 @@
 
                     &.selected {
                         box-shadow: inset 0px 0px 0px 5px white;
+
+                        body.light-mode & {
+                            box-shadow: inset 0px 0px 0px 5px black;
+
+                        }
+
                         position: relative;
 
                         &::after {
@@ -406,5 +487,52 @@
                 }
             }
         }
+    }
+}
+
+#page-welcome h1:first-child {
+    animation: page-enter-1-title 1s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+
+    @keyframes page-enter-1-title {
+        0% {
+            transform: translateX(50vw);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateX(0%);
+        }
+    }
+}
+
+
+div.scroller {
+    height: 0px;
+    max-width: 724px;
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
+    transform-style: preserve-3d;
+    perspective: var(--flow-perspective);
+    overflow: hidden;
+}
+
+body.fade-out {
+    transition: 0.25s;
+    filter: brightness(0);
+}
+
+body.fade-out #background {
+    background-image: none !important;
+    background-color: var(--metro-background);
+    transition: 0.25s;
+    filter: brightness(0);
+    opacity: 1;
+}
+#page-welcome > div.setup-body > p:nth-child(2) > img{
+    body.light-mode &{
+        filter: brightness(0) !important;
     }
 }

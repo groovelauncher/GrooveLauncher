@@ -67,7 +67,6 @@ window.goToPage = goToPage
     [{ title: "Next", style: "default",inline: true, action: () => { } }]
 );*/
 //alert.querySelector("button").style.visibility = "hidden"
-console.log(alert)
 
 function finishSetup() {
 
@@ -109,7 +108,6 @@ if (updatedApp) {
 }
 var history = []
 history.push(0)
-console.log(setup)
 document.querySelector("#page-welcome button.right-btn").addEventListener("flowClick", (e) => {
     if (setup.update_wizard) {
         goToPage(1)
@@ -213,8 +211,7 @@ document.querySelector("#page-readme button.right-btn").addEventListener("flowCl
                 try {
                     const appdetail = GrooveBoard.backendMethods.getAppDetails(defaultApps[element])
                     const app = searchApps[element]
-                    console.log("app", element, app, appdetail)
-                    if (appdetail.label = "Unknown") throw new Error("App not found for ", element);
+                    if (appdetail.label == "Unknown") throw new Error("App not found for ", element);
 
                     homeConfiguration.push({
                         "p": appdetail.packageName,

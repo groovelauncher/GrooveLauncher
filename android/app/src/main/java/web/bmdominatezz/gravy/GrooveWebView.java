@@ -7,10 +7,12 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.AdaptiveIconDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.icu.text.DateFormat;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Build;
@@ -42,6 +44,7 @@ import web.bmdominatezz.gravy.MainActivity;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -74,7 +77,6 @@ public class GrooveWebView extends WebView {
         return resultHolder[0];
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public Bitmap getAppIcon(PackageManager mPackageManager, String packageName) {
         Drawable drawable = null;
         try {
@@ -86,33 +88,35 @@ public class GrooveWebView extends WebView {
 
         if (drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable) drawable).getBitmap();
-        } else if (drawable instanceof AdaptiveIconDrawable) {
-            Drawable foregroundDr = ((AdaptiveIconDrawable) drawable).getForeground();
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (drawable instanceof AdaptiveIconDrawable) {
+                Drawable foregroundDr = ((AdaptiveIconDrawable) drawable).getForeground();
 
-            if (foregroundDr == null) {
-                Bitmap transparentBitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
-                transparentBitmap.eraseColor(android.graphics.Color.TRANSPARENT);
-                return transparentBitmap;
-            } else {
-                double zoom = 1.5;
-                // Create a bitmap with specified width and height
-                Bitmap bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
-                // Create a canvas to draw on the bitmap
-                Canvas canvas = new Canvas(bitmap);
-                // Calculate the size after zoom
-                int width = (int) (canvas.getWidth() * zoom);
-                int height = (int) (canvas.getHeight() * zoom);
-                // Calculate the offsets to center the zoomed drawable
-                int offsetX = (canvas.getWidth() - width) / 2;
-                int offsetY = (canvas.getHeight() - height) / 2;
-                // Set the bounds of the drawable with zoom
-                foregroundDr.setBounds(offsetX, offsetY, offsetX + width, offsetY + height);
-                // Draw the drawable onto the canvas
-                foregroundDr.draw(canvas);
-                return bitmap;
+                if (foregroundDr == null) {
+                    Bitmap transparentBitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
+                    transparentBitmap.eraseColor(Color.TRANSPARENT);
+                    return transparentBitmap;
+                } else {
+                    double zoom = 1.5;
+                    // Create a bitmap with specified width and height
+                    Bitmap bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
+                    // Create a canvas to draw on the bitmap
+                    Canvas canvas = new Canvas(bitmap);
+                    // Calculate the size after zoom
+                    int width = (int) (canvas.getWidth() * zoom);
+                    int height = (int) (canvas.getHeight() * zoom);
+                    // Calculate the offsets to center the zoomed drawable
+                    int offsetX = (canvas.getWidth() - width) / 2;
+                    int offsetY = (canvas.getHeight() - height) / 2;
+                    // Set the bounds of the drawable with zoom
+                    foregroundDr.setBounds(offsetX, offsetY, offsetX + width, offsetY + height);
+                    // Draw the drawable onto the canvas
+                    foregroundDr.draw(canvas);
+                    return bitmap;
+                }
+
+
             }
-
-
         }
         Log.d("groovalauncher", "getAppIcon: invalid " + packageName);
         return null;
@@ -120,9 +124,11 @@ public class GrooveWebView extends WebView {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public Bitmap getAppIconBackground(PackageManager mPackageManager, String packageName) {
         Drawable drawable = null;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return null;
+        }
         try {
             drawable = mPackageManager.getApplicationIcon(packageName);
         } catch (PackageManager.NameNotFoundException e) {
@@ -411,10 +417,17 @@ public class GrooveWebView extends WebView {
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        Calendar calendar = Calendar.getInstance();
+        String timeStamp = String.format("%04d%02d%02d_%02d%02d%02d",
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH) + 1, // Months are 0-based
+                calendar.get(Calendar.DAY_OF_MONTH),
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                calendar.get(Calendar.SECOND));
+
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File imageFile = File.createTempFile(
                 imageFileName, /* prefix */
                 ".jpg", /* suffix */

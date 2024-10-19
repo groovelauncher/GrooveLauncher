@@ -357,6 +357,8 @@ requestAnimationFrame(() => {
                 document.getElementById("clearfont").style.visibility = "hidden"
             }
         });
+    }else{
+        document.getElementById("clearfont").style.visibility = "hidden"
     }
 
     document.getElementById("pm-chooser").selectOption(parent.GrooveBoard.backendMethods.packageManagerProvider.get())

@@ -8,10 +8,10 @@ android {
 
     defaultConfig {
         applicationId = "web.bmdominatezz.gravy"
-        minSdk = 26
+        minSdk = 21
         targetSdk = 34
-        versionCode = 30 //011
-        versionName = "0.3.0-beta.3"
+        versionCode = 31
+        versionName = "0.3.1-beta.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

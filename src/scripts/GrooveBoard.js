@@ -672,10 +672,10 @@ const backendMethods = {
           try {
             config.push({
               p: el.getAttribute("packagename"),        // packageName
-              t: el.getAttribute("title"),              // title
+              /*t: el.getAttribute("title"),              // title
               ii: el.getAttribute("imageicon") == "true", // imageIcon
               i: el.getAttribute("icon"),               // icon
-              ib: el.getAttribute("icon-bg"),            // icon background
+              ib: el.getAttribute("icon-bg"),            // icon background*/
               s: el.getAttribute("supportedsizes").split(","),     // supportedSizes
               w: el.gridstackNode.w,                    // width
               h: el.gridstackNode.h,                    // height
@@ -696,9 +696,10 @@ const backendMethods = {
       const config = JSON.parse(localStorage.getItem("homeConfiguration")) || []
 
       config.forEach(tile => {
+        const appdetail = backendMethods.getAppDetails(tile.p)
         if (document.querySelectorAll(`div.groove-home-tile[packagename="${tile.p}"]`).length > 0) return
 
-        const homeTile = GrooveElements.wHomeTile(tile.i, tile.ib, tile.t, tile.p, "", tile.s)
+        const homeTile = GrooveElements.wHomeTile(appdetail.icon.foreground, appdetail.icon.background, appdetail.label, tile.p, "", tile.s)
         if (iconPackDB[tile.p]) {
           if (iconPackDB[tile.p].pack == 0) {
             homeTile.classList.add("iconpack0")

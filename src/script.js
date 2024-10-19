@@ -164,7 +164,8 @@ window.addEventListener("activityResume", () => {
 })
 
 
-startUpSequence([
+requestAnimationFrame(()=>{
+    startUpSequence([
     (next) => {
         if (GrooveBoard.backendMethods.setupNeeded()) {
             location.href = !GrooveMockInstance ? '/assets/welcome.html' : '/www/welcome.html'
@@ -256,3 +257,4 @@ startUpSequence([
         GrooveBoard.boardMethods.finishLoading()
     }
 )
+})

@@ -4,7 +4,8 @@ const iconPackConverter = [
         "apps": [
             "com.sec.android.app.popupcalculator",
             "com.android.calculator",
-            "com.android.calculator2"
+            "com.android.calculator2",
+            "com.google.android.calculator"
         ],
         "icon": "calculator"
     },
@@ -14,7 +15,8 @@ const iconPackConverter = [
             "com.sec.android.app.camera",
             "com.samsung.android.app.cameraassistant",
             "org.lineageos.aperture",
-            "com.android.camera2"
+            "com.android.camera2",
+            "com.oplus.camera"
         ],
         "icon": "camera"
     },
@@ -52,7 +54,8 @@ const iconPackConverter = [
         "apps": [
             "com.android.vending",
             "com.sec.android.app.samsungapps",
-            "com.aurora.store"
+            "com.aurora.store",
+            "com.heytap.market"
         ],
         "icon": "store"
     },
@@ -60,7 +63,8 @@ const iconPackConverter = [
     {
         "apps": [
             "com.metro.browser",
-            "org.lineageos.jelly"
+            "org.lineageos.jelly",
+            "com.heytap.browser"
         ],
         "icon": "browser"
     },
@@ -87,7 +91,8 @@ const iconPackConverter = [
         "apps": [
             "com.sec.android.app.myfiles'",
             "com.android.documentsui",
-            "com.google.android.documentsui"
+            "com.google.android.documentsui",
+            "com.coloros.filemanager"
         ],
         "icon": "files"
     },
@@ -103,7 +108,8 @@ const iconPackConverter = [
     {
         "apps": [
             "com.sec.android.app.music",
-            "org.lineageos.eleven"
+            "org.lineageos.eleven",
+            "com.realme.as.music"
         ],
         "icon": "music",
         "accent": "emerald"
@@ -112,7 +118,8 @@ const iconPackConverter = [
     {
         "apps": [
             "com.sec.android.app.voicenote",
-            "org.lineageos.recorder"
+            "org.lineageos.recorder",
+            "com.android.soundrecorder"
         ],
         "icon": "podcasts"
     },

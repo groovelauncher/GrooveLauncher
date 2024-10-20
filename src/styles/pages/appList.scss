@@ -257,9 +257,10 @@ div.inner-page.app-list-page {
   align-items: center;
 
 
-  .groove-app-tile-icon{
+  .groove-app-tile-icon {
     background-size: 100% 100% !important;
   }
+
   .groove-app-tile-icon,
   .groove-app-tile-imageicon {
     margin: 5px;
@@ -376,8 +377,13 @@ div.letter-selector {
   &.shown {
     opacity: 1;
     pointer-events: all;
-    background: var(--metro-transparent);
-    box-shadow: 0px 0px 0px 9000px var(--metro-transparent);
+
+    &::before {
+      transition: background-color .2s .1s;
+      background: var(--metro-transparent);
+    }
+
+    //box-shadow: 0px 0px 0px 9000px var(--metro-transparent);
 
     .letter-selector-row {
       transform: perspective(calc(var(--flow-perspective) * 1)) rotateX(0deg);
@@ -447,6 +453,22 @@ div.letter-selector {
       font-weight: 450;
     }
   }
+
+  height: calc(100% - var(--window-inset-bottom) - var(--window-inset-top) * 2);
+  overflow: visible;
+  top: var(--window-inset-top);
+
+  &::before {
+    transition: background-color .1s;
+    content: "";
+    display: block;
+    position: fixed;
+    --m: 100vw;
+    left: calc(0px - var(--m));
+    top: calc(0px - var(--m));
+    width: calc(100% + var(--m)* 2);
+    height: calc(100% + var(--m)* 2);
+  }
 }
 
 div.groove-app-menu {
@@ -462,7 +484,8 @@ div.groove-app-menu {
   font-weight: 350;
   perspective: var(--flow-perspective);
   box-sizing: border-box;
-  --full-height:154px;
+  --full-height: 154px;
+
   &.intro {
     overflow: hidden;
 
@@ -646,21 +669,4 @@ div.app-list-page {
 div.app-list-page {
   width: calc(100% - var(--window-inset-left) - var(--window-inset-right)) !important;
   left: calc(var(--window-inset-left) - (var(--window-inset-right) + var(--window-inset-left)) / 2);
-}
-
-div.letter-selector {
-  height: calc(100% - var(--window-inset-bottom) - var(--window-inset-top) * 2);
-  overflow: visible;
-  top: var(--window-inset-top);
-
-  &::before {
-    content: "";
-    display: block;
-    position: fixed;
-    --m: 100vw;
-    left: calc(0px - var(--m));
-    top: calc(0px - var(--m));
-    width: calc(100% + var(--m)* 2);
-    height: calc(100% + var(--m)* 2);
-  }
 }

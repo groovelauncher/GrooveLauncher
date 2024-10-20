@@ -570,7 +570,7 @@ const iconPackConverter = [
             "com.here.app.maps",
             "app.organicmaps"
         ],
-        "icon": "news",
+        "icon": "maps",
     },
     //RADIO
     {

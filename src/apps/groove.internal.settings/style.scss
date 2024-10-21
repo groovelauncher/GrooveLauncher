@@ -13,11 +13,11 @@ body {
     background-color: transparent !important;
     display: flex;
     flex-direction: column;
-    align-items: cente;
+    align-items: center;
 
     @keyframes app-intro-animation {
         0% {
-            transform: rotateY(30deg) translateX(50px);
+            transform: rotateY(75deg) translateX(100px);
             transform-origin: 0px 50%;
             opacity: 0;
 
@@ -42,7 +42,7 @@ body {
 
     @keyframes app-outro-animation {
         to {
-            transform: rotateY(30deg) translateX(50px);
+            transform: rotateY(150deg) translateX(200px);
             transform-origin: 0px 50%;
             opacity: 0;
 

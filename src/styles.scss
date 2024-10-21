@@ -101,7 +101,8 @@ iframe.groove-element.groove-app-view {
 div.bscroll-vertical-scrollbar {
   width: 3px !important;
   right: 2px !important;
-
+  position: absolute;
+  z-index: 999;
   div.bscroll-indicator {
     border: none !important;
     background: #666666 !important;

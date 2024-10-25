@@ -7,7 +7,9 @@ const GrooveElements = {
   wAppMenu: wAppMenu,
   wTileMenu: wTileMenu,
   wAppView: wAppView,
-  wAlertView: wAlertView
+  wAlertView: wAlertView,
+  wListView, wListView,
+  wListViewItem: wListViewItem
 };
 function wHomeTile(
   // imageIcon = false,
@@ -215,5 +217,37 @@ function wAlertView(title, body, actions, unsafe = false) {
   })
   alertView.querySelector(".groove-alert-actions")
   return alertView
+}
+function wListView(elements = []) {
+  /*
+<div class="list-view-item">
+              <p class="list-view-item-title">home+theme</p>
+              <p class="list-view-item-description">color</p>
+            </div>*/
+  const listView = document.createElement("div");
+  listView.classList.add("groove-element");
+  listView.classList.add("groove-list-view");
+  try {
+    elements.forEach(e => {
+      const item = wListViewItem(e.title, e.description)
+      listView.append(item)
+    })
+  } catch (error) {
+    console.error("Corrupted list view data")
+  }
+  return listView
+}
+function wListViewItem(title, description) {
+  const listViewItem = document.createElement("div");
+  listViewItem.classList.add("groove-element");
+  listViewItem.classList.add("groove-list-view-item");
+  listViewItem.innerHTML = `<p class="groove-list-view-item-title"></p>
+              <p class="groove-list-view-item-description"></p>`
+  listViewItem.querySelector("p.groove-list-view-item-title").innerText = title
+  listViewItem.querySelector("p.groove-list-view-item-description").innerText = description
+  if(description == undefined || description == ""){
+    listViewItem.classList.add("single-line")
+  }
+  return listViewItem;
 }
 export default GrooveElements;

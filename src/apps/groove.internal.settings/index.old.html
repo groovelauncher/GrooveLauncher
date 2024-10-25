@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body style="perspective: var(--flow-perspective)">
+  <div class="innerApp">
+    <h1 class="app-title">Settings</h1>
+    <div class="app-tabs">
+      <p class="active-tab">Theme</p>
+      <p>Apps+Tiles</p>
+      <p>Display</p>
+      <p>Advanced</p>
+      <p>About</p>
+    </div>
+    <div id="accent-color-picker">
+      <h1 class="app-title">Accent Color</h1>
+      <div class="accent-color-catalogue">
+        <div>
+          <div style="--index:0;">
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-lime);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-green);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-emerald);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-teal);"></div>
+          </div>
+          <div style="--index:1;">
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-cyan);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-cobalt);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-indigo);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-violet);"></div>
+          </div>
+          <div style="--index:2;">
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-pink);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-magenta);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-crimson);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-red);"></div>
+          </div>
+          <div style="--index:3;">
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-orange);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-amber);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-yellow);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-brown);"></div>
+          </div>
+          <div style="--index:4;">
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-olive);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-steel);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-mauve);"></div>
+            <div class="accent-color-catalogue-item" style="background: var(--metro-color-taupe);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="settings-pages">
+      <div class="settings-pages-container">
+        <div class="settings-page active-page first-page" id="theme-tab">
+          <div>
+
+
+            <p class="text">
+              Change your device's background and
+              <span style="color: var(--accent-color)">accent color</span> to
+              match your mood today, this week, or all month.
+            </p>
+            <div class="group">
+              <p class="group-title">Background</p>
+              <div class="metro-dropdown-menu" id="theme-chooser" selected="1">
+                <div class="metro-dropdown-option">Light</div>
+                <div class="metro-dropdown-option">Dark</div>
+              </div>
+            </div>
+
+            <div class="group">
+              <p class="group-title">Accent color</p>
+              <div class="color-picker">
+                <div class="picker-example"></div>
+                <div class="picker-option">color</div>
+              </div>
+            </div>
+            <div class="group" id="wallpaper-group">
+              <div id="wallpaper-thumbnail"></div>
+              <p class="group-title">Home background</p>
+              <button class="metro-button" id="choose-wallpaper">
+                choose photo
+                <input hidden type="file" accept="image/*" />
+              </button>
+              <button class="metro-button link" id="remove-wallpaper">remove</button>
+            </div>
+            <p class="text" style="margin-top: 40px;">
+              You can change the size and number of tiles available on your home screen.
+            </p>
+            <div class="group">
+              <p class="group-title">Show more Tiles</p>
+              <div class="tile-selector">
+                <p>Off</p>
+                <div>
+                  <div id="tile-toggle-switch" class="metro-toggle-switch"></div>
+                </div>
+              </div>
+            </div>
+
+            <div id="device-placeholder">
+              <svg viewBox="1 0 428 264" width="428" height="264">
+                <path
+                  d="M 1 264 L 1 65 C 1.065 47.159 8.358 30.718 20.038 19.038 C 31.718 7.358 48.159 0.065 66 0 L 364 0 C 381.841 0.065 398.282 7.358 409.962 19.038 C 421.642 30.718 428.935 47.159 429 65 L 429 264 L 426 264 L 426 65 C 426.065 47.771 419.143 32.462 407.841 21.159 C 396.538 9.857 381.229 2.935 364 3 L 66 3 C 48.771 2.935 33.462 9.857 22.159 21.159 C 10.857 32.462 3.935 47.771 4 65 L 4 264 Z"
+                  style="fill: rgb(255, 255, 255);"></path>
+                <path
+                  d="M 11 264 L 11 65 C 11.044 49.608 17.323 35.481 27.402 25.402 C 37.481 15.323 51.608 9.044 67 9 L 363 9 C 378.392 9.044 392.519 15.323 402.598 25.402 C 412.677 35.481 418.956 49.608 419 65 L 419 264 L 417 264 L 417 65 C 417.044 50.016 411.011 36.643 401.184 26.816 C 391.357 16.989 377.984 10.956 363 11 L 67 11 C 52.016 10.956 38.643 16.989 28.816 26.816 C 18.989 36.643 12.956 50.016 13 65 L 13 264 Z"
+                  style="fill: rgb(255, 255, 255);"></path>
+                <path
+                  d="M 25.5 264 L 25.5 65 C 25.565 53.648 30.228 43.083 37.655 35.655 C 45.083 28.228 55.648 23.565 67 23.5 L 363 23.5 C 374.352 23.565 384.917 28.228 392.345 35.655 C 399.772 43.083 404.435 53.648 404.5 65 L 404.5 264 L 401.5 264 L 401.5 65 C 401.565 54.261 397.273 44.826 390.223 37.777 C 383.174 30.727 373.739 26.435 363 26.5 L 67 26.5 C 56.261 26.435 46.826 30.727 39.777 37.777 C 32.727 44.826 28.435 54.261 28.5 65 L 28.5 264 Z"
+                  style="fill: rgb(255, 255, 255);"></path>
+                <path
+                  d="M 226.277 49.277 C 226.277 52.319 224.96 55.265 222.974 57.251 C 220.988 59.237 218.042 60.554 215 60.554 C 211.958 60.554 209.012 59.237 207.026 57.251 C 205.04 55.265 203.723 52.319 203.723 49.277 C 203.723 46.235 205.04 43.289 207.026 41.303 C 209.012 39.317 211.958 38 215 38 C 218.042 38 220.988 39.317 222.974 41.303 C 224.96 43.289 226.277 46.235 226.277 49.277 Z M 221.56 42.717 C 219.826 40.983 217.634 40 215 40 C 212.366 40 210.174 40.983 208.44 42.717 C 206.706 44.451 205.723 46.643 205.723 49.277 C 205.723 51.911 206.706 54.103 208.44 55.837 C 210.174 57.571 212.366 58.554 215 58.554 C 217.634 58.554 219.826 57.571 221.56 55.837 C 223.294 54.103 224.277 51.911 224.277 49.277 C 224.277 46.643 223.294 44.451 221.56 42.717 Z"
+                  style="fill: rgb(255, 255, 255);"></path>
+                <path
+                  d="M 174.646 10.354 L 179.646 15.354 L 179.793 15.5 L 180 15.5 L 250 15.5 L 250.207 15.5 L 250.354 15.354 L 255.354 10.354 L 254.646 9.646 L 249.793 14.5 L 180.207 14.5 L 175.354 9.646 Z"
+                  style="fill: rgb(255, 255, 255);"></path>
+              </svg>
+              <svg class="selected" viewBox="40 84.207 350 170" width="350" height="170">
+                <path
+                  d="M 40 84.207 L 210 84.207 L 210 254.207 L 40 254.207 L 40 84.207 Z M 220 84.207 L 300 84.207 L 300 164.207 L 220 164.207 L 220 84.207 Z M 220 174.207 L 300 174.207 L 300 254.207 L 220 254.207 L 220 174.207 Z M 310 84.207 L 390 84.207 L 390 164.207 L 310 164.207 L 310 84.207 Z M 310 174.207 L 390 174.207 L 390 254.207 L 310 254.207 L 310 174.207 Z"
+                  style="fill: var(--accent-color);"></path>
+              </svg>
+              <svg viewBox="40 84.207 350 179.793" width="350" height="179.793">
+                <path
+                  d="M 280 204.207 L 390 204.207 L 390 264 L 280 264 Z M 160 84.207 L 390 84.207 L 390 194.207 L 160 194.207 Z M 160 204.207 L 270 204.207 L 270 264 L 160 264 Z M 40 204.207 L 150 204.207 L 150 264 L 40 264 Z M 40 84.207 L 150 84.207 L 150 194.207 L 40 194.207 Z"
+                  style="fill: var(--accent-color);"></path>
+              </svg>
+            </div>
+
+          </div>
+        </div>
+        <div class="settings-page" id="tiles-tab">
+          <div class="group">
+            <p class="group-title">Example</p>
+            <div class="tile-selector" style="margin-bottom: 0px;">
+              <p>Off</p>
+              <div>
+                <div id="tile-toggle-switch" class="metro-toggle-switch"></div>
+              </div>
+            </div>
+          </div>
+          <div class="group">
+            <p class="group-title">Example</p>
+            <div class="tile-selector" style="margin-bottom: 0px;">
+              <p>Off</p>
+              <div>
+                <div id="tile-toggle-switch" class="metro-toggle-switch"></div>
+              </div>
+            </div>
+          </div>0
+        </div>
+        <div class="settings-page" id="display-tab">
+          <div class="group">
+            <p class="group-title">Reduce motion</p>
+            <div class="tile-selector" style="margin-bottom: 0px;">
+              <p>Off</p>
+              <div>
+                <div id="tile-toggle-switch" class="metro-toggle-switch"></div>
+              </div>
+            </div>
+          </div>
+          <div class="group">
+            <p class="group-title">Scaling</p>
+            <div id="display-scaling-chooser" class="metro-dropdown-menu" selected="2">
+              <div class="metro-dropdown-option">80%</div>
+              <div class="metro-dropdown-option">90%</div>
+              <div class="metro-dropdown-option">100%</div>
+              <div class="metro-dropdown-option">110%</div>
+              <div class="metro-dropdown-option">125%</div>
+            </div>
+          </div>
+          <div class="group">
+            <p class="group-title">Font</p>
+            <div id="font-chooser" class="metro-dropdown-menu" selected="0">
+              <div class="metro-dropdown-option">Open Sans</div>
+              <div class="metro-dropdown-option">Noto Sans</div>
+              <div class="metro-dropdown-option"><span style="pointer-events: none;" class="name">Choose...</span><input
+                  hidden type="file" accept=".ttf" /></div>
+            </div>
+            <button class="metro-button" id="clearfont">Remove Font</button>
+          </div>
+        </div>
+        <div class="settings-page" id="advanced-tab">
+          <div class="group">
+            <p class="group-title">Package manager (EXPERIMENTAL)</p>
+            <div class="metro-dropdown-menu" id="pm-chooser" selected="0">
+              <div class="metro-dropdown-option">System</div>
+              <div class="metro-dropdown-option">Root</div>
+              <div class="metro-dropdown-option">Shizuku</div>
+            </div>
+          </div>
+          <div class="group">
+            <p class="group-title">Debugging</p>
+            <button class="metro-button" id="dumpbtn">Dump Apps JSON</button>
+          </div>
+        </div>
+        <div class="settings-page" id="about-tab">
+          <div class="scrollable article-f" style="perspective: var(--flow-perspective); padding-bottom: 50px;">
+            <h1 id="about-app-name">Groove Launcher</h1>
+            <h2 id="about-app-version">Version: Loading...</h2>
+            <h2 id="about-webview-version" style="margin-bottom: 20px;">WebView Version: Loading...</h2>
+            <button class="metro-button" id="resetbtn" style="margin-bottom: 30px;">Reset Groove Launcher</button>
+            <p>
+              <strong>Groove Launcher</strong> is a metro-styled launcher
+              designed for a customizable and sleek user experience. Users can
+              personalize their launcher by adjusting tile sizes, changing
+              tile positions, customizing the color theme, and setting their
+              favorite wallpapers.
+            </p>
+
+            <h2>Features</h2>
+
+            <ul>
+              <li>
+                <strong>Metro-Style Interface:</strong> A clean & modern
+                design inspired by Windows Phone 8.
+              </li>
+              <li>
+                <strong>Customizable Tiles:</strong> Drag and drop tiles,
+                adjust their sizes, and move them around to fit your unique
+                style.
+              </li>
+              <li>
+                <strong>Theme Customization:</strong> Change the color of the
+                launcher to match your mood or aesthetic.
+              </li>
+              <li>
+                <strong>Wallpaper Personalization:</strong> Choose and set
+                your own wallpapers to create a fully personalized setup.
+              </li>
+            </ul>
+
+            <h2>Contributing</h2>
+
+            <p>
+              Contributions are most welcome! Feel free to submit issues and
+              pull requests to help improve <strong>Groove Launcher</strong>.
+            </p>
+
+            <ol>
+              <li>Fork the repository.</li>
+              <li>Create a new branch for your feature or bugfix.</li>
+              <li>Submit a pull request when your code is ready.</li>
+            </ol>
+
+            <h2>License</h2>
+
+            <p>
+              This project is licensed under the MIT License - see the
+              <a
+                href="javascript:Groove.openURL('https://github.com/groovelauncher/GrooveLauncher?tab=MIT-1-ov-file')">LICENSE</a>
+              file for details.
+            </p>
+
+            <h2>Contact</h2>
+
+            <p>For any inquiries or feedback, feel free to reach out!</p>
+            <a href="javascript:Groove.openURL('https://buymeacoffee.com/berkaytumal')"
+              style="display:block; transform-style:  preserve-3d;"><img id="buymeacoffee"
+                src="./../../assets/default-yellow.png" class="flow-touch" alt="Buy Me A Coffee"
+                style="height: 60px !important; width: 217px !important;" /></a>
+            <h2>Team Groove</h2>
+            <div class="credit-item">
+              <p>Nathan Tool<span>(Logo Design)</span></p>
+              <p url="https://reddit.com/u/NateTool"> u/NateTool</p>
+            </div>
+            <div class="credit-item">
+              <p>Berkay Tumal<span>(Developer)</span></p>
+              <p url="https://github.com/berkaytumal"> berkaytumal</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>

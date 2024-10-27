@@ -21,6 +21,15 @@ body {
   &.showBackground {
     background-color: var(--metro-background) !important;
   }
+
+  &.reduced-motion {
+
+    *,
+    & {
+      perspective: 9999999px !important;
+      --flow-perspective: 9999999px !important;
+    }
+  }
 }
 
 img {

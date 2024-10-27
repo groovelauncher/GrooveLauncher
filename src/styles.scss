@@ -24,7 +24,18 @@ html {
   padding: 0px;
 
 }
+body{
+  &.reduced-motion {
 
+    *,
+    & {
+      //perspective: none !important;
+      --flow-perspective: 9999999px !important;
+      --shake-x:0px !important;
+      --shake-y:0px !important;
+    }
+  }
+}
 img {
   text-indent: -10000px
 }

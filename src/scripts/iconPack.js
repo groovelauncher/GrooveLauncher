@@ -186,7 +186,12 @@ const iconPackConverter = [
     //STORE
     {
         "apps": [
-            "com.android.vending",
+            "com.android.vending"
+        ],
+        "icon": "store2"
+    },
+    {
+        "apps": [
             "com.aurora.store",
             "com.heytap.market",
             "com.oneplus.store",

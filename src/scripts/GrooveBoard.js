@@ -619,12 +619,13 @@ const backendMethods = {
   },
   setAccentColor: (color, doNotSave = false) => {
     if (Object.values(grooveColors).includes(color)) {
-      document.body.style.setProperty("--accent-color", color);
-      document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setAccentColor(e, color))
-      if (!doNotSave) localStorage.setItem("accentColor", color)
+
     } else {
-      console.error("Invalid color!");
+      console.error("Custom color detected!");
     }
+    document.body.style.setProperty("--accent-color", color);
+    document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setAccentColor(e, color))
+    if (!doNotSave) localStorage.setItem("accentColor", color)
   },
   setTheme: (theme, doNotSave = false) => {
     if (Object.values(grooveThemes).includes(theme)) {
@@ -648,6 +649,11 @@ const backendMethods = {
     } else {
       console.error("Invalid tile size!");
     }
+  },
+  setReduceMotion: (bool, doNotSave = false) => {
+    bool = !!bool
+    if (bool) document.body.classList.add("reduced-motion"); else document.body.classList.remove("reduced-motion")
+    if (!doNotSave) localStorage.setItem("reducedMotion", bool)
   },
   setUIScale: (scale, doNotSave = false) => {
     scale = scale < .25 ? .25 : scale > 4 ? 4 : scale
@@ -916,6 +922,8 @@ window.addEventListener('message', (event) => {
     } else if (event.data.action == "setTileColumns") {
       backendMethods.setTileColumns(event.data.argument);
       backendMethods.homeConfiguration.save()
+    } else if (event.data.action == "setReduceMotion") {
+      backendMethods.setReduceMotion(event.data.argument);
     } else if (event.data.action == "setUIScale") {
       backendMethods.setUIScale(event.data.argument);
     } else if (event.data.action == "reloadApp") {

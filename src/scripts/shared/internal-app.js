@@ -12,10 +12,11 @@ if (GrooveMockInstance) {
 
 const setAccentColor = (color) => {
   if (Object.values(grooveColors).includes(color)) {
-    document.body.style.setProperty("--accent-color", color);
   } else {
-    console.error("Invalid color!", color);
+    console.error("Custom color detected!", color);
   }
+  document.body.style.setProperty("--accent-color", color);
+
 };
 const setTheme = (theme) => {
   if (Object.values(grooveThemes).includes(theme)) {
@@ -45,14 +46,19 @@ const setFont = (font) => {
         fontStore.loadFont()
         resultFont = 2
         document.body.classList.add("font-2")
-        
+
       }
       break;
   }
 }
+function setReduceMotion(bool) {
+  bool = !!bool
+  if (bool) document.body.classList.add("reduced-motion"); else document.body.classList.remove("reduced-motion")
+}
 window.setAccentColor = setAccentColor;
 window.setTheme = setTheme;
 window.setFont = setFont;
+window.setReduceMotion = setReduceMotion;
 
 window.addEventListener("message", (event) => {
   if (event.data["action"]) {
@@ -92,6 +98,11 @@ const appViewEvents = {
   },
   setUIScale: (scale) => {
     const message = { action: "setUIScale", argument: scale };
+    window.parent.postMessage(message, '*');
+  },
+  setReduceMotion: (bool) => {
+    setReduceMotion(bool)
+    const message = { action: "setReduceMotion", argument: bool };
     window.parent.postMessage(message, '*');
   },
   reloadApp: () => {

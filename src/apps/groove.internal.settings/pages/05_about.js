@@ -38,17 +38,23 @@ document.querySelector("#updatebutton").addEventListener("flowClick", (e) => {
             const availableReleases = releases.filter(release => (release.name.includes("beta") == isBeta))
             if (availableReleases.length) {
                 const update = availableReleases[0]
-                const updateUrl = update.assets.length == 1 ? update.assets[0].browser_download_url : update.html_url
-                parent.GrooveBoard.alert(
-                    "Update Available!",
-                    update.assets.length == 1 ? `A new version <strong>(${update.name})</strong> is available, sized at ${formatFileSize(update.assets[0].size)}. Would you like to download it?`
-                        : `A new version <strong>${update.name}</strong> is available. Would you like to download it?`,
-                    [{
-                        title: "Yes", style: "default", inline: true, action: () => {
-                            Groove.openURL(updateUrl)
-                        }
-                    }, { title: "No", style: "default", inline: true, action: () => { } }]
-                );
+                console.log(update)
+                if (update.name == Groove.getAppVersion()) {
+                    alreadyUpToDate()
+                } else {
+                    const updateUrl = update.assets.length == 1 ? update.assets[0].browser_download_url : update.html_url
+                    parent.GrooveBoard.alert(
+                        "Update Available!",
+                        update.assets.length == 1 ? `A new version <strong>(${update.name})</strong> is available, sized at ${formatFileSize(update.assets[0].size)}. Would you like to download it?`
+                            : `A new version <strong>${update.name}</strong> is available. Would you like to download it?`,
+                        [{
+                            title: "Yes", style: "default", inline: true, action: () => {
+                                Groove.openURL(updateUrl)
+                            }
+                        }, { title: "No", style: "default", inline: true, action: () => { } }]
+                    );
+                }
+
             } else {
                 alreadyUpToDate()
             }

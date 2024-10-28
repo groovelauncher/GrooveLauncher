@@ -15,7 +15,7 @@ const allTabs = document.querySelectorAll("div.innerApp div.app-tabs > p")
 const allPages = Array.from(document.querySelectorAll("#settings-pages > div.settings-pages-container > div.settings-page"))
 document.querySelectorAll("div.groove-list-view").forEach(listView => {
     var index = 0
-    listView.querySelectorAll("div.groove-list-view-item").forEach(listViewItem => {
+    listView.querySelectorAll("div.groove-list-view-item:not(.hidden)").forEach(listViewItem => {
         listViewItem.style.setProperty("--index", index)
         index += 1;
     })
@@ -48,8 +48,6 @@ bs.on('beforeScrollStart', (e) => {
 })
 function handlePageAnim(index = 0, next = true, scroll = 0) {
     document.querySelectorAll("div.innerApp > div.app-tabs > p").forEach(e => e.classList.remove("active-tab"))
-    console.log(index)
-
     document.querySelectorAll("div.innerApp > div.app-tabs > p")[index].classList.add("active-tab")
     document.querySelectorAll("div.settings-pages-container > div.settings-page").forEach(e => e.classList.remove("active-page"))
     document.querySelectorAll("div.settings-pages-container > div.settings-page")[index + 1].style.setProperty("--page-swipe-translate", (next ? scroll : -scroll) + "px")
@@ -65,7 +63,6 @@ bs.on('flick', () => {
     const next = (-1 - bs.x / scrollWidth()) > scrollStartX
     var index = next ? (scrollStartPageIndex + 1) : (scrollStartPageIndex - 1)
     index = index < 0 ? allPages.length - 1 : index > (allPages.length - 1) ? 0 : index
-    console.log("from flick", index)
     handlePageAnim(index, next, Math.abs(scrollStartX - (-1 - bs.x / scrollWidth())) * scrollWidth() * 2)
 })
 bs.on('touchEnd', (e) => {
@@ -73,7 +70,6 @@ bs.on('touchEnd', (e) => {
         const next = (-1 - bs.x / scrollWidth()) > scrollStartX
         var index = next ? (scrollStartPageIndex + 1) : (scrollStartPageIndex - 1)
         index = index < 0 ? allPages.length - 1 : index > (allPages.length - 1) ? 0 : index
-        console.log("from touch", index)
         handlePageAnim(index, next, Math.abs(scrollStartX - (-1 - bs.x / scrollWidth())) * scrollWidth() * 2)
     }
 })
@@ -178,12 +174,30 @@ function activeTabScroll() {
 }
 window.activeTabScroll = activeTabScroll
 const scrollers = {
+    home: new GrooveScroll("#home-tab", {
+        bounceTime: 300,
+        swipeBounceTime: 200,
+        outOfBoundaryDampingFactor: 1,
+        scrollbar: true
+    }),
     apps: new GrooveScroll("#apps-tab", {
         bounceTime: 300,
         swipeBounceTime: 200,
         outOfBoundaryDampingFactor: 1,
         scrollbar: true
-    })
+    }),
+    theme: new GrooveScroll("#theme-tab", {
+        bounceTime: 300,
+        swipeBounceTime: 200,
+        outOfBoundaryDampingFactor: 1,
+        scrollbar: true
+    }),
+    about: new GrooveScroll("#about-tab", {
+        bounceTime: 300,
+        swipeBounceTime: 200,
+        outOfBoundaryDampingFactor: 1,
+        scrollbar: true
+    }),
 }
 setTimeout(() => {
     Object.values(scrollers).forEach(e => e.refresh())
@@ -200,9 +214,7 @@ function showPageAnim() {
         document.querySelectorAll("div.groove-list-view.skew").forEach(listView => listView.classList.remove("skew"))
     }, 2000);
     window.activeTabScrollTimeout = setTimeout(() => {
-        console.log("bşla")
         activeTabScroll()
-
     }, 1000);
 }
 requestAnimationFrame(() => {
@@ -211,20 +223,24 @@ requestAnimationFrame(() => {
 
 
 window.parent.GrooveBoard.backendMethods.reloadAppDatabase().forEach(e => {
-    document.querySelector("#apps-tab > div.scroller > div.groove-list-view").append(GrooveElements.wListViewItem(e.label, ""))
+    const el = GrooveElements.wListViewItem(e.label, "")
+    el.setAttribute("packagename", e.packageName)
+    document.querySelector("#apps-tab > div.scroller > div.groove-list-view").append(el)
 })
 window.animPlaying = false
 const navigation = {
     goToPage: (index) => {
         animPlaying = true
-    
-        console.log("gotopage", index)
         document.querySelector("div.innerApp").classList.remove("shown-page")
         document.querySelector("div.innerApp").classList.add("hidden-page")
         document.querySelectorAll("div.innerAppPage")[index].classList.add("shown-page")
+        document.querySelectorAll("div.innerAppPage")[index].classList.remove("hidden-page")
         setTimeout(() => {
             document.querySelector("div.innerApp").style.setProperty("flexGrow", 0)
         }, 150);
+        setTimeout(() => {
+            document.querySelectorAll("div.innerAppPage")[index].classList.add("shown-page-no-anim")
+        }, 750);
         window.parent.GrooveBoard.backendMethods.navigation.push("settings-inner-page", () => { }, () => {
             navigation.settingsHome()
         })
@@ -236,7 +252,7 @@ const navigation = {
             animPlaying = false
         }, 1000);
         const beforePage = document.querySelector("div.shown-page")
-        document.querySelectorAll("div.shown-page").forEach(e => e.classList.remove("shown-page"))
+        document.querySelectorAll("div.shown-page").forEach(e => { e.classList.remove("shown-page"); e.classList.remove("shown-page-no-anim"); })
         beforePage.classList.add("hidden-page")
         setTimeout(() => {
             document.querySelector("div.innerApp").classList.remove("hidden-page")
@@ -245,6 +261,34 @@ const navigation = {
         }, 150);
     }
 }
+window.pageNavigation = navigation
 $("#home-tab > div > div.groove-list-view > div.groove-list-view-item").on("flowClick", e => {
     navigation.goToPage($(e.target).index())
 })
+$("#apps-tab > div.scroller > div.groove-list-view > div.groove-list-view-item").on("flowClick", e => {
+    try {
+        const appdetail = parent.GrooveBoard.backendMethods.getAppDetails(e.target.getAttribute("packagename"))
+        window.lastSelectedApp = appdetail
+        document.querySelector("#appDetailPage > div.app-tabs > p").innerText = appdetail.label
+        document.querySelector("#appDetailPage > div.settings-pages > div > div > p").innerText = appdetail.packageName
+        if(appdetail.type == 0){
+            document.querySelector("#uninstallappbutton").style.display = "none"
+        }else{
+            document.querySelector("#uninstallappbutton").style.display = "block"
+        }
+        pageNavigation.goToPage(6)
+    } catch (error) {
+        parent.GrooveBoard.alert(
+            "Unable to Get App Details!",
+            "Couldn’t retrieve details for this app.",
+            [{ title: "Ok", style: "default", inline: true, action: () => { } }]
+        );
+    }
+
+})
+import "./pages/00_home+theme"
+import "./pages/01_screen_rotation"
+import "./pages/03_ease_of_access"
+import "./pages/04_advanced"
+import "./pages/05_about"
+import "./pages/10_applications"

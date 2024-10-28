@@ -232,6 +232,9 @@ div.tile-list-inner-container {
     &.gs-6 {
         left: 6px;
         width: calc(100% - 6px * 2);
+        p.groove-home-tile-title{
+            font-size: 25px !important;
+        }
     }
 }
 
@@ -417,6 +420,10 @@ div.groove-home-tile {
             margin: 10px 12px;
             font-size: 19px;
             //zoom: calc(1 / var(--tile-zoom));
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: calc(100% - 24px);
         }
     }
 

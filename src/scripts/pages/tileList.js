@@ -24,8 +24,6 @@ grid.on("dragstart", function (event, el) {
   // el.classList.add("grid-dragging")
   scrollers.tile_page_scroller.cancelScroll()
   lastDragEl = el
-  console.log(el)
-
   isDragging = true
   $(el).css({
     left: $(el).position().left + 15,
@@ -33,11 +31,8 @@ grid.on("dragstart", function (event, el) {
   })
 });
 grid.on('drag', function (event, el) {
-
-  console.log("başladı drag")
 });
 grid.on('change', function (event, items) {
-  console.log("ofafa")
 });
 window.addEventListener("pointermove", (e) => {
   if (isDragging && false) {
@@ -57,7 +52,6 @@ grid.on("dragstop", function (event, el) {
     GrooveBoard.backendMethods.homeConfiguration.save()
   }, 500);
   isDragging = false
-  console.log("bitti")
   //$("div.groove-home-tile.grid-dragging").removeClass("grid-dragging").css("transition", "")
 });
 window.tileListGrid = grid;

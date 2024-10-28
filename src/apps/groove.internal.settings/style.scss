@@ -31,6 +31,60 @@
     .settings-pages {
         flex-grow: 1;
         height: 0px;
+        perspective: var(--flow-perspective);
+        transform-style: preserve-3d !important;
+
+        .settings-pages-container {
+            transform-style: preserve-3d !important;
+            height: 100%;
+            .settings-page-2 {
+                transform-style: preserve-3d !important;
+                transition: opacity .25s cubic-bezier(0.075, 0.82, 0.165, 1);
+                height: 100%;
+                float: left;
+                width: calc(100vw - 22px * 2);
+                opacity: 0;
+                overflow: hidden;
+                --page-swipe-translate: 0px;
+                animation: page-swipe-translate .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+                @keyframes page-swipe-translate {
+                    from {
+                        transform: translate(var(--page-swipe-translate));
+                    }
+
+                    to {
+                        transform: translate(0px);
+                    }
+                }
+
+                opacity: 1;
+
+
+                p.groove-list-view-item-description {
+                    animation: groove-list-view-item-description-page-skew .75s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+                    @keyframes groove-list-view-item-description-page-skew {
+                        from {
+                            transform: translateX(calc(var(--page-swipe-direction) * 150px));
+                        }
+
+                        to {
+                            transform: translateX(0px);
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    &:not(.shown-page):not(.shown-page-no-anim) {
+        pointer-events: none !important;
+
+        * {
+            pointer-events: none !important;
+        }
     }
 }
 
@@ -192,6 +246,7 @@ div.app-tabs {
         height: 100%;
 
         .settings-page {
+            transform-style: preserve-3d !important;
             perspective: var(--flow-perspective);
             transition: opacity .25s cubic-bezier(0.075, 0.82, 0.165, 1);
             height: 100%;
@@ -266,8 +321,19 @@ p.text {
         margin: 6px 0px;
     }
 
-    &:not(div:nth-child(2)) {
+    p.group-description {
+        color: rgb(153, 153, 153);
+        font-size: 20px;
+        margin: 6px 0px;
+        margin-top: 0px;
+    }
+
+    &:not(div:nth-child(2)):not(.first-group) {
         margin-top: 22px;
+    }
+
+    &.first-group {
+        margin-top: 0px !important;
     }
 }
 
@@ -342,6 +408,10 @@ a {
     top: -18px;
     width: calc(100% + 44px);
     height: calc(100% + 36px);
+    left: 0px;
+    top: 0px;
+    width: 100vw;
+    height: 100vh;
 
     * {
         color: transparent;
@@ -517,6 +587,7 @@ a {
         margin-left: 5px;
     }
 
+
     button.metro-button.link {
         padding: 0px;
     }
@@ -564,9 +635,10 @@ div.credit-item {
         margin: 0px;
 
         span {
-            margin: 0px 10px;
+            //margin: 0px 10px;
             opacity: .5;
             font-size: 15px;
+            display: block;
         }
     }
 
@@ -594,6 +666,10 @@ div.credit-item {
 
     div.groove-list-view-item {
         @include flow-touch;
+
+        &.hidden {
+            display: none;
+        }
 
         p.groove-list-view-item-title {
             margin: 0px;
@@ -624,30 +700,69 @@ div.credit-item {
     transform-style: preserve-3d;
 }
 
-.hidden-page {
-    &.innerApp {
-        animation: app-outro-animation-2 0.15s cubic-bezier(0.83, 0, 0.92, 0.18) forwards !important;
+body:not(.soft-exit):not(.soft-exit-home) {
+    .hidden-page {
+        &.innerApp {
+            animation: app-outro-animation-2 0.15s cubic-bezier(0.83, 0, 0.92, 0.18) forwards !important;
 
+        }
+
+        &.innerAppPage {
+            animation: app-outro-animation 0.15s cubic-bezier(0.83, 0, 0.92, 0.18) forwards !important;
+
+        }
+
+        pointer-events: none !important;
+
+        * {
+            pointer-events: none !important;
+        }
     }
 
-    &.innerAppPage {
-        animation: app-outro-animation 0.15s cubic-bezier(0.83, 0, 0.92, 0.18) forwards !important;
+    .shown-page {
+        &.innerApp {
+            animation: app-intro-animation-2 .5s .25s cubic-bezier(0.075, 0.82, 0.165, 1) forwards !important;
 
+        }
+
+        &.innerAppPage {
+            animation: app-intro-animation .5s .25s cubic-bezier(0.075, 0.82, 0.165, 1) forwards !important;
+
+        }
+
+        pointer-events: all !important;
     }
 
-    pointer-events: none !important;
+    .shown-page-no-anim {
+        pointer-events: all !important;
+        opacity: 1;
+        animation: none !important;
+    }
 }
-
-.shown-page {
-    &.innerApp {
-        animation: app-intro-animation-2 .5s .25s cubic-bezier(0.075, 0.82, 0.165, 1) forwards !important;
-
+#about-tab{
+    div.double-buttons{
+        display: flex; margin-bottom: 30px;
+        button{
+            width: 0px;
+            flex-grow: 1;
+            text-align: center;
+            img{
+                display: none;
+                body:not(.light-mode) &{
+                    filter: invert(1);
+                }
+                position: absolute;
+                left: calc(50% - 17.5px);
+                top: calc(50% - 17.5px);
+                width: 35px;
+                height: 35px;
+            }
+            &.loading{
+                color: transparent;
+                img{
+                    display: block;
+                }
+            }
+        }
     }
-
-    &.innerAppPage {
-        animation: app-intro-animation .5s .25s cubic-bezier(0.075, 0.82, 0.165, 1) forwards !important;
-
-    }
-
-    pointer-events: all !important;
 }

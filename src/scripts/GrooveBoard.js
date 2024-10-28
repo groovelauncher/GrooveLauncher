@@ -253,10 +253,6 @@ const boardMethods = {
             }, { title: "No", style: "default", inline: true, action: () => { } }]
           );
         }
-
-
-
-
       },
     });
     document.querySelector("div.app-list-page").appendChild(el);

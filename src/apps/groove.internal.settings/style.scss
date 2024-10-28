@@ -742,6 +742,7 @@ body:not(.soft-exit):not(.soft-exit-home) {
 #about-tab{
     div.double-buttons{
         display: flex; margin-bottom: 30px;
+        max-width: 768px;
         button{
             width: 0px;
             flex-grow: 1;

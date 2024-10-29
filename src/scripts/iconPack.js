@@ -519,8 +519,7 @@ const iconPackConverter = [
             "de.beowulf.wetter",
             "net.oneplus.weather"
         ],
-        "icon": "health",
-        "accent": "orange"
+        "icon": "weather"
     },
     //MAIL
     {

@@ -34,6 +34,8 @@ document.querySelectorAll("div.accent-color-catalogue-item").forEach(e => e.addE
     }, 500);
     appViewEvents.setAccentColor(grooveColors[e.target.style.background.slice(18).slice(0, -1)])
     document.querySelector("div.color-picker > div.picker-option").innerText = e.target.style.background.slice(18).slice(0, -1)
+    document.querySelector("#home-tab > div:nth-child(1) > div > div:nth-child(1) > p.groove-list-view-item-description").innerText = e.target.style.background.slice(18).slice(0, -1)
+
 }))
 
 document.getElementById("choose-wallpaper").querySelector("input").addEventListener('change', (event) => {
@@ -112,3 +114,8 @@ setTimeout(() => {
     }
 
 }, 500);
+
+if (!!localStorage['accentColor']) {
+    const colorName = Object.keys(grooveColors).find(key => grooveColors[key] == localStorage['accentColor']) || "custom color";
+    document.querySelector("#home-tab > div:nth-child(1) > div > div:nth-child(1) > p.groove-list-view-item-description").innerText = colorName
+}

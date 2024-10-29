@@ -219,14 +219,14 @@ function showPageAnim() {
 }
 requestAnimationFrame(() => {
     showPageAnim()
-})
+});
 
 
-window.parent.GrooveBoard.backendMethods.reloadAppDatabase().forEach(e => {
+(!!window.parent.allappsarchive ? window.parent.allappsarchive : window.parent.GrooveBoard.backendMethods.reloadAppDatabase()).forEach(e => {
     const el = GrooveElements.wListViewItem(e.label, "")
     el.setAttribute("packagename", e.packageName)
     document.querySelector("#apps-tab > div.scroller > div.groove-list-view").append(el)
-})
+});
 window.animPlaying = false
 const navigation = {
     goToPage: (index) => {
@@ -271,9 +271,9 @@ $("#apps-tab > div.scroller > div.groove-list-view > div.groove-list-view-item")
         window.lastSelectedApp = appdetail
         document.querySelector("#appDetailPage > div.app-tabs > p").innerText = appdetail.label
         document.querySelector("#appDetailPage > div.settings-pages > div > div > p").innerText = appdetail.packageName
-        if(appdetail.type == 0){
+        if (appdetail.type == 0) {
             document.querySelector("#uninstallappbutton").style.display = "none"
-        }else{
+        } else {
             document.querySelector("#uninstallappbutton").style.display = "block"
         }
         pageNavigation.goToPage(6)

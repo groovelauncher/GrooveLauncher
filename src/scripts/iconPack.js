@@ -457,7 +457,8 @@ const iconPackConverter = [
             "com.google.android.play.games",
             "com.oneplus.gamespace",
             "com.samsung.android.game.gamehome",
-            "com.xiaomi.gamecenter"
+            "com.xiaomi.gamecenter",
+            "com.xiaomi.glgm"
         ],
         "icon": "games",
         "accent": "emerald"

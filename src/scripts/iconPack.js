@@ -195,7 +195,8 @@ const iconPackConverter = [
             "com.aurora.store",
             "com.heytap.market",
             "com.oneplus.store",
-            "com.sec.android.app.samsungapps"
+            "com.sec.android.app.samsungapps",
+            "com.xiaomi.market"
         ],
         "icon": "store"
     },
@@ -457,7 +458,8 @@ const iconPackConverter = [
             "com.google.android.play.games",
             "com.oneplus.gamespace",
             "com.samsung.android.game.gamehome",
-            "com.xiaomi.gamecenter"
+            "com.xiaomi.gamecenter",
+            "com.xiaomi.gamecenter.pad"
         ],
         "icon": "games",
         "accent": "emerald"

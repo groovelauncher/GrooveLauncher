@@ -1,6 +1,6 @@
-import { normalizeSync } from 'normalize-diacritics';
+import { normalize } from 'normalize-diacritics-es';
 window.normalizeDiacritics = (input = "") => {
-  return normalizeSync(input)
+  return normalize(input)
 }
 
 import {

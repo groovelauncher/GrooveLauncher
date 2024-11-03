@@ -3,12 +3,12 @@
   "version": "0.2.1-beta.2",
   "main": "index.js",
   "scripts": {
-    "build-watch": "npm run build-watch:webpack & npm run build-watch:scss & npm run build-watch:internal-apps & npm run build-watch:android",
+    "build-watch": "concurrently \"npm run build-watch:webpack\" \"npm run build-watch:scss\" \"npm run build-watch:internal-apps\" \"npm run build-watch:android\"",
     "build-watch:webpack": "npx webpack --watch",
     "build-watch:scss": "sass --no-source-map --watch src/styles.scss www/dist/styles.css",
-    "build-watch:android": "npm run build:android & chokidar 'www/**/*' -c 'npm run build:android'",
-    "build-watch:internal-apps": "node build-internal-apps.js & chokidar 'src/apps/**/*' -c 'npm run build:internal-apps'",
-    "build-watch:web": "npm run build-watch:webpack & npm run build-watch:scss & npm run build-watch:internal-apps",
+    "build-watch:android": "concurrently \"npm run build:android\" \"chokidar 'www/**/*' -c 'npm run build:android'\"",
+    "build-watch:internal-apps": "concurrently \"node build-internal-apps.js\" \"chokidar 'src/apps/**/*' -c 'npm run build:internal-apps'\"",
+    "build-watch:web": "concurrently \"npm run build-watch:webpack\" \"npm run build-watch:scss\" \"npm run build-watch:internal-apps\"",
     "build": "npm run build:webpack && npm run build:scss && npm run build:internal-apps && npm run build:android",
     "build:webpack": "npx webpack",
     "build:scss": "sass --no-source-map src/styles.scss www/dist/styles.css",
@@ -26,7 +26,7 @@
     "clusterize.js": "^1.0.0",
     "gridstack": "^10.3.1",
     "jquery": "^3.7.1",
-    "normalize-diacritics": "^5.0.0"
+    "normalize-diacritics-es": "^1.0.8"
   },
   "devDependencies": {
     "chokidar-cli": "^3.0.0",

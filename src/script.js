@@ -19,11 +19,11 @@ import GrooveBoard from "./scripts/GrooveBoard";
 import iconPackConverter from "./scripts/iconPack.js";
 import "./scripts/pages/appList.js"
 import "./scripts/pages/tileList.js"
-import { normalizeSync } from 'normalize-diacritics';
+import { normalize } from 'normalize-diacritics-es';
 import { grooveThemes } from "./scripts/GrooveProperties.js";
 import applyOverscroll from "./scripts/overscrollFramework.js";
 window.normalizeDiacritics = (input = "") => {
-    return normalizeSync(input)
+    return normalize(input)
 }
 import BScroll from "better-scroll";
 

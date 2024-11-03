@@ -43,6 +43,7 @@ window.addEventListener("pointerdown", (e) => {
     if (el.classList.contains("metro-toggle-switch")) metroToggleSwitch.pointerDown(el);
     clearTimeout(el.deletePropertiesTimeout)
     el.supportsFlowTouch = window.getComputedStyle(el).getPropertyValue("--flow-touch") == "true"
+    clearTimeout(el["activeRemoveTimeout"])
     el.classList.add("active")
     el.classList.add("e_active")
     el.pointerDown = true
@@ -76,7 +77,9 @@ window.addEventListener("pointerup", (e) => {
         } else {
             if (el.classList.contains("metro-toggle-switch")) metroToggleSwitch.pointerUp(el, false)
         }
-        el.classList.remove("active")
+        el.activeRemoveTimeout = setTimeout(() => {
+            el.classList.remove("active")
+        }, 250);
         el.classList.remove("e_active")
 
         el.deletePropertiesTimeout = setTimeout(() => {

@@ -1,6 +1,9 @@
 const getPage = () => window.scrollers.main_home_scroller.getCurrentPage().pageX
 const mainHomeSlider = document.getElementById("main-home-slider")
-
+const appTransitionScale = window.innerHeight / 850
+const timings = {
+    launchHide: () => (.15 * appTransitionScale + .2 + .15) * 1000
+}
 function isElementVisible(el) {
     const rect = el.getBoundingClientRect();
     return (
@@ -79,13 +82,13 @@ const appTransition = {
         clearTimeout(window.appTransitionLaunchError)
         window.appTransitionLaunchError = setTimeout(() => {
             appTransition.onResume(true)
-        }, 2000);
+        }, timings.launchHide() + 1000);
         startAnim()
         setTimeout(() => {
-            scrollers.main_home_scroller.scrollTo(0,0)
+            scrollers.main_home_scroller.scrollTo(0, 0)
             mainHomeSlider.style.visibility = "hidden"
             document.querySelectorAll(".app-transition-selected").forEach(e => e.classList.remove("app-transition-selected"))
-        }, 600);
+        }, timings.launchHide());
     },
     onResume: (back = false, firstintro = false) => {
         mainHomeSlider.style.removeProperty("visibility")

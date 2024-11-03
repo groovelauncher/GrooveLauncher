@@ -14,7 +14,7 @@
     "build:scss": "npx sass --no-source-map src/styles.scss www/dist/styles.css",
     "build:android": "rm -rf android/app/src/main/assets/* && cp -R www/* android/app/src/main/assets/",
     "build:internal-apps": "node build-internal-apps.js",
-    "build:production": "rm -rf android/app/src/main/assets/* && npx webpack --env production && npx sass --no-source-map --style=compressed src/styles.scss www/dist/styles.css && node build-internal-apps.js --production && npm run build:android"
+    "build:production": "rm -rf android/app/src/main/assets/* && npx webpack --env production && npx sass --no-source-map --style=compressed src/styles.scss www/dist/styles.css && node build-internal-apps.js --production && npm run build:android && echo Compilation completed."
   },
   "author": "",
   "license": "UNLICENSED",

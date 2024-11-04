@@ -71,7 +71,7 @@ class GrooveMock {
         window.open(url, "_blank")
     }
     getAppVersion() {
-        return "0.4.2-beta.4"
+        return "0.4.3-beta.4"
     }
     getWebViewVersion() {
         return "chrome"

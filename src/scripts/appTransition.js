@@ -1,8 +1,8 @@
 const getPage = () => window.scrollers.main_home_scroller.getCurrentPage().pageX
 const mainHomeSlider = document.getElementById("main-home-slider")
-const appTransitionScale = window.innerHeight / 850
+const appTransitionScale = () => window.innerHeight / 850 / 2 + .5
 const timings = {
-    launchHide: () => (.15 * appTransitionScale + .2 + .15) * 1000
+    launchHide: () => (.15 * appTransitionScale() + .2 + .15) * 1000 + 500
 }
 function isElementVisible(el) {
     const rect = el.getBoundingClientRect();

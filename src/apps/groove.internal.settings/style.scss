@@ -346,7 +346,7 @@ p.text {
     display: flex;
     flex-direction: row;
 
-    &.active {
+    &.t_active {
         //box-shadow: inset 0px 0px 0px 3px var(--accent-color);
         background-color: var(--accent-color);
         //color: black;

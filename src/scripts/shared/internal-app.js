@@ -1,5 +1,5 @@
 import { grooveColors, grooveThemes } from "../GrooveProperties";
-import clickDetectorConfig from "../clickDetector.js";
+import "../flowTouch.js";
 import applyOverscroll from "../overscrollFramework.js";
 import fontStore from "../fontStore.js";
 import GrooveMock from "./../GrooveMock.js";

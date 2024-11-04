@@ -257,7 +257,7 @@ div.app-page-icon-banner {
         box-shadow: inset 0px 0px 0px 3px var(--metro-foreground);
         background-color: var(--metro-background);
 
-        &.e_active {
+        &.t_active {
             background: var(--metro-foreground);
             color: var(--metro-background);
         }
@@ -459,18 +459,11 @@ div.groove-home-tile {
             height: 42px;
             border-radius: 50%;
             box-sizing: border-box;
-
-
-
             box-shadow: inset 0px 0px 0px 3px var(--metro-foreground);
             background-color: var(--metro-background);
-
-            &.active {}
-
-
             display: flex;
 
-            &.active {
+            &.t_active {
                 background: var(--metro-foreground);
                 color: var(--metro-background);
                 box-shadow: inset 0px 0px 0px 3px var(--metro-background);

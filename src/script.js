@@ -10,7 +10,7 @@ import startUpSequence from "./scripts/startUpSequence";
 import jQuery from "jquery";
 window.$ = jQuery
 import appTransition from "./scripts/appTransition.js";
-import clickDetectorConfig from "./scripts/clickDetector.js";
+import "./scripts/flowTouch.js";
 import { GrooveScroll, GrooveSlide } from "./scripts/overscrollFramework.js";
 import { boardMethods } from "./scripts/GrooveBoard";
 import imageStore from "./scripts/imageStore.js";
@@ -91,7 +91,9 @@ GrooveBoard.backendMethods.refreshInsets()
 $(window).on("resize", () => {
     $(":root").css({ "--window-width": window.innerWidth + "px", "--window-height": window.innerHeight + "px", "--window-hypotenuse": (Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2))) + "px", "--app-transition-scale": window.innerHeight / 850 })
 })
-$(":root").css({ "--window-width": window.innerWidth + "px", "--window-height": window.innerHeight + "px", "--window-hypotenuse": (Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2))) + "px", "--app-transition-scale": window.innerHeight / 850 })
+const appTransitionScale = () => window.innerHeight / 850 / 2 + .5
+
+$(":root").css({ "--window-width": window.innerWidth + "px", "--window-height": window.innerHeight + "px", "--window-hypotenuse": (Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2))) + "px", "--app-transition-scale": appTransitionScale })
 
 scrollers.main_home_scroller.on("slideWillChange", function (e) {
     if (e.pageX == 0) {

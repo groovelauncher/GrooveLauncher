@@ -14,7 +14,7 @@ import { GrooveScroll } from "./scripts/overscrollFramework.js";
 import detectDeviceType from "./scripts/detectDeviceType";
 import GrooveBoard from "./scripts/GrooveBoard";
 window.GrooveBoard = GrooveBoard
-import clickDetectorConfig from "./scripts/clickDetector.js";
+import "./scripts/flowTouch.js";
 
 $(window).on("systemInsetsChange", function () {
     GrooveBoard.backendMethods.refreshInsets()

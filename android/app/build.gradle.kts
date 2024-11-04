@@ -10,8 +10,8 @@ android {
         applicationId = "web.bmdominatezz.gravy"
         minSdk = 21
         targetSdk = 34
-        versionCode = 42
-        versionName = "0.4.2-beta.4"
+        versionCode = 43
+        versionName = "0.4.3-beta.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

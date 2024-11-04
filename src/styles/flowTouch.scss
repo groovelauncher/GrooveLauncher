@@ -55,7 +55,7 @@
     width: max-content;
     height: min-content;
 
-    &.e_active {
+    &.t_active {
         background: var(--accent-color);
         color: white;
     }
@@ -66,15 +66,17 @@
         background: transparent !important;
         color: var(--metro-foreground) !important;
 
-        &.active {
+        &.t_active {
             color: var(--accent-color) !important;
         }
     }
 
 }
-.metro-button{
+
+.metro-button {
     @include metro-button;
 }
+
 .metro-toggle-switch {
     --transition: 0;
 
@@ -111,7 +113,7 @@
 
     perspective: var(--flow-perspective);
 
-    &.active,
+    &.t_active,
     &.clicked {
         box-shadow: inset 0px 0px 0px 3px var(--accent-color);
         background-color: white;
@@ -151,6 +153,13 @@
         height: 48px;
         display: flex;
         align-items: center;
+
+        span, & {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 
 

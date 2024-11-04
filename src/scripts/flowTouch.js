@@ -46,6 +46,7 @@ window.addEventListener("pointerdown", (e) => {
     clearTimeout(el["activeRemoveTimeout"])
     el.classList.add("active")
     el.classList.add("e_active")
+    el.classList.add("t_active")
     el.pointerDown = true
     el.lastPointerPosition = [e.pageX, e.pageY]
     if (el.supportsFlowTouch) {
@@ -81,6 +82,7 @@ window.addEventListener("pointerup", (e) => {
             el.classList.remove("active")
         }, 250);
         el.classList.remove("e_active")
+        el.classList.remove("t_active")
 
         el.deletePropertiesTimeout = setTimeout(() => {
             deleteProperties(el)
@@ -97,6 +99,7 @@ window.addEventListener("pointermove", (e) => {
     flowTouchRotate(el, e.pageX, e.pageY)
     if (hypotenuse > clickDetectorConfig.touchUpDistanceThreshold) {
         el.classList.remove("active")
+        el.classList.remove("t_active")
         deleteProperties(el)
         delete pointerDownElements[e.pointerId]
     }

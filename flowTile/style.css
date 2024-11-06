@@ -1,0 +1,23 @@
+@import url("https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css");
+@import url("flowTile.css");
+
+#container {
+    width: 480px;
+    height: 850px;
+    background-color: rgb(255,255,255,.1);
+}
+
+body,
+html {
+    color-scheme: dark;
+}
+
+.ui-icon-gripsmall-diagonal-se {
+    filter: invert();
+}
+
+.ft-tile {
+    background-color: cornflowerblue ;
+    background: linear-gradient(45deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%);
+
+}

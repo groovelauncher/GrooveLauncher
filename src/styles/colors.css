@@ -1,0 +1,41 @@
+:root {
+  --metro-color-lime: #A4C400;
+  --metro-color-green: #60A917;
+  --metro-color-emerald: #008A00;
+  --metro-color-teal: #00ABA9;
+  --metro-color-cyan: #1BA1E2;
+  --metro-color-cobalt: #3E65FF;
+  --metro-color-indigo: #6A00FF;
+  --metro-color-violet: #AA00FF;
+  --metro-color-pink: #F472D0;
+  --metro-color-magenta: #D80073;
+  --metro-color-crimson: #A20025;
+  --metro-color-red: #E51400;
+  --metro-color-orange: #FA6800;
+  --metro-color-amber: #F0A30A;
+  --metro-color-yellow: #E3C800;
+  --metro-color-brown: #825A2C;
+  --metro-color-olive: #6d8764;
+  --metro-color-steel: #647687;
+  --metro-color-mauve: #76608A;
+  --metro-color-taupe: #87794E;
+  --accent-color: var(--metro-color-violet);
+}
+
+body:not(.light-mode) {
+  --metro-background: black;
+  --metro-foreground: white;
+  --metro-opaque: #111511;
+  --metro-opaque-2: white;
+  --metro-transparent: rgb(0, 0, 0, .5);
+  --metro-transparent-2: rgb(255, 255, 255, .5);
+}
+
+body.light-mode {
+  --metro-background: white;
+  --metro-foreground: black;
+  --metro-opaque: #dfe0df;
+  --metro-opaque-2: #a6a8a7;
+  --metro-transparent: rgb(255, 255, 255, .5);
+  --metro-transparent-2: rgb(0, 0, 0, .5);
+}/*# sourceMappingURL=colors.css.map */

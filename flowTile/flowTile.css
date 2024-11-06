@@ -1,0 +1,26 @@
+div.ft-container {
+  position: relative;
+}
+div.ft-container div.ft-tile {
+  position: absolute;
+  left: var(--fl-container-p-l);
+  top: var(--fl-container-p-t);
+  width: var(--fl-tile-w-1);
+  height: var(--fl-tile-w-1);
+}
+div.ft-container div.ft-tile.ft-size-s {
+  width: var(--fl-tile-w-1);
+  height: var(--fl-tile-w-1);
+}
+div.ft-container div.ft-tile.ft-size-m {
+  width: var(--fl-tile-w-2);
+  height: var(--fl-tile-w-2);
+}
+div.ft-container div.ft-tile.ft-size-w {
+  width: var(--fl-tile-w-4);
+  height: var(--fl-tile-w-2);
+}
+div.ft-container div.ft-tile.ft-size-l {
+  width: var(--fl-tile-w-4);
+  height: var(--fl-tile-w-2);
+}/*# sourceMappingURL=flowTile.css.map */

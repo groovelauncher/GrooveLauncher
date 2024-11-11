@@ -1,5 +1,5 @@
 
-function tile(x, y, w, h, content = "") {
+function tile(x, y, w, h, content) {
     const invalidSize = new Error("invalid size")
     if (w == 1) {
         if (h != 1) {
@@ -23,8 +23,19 @@ function tile(x, y, w, h, content = "") {
     ft_tile.ft_y = calculations.redefine(y, 0)
     ft_tile.ft_w = calculations.redefine(w, 1)
     ft_tile.ft_h = calculations.redefine(h, 1)
-    ft_tile.innerHTML = content
+    ft_tile.innerHTML = calculations.redefine(content, "")
     ft_tile.classList.add("ft-tile")
+    var position = [x, y]
+    ft_tile.getPosition = () => {
+        return { x: position[0], y: position[1] };
+    }
+    ft_tile.setPosition = (x, y) => {
+        if (x) position[0] = x
+        if (y) position[1] = y
+        ft_tile.ft_x = x
+        ft_tile.ft_y = y
+        return { x: position[0], y: position[1] };
+    }
     return ft_tile;
 }
 const calculations = {
@@ -54,7 +65,6 @@ const calculations = {
             }
         }
     }
-
 }
 window.calculations = calculations
 const eventLogTypes = {
@@ -65,31 +75,14 @@ const eventLogTypes = {
 function spaceDetector(tiles, cols) {
     var space = [];
     function calculate() {
-        var rows = 0
-        tiles.forEach(tile => rows = Math.max(rows, tile.ft_y + tile.ft_h))
-        space = new Array(rows * cols).fill(false)
-        //    console.log("sspace", space)
-        tiles.forEach(tile => {
-            const pointer = tile.ft_x + tile.ft_y * cols
-            //console.log(pointer)
-            for (let x = 0; x < tile.ft_w; x++) {
-                for (let y = 0; y < tile.ft_h; y++) {
-                    const rpointer = pointer + x + pointer * cols
-                    space[rpointer] = true
-                    //console.log("yüzery", x, y)
-                }
-            }
-        })
+        calculateUntil(tiles.length)
     }
     function calculateUntil(index) {
-        //console.log("iyi ok")
         var rows = 0
-        tiles.forEach(tile => rows = Math.max(rows, tile.ft_y + tile.ft_h))
-        //    console.log("sspace", space)
+        tiles.forEach(tile => rows = Math.max(rows, tile.getPosition().y + tile.ft_h))
         space = new Array(rows * cols).fill(false)
-        //console.log("psacew", space)
         Array.from(tiles).slice(0, index).forEach(tile => {
-            const pointer = tile.ft_x + tile.ft_y * cols
+            const pointer = tile.getPosition().x + tile.getPosition().y * cols
             //console.log(pointer)
             for (let x = 0; x < tile.ft_w; x++) {
                 for (let y = 0; y < tile.ft_h; y++) {
@@ -101,11 +94,26 @@ function spaceDetector(tiles, cols) {
         })
     }
     //console.log("sspace", space)
-    function isEmpty(x, y) {
-        return (space) ? (!space[x + y * cols]) : false
+    function isEmpty(x, y, w = 1, h = 1) {
+        var result = true
+        for (let ax = 0; ax < w; ax++) {
+            for (let ay = 0; ay < h; ay++) {
+                result &= !space[x + ax + (y + ay) * cols]
+            }
+        }
+        return space ? result : false
     }
     return { isEmpty, calculate, calculateUntil, space: () => space }
 }
+function isRectangleInRectangle(inner, outer) {
+    return (
+        inner[0] >= outer[0] &&
+        inner[1] >= outer[1] &&
+        inner[0] + inner[2] <= outer[0] + outer[2] &&
+        inner[1] + inner[3] <= outer[1] + outer[3]
+    );
+}
+
 function spaceMatrix(radius) {
     if (radius < 1) {
         throw new Error("radius too small")
@@ -201,21 +209,50 @@ function flowTile(container) {
             var pos;
             //console.log("space", sd.space())
 
-            if (sd.isEmpty(tile.ft_x, tile.ft_y)) {
+            if (sd.isEmpty(tile.ft_x, tile.ft_y, tile.ft_w, tile.ft_h)) {
                 pos = [tile.ft_x, tile.ft_y]
             }
             //console.log(pos)
             if (pos) {
+                tile.setPosition(pos[0], pos[1])
                 tile.style.setProperty("left", containerPadding[3] + pos[0] * baseSize + pos[0] * tileMargin + "px")
-                //console.log("pad", containerPadding[3] + pos[0] * baseSize)
                 tile.style.setProperty("top", containerPadding[0] + pos[1] * baseSize + pos[1] * tileMargin + "px")
                 tile.style.removeProperty("background")
                 tile.ft_placed = true;
+
             }
         })
         const left_outs = Array.from(tiles).filter(tile => !tile.ft_placed)
         left_outs.forEach(left_out => {
-            var radius
+            var radius = 0
+            var pos
+            var resolved = false
+            sd.calculateUntil(Array.from(tiles).indexOf(left_out))
+            console.log("space")
+            console.log("calc until", Array.from(tiles).indexOf(left_out))
+            while (!resolved) {
+                radius += 1
+                const matrix = spaceMatrix(radius)
+                matrix.forEach(space => {
+                    if (resolved) return;
+                    if (!isRectangleInRectangle(
+                        [space[0], space[1], left_out.ft_w, left_out.ft_h],
+                        [0, 0, columns, 999999]
+                    )) return;
+                    if (sd.isEmpty(space[0], space[1], left_out.ft_w, left_out.ft_h)) {
+                        pos = [space[0], space[1]]
+                        resolved = true
+                    }
+                });
+            }
+            if (pos) {
+                left_out.setProperty(pos[0], pos[1])
+                left_out.style.setProperty("left", containerPadding[3] + pos[0] * baseSize + pos[0] * tileMargin + "px")
+                //console.log("pad", containerPadding[3] + pos[0] * baseSize)
+                left_out.style.setProperty("top", containerPadding[0] + pos[1] * baseSize + pos[1] * tileMargin + "px")
+                left_out.style.removeProperty("background")
+                left_out.ft_placed = true;
+            }
         });
         console.log("leftouts", left_outs.length)
         sd.calculate()

@@ -1,18 +1,65 @@
-const getPage = () => window.scrollers.main_home_scroller.getCurrentPage().pageX
-const mainHomeSlider = document.getElementById("main-home-slider")
-const appTransitionScale = () => window.innerHeight / 850 / 2 + .5
-const timings = {
-    launchHide: () => (.15 * appTransitionScale() + .2 + .15) * 1000 + 500
-}
+// Configuration object for all animation-related settings
+const CONFIG = {
+    ANIMATION: {
+        BASE_TIMEOUT: 1000,
+        ERROR_TIMEOUT: 1000,
+        VISIBILITY_MARGIN: {
+            height: 1,
+            width: 1
+        }
+    },
+    SELECTORS: {
+        MAIN_SLIDER: '#main-home-slider',
+        APP_TILES: 'div.app-list-container > div.groove-element.groove-app-tile:not(.search-hidden)',
+        HOME_TILES: 'div.tile-list-inner-container > div.groove-element.groove-home-tile',
+        TILE_CONTAINER: 'div.tile-list-container',
+        STICKY_LETTER: '#sticky-letter',
+        SEARCH_ICON: '#search-icon',
+        ICON_BANNER: 'div.app-page-icon-banner'
+    },
+    CLASSES: {
+        TRANSITION: {
+            BASE: 'app-transition',
+            BACK: 'app-transition-back',
+            RESUME: 'app-transition-on-resume',
+            PAUSE: 'app-transition-on-pause',
+            TILE_LIST: 'app-transition-tile-list',
+            APP_LIST: 'app-transition-app-list'
+        }
+    }
+};
+
+// Cache frequently used DOM elements for better performance
+const mainHomeSlider = document.getElementById(CONFIG.SELECTORS.MAIN_SLIDER.slice(1));
+
+// Animation timing calculations
+const ANIMATION_TIMINGS = {
+    // Calculate base scale based on window height
+    baseScale: () => window.innerHeight / 850 / 2 + 0.5,
+    // Calculate launch hide timing with scale factor
+    launchHide: function() { return (0.15 * this.baseScale() + 0.35) * 1000 + 500 }
+};
+
+// Check if an element is visible within the viewport
 function isElementVisible(el) {
-    const rect = el.getBoundingClientRect();
-    return (
-        rect.top >= (-rect.height) &&
-        rect.left >= (-rect.width) &&
-        rect.bottom <= ((window.innerHeight || document.documentElement.clientHeight) + rect.height) &&
-        rect.right <= ((window.innerWidth || document.documentElement.clientWidth) + rect.width)
-    );
+    try {
+        const rect = el.getBoundingClientRect();
+        const viewHeight = window.innerHeight || document.documentElement.clientHeight;
+        const viewWidth = window.innerWidth || document.documentElement.clientWidth;
+        
+        return (
+            rect.top >= (-rect.height * CONFIG.ANIMATION.VISIBILITY_MARGIN.height) &&
+            rect.left >= (-rect.width * CONFIG.ANIMATION.VISIBILITY_MARGIN.width) &&
+            rect.bottom <= (viewHeight + rect.height * CONFIG.ANIMATION.VISIBILITY_MARGIN.height) &&
+            rect.right <= (viewWidth + rect.width * CONFIG.ANIMATION.VISIBILITY_MARGIN.width)
+        );
+    } catch (error) {
+        console.error('Error checking element visibility:', error);
+        return false;
+    }
 }
+
+// Calculate the center coordinates of an element
 function getElementCenter(el) {
     const rect = el.getBoundingClientRect();
     return {
@@ -20,90 +67,118 @@ function getElementCenter(el) {
         y: rect.top + rect.height / 2
     };
 }
+
+// Clean up animation classes from elements
 function removeAnimClasses() {
-    mainHomeSlider.classList.remove("app-transition", "app-transition-back", "app-transition-on-resume", "app-transition-on-pause", "app-transition-tile-list", "app-transition-app-list")
-    document.querySelectorAll(".groove-home-tile").forEach(e => e.classList.remove("active"))
+    const classesToRemove = Object.values(CONFIG.CLASSES.TRANSITION);
+    mainHomeSlider.classList.remove(...classesToRemove);
+    document.querySelectorAll('.groove-home-tile').forEach(e => e.classList.remove('active'));
 }
+
+// Get the current horizontal offset of the app page
 function appPageOffset() {
-    return document.querySelector("div.tile-list-container").getBoundingClientRect().left
+    const container = document.querySelector(CONFIG.SELECTORS.TILE_CONTAINER);
+    return container ? container.getBoundingClientRect().left : 0;
 }
-const indexElements = (page) => {
-    document.querySelectorAll('div.app-list-container > div.groove-element.groove-app-tile:not(.search-hidden), div.tile-list-inner-container > div.groove-element.groove-home-tile').forEach(element => {
-        element.style.removeProperty("--app-animation-index")
-        element.style.removeProperty("--app-animation-distance")
+
+// Set animation indices for elements based on their visibility
+function indexElements(page) {
+    // Reset all animation properties
+    document.querySelectorAll(`${CONFIG.SELECTORS.APP_TILES}, ${CONFIG.SELECTORS.HOME_TILES}`).forEach(element => {
+        element.style.removeProperty('--app-animation-index');
+        element.style.removeProperty('--app-animation-distance');
     });
-    var elements
-    elements = page ? document.querySelectorAll('div.app-list-container > div.groove-element.groove-app-tile') : tileListGrid.engine.nodes.map(e => e.el)
+
+    const elements = page 
+        ? document.querySelectorAll(CONFIG.SELECTORS.APP_TILES)
+        : tileListGrid.engine.nodes.map(e => e.el);
+
     const visibleElements = Array.from(elements).filter(isElementVisible);
-    if (page) {
-        visibleElements.unshift(document.getElementById("sticky-letter"))
-        visibleElements.unshift(document.getElementById("search-icon"))
-        visibleElements.reverse().forEach((element, index) => {
-            element.style.setProperty("--app-animation-index", (index / (visibleElements.length - 1)).toFixed(2))
-            element.style.setProperty("--app-animation-distance", -element.offsetLeft + "px")
 
+    if (page) {
+        // Handle app page elements
+        const stickyLetter = document.querySelector(CONFIG.SELECTORS.STICKY_LETTER);
+        const searchIcon = document.querySelector(CONFIG.SELECTORS.SEARCH_ICON);
+        
+        if (stickyLetter) visibleElements.unshift(stickyLetter);
+        if (searchIcon) visibleElements.unshift(searchIcon);
+        
+        visibleElements.reverse().forEach((element, index) => {
+            const normalizedIndex = (index / (visibleElements.length - 1)).toFixed(2);
+            setElementAnimationProperties(element, normalizedIndex);
         });
     } else {
-        visibleElements.push(document.querySelector("div.app-page-icon-banner"))
+        // Handle tile list elements
+        const iconBanner = document.querySelector(CONFIG.SELECTORS.ICON_BANNER);
+        if (iconBanner) visibleElements.push(iconBanner);
+        
         visibleElements.reverse().forEach((element, index) => {
-            element.style.setProperty("--app-animation-index", (index / (visibleElements.length - 1)).toFixed(2))
-            element.style.setProperty("--app-animation-distance", -element.offsetLeft + "px")
-            element.style.setProperty("--app-page-distance", -appPageOffset() + "px")
-
-            return
-            const elementBoundingClientRect = element.getBoundingClientRect()
-            const elementPoint = { x: elementBoundingClientRect.left + elementBoundingClientRect.width, y: + elementBoundingClientRect.top + elementBoundingClientRect.height } //getElementCenter(element)
-            const tileListPageBoundingClientRect = document.querySelector("div.inner-page.tile-list-page").getBoundingClientRect()
-            const comparePoint = { x: tileListPageBoundingClientRect.width + tileListPageBoundingClientRect.left, y: tileListPageBoundingClientRect.height + tileListPageBoundingClientRect.top }
-            const hypotenuse = Math.sqrt(Math.pow(elementPoint.x - comparePoint.x, 2) + Math.pow(elementPoint.y - comparePoint.y, 2))
-            const diagonal = Math.sqrt(Math.pow(tileListPageBoundingClientRect.width, 2) + Math.pow(tileListPageBoundingClientRect.height, 2))
-            element.style.setProperty("--app-animation-index", hypotenuse / diagonal)
-            element.style.setProperty("--app-animation-distance", -element.offsetLeft + "px")
-
+            const normalizedIndex = (index / (visibleElements.length - 1)).toFixed(2);
+            setElementAnimationProperties(element, normalizedIndex, true);
         });
     }
 }
-const startAnim = () => {
-    const page = getPage()
-    indexElements(page)
-    mainHomeSlider.classList.add("app-transition")
-    if (page) {
-        mainHomeSlider.classList.remove("app-transition-tile-list")
-        mainHomeSlider.classList.add("app-transition-app-list")
-    } else {
-        mainHomeSlider.classList.remove("app-transition-app-list")
-        mainHomeSlider.classList.add("app-transition-tile-list")
+
+// Set CSS properties for element animations
+function setElementAnimationProperties(element, index, includePage = false) {
+    element.style.setProperty('--app-animation-index', index);
+    element.style.setProperty('--app-animation-distance', -element.offsetLeft + 'px');
+    if (includePage) {
+        element.style.setProperty('--app-page-distance', -appPageOffset() + 'px');
     }
 }
+
+// Main animation controller object
 const appTransition = {
+    // Handle app pause state
     onPause: () => {
-        mainHomeSlider.classList.remove("app-transition-on-resume")
-        mainHomeSlider.classList.add("app-transition-on-pause")
-        clearTimeout(window.appTransitionLaunchError)
+        mainHomeSlider.classList.remove(CONFIG.CLASSES.TRANSITION.RESUME);
+        mainHomeSlider.classList.add(CONFIG.CLASSES.TRANSITION.PAUSE);
+        
+        clearTimeout(window.appTransitionLaunchError);
         window.appTransitionLaunchError = setTimeout(() => {
-            appTransition.onResume(true)
-        }, timings.launchHide() + 1000);
-        startAnim()
-        setTimeout(() => {
-            scrollers.main_home_scroller.scrollTo(0, 0)
-            mainHomeSlider.style.visibility = "hidden"
-            document.querySelectorAll(".app-transition-selected").forEach(e => e.classList.remove("app-transition-selected"))
-        }, timings.launchHide());
-    },
-    onResume: (back = false, firstintro = false) => {
-        mainHomeSlider.style.removeProperty("visibility")
-        clearTimeout(window.appTransitionLaunchError)
-        scrollers.main_home_scroller.scrollTo(0, 0)
-        mainHomeSlider.classList.remove("app-transition-on-pause")
-        mainHomeSlider.classList.add("app-transition-on-resume")
-        startAnim()
-        if (back) mainHomeSlider.classList.add("app-transition-back")
-        if (firstintro) mainHomeSlider.style.removeProperty("visibility")
+            appTransition.onResume(true);
+        }, ANIMATION_TIMINGS.launchHide() + CONFIG.ANIMATION.ERROR_TIMEOUT);
 
+        startAnim();
+        
         setTimeout(() => {
-            removeAnimClasses()
-        }, 1000);
+            scrollers.main_home_scroller.scrollTo(0, 0);
+            mainHomeSlider.style.visibility = 'hidden';
+            document.querySelectorAll('.app-transition-selected')
+                .forEach(e => e.classList.remove('app-transition-selected'));
+        }, ANIMATION_TIMINGS.launchHide());
+    },
+
+    // Handle app resume state
+    onResume: (back = false, firstIntro = false) => {
+        mainHomeSlider.style.removeProperty('visibility');
+        clearTimeout(window.appTransitionLaunchError);
+        
+        scrollers.main_home_scroller.scrollTo(0, 0);
+        mainHomeSlider.classList.remove(CONFIG.CLASSES.TRANSITION.PAUSE);
+        mainHomeSlider.classList.add(CONFIG.CLASSES.TRANSITION.RESUME);
+        
+        startAnim();
+        
+        if (back) mainHomeSlider.classList.add(CONFIG.CLASSES.TRANSITION.BACK);
+        if (firstIntro) mainHomeSlider.style.removeProperty('visibility');
+
+        setTimeout(removeAnimClasses, CONFIG.ANIMATION.BASE_TIMEOUT);
     }
+};
+
+// Start the animation sequence
+function startAnim() {
+    const page = window.scrollers.main_home_scroller.getCurrentPage().pageX;
+    indexElements(page);
+    mainHomeSlider.classList.add(CONFIG.CLASSES.TRANSITION.BASE);
+    
+    const addClass = page ? CONFIG.CLASSES.TRANSITION.APP_LIST : CONFIG.CLASSES.TRANSITION.TILE_LIST;
+    const removeClass = page ? CONFIG.CLASSES.TRANSITION.TILE_LIST : CONFIG.CLASSES.TRANSITION.APP_LIST;
+    
+    mainHomeSlider.classList.remove(removeClass);
+    mainHomeSlider.classList.add(addClass);
 }
 
-export default appTransition
+export default appTransition;

@@ -181,7 +181,8 @@ const shakeDistanceModifier = {
 window.homeTileEditSwitch = homeTileEditSwitch;
 
 $("#app-page-icon").on("flowClick", function () {
-  window.scrollers.main_home_scroller.scrollTo(-window.innerWidth, 0, 500);
+  window.scrollers.main_home_scroller.scrollTo(-window.innerWidth, 0, 750);
+  $("#search-icon").addClass("shown");
 });
 
 const resizeObserver = new ResizeObserver((entries) => {

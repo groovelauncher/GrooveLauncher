@@ -227,7 +227,7 @@ const boardMethods = {
         el.classList.add("iconpack" + iconpack);
         scrollers.tile_page_scroller.refresh();
         setTimeout(() => {
-          scrollers.main_home_scroller.scrollTo(0, 0, 500);
+          scrollers.main_home_scroller.scrollTo(0, 0, 750);
           setTimeout(() => {
             scrollers.tile_page_scroller.scrollTo(
               0,
@@ -454,16 +454,16 @@ const backendMethods = {
   },
   navigation: {
     history: [],
-    push: (change, forwardAction, backAction) => {
+    push: (change, forwardAction, backAction, homeBack = true) => {
       GrooveBoard.backendMethods.navigation.invalidate(change);
-      //console.log("HISTORY PUSH", change);
       forwardAction();
       backendMethods.navigation.history.push({
         forwardAction: forwardAction,
         change: change,
         backAction,
+        homeBack
       });
-      history.pushState(change, "", window.location.href); // Explicitly using the current URL
+      history.pushState(change, "", window.location.href);
       listHistory();
     },
     back: (action = true, homeBack = false) => {
@@ -471,8 +471,11 @@ const backendMethods = {
       if (action == false)
         backendMethods.navigation.lastPush.backAction = () => { };
       const act = backendMethods.navigation.history.pop();
-      //console.log("HISTORY BACK", act.change);
-      act.backAction(homeBack);
+      if (homeBack && act.homeBack) {
+        act.backAction(homeBack);
+      } else if (!homeBack) {
+        act.backAction(homeBack);
+      }
       listHistory();
     },
     home: () => {
@@ -866,12 +869,12 @@ const backendMethods = {
     }
   },
   appInstall: (packagename) => {
-    GrooveBoard.backendMethods.reloadApps()
+    backendMethods.reloadApps()
   },
   appUninstall: (packagename) => {
     const tileElem = document.querySelector(`div.groove-home-tile[packagename="${packagename}"]`)
     if (tileElem) tileListGrid.removeWidget(tileElem)
-    GrooveBoard.backendMethods.reloadApps()
+    backendMethods.reloadApps()
   },
   serveConfig: () => {
     var response = { "uiscale": "1", "theme": "1", "accentcolor": "#3E65FF" }

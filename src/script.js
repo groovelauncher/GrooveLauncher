@@ -100,13 +100,25 @@ scrollers.main_home_scroller.on("slideWillChange", function (e) {
         if (GrooveBoard.backendMethods.navigation.lastPush.change == "appMenuOpened") {
             GrooveBoard.backendMethods.navigation.back()
         }
+        $("#search-icon").removeClass("shown");
     } else {
         GrooveBoard.backendMethods.navigation.push("appMenuOpened", () => { }, () => {
-            scrollers.main_home_scroller.scrollTo(0, 0, 500)
+            scrollers.main_home_scroller.scrollTo(0, 0, 750)
         })
+        $("#search-icon").addClass("shown");
     }
 })
 
+// Add scroll listener for more granular control
+scrollers.main_home_scroller.scroller.translater.hooks.on("beforeTranslate", function(p) {
+    const position = scrollers.main_home_scroller.x;
+    console.log(position)
+    if (position < -10) {
+        $("#search-icon").addClass("shown");
+    } else {
+        $("#search-icon").removeClass("shown");
+    }
+});
 
 function getRandomMultiplier() {
     // Returns -1, 0, or 1

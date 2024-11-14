@@ -8,7 +8,7 @@
     opacity: 0;
     height: 100%;
     position: absolute;
-    left: 22px;
+    left: calc(50% - min(768px, 100vw)/2 + 22px);
     top: 18px;
     width: calc(100% - 44px);
     height: calc(100% - 36px);
@@ -23,6 +23,7 @@
     height: 100%;
     position: absolute;
     left: 22px;
+    left: calc(50% - min(768px, 100vw)/2 + 22px);
     top: 18px;
     width: calc(100% - 44px);
     height: calc(100% - 36px);
@@ -31,22 +32,24 @@
     .settings-pages {
         flex-grow: 1;
         height: 0px;
-        perspective: var(--flow-perspective);
+        //perspective: var(--flow-perspective);
         transform-style: preserve-3d !important;
 
         .settings-pages-container {
             transform-style: preserve-3d !important;
             height: 100%;
+
             .settings-page-2 {
-                transform-style: preserve-3d !important;
+                transform-style: preserve-3d;
                 transition: opacity .25s cubic-bezier(0.075, 0.82, 0.165, 1);
                 height: 100%;
                 float: left;
-                width: calc(100vw - 22px * 2);
+                width: calc(100% - 22px * 0);
                 opacity: 0;
                 overflow: hidden;
                 --page-swipe-translate: 0px;
                 animation: page-swipe-translate .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+                perspective: var(--flow-perspective);
 
                 @keyframes page-swipe-translate {
                     from {
@@ -213,7 +216,9 @@ div.app-tabs {
         opacity: .5;
 
         &.title-fade-in {
-            &::after {
+
+            &::after,
+            &::before {
                 opacity: 1;
             }
         }
@@ -225,12 +230,20 @@ div.app-tabs {
             left: calc(100% + var(--ats-title-left));
         }
 
+        &::before {
+            //transition: .5s;
+            position: absolute;
+            content: var(--ats-title);
+            left: calc((100% + var(--ats-title-left)) * 2);
+        }
+
         &.active-tab {
             opacity: 1;
 
 
 
-            &::after {
+            &::after,
+            &::before {
                 opacity: .5;
             }
         }
@@ -259,7 +272,11 @@ div.app-tabs {
                 visibility: hidden;
                 //opacity: 0 !important;
             }
-
+            &:not(.active-page){
+                * , &{
+                    pointer-events: none !important;
+                }
+            }
             &.active-page {
                 --page-swipe-translate: 0px;
                 animation: page-swipe-translate .5s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -489,6 +506,12 @@ a {
     padding: 18px 22px;
     align-items: center;
     justify-content: center;
+
+    &.hidden {
+        .accent-color-catalogue-item {
+            transform: translate(0px) !important;
+        }
+    }
 
     h1.app-title {
         max-width: 724px;
@@ -739,28 +762,37 @@ body:not(.soft-exit):not(.soft-exit-home) {
         animation: none !important;
     }
 }
-#about-tab{
-    div.double-buttons{
-        display: flex; margin-bottom: 30px;
+
+#about-tab {
+    div.double-buttons {
+        display: flex;
+        margin-bottom: 30px;
         max-width: 768px;
-        button{
+        transform-style: preserve-3d;
+
+        button {
             width: 0px;
             flex-grow: 1;
             text-align: center;
-            img{
+
+            img {
                 display: none;
-                body:not(.light-mode) &{
+
+                body:not(.light-mode) & {
                     filter: invert(1);
                 }
+
                 position: absolute;
                 left: calc(50% - 17.5px);
                 top: calc(50% - 17.5px);
                 width: 35px;
                 height: 35px;
             }
-            &.loading{
+
+            &.loading {
                 color: transparent;
-                img{
+
+                img {
                     display: block;
                 }
             }

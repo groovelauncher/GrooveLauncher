@@ -1,4 +1,3 @@
-
 import { applyOverscroll, appViewEvents, grooveColors, grooveThemes, setAccentColor } from "../../scripts/shared/internal-app";
 import { GrooveScroll, GrooveSlide } from "../../scripts/overscrollFramework";
 import imageStore from "../../scripts/imageStore";
@@ -192,7 +191,37 @@ const scrollers = {
         outOfBoundaryDampingFactor: 1,
         scrollbar: true
     }),
+    rotationLock: new GrooveScroll("#rotation-lock-tab", {
+        bounceTime: 300,
+        swipeBounceTime: 200,
+        outOfBoundaryDampingFactor: 1,
+        scrollbar: true
+    }),
+    language: new GrooveScroll("#language-tab", {
+        bounceTime: 300,
+        swipeBounceTime: 200,
+        outOfBoundaryDampingFactor: 1,
+        scrollbar: true
+    }),
+    easeOfAccess: new GrooveScroll("#ease-of-access-tab", {
+        bounceTime: 300,
+        swipeBounceTime: 200,
+        outOfBoundaryDampingFactor: 1,
+        scrollbar: true
+    }),
+    advanced: new GrooveScroll("#advanced-tab", {
+        bounceTime: 300,
+        swipeBounceTime: 200,
+        outOfBoundaryDampingFactor: 1,
+        scrollbar: true
+    }),
     about: new GrooveScroll("#about-tab", {
+        bounceTime: 300,
+        swipeBounceTime: 200,
+        outOfBoundaryDampingFactor: 1,
+        scrollbar: true
+    }),
+    appDetail: new GrooveScroll("#app-detail-tab", {
         bounceTime: 300,
         swipeBounceTime: 200,
         outOfBoundaryDampingFactor: 1,
@@ -215,7 +244,7 @@ function showPageAnim() {
     }, 2000);
     window.activeTabScrollTimeout = setTimeout(() => {
         activeTabScroll()
-    }, 1000);
+    }, 500);
 }
 requestAnimationFrame(() => {
     showPageAnim()
@@ -243,7 +272,7 @@ const navigation = {
         }, 750);
         window.parent.GrooveBoard.backendMethods.navigation.push("settings-inner-page", () => { }, () => {
             navigation.settingsHome()
-        })
+        }, false)
     },
 
     settingsHome: () => {
@@ -257,7 +286,6 @@ const navigation = {
         setTimeout(() => {
             document.querySelector("div.innerApp").classList.remove("hidden-page")
             document.querySelector("div.innerApp").classList.add("shown-page")
-
         }, 150);
     }
 }
@@ -270,7 +298,7 @@ $("#apps-tab > div.scroller > div.groove-list-view > div.groove-list-view-item")
         const appdetail = parent.GrooveBoard.backendMethods.getAppDetails(e.target.getAttribute("packagename"))
         window.lastSelectedApp = appdetail
         document.querySelector("#appDetailPage > div.app-tabs > p").innerText = appdetail.label
-        document.querySelector("#appDetailPage > div.settings-pages > div > div > p").innerText = appdetail.packageName
+        document.querySelector("#appDetailPage > div.settings-pages > div > div > div > p").innerText = appdetail.packageName
         if (appdetail.type == 0) {
             document.querySelector("#uninstallappbutton").style.display = "none"
         } else {
@@ -278,6 +306,7 @@ $("#apps-tab > div.scroller > div.groove-list-view > div.groove-list-view-item")
         }
         pageNavigation.goToPage(6)
     } catch (error) {
+        throw error
         parent.GrooveBoard.alert(
             "Unable to Get App Details!",
             "Couldn’t retrieve details for this app.",

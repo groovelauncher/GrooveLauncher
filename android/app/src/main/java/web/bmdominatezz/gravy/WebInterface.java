@@ -237,47 +237,54 @@ public class WebInterface {
         statusBarAppearance = appearance;
         Window window = mainActivity.getWindow();
         View decorView = window.getDecorView();
-        try {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                WindowInsetsController insetsController = window.getInsetsController();
-                if (insetsController != null) {
+        
+        mainActivity.runOnUiThread(() -> {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    // Android 11+ (API 30+)
+                    WindowInsetsController insetsController = window.getInsetsController();
+                    if (insetsController != null) {
+                        switch (appearance) {
+                            case "hide":
+                                insetsController.hide(WindowInsets.Type.statusBars());
+                                break;
+                            case "dark":
+                                insetsController.show(WindowInsets.Type.statusBars());
+                                insetsController.setSystemBarsAppearance(
+                                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                                );
+                                break;
+                            case "light":
+                                insetsController.show(WindowInsets.Type.statusBars());
+                                insetsController.setSystemBarsAppearance(
+                                    0,
+                                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                                );
+                                break;
+                        }
+                    }
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // Android 6.0 to Android 10 (API 23-29)
+                    int flags = decorView.getSystemUiVisibility();
                     switch (appearance) {
                         case "hide":
-                            insetsController.hide(WindowInsets.Type.statusBars());
+                            flags |= View.SYSTEM_UI_FLAG_FULLSCREEN;
                             break;
                         case "dark":
-                            insetsController.show(WindowInsets.Type.statusBars());
-                            insetsController.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
-                            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                            flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                            flags &= ~View.SYSTEM_UI_FLAG_FULLSCREEN;
                             break;
                         case "light":
-                            insetsController.show(WindowInsets.Type.statusBars());
-                            insetsController.setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
-                            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-                            break;
-                        default:
+                            flags &= ~(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_FULLSCREEN);
                             break;
                     }
+                    decorView.setSystemUiVisibility(flags);
                 }
-            } else {
-                // For older API levels
-                int flags = 0;
-                switch (appearance) {
-                    case "hide":
-                        flags |= View.SYSTEM_UI_FLAG_FULLSCREEN;
-                        break;
-                    case "dark":
-                        flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-                        break;
-                    case "light":
-                        flags |= View.SYSTEM_UI_FLAG_VISIBLE;
-                        break;
-                }
-                decorView.setSystemUiVisibility(flags);
+            } catch (Exception e) {
+                Log.e("WebInterface", "Error setting status bar appearance", e);
             }
-        } catch (Exception e) {
-        }
+        });
     }
 
     @JavascriptInterface
@@ -292,46 +299,58 @@ public class WebInterface {
         navigationBarAppearance = appearance;
         Window window = mainActivity.getWindow();
         View decorView = window.getDecorView();
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                WindowInsetsController insetsController = window.getInsetsController();
-                if (insetsController != null) {
+        
+        mainActivity.runOnUiThread(() -> {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    // Android 11+ (API 30+)
+                    WindowInsetsController insetsController = window.getInsetsController();
+                    if (insetsController != null) {
+                        switch (appearance) {
+                            case "hide":
+                                insetsController.hide(WindowInsets.Type.navigationBars());
+                                break;
+                            case "dark":
+                                insetsController.show(WindowInsets.Type.navigationBars());
+                                window.setNavigationBarColor(android.graphics.Color.WHITE);
+                                insetsController.setSystemBarsAppearance(
+                                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
+                                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+                                );
+                                break;
+                            case "light":
+                                insetsController.show(WindowInsets.Type.navigationBars());
+                                window.setNavigationBarColor(android.graphics.Color.BLACK);
+                                insetsController.setSystemBarsAppearance(
+                                    0,
+                                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+                                );
+                                break;
+                        }
+                    }
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    // Android 8.0 to Android 10 (API 26-29)
+                    int flags = decorView.getSystemUiVisibility();
                     switch (appearance) {
                         case "hide":
-                            insetsController.hide(WindowInsets.Type.navigationBars());
+                            flags |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
                             break;
                         case "dark":
-                            insetsController.show(WindowInsets.Type.navigationBars());
-                            insetsController.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
-                            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+                            window.setNavigationBarColor(android.graphics.Color.WHITE);
+                            flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+                            flags &= ~View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
                             break;
                         case "light":
-                            insetsController.show(WindowInsets.Type.navigationBars());
-                            insetsController.setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
-                            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-                            break;
-                        default:
+                            window.setNavigationBarColor(android.graphics.Color.BLACK);
+                            flags &= ~(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
                             break;
                     }
+                    decorView.setSystemUiVisibility(flags);
                 }
-            } else {
-                // For older API levels
-                int flags = 0;
-                switch (appearance) {
-                    case "hide":
-                        flags |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-                        break;
-                    case "dark":
-                        flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-                        break;
-                    case "light":
-                        flags |= View.SYSTEM_UI_FLAG_VISIBLE;
-                        break;
-                }
-                decorView.setSystemUiVisibility(flags);
+            } catch (Exception e) {
+                Log.e("WebInterface", "Error setting navigation bar appearance", e);
             }
-        } catch (Exception e) {
-        }
+        });
     }
 
     @JavascriptInterface

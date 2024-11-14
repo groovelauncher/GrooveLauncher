@@ -102,7 +102,7 @@
     <div class="settings-pages" style="overflow: hidden;">
       <div class="settings-pages-container">
         <div class="settings-page-2" id="theme-tab">
-          <div>
+          <div style="transform-style: preserve-3d">
             <p class="text">
               Change your device's background and
               <span style="color: var(--accent-color)">accent color</span> to
@@ -186,17 +186,20 @@
     </div>
     <div class="settings-pages" id="screen-rotation-tab" style="overflow: hidden;">
       <div class="settings-pages-container">
-        <div class="group first-group">
-          <p class="group-title">Rotation lock</p>
-          <div class="tile-selector">
-            <p>Off</p>
-            <div>
-              <div id="rotation-toggle-switch" class="metro-toggle-switch"></div>
+        <div class="settings-page-2" id="rotation-lock-tab">
+          <div class="group first-group">
+            <p class="group-title">Rotation lock</p>
+            <div class="tile-selector">
+              <p>Off</p>
+              <div>
+                <div id="rotation-toggle-switch" class="metro-toggle-switch"></div>
+              </div>
             </div>
-          </div>
-          <p class="group-description">When Rotation lock is on, your home will stay in the current orientation when you
-            rotate your device.</p>
+            <p class="group-description">When Rotation lock is on, your home will stay in the current orientation when
+              you
+              rotate your device.</p>
 
+          </div>
         </div>
       </div>
     </div>
@@ -206,12 +209,14 @@
     <div class="app-tabs">
       <p class="active-tab">language</p>
     </div>
-    <div class="settings-pages" id="screen-rotation-tab" style="overflow: hidden;">
+    <div class="settings-pages" id="language-settings" style="overflow: hidden;">
       <div class="settings-pages-container">
-        <div class="groove-list-view skew" style="padding-bottom: 50px;">
-          <div class="groove-list-view-item">
-            <p class="groove-list-view-item-title" style="color: var(--accent-color);">English (United States)</p>
-            <p class="groove-list-view-item-description">English</p>
+        <div class="settings-page-2" id="language-tab">
+          <div class="groove-list-view skew" style="padding-bottom: 50px;">
+            <div class="groove-list-view-item">
+              <p class="groove-list-view-item-title" style="color: var(--accent-color);">English (United States)</p>
+              <p class="groove-list-view-item-description">English</p>
+            </div>
           </div>
         </div>
       </div>
@@ -222,36 +227,38 @@
     <div class="app-tabs">
       <p class="active-tab">ease of access</p>
     </div>
-    <div class="settings-pages" id="screen-rotation-tab" style="overflow: hidden;">
+    <div class="settings-pages" id="ease-of-access-settings" style="overflow: hidden;">
       <div class="settings-pages-container">
-        <div class="group first-group">
-          <p class="group-title">Reduce motion</p>
-          <div class="tile-selector reduce-motion-toggle-switch" style="margin-bottom: 0px;">
-            <p>Off</p>
-            <div>
-              <div class="metro-toggle-switch"></div>
+        <div class="settings-page-2" id="ease-of-access-tab">
+          <div class="group first-group">
+            <p class="group-title">Reduce motion</p>
+            <div class="tile-selector reduce-motion-toggle-switch" style="margin-bottom: 0px;">
+              <p>Off</p>
+              <div>
+                <div class="metro-toggle-switch"></div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="group">
-          <p class="group-title">Scaling</p>
-          <div id="display-scaling-chooser" class="metro-dropdown-menu" selected="2">
-            <div class="metro-dropdown-option">80%</div>
-            <div class="metro-dropdown-option">90%</div>
-            <div class="metro-dropdown-option">100%</div>
-            <div class="metro-dropdown-option">110%</div>
-            <div class="metro-dropdown-option">125%</div>
+          <div class="group">
+            <p class="group-title">Scaling</p>
+            <div id="display-scaling-chooser" class="metro-dropdown-menu" selected="2">
+              <div class="metro-dropdown-option">80%</div>
+              <div class="metro-dropdown-option">90%</div>
+              <div class="metro-dropdown-option">100%</div>
+              <div class="metro-dropdown-option">110%</div>
+              <div class="metro-dropdown-option">125%</div>
+            </div>
           </div>
-        </div>
-        <div class="group">
-          <p class="group-title">Font</p>
-          <div id="font-chooser" class="metro-dropdown-menu" selected="0">
-            <div class="metro-dropdown-option">Open Sans</div>
-            <div class="metro-dropdown-option">Noto Sans</div>
-            <div class="metro-dropdown-option"><span style="pointer-events: none;" class="name">Choose...</span><input
-                hidden type="file" accept=".ttf" /></div>
+          <div class="group">
+            <p class="group-title">Font</p>
+            <div id="font-chooser" class="metro-dropdown-menu" selected="0">
+              <div class="metro-dropdown-option">Open Sans</div>
+              <div class="metro-dropdown-option">Noto Sans</div>
+              <div class="metro-dropdown-option"><span style="pointer-events: none;" class="name">Choose...</span><input
+                  hidden type="file" accept=".ttf" /></div>
+            </div>
+            <button class="metro-button link" id="clearfont" style="padding-left: 0px;">Remove Font</button>
           </div>
-          <button class="metro-button link" id="clearfont" style="padding-left: 0px;">Remove Font</button>
         </div>
       </div>
     </div>
@@ -261,25 +268,27 @@
     <div class="app-tabs">
       <p class="active-tab">advanced</p>
     </div>
-    <div class="settings-pages" id="screen-rotation-tab" style="overflow: hidden;">
+    <div class="settings-pages" id="advanced-settings" style="overflow: hidden;">
       <div class="settings-pages-container">
-        <div class="group">
-          <p class="group-title">Package manager (EXPERIMENTAL)</p>
-          <div class="metro-dropdown-menu" id="pm-chooser" selected="0">
-            <div class="metro-dropdown-option">System</div>
-            <div class="metro-dropdown-option">Root</div>
-            <div class="metro-dropdown-option">Shizuku</div>
-          </div>
-        </div>
-        <div class="group">
-          <p class="group-title">Debugging</p>
-          <div class="tile-selector" style="margin-bottom: 0px; display: none;">
-            <p>Off</p>
-            <div>
-              <div id="remote-debug-toggle-switch" class="metro-toggle-switch"></div>
+        <div class="settings-page-2" id="advanced-tab">
+          <div class="group">
+            <p class="group-title">Package manager (EXPERIMENTAL)</p>
+            <div class="metro-dropdown-menu" id="pm-chooser" selected="0">
+              <div class="metro-dropdown-option">System</div>
+              <div class="metro-dropdown-option">Root</div>
+              <div class="metro-dropdown-option">Shizuku</div>
             </div>
           </div>
-          <button class="metro-button" id="dumpbtn" style="margin-top: 0px;">Dump Installed Apps JSON</button>
+          <div class="group">
+            <p class="group-title">Debugging</p>
+            <div class="tile-selector" style="margin-bottom: 0px; display: none;">
+              <p>Off</p>
+              <div>
+                <div id="remote-debug-toggle-switch" class="metro-toggle-switch"></div>
+              </div>
+            </div>
+            <button class="metro-button" id="dumpbtn" style="margin-top: 0px;">Dump Installed Apps JSON</button>
+          </div>
         </div>
       </div>
     </div>
@@ -384,13 +393,15 @@
   <div class="innerAppPage" id="appDetailPage">
     <h1 class="app-title">Settings</h1>
     <div class="app-tabs">
-      <p class="active-tab">app name</p>
+      <p class="active-tab" style="text-transform: none !important;">app name</p>
     </div>
     <div class="settings-pages" style="overflow: hidden;">
       <div class="settings-pages-container">
-        <div class="group" style="pointer-events: auto;">
-          <p class="group-title">com.example</p>
-          <button class="metro-button" id="uninstallappbutton">Uninstall App</button>
+        <div class="settings-page-2" id="app-detail-tab">
+          <div class="group" style="pointer-events: auto;">
+            <p class="group-title">com.example</p>
+            <button class="metro-button" id="uninstallappbutton">Uninstall App</button>
+          </div>
         </div>
       </div>
     </div>

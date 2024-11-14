@@ -128,7 +128,7 @@
                     div.tile-list-inner-container>div.groove-home-tile,
                     div.app-page-icon-banner {
                         // animation: tileListAppTransitionAnim1 .4s calc(var(--app-animation-index) * .15s) cubic-bezier(0.00, 1.00, 0.51, 1.00) forwards;
-                        animation: tileListAppTransitionAnim2 .75s calc(var(--app-animation-index) * var(--app-transition-scale) *  .2s) cubic-bezier(.05, 1, .1, 1) forwards;
+                        animation: tileListAppTransitionAnim2 .75s calc(var(--app-animation-index) * var(--app-transition-scale) * .2s) cubic-bezier(.05, 1, .1, 1) forwards;
                         transform-origin: var(--app-animation-distance) 50%;
                         opacity: 0;
 
@@ -174,14 +174,18 @@
                     transform-origin: var(--app-animation-distance) 50%;
 
                     @keyframes appListAppTransitionAnim0 {
-                        from {
+                        0% {
                             transform: rotateY(0deg);
                             opacity: 1;
                         }
 
-                        to {
-                            transform: translateX(calc(var(--flow-perspective) / -2)) rotateY(-90deg) translateX(calc(0%));
+                        99% {
                             opacity: 1;
+                        }
+
+                        100% {
+                            transform: translateX(calc(var(--flow-perspective) / -2)) rotateY(-90deg) translateX(calc(0%));
+                            opacity: 0;
                         }
                     }
                 }

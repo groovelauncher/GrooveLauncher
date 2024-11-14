@@ -10,6 +10,19 @@
   box-sizing: border-box;
   box-shadow: inset 0px 0px 0px 3px var(--metro-foreground);
   background-color: var(--metro-background);
+  opacity: 0;
+
+  &.shown {
+    &:not(.active) {
+      transition: transform var(--flow-touch-up-transition) ease-out, opacity .25s .2s !important;
+    }
+
+    opacity: 1;
+  }
+
+  &:not(.shown):not(.active) {
+    transition: transform var(--flow-touch-up-transition) ease-out, opacity 0s .5s !important;
+  }
 
   &.t_active {
     background: var(--metro-foreground);
@@ -419,6 +432,10 @@ div.letter-selector {
   overflow-y: auto;
   overflow-x: hidden;
   overflow: hidden;
+
+  &.hidden div.letter-selector-letter {
+    transform: translate(0px) !important;
+  }
 
   div.letter-selector-row {
     display: flex;

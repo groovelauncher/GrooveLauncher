@@ -1,15 +1,23 @@
 import jquery from "jquery"
 import easing from "./easings"
 const $ = jquery
+
+// Configuration for touch/click detection thresholds
 const clickDetectorConfig = {
     tapDistanceThreshold: 5,
     touchUpDistanceThreshold: 200
 }
+
+// Track elements currently being touched/clicked
 var pointerDownElements = {}
 const getElementFromPointerId = (pid) => Object.entries(pointerDownElements).filter(e => e[0] == String(pid))[0][1]
 window.pointerDownElements = pointerDownElements
+
+// Properties to clean up after touch/click events
 const usedProperties = ["pointerdown", "lastPointerPosition", "supportsFlowTouch", "deletePropertiesTimeout", "checked", "lastDragTransition"]
 const usedStyleProperties = ["flow-rotate-x", "flow-rotate-y"]
+
+// Cleanup function to remove temporary properties
 function deleteProperties(el) {
     usedProperties.forEach(property => {
         delete el[property]
@@ -18,6 +26,8 @@ function deleteProperties(el) {
         el.style.removeProperty("--" + property)
     });
 }
+
+// Calculate and apply 3D rotation effect based on touch position
 function flowTouchRotate(el, pageX, pageY) {
     if (el.supportsFlowTouch) {
         const rect = el.getBoundingClientRect();
@@ -37,6 +47,8 @@ function flowTouchRotate(el, pageX, pageY) {
         el.style.setProperty("--flow-rotate-y", rotateY + "deg")
     }
 }
+
+// Event Listeners
 window.addEventListener("pointerdown", (e) => {
 
     const el = e.target
@@ -63,6 +75,7 @@ window.addEventListener("pointerdown", (e) => {
     flowTouchRotate(el, e.pageX, e.pageY)
 
 })
+
 window.addEventListener("pointerup", (e) => {
     if (!!pointerDownElements[e.pointerId]) {
         const el = getElementFromPointerId(e.pointerId)
@@ -92,6 +105,7 @@ window.addEventListener("pointerup", (e) => {
     }
 
 })
+
 window.addEventListener("pointermove", (e) => {
     if (!pointerDownElements[e.pointerId]) return
     const el = getElementFromPointerId(e.pointerId)
@@ -108,7 +122,7 @@ window.addEventListener("pointermove", (e) => {
 
 })
 
-
+// Metro Toggle Switch Component
 const metroToggleSwitch = {
     animate: (el, from, to) => {
         clearInterval(el.mtsanim)
@@ -157,7 +171,10 @@ const metroToggleSwitch = {
         }
     }
 }
+
 var focusedElements = new Set()
+
+// Metro Dropdown Menu Component
 const metroDropdownMenu = {
     click: (el) => {
         el.blurElement = () => { metroDropdownMenu.blur(el) }
@@ -195,6 +212,8 @@ const metroDropdownMenu = {
         if (event) setTimeout(() => { el.dispatchEvent(new CustomEvent("selected", { detail: { index: index, prevIndex: lastIndex } })) }, 200);
     }
 }
+
+// Initialize dropdown menus
 document.querySelectorAll("div.metro-dropdown-menu").forEach(el => {
     const index = el.getAttribute("selected") || 0
     el.selectOption = (index) => {
@@ -204,26 +223,3 @@ document.querySelectorAll("div.metro-dropdown-menu").forEach(el => {
 })
 
 export default clickDetectorConfig;
-
-
-/*document.querySelector("div.first-page > div > div.group > div.picker").addEventListener("flowClick", (e) => {
-    if (e.target.classList.contains("clicked")) {
-        e.target.classList.remove("clicked")
-    } else {
-        e.target.classList.add("clicked")
-    }
-})
-
-window.addEventListener('click', function (event) {
-    if (!document.querySelector("div.first-page > div > div.group > div.picker").contains(event.target)) {
-        document.querySelector("div.first-page > div > div.group > div.picker").classList.remove("clicked")
-    }
-});
-document.querySelectorAll("div.first-page > div > div.group > div.picker div.picker-option").forEach(e => e.addEventListener("flowClick", (e) => {
-    const index = Array.from(e.target.parentNode.children).indexOf(e.target)
-    setTimeout(() => {
-        appViewEvents.setTheme(1 - index)
-    }, 200);
-    document.querySelector("div.first-page > div > div.group > div.picker").setAttribute("selected", index)
-    document.querySelector("div.first-page > div > div.group > div.picker").classList.remove("clicked")
-}))*/

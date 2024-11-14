@@ -88,7 +88,8 @@ function GrooveSlide(selector, options = {}) {
       loop: false,
       interval: false,
       autoplay: false,
-      easing: "cubic-bezier(0.075, 0.82, 0.165, 1)"
+      easing: "cubic-bezier(0.075, 0.82, 0.165, 1)",
+      speed: 750,
     }
   }, options))
 

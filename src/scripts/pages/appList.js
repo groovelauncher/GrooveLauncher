@@ -1,4 +1,5 @@
 import jQuery from "jquery";
+import _ from "lodash";
 var $ = jQuery
 
 const appListPage = $("div.inner-page.app-list-page")
@@ -10,6 +11,8 @@ const stickyLetterTile = $("#sticky-letter")
 var isSearchModeOn = false
 $("div.groove-element.groove-app-tile.groove-letter-tile")
 function searchResultClick(e) {
+    if (!e.target.canClick || e.target.appMenuState) return;
+    
     $("div.groove-app-tile").off("flowClick", searchResultClick)
     e.target.classList.add("app-transition-selected")
     appTransition.onPause()
@@ -149,7 +152,7 @@ $(window).on("finishedLoading", () => {
         e.preventDefault()
     })
 })
-appListSearch.on("input", function (e) {
+appListSearch.on("input", _.debounce(function (e) {
     const search = window.normalizeDiacritics(this.value).toLocaleLowerCase("en")
     if (search.length == 0) $("div.app-search-search-store").css("visibility", "hidden"); else $("div.app-search-search-store").css("visibility", "");
     $("div.app-list-container > div.groove-app-tile:not(.groove-letter-tile)").each(function (index, element) {
@@ -177,7 +180,7 @@ appListSearch.on("input", function (e) {
     }
     scrollers.app_page_scroller.refresh()
 
-})
+}, 150))
 $("div.app-search-search-store").on("flowClick", () => {
     //window.open("https://play.google.com/store/search?q=" + appListSearch[0].value, "_blank")
     Groove.searchStore(appListSearch[0].value)
@@ -211,6 +214,7 @@ $(window).on("pointerdown", function (e) {
         e.target.appMenu = false
         e.target.appMenuState = false
         e.target.appRect = e.target.getBoundingClientRect()
+        
         clearTimeout(window.appMenuCreationFirstTimeout)
         clearTimeout(window.appMenuCreationSecondTimeout)
         $("div.groove-app-menu").remove()

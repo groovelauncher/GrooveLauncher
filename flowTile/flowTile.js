@@ -246,7 +246,7 @@ function flowTile(container) {
                 });
             }
             if (pos) {
-                left_out.setProperty(pos[0], pos[1])
+                left_out.setPosition(pos[0], pos[1])
                 left_out.style.setProperty("left", containerPadding[3] + pos[0] * baseSize + pos[0] * tileMargin + "px")
                 //console.log("pad", containerPadding[3] + pos[0] * baseSize)
                 left_out.style.setProperty("top", containerPadding[0] + pos[1] * baseSize + pos[1] * tileMargin + "px")

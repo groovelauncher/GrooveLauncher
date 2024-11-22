@@ -1,3 +1,4 @@
+window.Groove = window.Groove || window.parent.Groove
 document.querySelector("#resetbtn").addEventListener("flowClick", () => {
 
     window.parent.GrooveBoard.alert(
@@ -73,8 +74,8 @@ document.querySelectorAll("div.credit-item > p:nth-child(2)").forEach(e => e.add
     Groove.openURL(e.getAttribute("url"))
 }))
 
-document.querySelector("#about-app-version").innerText = "Version: " + Groove.getAppVersion()
-document.querySelector("#about-webview-version").innerText = "WebView Version: " + Groove.getWebViewVersion()
+document.querySelector("#about-app-version").setAttribute("data-i18n-params", `{version: "${Groove.getAppVersion()}"}`)
+document.querySelector("#about-webview-version").setAttribute("data-i18n-params", `{version: "${Groove.getWebViewVersion()}"}`)
 function incompatibleWebViewVersion(compatible = false) {
     if (compatible) {
         document.querySelector("#about-webview-version").innerHTML += " <span style='color:var(--metro-color-green);'>(compatible)</span>"

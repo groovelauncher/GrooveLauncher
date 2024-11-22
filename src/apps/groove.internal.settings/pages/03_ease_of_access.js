@@ -1,5 +1,9 @@
+import "../../../scripts/shared/internal-app";
+
+import fontStore from "../../../scripts/fontStore";
+import i18n from "../../../scripts/localeManager";
 document.querySelector("div.reduce-motion-toggle-switch > div > .metro-toggle-switch").addEventListener("checked", (e) => {
-    e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? "On" : "Off"
+    e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
     appViewEvents.setReduceMotion(e.target.hasAttribute("checked"))
 })
 
@@ -68,7 +72,7 @@ document.getElementById("font-chooser").addEventListener("selected", (e) => {
 
 setTimeout(() => {
     if (localStorage["reducedMotion"] == "true") {
-        document.querySelector("div.reduce-motion-toggle-switch > p").innerText = "On"
+        document.querySelector("div.reduce-motion-toggle-switch > p").innerText = i18n.t("common.actions.on")
         document.querySelector("div.reduce-motion-toggle-switch > div > .metro-toggle-switch").setAttribute("checked", "")
         document.body.classList.add("reduced-motion")
     }
@@ -79,9 +83,9 @@ setTimeout(() => {
     if (!!localStorage.getItem("font")) {
         const font = Number(localStorage.getItem("font"))
         document.getElementById("font-chooser").selectOption(font)
-        setFont(font)
+        window.setFont(font)
         fontStore.hasFont().then((value) => {
-            if (value) {
+            if (value || localStorage["customFontName"]) {
                 document.getElementById("clearfont").style.visibility = "visible"
                 document.querySelector("#font-chooser > div:nth-child(3) > span.name").innerText = localStorage["customFontName"] || "custom font"
 
@@ -95,5 +99,17 @@ setTimeout(() => {
 }, 500);    //reduce-motion-toggle-switch
 if (!!localStorage.getItem("font")) {
     const font = Number(localStorage.getItem("font"))
-    setFont(font)
+    window.setFont(font)
 }
+document.getElementById("clearfont").addEventListener("flowClick", () => {
+    fontStore.clearFont()
+    document.querySelector("#font-chooser > div:nth-child(3) > span.name").innerText = i18n.t("settings.ease_of_access.font.choose")
+    document.getElementById("clearfont").style.visibility = "hidden"
+    window.setFont(0)
+    document.getElementById("font-chooser").selectOption(0)
+    parent.GrooveBoard.backendMethods.font.set(0)
+    lastX = -9999
+    setTimeout(() => {
+        lastX = -9999
+    }, 100);
+})

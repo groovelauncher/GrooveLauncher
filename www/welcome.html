@@ -15,35 +15,35 @@
         <div class="setup-pages">
             <div class="setup-page" style="opacity: 1;" id="page-welcome">
                 <div class="setup-body">
-                    <h1>Welcome</h1>
+                    <h1 data-i18n="welcome.welcome.install">Welcome</h1>
                     <p style="margin: 0px;"><img src="./assets/logo@.5.svg" width="30"
-                            style="filter: contrast(0) brightness(2);    transform: translateY(6px); padding-right: 8px;">Groove
-                        Launcher
+                            style="filter: contrast(0) brightness(2);    transform: translateY(6px); padding-right: 8px;">
+                        <span data-i18n="welcome.welcome.appName">Groove Launcher</span>
                     </p>
-                    <p>Let's setup your experience in a few short steps.</p>
+                    <p data-i18n="welcome.welcome.setupIntro">Let's setup your experience in a few short steps.</p>
 
                 </div>
                 <div class="setup-footer">
-                    <p style="text-transform: uppercase;position: absolute;bottom: 80px;opacity: .75;">Warning: This is
-                        pre-release software and may contain bugs.</p>
-                    <button class="right-btn">next</button>
+                    <p style="text-transform: uppercase;position: absolute;bottom: 80px;opacity: .75;" 
+                       data-i18n="welcome.welcome.warning">Warning: This is pre-release software and may contain bugs.</p>
+                    <button class="right-btn" data-i18n="welcome.common.next">next</button>
                 </div>
             </div>
 
             <div class="setup-page" id="page-wizard">
                 <div class="setup-body">
-                    <h1>Update Wizard</h1>
-                    <p>Let's ensure your data is moved across safely! Click next to continue.</p>
+                    <h1 data-i18n="wizard.title">Update Wizard</h1>
+                    <p data-i18n="wizard.description">Let's ensure your data is moved across safely! Click next to continue.</p>
                 </div>
                 <div class="setup-footer">
-                    <button class="left-btn">previous</button>
-                    <button class="right-btn">next</button>
+                    <button class="left-btn" data-i18n="welcome.common.previous">previous</button>
+                    <button class="right-btn" data-i18n="welcome.common.next">next</button>
                 </div>
             </div>
             <div class="setup-page" id="update-loading">
                 <div class="setup-body">
-                    <h1>Update Wizard</h1>
-                    <p>Please wait...</p>
+                    <h1 data-i18n="wizard.title">Update Wizard</h1>
+                    <p data-i18n="common.pleaseWait">Please wait...</p>
                     <div id="update-loader" class="loader"
                         style="background: transparent; box-shadow: none; pointer-events: none;">
                         <div class="loader-animation">
@@ -64,39 +64,39 @@
             </div>
             <div class="setup-page" id="page-access">
                 <div class="setup-body">
-                    <h1>Ease of Access</h1>
-                    <p style="display: none;">Customize your experience to ensure that everything feels just right.</p>
+                    <h1 data-i18n="welcome.access.title">Ease of Access</h1>
+                    <p style="display: none;" data-i18n="welcome.access.description">Customize your experience to ensure that everything feels just right.</p>
                     <div class="scroller" style="margin: 0px;">
                         <div>
                             <div class="group">
-                                <p class="group-title">Background</p>
+                                <p class="group-title" data-i18n="welcome.access.background">Background</p>
                                 <div class="metro-dropdown-menu" id="theme-chooser" selected="1">
-                                    <div class="metro-dropdown-option">Light</div>
-                                    <div class="metro-dropdown-option">Dark</div>
+                                    <div class="metro-dropdown-option" data-i18n="welcome.themes.light">Light</div>
+                                    <div class="metro-dropdown-option" data-i18n="welcome.themes.dark">Dark</div>
                                 </div>
                             </div>
                             <div class="group">
-                                <p class="group-title">Scaling</p>
+                                <p class="group-title" data-i18n="welcome.access.scaling">Scaling</p>
                                 <div id="display-scaling-chooser" class="metro-dropdown-menu" selected="2">
-                                    <div class="metro-dropdown-option">80%</div>
-                                    <div class="metro-dropdown-option">90%</div>
-                                    <div class="metro-dropdown-option">100%</div>
-                                    <div class="metro-dropdown-option">110%</div>
-                                    <div class="metro-dropdown-option">125%</div>
+                                    <div class="metro-dropdown-option" data-i18n="common.numbers.percent" data-i18n-params="{number: 80}">80%</div>
+                                    <div class="metro-dropdown-option" data-i18n="common.numbers.percent" data-i18n-params="{number: 90}">90%</div>
+                                    <div class="metro-dropdown-option" data-i18n="common.numbers.percent" data-i18n-params="{number: 100}">100%</div>
+                                    <div class="metro-dropdown-option" data-i18n="common.numbers.percent" data-i18n-params="{number: 110}">110%</div>
+                                    <div class="metro-dropdown-option" data-i18n="common.numbers.percent" data-i18n-params="{number: 125}">125%</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="setup-footer">
-                    <button class="left-btn">previous</button>
-                    <button class="right-btn">next</button>
+                    <button class="left-btn" data-i18n="welcome.common.previous">previous</button>
+                    <button class="right-btn" data-i18n="welcome.common.next">next</button>
                 </div>
             </div>
             <div class="setup-page" id="accent-color-picker">
                 <div class="setup-body">
-                    <h1>Choose your color</h1>
-                    <p style="display: none;">Pick a color that matches your mood.</p>
+                    <h1 data-i18n="welcome.colors.title">Choose your color</h1>
+                    <p style="display: none;" data-i18n="colors.description">Pick a color that matches your mood.</p>
                     <div class="accent-color-catalogue" style="overflow: hidden;position: relative;margin: 0px;">
 
 
@@ -157,13 +157,13 @@
                     </div>
                 </div>
                 <div class="setup-footer">
-                    <button class="left-btn">previous</button>
-                    <button class="right-btn">next</button>
+                    <button class="left-btn" data-i18n="welcome.common.previous">previous</button>
+                    <button class="right-btn" data-i18n="welcome.common.next">next</button>
                 </div>
             </div>
             <div class="setup-page" id="page-readme">
                 <div class="setup-body">
-                    <h1>What's New?</h1>
+                    <h1 data-i18n="welcome.whatsnew.title">What's New?</h1>
                     <div class="scroller" style="overflow: hidden; position: relative; margin: 0px;">
                         <div>
                             <ul>
@@ -179,15 +179,15 @@
                     </div>
                 </div>
                 <div class="setup-footer">
-                    <button class="left-btn">previous</button>
-                    <button class="right-btn">next</button>
+                    <button class="left-btn" data-i18n="welcome.common.previous">previous</button>
+                    <button class="right-btn" data-i18n="welcome.common.next">next</button>
 
                 </div>
             </div>
             <div class="setup-page" id="page-finish">
                 <div class="setup-body">
-                    <h1>Get ready to Groove</h1>
-                    <p>Your setup is done. Time to dive in!</p>
+                    <h1 data-i18n="welcome.finish.title">Get ready to Groove</h1>
+                    <p data-i18n="welcome.finish.description">Your setup is done. Time to dive in!</p>
                 </div>
                 <div class="setup-footer">
                 </div>

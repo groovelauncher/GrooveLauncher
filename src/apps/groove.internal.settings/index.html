@@ -10,10 +10,10 @@
 
 <body style="perspective: var(--flow-perspective)">
   <div class="innerApp">
-    <h1 class="app-title">Settings</h1>
+    <h1 class="app-title" data-i18n="settings.title">Settings</h1>
     <div class="app-tabs">
-      <p class="active-tab">Home</p>
-      <p>Applications</p>
+      <p class="active-tab" data-i18n="settings.tabs.home">Home</p>
+      <p data-i18n="settings.tabs.applications">Applications</p>
     </div>
     <div id="settings-pages">
       <div class="settings-pages-container">
@@ -21,28 +21,30 @@
           <div>
             <div class="groove-list-view skew" style="padding-bottom: 50px;">
               <div class="groove-list-view-item">
-                <p class="groove-list-view-item-title">home+theme</p>
+                <p class="groove-list-view-item-title" data-i18n="settings.theme.title">home+theme</p>
                 <p class="groove-list-view-item-description">violet</p>
               </div>
               <div class="groove-list-view-item hidden">
-                <p class="groove-list-view-item-title">screen rotation</p>
+                <p class="groove-list-view-item-title" data-i18n="settings.screen_rotation.title">screen rotation</p>
                 <p class="groove-list-view-item-description">locked</p>
               </div>
-              <div class="groove-list-view-item hidden">
-                <p class="groove-list-view-item-title">language</p>
+              <div class="groove-list-view-item">
+                <p class="groove-list-view-item-title" data-i18n="settings.language.title">language</p>
                 <p class="groove-list-view-item-description">English (United States)</p>
               </div>
               <div class="groove-list-view-item">
-                <p class="groove-list-view-item-title">ease of access</p>
-                <p class="groove-list-view-item-description">text size, high contrast, and more</p>
+                <p class="groove-list-view-item-title" data-i18n="settings.ease_of_access.title">ease of access</p>
+                <p class="groove-list-view-item-description" data-i18n="settings.ease_of_access.description">text size,
+                  high contrast, and more</p>
               </div>
               <div class="groove-list-view-item">
-                <p class="groove-list-view-item-title">advanced</p>
-                <p class="groove-list-view-item-description">package manager and other tweaks</p>
+                <p class="groove-list-view-item-title" data-i18n="settings.advanced.title">advanced</p>
+                <p class="groove-list-view-item-description" data-i18n="settings.advanced.description">package manager
+                  and other tweaks</p>
               </div>
               <div class="groove-list-view-item">
-                <p class="groove-list-view-item-title">about</p>
-                <p class="groove-list-view-item-description">Groove Launcher</p>
+                <p class="groove-list-view-item-title" data-i18n="settings.about.title">about</p>
+                <p class="groove-list-view-item-description" data-i18n="settings.about.description">Groove Launcher</p>
               </div>
             </div>
           </div>
@@ -58,7 +60,7 @@
     </div>
   </div>
   <div id="accent-color-picker">
-    <h1 class="app-title">Accent Color</h1>
+    <h1 class="app-title" data-i18n="settings.theme.accent_color">Accent Color</h1>
     <div class="accent-color-catalogue">
       <div>
         <div style="--index:0;">
@@ -95,50 +97,50 @@
     </div>
   </div>
   <div class="innerAppPage">
-    <h1 class="app-title">Settings</h1>
+    <h1 class="app-title" data-i18n="settings.title">Settings</h1>
     <div class="app-tabs">
-      <p class="active-tab">home+theme</p>
+      <p class="active-tab" data-i18n="settings.theme.title">home+theme</p>
     </div>
     <div class="settings-pages" style="overflow: hidden;">
       <div class="settings-pages-container">
         <div class="settings-page-2" id="theme-tab">
           <div style="transform-style: preserve-3d">
-            <p class="text">
+            <p class="text" data-i18n="settings.theme.friendly_accent">
               Change your device's background and
               <span style="color: var(--accent-color)">accent color</span> to
               match your mood today, this week, or all month.
             </p>
             <div class="group">
-              <p class="group-title">Background</p>
+              <p class="group-title" data-i18n="settings.theme.background">Background</p>
               <div class="metro-dropdown-menu" id="theme-chooser" selected="1">
-                <div class="metro-dropdown-option">Light</div>
-                <div class="metro-dropdown-option">Dark</div>
+                <div class="metro-dropdown-option" data-i18n="settings.theme.themes.light">Light</div>
+                <div class="metro-dropdown-option" data-i18n="settings.theme.themes.dark">Dark</div>
               </div>
             </div>
 
             <div class="group">
-              <p class="group-title">Accent color</p>
+              <p class="group-title" data-i18n="settings.theme.accent_color">Accent color</p>
               <div class="color-picker">
                 <div class="picker-example"></div>
-                <div class="picker-option">color</div>
+                <div class="picker-option" data-i18n="settings.theme.color">color</div>
               </div>
             </div>
             <div class="group" id="wallpaper-group">
               <div id="wallpaper-thumbnail"></div>
-              <p class="group-title">Home background</p>
+              <p class="group-title" data-i18n="settings.theme.home_background">Home background</p>
               <button class="metro-button" id="choose-wallpaper">
-                choose photo
+                <span data-i18n="settings.theme.choose_photo">choose photo</span>
                 <input hidden type="file" accept="image/*" />
               </button>
-              <button class="metro-button link" id="remove-wallpaper">remove</button>
+              <button class="metro-button link" id="remove-wallpaper" data-i18n="settings.theme.remove">remove</button>
             </div>
-            <p class="text" style="margin-top: 40px;">
+            <p class="text" style="margin-top: 40px;" data-i18n="settings.theme.friendly_tiles">
               You can change the size and number of tiles available on your home screen.
             </p>
             <div class="group">
-              <p class="group-title">Show more Tiles</p>
+              <p class="group-title" data-i18n="settings.theme.show_more_tiles">Show more Tiles</p>
               <div class="tile-selector">
-                <p>Off</p>
+                <p data-i18n-init="common.actions.off">Off</p>
                 <div>
                   <div id="tile-toggle-switch" class="metro-toggle-switch"></div>
                 </div>
@@ -180,9 +182,9 @@
     </div>
   </div>
   <div class="innerAppPage">
-    <h1 class="app-title">Settings</h1>
+    <h1 class="app-title" data-i18n="settings.title">Settings</h1>
     <div class="app-tabs">
-      <p class="active-tab">screen rotation</p>
+      <p class="active-tab" data-i18n="settings.screen_rotation.title">screen rotation</p>
     </div>
     <div class="settings-pages" id="screen-rotation-tab" style="overflow: hidden;">
       <div class="settings-pages-container">
@@ -205,17 +207,33 @@
     </div>
   </div>
   <div class="innerAppPage">
-    <h1 class="app-title">Settings</h1>
+    <div class="loader"
+      style="background: transparent; box-shadow: none; pointer-events: none;height: max-content;top: 220px;">
+      <div class="loader-animation" style="height: 10px;width: 50%;">
+        <span style="--index:0"></span>
+        <span style="--index:1"></span>
+        <span style="--index:2"></span>
+        <span style="--index:3"></span>
+        <span style="--index:4"></span>
+        <span style="--index:5"></span>
+        <span style="--index:6"></span>
+      </div>
+    </div>
+    <h1 class="app-title" data-i18n="settings.title">Settings</h1>
     <div class="app-tabs">
-      <p class="active-tab">language</p>
+      <p class="active-tab" data-i18n="settings.language.title">language</p>
     </div>
     <div class="settings-pages" id="language-settings" style="overflow: hidden;">
       <div class="settings-pages-container">
         <div class="settings-page-2" id="language-tab">
           <div class="groove-list-view skew" style="padding-bottom: 50px;">
             <div class="groove-list-view-item">
-              <p class="groove-list-view-item-title" style="color: var(--accent-color);">English (United States)</p>
-              <p class="groove-list-view-item-description">English</p>
+              <p class="groove-list-view-item-title" style="color: var(--accent-color);">English</p>
+              <p class="groove-list-view-item-description">United States</p>
+            </div>
+            <div class="groove-list-view-item">
+              <p class="groove-list-view-item-title">Türkçe</p>
+              <p class="groove-list-view-item-description">Türkiye</p>
             </div>
           </div>
         </div>
@@ -223,97 +241,110 @@
     </div>
   </div>
   <div class="innerAppPage">
-    <h1 class="app-title">Settings</h1>
+    <h1 class="app-title" data-i18n="settings.title">Settings</h1>
     <div class="app-tabs">
-      <p class="active-tab">ease of access</p>
+      <p class="active-tab" data-i18n="settings.ease_of_access.title">ease of access</p>
     </div>
     <div class="settings-pages" id="ease-of-access-settings" style="overflow: hidden;">
       <div class="settings-pages-container">
         <div class="settings-page-2" id="ease-of-access-tab">
           <div class="group first-group">
-            <p class="group-title">Reduce motion</p>
+            <p class="group-title" data-i18n="settings.ease_of_access.reduce_motion">Reduce motion</p>
             <div class="tile-selector reduce-motion-toggle-switch" style="margin-bottom: 0px;">
-              <p>Off</p>
+              <p data-i18n-init="common.actions.off">Off</p>
               <div>
                 <div class="metro-toggle-switch"></div>
               </div>
             </div>
           </div>
           <div class="group">
-            <p class="group-title">Scaling</p>
+            <p class="group-title" data-i18n="settings.ease_of_access.scaling">Scaling</p>
             <div id="display-scaling-chooser" class="metro-dropdown-menu" selected="2">
-              <div class="metro-dropdown-option">80%</div>
-              <div class="metro-dropdown-option">90%</div>
-              <div class="metro-dropdown-option">100%</div>
-              <div class="metro-dropdown-option">110%</div>
-              <div class="metro-dropdown-option">125%</div>
+              <div class="metro-dropdown-option" data-i18n-init="common.numbers.percent" data-i18n-params="{value: 80}">
+                80%</div>
+              <div class="metro-dropdown-option" data-i18n-init="common.numbers.percent" data-i18n-params="{value: 90}">
+                90%</div>
+              <div class="metro-dropdown-option" data-i18n-init="common.numbers.percent"
+                data-i18n-params="{value: 100}">100%</div>
+              <div class="metro-dropdown-option" data-i18n-init="common.numbers.percent"
+                data-i18n-params="{value: 110}">110%</div>
+              <div class="metro-dropdown-option" data-i18n-init="common.numbers.percent"
+                data-i18n-params="{value: 125}">125%</div>
             </div>
           </div>
           <div class="group">
-            <p class="group-title">Font</p>
+            <p class="group-title" data-i18n="settings.ease_of_access.font.title">Font</p>
             <div id="font-chooser" class="metro-dropdown-menu" selected="0">
               <div class="metro-dropdown-option">Open Sans</div>
               <div class="metro-dropdown-option">Noto Sans</div>
-              <div class="metro-dropdown-option"><span style="pointer-events: none;" class="name">Choose...</span><input
-                  hidden type="file" accept=".ttf" /></div>
+              <div class="metro-dropdown-option"><span style="pointer-events: none;" class="name"
+                  data-i18n-init="settings.ease_of_access.font.choose">Choose...</span><input hidden type="file"
+                  accept=".ttf" /></div>
             </div>
-            <button class="metro-button link" id="clearfont" style="padding-left: 0px;">Remove Font</button>
+            <button class="metro-button link" id="clearfont" style="padding-left: 0px;"
+              data-i18n-init="settings.ease_of_access.font.remove">Remove Font</button>
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="innerAppPage">
-    <h1 class="app-title">Settings</h1>
+    <h1 class="app-title" data-i18n="settings.title">Settings</h1>
     <div class="app-tabs">
-      <p class="active-tab">advanced</p>
+      <p class="active-tab" data-i18n="settings.advanced.title">advanced</p>
     </div>
     <div class="settings-pages" id="advanced-settings" style="overflow: hidden;">
       <div class="settings-pages-container">
         <div class="settings-page-2" id="advanced-tab">
           <div class="group">
-            <p class="group-title">Package manager (EXPERIMENTAL)</p>
+            <p class="group-title" data-i18n="settings.advanced.package_manager.title_experimental">Package manager
+              (EXPERIMENTAL)</p>
             <div class="metro-dropdown-menu" id="pm-chooser" selected="0">
-              <div class="metro-dropdown-option">System</div>
-              <div class="metro-dropdown-option">Root</div>
-              <div class="metro-dropdown-option">Shizuku</div>
+              <div class="metro-dropdown-option" data-i18n="settings.advanced.package_manager.system">System</div>
+              <div class="metro-dropdown-option" data-i18n="settings.advanced.package_manager.root">Root</div>
+              <div class="metro-dropdown-option" data-i18n="settings.advanced.package_manager.shizuku">Shizuku</div>
             </div>
           </div>
           <div class="group">
-            <p class="group-title">Debugging</p>
+            <p class="group-title" data-i18n="settings.advanced.debugging.title">Debugging</p>
             <div class="tile-selector" style="margin-bottom: 0px; display: none;">
-              <p>Off</p>
+              <p data-i18n-init="common.actions.off">Off</p>
               <div>
                 <div id="remote-debug-toggle-switch" class="metro-toggle-switch"></div>
               </div>
             </div>
-            <button class="metro-button" id="dumpbtn" style="margin-top: 0px;">Dump Installed Apps JSON</button>
+            <button class="metro-button" id="dumpbtn" style="margin-top: 0px;"
+              data-i18n="settings.advanced.debugging.dump_apps">Dump Installed Apps JSON</button>
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="innerAppPage">
-    <h1 class="app-title">Settings</h1>
+    <h1 class="app-title" data-i18n="settings.title">Settings</h1>
     <div class="app-tabs">
-      <p class="active-tab">about</p>
+      <p class="active-tab" data-i18n="settings.about.title">about</p>
     </div>
     <div class="settings-pages" style="overflow: hidden;">
       <div class="settings-pages-container">
         <div class="settings-page-2" id="about-tab">
 
           <div class="scrollable article-f" style="padding-bottom: 50px;transform-style: preserve-3d;">
-            <h1 id="about-app-name">Groove Launcher</h1>
-            <h2 id="about-app-version">Version: Loading...</h2>
-            <h2 id="about-webview-version" style="margin-bottom: 20px;">WebView Version: Loading...</h2>
+            <h1 id="about-app-name" data-i18n="settings.about.description">Groove Launcher</h1>
+            <h2 id="about-app-version" data-i18n="settings.about.version" data-i18n-params='{version: "Loading..."}'>
+              Version: Loading...</h2>
+            <h2 id="about-webview-version" style="margin-bottom: 20px;" data-i18n="settings.about.webview_version"
+              data-i18n-params='{version: "Loading..."}'>WebView Version: Loading...</h2>
             <div class="double-buttons">
-              <button class="metro-button" id="resetbtn">Reset Launcher</button>
-              <button class="metro-button" id="updatebutton">Check Updates
+              <button class="metro-button" id="resetbtn" data-i18n="settings.about.reset_launcher">Reset
+                Launcher</button>
+              <button class="metro-button" id="updatebutton"><span data-i18n-init="settings.about.check_updates"
+                  style="pointer-events: none;">Check Updates</span>
                 <img src="./../../assets/loader.png">
               </button>
 
             </div>
-            <p>
+            <p data-i18n-init="readme.entry">
               <strong>Groove Launcher</strong> is a metro-styled launcher
               designed for a customizable and sleek user experience. Users can
               personalize their launcher by adjusting tile sizes, changing
@@ -321,68 +352,70 @@
               favorite wallpapers.
             </p>
 
-            <h2>Features</h2>
+            <h2 data-i18n-init="readme.title_features">Features</h2>
 
             <ul>
-              <li>
+              <li data-i18n-init="readme.list_featuers_0">
                 <strong>Metro-Style Interface:</strong> A clean & modern
                 design inspired by Windows Phone 8.
               </li>
-              <li>
+              <li data-i18n-init="readme.list_featuers_1">
                 <strong>Customizable Tiles:</strong> Drag and drop tiles,
                 adjust their sizes, and move them around to fit your unique
                 style.
               </li>
-              <li>
+              <li data-i18n-init="readme.list_featuers_2">
                 <strong>Theme Customization:</strong> Change the color of the
                 launcher to match your mood or aesthetic.
               </li>
-              <li>
+              <li data-i18n-init="readme.list_featuers_3">
                 <strong>Wallpaper Personalization:</strong> Choose and set
                 your own wallpapers to create a fully personalized setup.
               </li>
             </ul>
 
-            <h2>Contributing</h2>
+            <h2 data-i18n-init="readme.title_contributing">Contributing</h2>
 
-            <p>
+            <p data-i18n-init="readme.paragraph_contributing_0">
               Contributions are most welcome! Feel free to submit issues and
               pull requests to help improve <strong>Groove Launcher</strong>.
             </p>
 
             <ol>
-              <li>Fork the repository.</li>
-              <li>Create a new branch for your feature or bugfix.</li>
-              <li>Submit a pull request when your code is ready.</li>
+              <li data-i18n-init="readme.list_paragraph_contributing_0">Fork the repository.</li>
+              <li data-i18n-init="readme.list_paragraph_contributing_1">Create a new branch for your feature or bugfix.
+              </li>
+              <li data-i18n-init="readme.list_paragraph_contributing_2">Submit a pull request when your code is ready.
+              </li>
             </ol>
 
-            <h2>License</h2>
+            <h2 data-i18n-init="readme.title_license">License</h2>
 
-            <p>
+            <p data-i18n-init="readme.paragraph_license">
               This project is licensed under the MIT License - see the
               <a
                 href="javascript:Groove.openURL('https://github.com/groovelauncher/GrooveLauncher?tab=MIT-1-ov-file')">LICENSE</a>
               file for details.
             </p>
 
-            <h2>Contact</h2>
+            <h2 data-i18n-init="readme.title_contact">Contact</h2>
 
-            <p>For any inquiries or feedback, feel free to reach out!</p>
+            <p data-i18n-init="readme.paragraph_contact_0">For any inquiries or feedback, feel free to reach out!</p>
             <a href="javascript:Groove.openURL('https://buymeacoffee.com/berkaytumal')"
               style="display:block; transform-style:  preserve-3d;"><img id="buymeacoffee"
                 src="./../../assets/default-yellow.png" class="flow-touch" alt="Buy Me A Coffee"
                 style="height: 60px !important; width: 217px !important;" /></a>
-            <h2>Team Groove</h2>
+            <h2 data-i18n-init="settings.roles.team_groove">Team Groove</h2>
             <div class="credit-item">
-              <p>Berkay Tumal<span>(Developer)</span></p>
+              <p>Berkay Tumal<span data-i18n-init="settings.roles.developer">(Developer)</span></p>
               <p url="https://github.com/berkaytumal"> berkaytumal</p>
             </div>
             <div class="credit-item">
-              <p>Nathan Tool<span>(Logo Design)</span></p>
+              <p>Nathan Tool<span data-i18n-init="settings.roles.logo_design">(Logo Design)</span></p>
               <p url="https://reddit.com/u/NateTool"> u/NateTool</p>
             </div>
             <div class="credit-item">
-              <p>K.Parth Singh<span>(Icon Design)</span></p>
+              <p>K.Parth Singh<span data-i18n-init="settings.roles.icon_design">(Icon Design)</span></p>
               <p url="https://www.instagram.com/k.parth_singh/"> k.parth_singh</p>
             </div>
           </div>
@@ -391,7 +424,7 @@
     </div>
   </div>
   <div class="innerAppPage" id="appDetailPage">
-    <h1 class="app-title">Settings</h1>
+    <h1 class="app-title" data-i18n="settings.title">Settings</h1>
     <div class="app-tabs">
       <p class="active-tab" style="text-transform: none !important;">app name</p>
     </div>
@@ -400,7 +433,8 @@
         <div class="settings-page-2" id="app-detail-tab">
           <div class="group" style="pointer-events: auto;">
             <p class="group-title">com.example</p>
-            <button class="metro-button" id="uninstallappbutton">Uninstall App</button>
+            <button class="metro-button" id="uninstallappbutton" data-i18n="settings.apps.uninstall_app">Uninstall
+              App</button>
           </div>
         </div>
       </div>

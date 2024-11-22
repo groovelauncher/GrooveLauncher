@@ -78,4 +78,4 @@ document.querySelector("#dumpbtn").addEventListener("flowClick", () => {
         );
     }
 })
-document.getElementById("pm-chooser").selectOption(parent.GrooveBoard.backendMethods.packageManagerProvider.get())
+if(parent.GrooveBoard)document.getElementById("pm-chooser").selectOption(parent.GrooveBoard.backendMethods.packageManagerProvider.get())

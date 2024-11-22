@@ -2,6 +2,9 @@ import iconPackConverter from "./scripts/iconPack.js";
 import jQuery from "jquery";
 window.$ = jQuery
 import GrooveMock from "./scripts/GrooveMock.js";
+import { i18n } from './scripts/localeManager';
+await i18n.init();
+window.i18n = i18n;
 
 const GrooveMockInstance = !window.Groove
 window.GrooveMockInstance = GrooveMockInstance
@@ -274,3 +277,5 @@ if (!!localStorage.getItem("tileColumns")) GrooveBoard.backendMethods.setTileCol
 if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
 if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
 if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true)
+
+i18n.translateDOM();

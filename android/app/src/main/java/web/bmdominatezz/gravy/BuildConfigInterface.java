@@ -15,17 +15,6 @@ public class BuildConfigInterface {
 
     @JavascriptInterface
     public String CAK() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try {
-                // Check if developer options are enabled
-                if (Settings.Global.getInt(context.getContentResolver(), Settings.Global.DEVELOPMENT_SETTINGS_ENABLED) == 1) {
-                    return "0";
-                }
-            } catch (Settings.SettingNotFoundException e) {
-                // If we can't determine, better safe than sorry
-                return "0";
-            }
-        }
         return BuildConfig.CAK;
     }
 } 

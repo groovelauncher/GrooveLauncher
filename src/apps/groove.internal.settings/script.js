@@ -1,9 +1,19 @@
 import { applyOverscroll, appViewEvents, grooveColors, grooveThemes, setAccentColor } from "../../scripts/shared/internal-app";
+console.log("check",{
+    setAccentColor,
+    setTheme, 
+    setFont,
+    setReduceMotion
+});
 import { GrooveScroll, GrooveSlide } from "../../scripts/overscrollFramework";
 import imageStore from "../../scripts/imageStore";
 import fontStore from "../../scripts/fontStore";
 import GrooveElements from "../../scripts/GrooveElements";
 import jQuery from "jquery";
+import i18n from "../../scripts/localeManager";
+window.i18n = i18n
+await i18n.init()
+await i18n.translateDOM()
 const $ = jQuery
 window.fontStore = fontStore
 const settingsPages = document.getElementById("settings-pages")
@@ -172,7 +182,7 @@ function activeTabScroll() {
     requestAnimationFrame(activeTabScroll)
 }
 window.activeTabScroll = activeTabScroll
-const scrollers = {
+window.scrollers = {
     home: new GrooveScroll("#home-tab", {
         bounceTime: 300,
         swipeBounceTime: 200,
@@ -251,7 +261,7 @@ requestAnimationFrame(() => {
 });
 
 
-(!!window.parent.allappsarchive ? window.parent.allappsarchive : window.parent.GrooveBoard.backendMethods.reloadAppDatabase()).forEach(e => {
+if (window.parent.GrooveBoard) (!!window.parent.allappsarchive ? window.parent.allappsarchive : window.parent.GrooveBoard.backendMethods.reloadAppDatabase()).forEach(e => {
     const el = GrooveElements.wListViewItem(e.label, "")
     el.setAttribute("packagename", e.packageName)
     document.querySelector("#apps-tab > div.scroller > div.groove-list-view").append(el)
@@ -270,7 +280,7 @@ const navigation = {
         setTimeout(() => {
             document.querySelectorAll("div.innerAppPage")[index].classList.add("shown-page-no-anim")
         }, 750);
-        window.parent.GrooveBoard.backendMethods.navigation.push("settings-inner-page", () => { }, () => {
+        if (window.parent.GrooveBoard) window.parent.GrooveBoard.backendMethods.navigation.push("settings-inner-page", () => { }, () => {
             navigation.settingsHome()
         }, false)
     },
@@ -315,9 +325,18 @@ $("#apps-tab > div.scroller > div.groove-list-view > div.groove-list-view-item")
     }
 
 })
+window.Groove = window.Groove || window.parent.Groove
+console.log({
+    setAccentColor,
+    setTheme, 
+    setFont,
+    setReduceMotion
+});
 import "./pages/00_home+theme"
 import "./pages/01_screen_rotation"
+import "./pages/02_language"
 import "./pages/03_ease_of_access"
 import "./pages/04_advanced"
 import "./pages/05_about"
 import "./pages/10_applications"
+//i18n.translateDOM()

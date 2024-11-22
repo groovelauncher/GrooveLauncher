@@ -1,0 +1,54 @@
+{
+  "actions": {
+    "ok": "Ok",
+    "okay": "Okay",
+    "yes": "Yes",
+    "no": "No",
+    "uninstall": "Uninstall",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "try_again": "Try again",
+    "light": "Light",
+    "dark": "Dark",
+    "remove": "Remove",
+    "on": "On",
+    "off": "Off",
+    "locked": "Locked",
+    "unlocked": "Unlocked"
+  },
+  "search": {
+    "title": "Search",
+    "no_results": "No results for {{query}}",
+    "search_store": "search Store"
+  },
+  "errors": {
+    "webview_old": "WebView is too old!",
+    "home_reset": "Your home screen was reset because of a fatal error :( Please report this:",
+    "launch_timeout": "System took too long to launch"
+  },
+  "app_menu": {
+    "pin_to_home": "Pin to home",
+    "uninstall": "Uninstall"
+  },
+  "alerts": {
+    "default": {
+      "title": "Alert!",
+      "message": "Message"
+    },
+    "uninstall": {
+      "title": "Uninstall this app?",
+      "message": "This app, plus any information it contains, will be deleted from your device."
+    }
+  },
+  "numbers": {
+    "percent": "{{value}}%",
+    "decimal": "{{whole}}.{{decimal}}",
+    "bytes": {
+      "b": "{{size}} B",
+      "kb": "{{size}} KB",
+      "mb": "{{size}} MB",
+      "gb": "{{size}} GB",
+      "tb": "{{size}} TB"
+    }
+  }
+}

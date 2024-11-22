@@ -1,10 +1,24 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
+}
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("gradle.local.properties")
+    if (localPropertiesFile.exists()) {
+        load(FileInputStream(localPropertiesFile))
+    }
 }
 
 android {
     namespace = "web.bmdominatezz.gravy"
     compileSdk = 34
+
+    buildFeatures {
+        buildConfig = true  // Enable BuildConfig generation
+    }
 
     defaultConfig {
         applicationId = "web.bmdominatezz.gravy"
@@ -13,6 +27,13 @@ android {
         versionCode = 43
         versionName = "0.4.3-beta.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Add the API key
+        buildConfigField(
+            type = "String",
+            name = "CAK",
+            value = "\"${localProperties.getProperty("CAK", "")}\""
+        )
     }
 
     buildTypes {

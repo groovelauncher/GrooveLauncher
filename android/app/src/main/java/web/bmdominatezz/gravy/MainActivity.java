@@ -1,7 +1,6 @@
 package web.bmdominatezz.gravy;
 
-import web.bmdominatezz.gravy.TimerUtils;
-
+import web.bmdominatezz.gravy.BuildConfig;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;

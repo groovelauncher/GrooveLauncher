@@ -2,7 +2,7 @@ import jQuery from "jquery";
 import GrooveBoard from "./GrooveBoard";
 const $ = jQuery
 var deletedApps = new Set()
-
+import BuildConfigMock from "./BuildConfigMock";
 // Add constants at the top
 const CONSTANTS = {
     INTERNAL_SETTINGS_APP: 'groove.internal.settings',
@@ -17,7 +17,7 @@ class GrooveMock {
     constructor(mockURL) {
         this.mockURL = mockURL;
         this.#retrievedApps = [];
-        
+
         // Use async/await pattern instead of callback
         this.#initializeApps();
     }
@@ -26,7 +26,7 @@ class GrooveMock {
         try {
             const response = await fetch(this.mockURL);
             const data = await response.json();
-            
+
             this.#retrievedApps = data.apps
                 .filter(app => app.packageName !== 'web.bmdominatezz.gravy')
                 .map(app => ({
@@ -79,7 +79,7 @@ class GrooveMock {
     uninstallApp(packageName) {
         console.log('Uninstall app:', packageName);
         deletedApps.add(packageName);
-        
+
         // Use Promise instead of setTimeout
         return new Promise(resolve => {
             setTimeout(() => {
@@ -132,3 +132,4 @@ class GrooveMock {
     }
 }
 export default GrooveMock;
+export { BuildConfigMock, GrooveMock }

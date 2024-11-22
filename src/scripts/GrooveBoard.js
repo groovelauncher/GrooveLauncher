@@ -12,6 +12,8 @@ import appViewEvents from "./appViewEvents"
 import canvasImageFit, { contain } from "./canvasImageFit";
 import imageStore from "./imageStore";
 import fontStore from "./fontStore";
+import LocaleStore from "./localeManager";
+import { localization } from "./localeManager";
 window.grooveTileColumns = grooveTileColumns;
 window.grooveColors = grooveColors;
 window.grooveThemes = grooveThemes;
@@ -525,7 +527,7 @@ const backendMethods = {
   },
   scaleTiles: function () {
     const scale =
-      GrooveBoard.backendMethods.getTileSize(1, 1)[0] / originalWidgetSizes[0];
+      backendMethods.getTileSize(1, 1)[0] / originalWidgetSizes[0];
     document
       .querySelector("div.tile-list-inner-container")
       .style.setProperty("--tile-zoom", scale);
@@ -544,13 +546,13 @@ const backendMethods = {
     }
     const fitRightBorder = Math.min(
       0,
-      tileListGrid.getColumn() - (chosenSize[0] + el.gridstackNode.x)
+      window.tileListGrid.getColumn() - (chosenSize[0] + el.gridstackNode.x)
     );
-    //tileListGrid.update(el.gridstackNode, { w: chosenSize[0], h: chosenSize[1] })
-    tileListGrid.moveNode(el.gridstackNode, {
+    //window.tileListGrid.update(el.gridstackNode, { w: chosenSize[0], h: chosenSize[1] })
+    window.tileListGrid.moveNode(el.gridstackNode, {
       x: el.gridstackNode.x + fitRightBorder,
     });
-    tileListGrid.moveNode(el.gridstackNode, {
+    window.tileListGrid.moveNode(el.gridstackNode, {
       w: chosenSize[0],
       h: chosenSize[1],
     });
@@ -639,9 +641,9 @@ const backendMethods = {
   },
   setTileColumns: (int, doNotSave = false) => {
     if (Object.values(grooveTileColumns).includes(int)) {
-      tileListGrid.column(
+      if (window.tileListGrid) window.tileListGrid.column(
         int,
-        int < tileListGrid.getColumn() ? "compact" : "none"
+        int < window.tileListGrid.getColumn() ? "compact" : "none"
       );
       if (!doNotSave) localStorage.setItem("tileColumns", int)
 
@@ -697,7 +699,7 @@ const backendMethods = {
     load: () => {
       window.cantSaveHomeConfig = true
       document.querySelectorAll("div.tile-list-inner-container > div.groove-home-tile").forEach(e => e.remove())
-      tileListGrid.batchUpdate(true)
+      window.tileListGrid.batchUpdate(true)
       const config = JSON.parse(localStorage.getItem("homeConfiguration")) || []
 
       config.forEach(tile => {
@@ -723,7 +725,7 @@ const backendMethods = {
         el.setAttribute("gs-y", tile.t)
         el.setAttribute("gs-w", tile.w)
         el.setAttribute("gs-h", tile.h)
-        tileListGrid.moveNode(el.gridstackNode, {
+        window.tileListGrid.moveNode(el.gridstackNode, {
           w: tile.w,
           h: tile.h,
           x: tile.x,
@@ -745,8 +747,8 @@ const backendMethods = {
               }
             })
             console.log(loadData)
-            tileListGrid.load(Object.values(loadData))*/
-      tileListGrid.batchUpdate(false)
+            window.tileListGrid.load(Object.values(loadData))*/
+      window.tileListGrid.batchUpdate(false)
       window.cantSaveHomeConfig = false
     },
   },
@@ -873,7 +875,7 @@ const backendMethods = {
   },
   appUninstall: (packagename) => {
     const tileElem = document.querySelector(`div.groove-home-tile[packagename="${packagename}"]`)
-    if (tileElem) tileListGrid.removeWidget(tileElem)
+    if (tileElem) window.tileListGrid.removeWidget(tileElem)
     backendMethods.reloadApps()
   },
   serveConfig: () => {
@@ -887,7 +889,9 @@ const backendMethods = {
     if (localStorage["lastVersion"] == undefined) return true;
     else if (localStorage["lastVersion"] != Groove.getAppVersion()) return true;
     else return false;
-  }
+  },
+  localization: localization
+
 };
 function listHistory() {
   return

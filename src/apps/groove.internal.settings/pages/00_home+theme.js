@@ -1,5 +1,5 @@
 import imageStore from "../../../scripts/imageStore";
-
+import i18n from "../../../scripts/localeManager";
 const urlParams = new URLSearchParams(window.location.search);
 
 
@@ -33,8 +33,8 @@ document.querySelectorAll("div.accent-color-catalogue-item").forEach(e => e.addE
 
     }, 500);
     appViewEvents.setAccentColor(grooveColors[e.target.style.background.slice(18).slice(0, -1)])
-    document.querySelector("div.color-picker > div.picker-option").innerText = e.target.style.background.slice(18).slice(0, -1)
-    document.querySelector("#home-tab > div:nth-child(1) > div > div:nth-child(1) > p.groove-list-view-item-description").innerText = e.target.style.background.slice(18).slice(0, -1)
+    document.querySelector("div.color-picker > div.picker-option").innerText = i18n.t(`colors.${e.target.style.background.slice(18).slice(0, -1).toLowerCase()}`)
+    document.querySelector("#home-tab > div:nth-child(1) > div > div:nth-child(1) > p.groove-list-view-item-description").innerText = i18n.t(`colors.${e.target.style.background.slice(18).slice(0, -1).toLowerCase()}`)
 
 }))
 
@@ -82,7 +82,7 @@ document.getElementById("remove-wallpaper").addEventListener("flowClick", (e) =>
 document.querySelector("#tile-toggle-switch").addEventListener("checked", (e) => {
     document.querySelector("#device-placeholder > svg:nth-child(2)").classList.remove("selected")
     document.querySelector("#device-placeholder > svg:nth-child(3)").classList.remove("selected")
-    document.querySelector("div.tile-selector > p").innerText = e.target.hasAttribute("checked") ? "On" : "Off"
+    document.querySelector("div.tile-selector > p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
     appViewEvents.setTileColumns(e.target.hasAttribute("checked") ? 6 : 4)
     if (e.target.hasAttribute("checked")) {
         document.querySelector("#device-placeholder > svg:nth-child(3)").classList.add("selected")
@@ -92,11 +92,11 @@ document.querySelector("#tile-toggle-switch").addEventListener("checked", (e) =>
 })
 setTimeout(() => {
     if (!localStorage['accentColor']) {
-        document.querySelector("div.color-picker > div.picker-option").innerText = "violet"
+        document.querySelector("div.color-picker > div.picker-option").innerText = i18n.t(`colors.violet`)
     } else {
-        const colorName = Object.keys(grooveColors).find(key => grooveColors[key] == localStorage['accentColor']) || "custom color";
-        document.querySelector("div.color-picker > div.picker-option").innerText = colorName;
-        document.querySelector("#home-tab > div:nth-child(1) > div > div:nth-child(1) > p.groove-list-view-item-description").innerText = colorName
+        const colorName = Object.keys(grooveColors).find(key => grooveColors[key] == localStorage['accentColor']) || "custom_color";
+        document.querySelector("div.color-picker > div.picker-option").innerText = i18n.t(`colors.${colorName.toLowerCase()}`);
+        document.querySelector("#home-tab > div:nth-child(1) > div > div:nth-child(1) > p.groove-list-view-item-description").innerText = i18n.t(`colors.${colorName.toLowerCase()}`)
     }
     if (urlParams.has("theme")) {
         document.querySelector("#theme-chooser").setAttribute("selected", urlParams.get("theme") == "light" ? 0 : 1)
@@ -104,7 +104,7 @@ setTimeout(() => {
     }
 
     if (urlParams.has("tileColumns")) {
-        document.querySelector("div.tile-selector > p").innerText = urlParams.get("tileColumns") == "4" ? "Off" : "On"
+        document.querySelector("div.tile-selector > p").innerText = urlParams.get("tileColumns") == "4" ? i18n.t("common.actions.off") : i18n.t("common.actions.on")
         if (urlParams.get("tileColumns") != "4") {
             document.querySelector("#tile-toggle-switch").setAttribute("checked", "")
             document.querySelector("#device-placeholder > svg:nth-child(3)").classList.add("selected")
@@ -115,7 +115,9 @@ setTimeout(() => {
 
 }, 500);
 
+document.querySelector("#home-tab > div:nth-child(1) > div > div:nth-child(1) > p.groove-list-view-item-description").innerText = i18n.t(`colors.violet`)
+
 if (!!localStorage['accentColor']) {
-    const colorName = Object.keys(grooveColors).find(key => grooveColors[key] == localStorage['accentColor']) || "custom color";
-    document.querySelector("#home-tab > div:nth-child(1) > div > div:nth-child(1) > p.groove-list-view-item-description").innerText = colorName
+    const colorName = Object.keys(grooveColors).find(key => grooveColors[key] == localStorage['accentColor']) || "custom_color";
+    document.querySelector("#home-tab > div:nth-child(1) > div > div:nth-child(1) > p.groove-list-view-item-description").innerText = i18n.t(`colors.${colorName.toLowerCase()}`)
 }

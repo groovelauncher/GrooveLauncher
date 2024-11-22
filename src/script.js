@@ -1,9 +1,10 @@
-import GrooveMock from "./scripts/GrooveMock.js";
-
+import { GrooveMock, BuildConfigMock } from "./scripts/GrooveMock.js";
+window.GrooveRole = "main"
 const GrooveMockInstance = !window.Groove
 window.GrooveMockInstance = GrooveMockInstance
 if (GrooveMockInstance) {
     window.Groove = new GrooveMock("./mock/apps.json")
+    window.BuildConfig = new BuildConfigMock()
     document.body.classList.add("groove-mock")
 }
 import startUpSequence from "./scripts/startUpSequence";
@@ -20,6 +21,7 @@ import iconPackConverter from "./scripts/iconPack.js";
 import "./scripts/pages/appList.js"
 import "./scripts/pages/tileList.js"
 import { normalize } from 'normalize-diacritics-es';
+import liveTileManager from "./scripts/liveTileManager.js";
 import { grooveThemes } from "./scripts/GrooveProperties.js";
 import applyOverscroll from "./scripts/overscrollFramework.js";
 window.normalizeDiacritics = (input = "") => {
@@ -110,9 +112,8 @@ scrollers.main_home_scroller.on("slideWillChange", function (e) {
 })
 
 // Add scroll listener for more granular control
-scrollers.main_home_scroller.scroller.translater.hooks.on("beforeTranslate", function(p) {
+scrollers.main_home_scroller.scroller.translater.hooks.on("beforeTranslate", function (p) {
     const position = scrollers.main_home_scroller.x;
-    console.log(position)
     if (position < -10) {
         $("#search-icon").addClass("shown");
     } else {
@@ -273,3 +274,8 @@ requestAnimationFrame(() => {
         }
     )
 })
+
+//GrooveBoard.alert("CAK", BuildConfig.CAK())
+i18n.init()
+
+window.liveTileManager = liveTileManager

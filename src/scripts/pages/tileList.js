@@ -188,7 +188,7 @@ $("#app-page-icon").on("flowClick", function () {
 const resizeObserver = new ResizeObserver((entries) => {
   for (let entry of entries) {
     GrooveBoard.backendMethods.scaleTiles();
-    scrollers.tile_page_scroller.refresh();
+    if (window["scrollers"]) scrollers.tile_page_scroller.refresh();
   }
 });
 resizeObserver.observe(document.querySelector("div.tile-list-inner-container"));

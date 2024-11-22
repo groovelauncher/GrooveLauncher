@@ -11,6 +11,7 @@ module.exports = env => {
     entry: {
       script: path.resolve(__dirname, './src/script.js'),
       welcome: path.resolve(__dirname, './src/welcome.js'), // add this
+      liveTileHelper: path.resolve(__dirname, './src/scripts/liveTileHelper.js'), // add this
     },
     output: {
       path: path.resolve(__dirname, './www/dist/'),

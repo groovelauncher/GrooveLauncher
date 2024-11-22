@@ -128,6 +128,11 @@
         transition: transform var(--flow-touch-up-transition) ease-out, height .2s ease-in !important;
     }
 
+    &.active {
+        transition: transform var(--flow-touch-down-transition) ease-in-out, height .2s ease-in !important;
+
+    }
+
     &.clicked {
         height: 112px;
 
@@ -147,14 +152,15 @@
 
     .metro-dropdown-option {
         @include flow-touch;
-        transition: height .2s ease-in, margin-top .2s ease-in;
+        transition: var(--flow-touch-up-transition) ease-out, transform var(--flow-touch-up-transition) ease-out, height .2s ease-in, margin-top .2s ease-in;
         font-size: 25px;
         margin: 0px 10px;
         height: 48px;
         display: flex;
         align-items: center;
 
-        span, & {
+        span,
+        & {
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -164,4 +170,37 @@
 
 
 
+}
+
+.metro-progress-bar {
+    position: relative;
+    width: 100%;
+    height: 5px;
+    background: rgb(127, 127, 127, .2);
+    --value: 0;
+    --value-2: 0;
+    --value-color: var(--accent-color);
+    --value-2-color: var(--accent-color);
+
+    &::after {
+        position: absolute;
+        z-index: 1;
+        transition: width .2s ease-in-out;
+        content: "";
+        display: block;
+        width: calc(var(--value) * 100%);
+        height: 100%;
+        background: var(--value-color);
+    }
+
+    &::before {
+        position: absolute;
+        z-index: 2;
+        transition: width .2s ease-in-out;
+        content: "";
+        display: block;
+        width: calc(var(--value-2) * 100%);
+        height: 100%;
+        background: var(--value-2-color);
+    }
 }

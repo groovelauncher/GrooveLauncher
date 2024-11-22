@@ -1,0 +1,116 @@
+{
+  "title": "Settings",
+  "tabs": {
+    "home": "Home",
+    "applications": "Applications"
+  },
+  "theme": {
+    "title": "Home+Theme",
+    "accent_color": "Accent color",
+    "background": "Background",
+    "home_background": "Home background",
+    "choose_photo": "Choose photo",
+    "show_more_tiles": "Show more Tiles",
+    "friendly_accent": "Change your device's background and <span style='color: var(--accent-color)'>accent color</span> to match your mood today, this week, or all month.",
+    "friendly_tiles": "You can change the size and number of tiles available on your home screen.",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark"
+    }
+  },
+  "screen_rotation": {
+    "title": "Screen Rotation",
+    "auto_rotate": "Auto-rotate",
+    "rotation_lock": "Rotation lock",
+    "friendly_rotation_lock": "When Rotation lock is on, your home will stay in the current orientation when you rotate your device."
+  },
+  "language": {
+    "title": "Language"
+  },
+  "ease_of_access": {
+    "title": "Ease of Access",
+    "description": "text size, high contrast, and more",
+    "reduce_motion": "Reduce motion",
+    "scaling": "Scaling",
+    "font": {
+      "title": "Font",
+      "choose": "Choose...",
+      "remove": "Remove Font"
+    }
+  },
+  "advanced": {
+    "title": "Advanced",
+    "description": "package manager and other tweaks",
+    "debugging": {
+      "title": "Debugging",
+      "dump_apps": "Dump Installed Apps JSON"
+    },
+    "package_manager": {
+      "title": "Package manager",
+      "title_experimental": "Package manager (EXPERIMENTAL)",
+      "system": "System",
+      "root": "Root",
+      "shizuku": "Shizuku"
+    }
+  },
+  "alerts": {
+    "reset": {
+      "title": "Reset Groove Launcher?",
+      "message": "This will reset your launcher to its default settings. All customizations will be lost."
+    },
+    "root": {
+      "title": "Root Access Required",
+      "message": "Root access is required to perform this action. Please grant root access to continue."
+    },
+    "shizuku": {
+      "title": "Shizuku Permission Required",
+      "message": "Shizuku permission is required to perform this action. Please grant Shizuku permission to continue."
+    },
+    "update_available": {
+      "title": "Update Available!",
+      "message": "A new version <strong>({{version}})</strong> is available, sized at {{size}}. Would you like to download it?",
+      "message2": "A new version <strong>({{version}})</strong> is available. Would you like to download it?"
+    },
+    "update_check_failed": {
+      "title": "Update Check Failed!",
+      "message": "Unable to check for app updates. Please try again later."
+    },
+    "up_to_date": {
+      "title": "Up to Date!",
+      "message": "You have the grooviest version of Groove Launcher."
+    },
+    "font_read_error": {
+      "title": "Unsupported file format",
+      "message": "The font file isn’t valid. Make sure it’s a .ttf file and try uploading again."
+    },
+    "font_load_error": {
+      "title": "Can’t load font",
+      "message": "We couldn’t read the font file. Only .ttf fonts are supported. Please try a different file."
+    },
+    "copy_failed": {
+      "title": "Copy Failed!",
+      "message": "Unable to copy apps list. Please try again."
+    },
+    "copy_success": {
+      "title": "Copied to Clipboard!",
+      "message": "Installed apps copied to JSON format successfully."
+    }
+  },
+  "about": {
+    "title": "About",
+    "description": "Groove Launcher",
+    "version": "Version: {{version}}",
+    "webview_version": "WebView Version: {{version}}",
+    "reset_launcher": "Reset Launcher",
+    "check_updates": "Check Updates"
+  },
+  "apps": {
+    "uninstall_app": "Uninstall App"
+  },
+  "roles": {
+    "team_groove": "Team Groove",
+    "developer": "Developer",
+    "icon_design": "Icon Design",
+    "logo_design": "Logo Design"
+  }
+}

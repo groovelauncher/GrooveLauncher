@@ -15,13 +15,15 @@ function getLocalTime() {
 
 liveTileHelper.eventListener.on("draw", draw);
 function draw(args) {
-    const tileFeed = new liveTileHelper.TileFeed(liveTileHelper.TileType.STATIC, liveTileHelper.AnimationType.FLIP);
+    const tileFeed = new liveTileHelper.TileFeed({
+        type: liveTileHelper.TileType.STATIC
+    });
 
     const result = getLocalTime();
     console.log(result);
     tileFeed.addTile(tileFeed.Tile(
-        `<p class="show-m" style="margin: 0px; font-size: 60px; font-weight: 100; text-align: left; width: min-content; position: absolute; left: 12px;">${result[0]} <span style="font-size: 0.5em;position: relative; top: -20px;">${result[1]}</span></p>
-        <p class="show-w" style="margin: 0px; font-size: 100px; font-weight: 100; text-align: center; width: max-content;">${result[0]}<span style="font-size: 0.5em;">${result[1]}</span></p>
+        `<p class="show-m" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: left; width: min-content; position: absolute; left: 12px;">${result[0]} <span style="font-size: 0.5em;position: relative; top: -20px;">${result[1]}</span></p>
+        <p class="show-w" style="margin: 0px; font-size: 100px; font-weight: 200; text-align: center; width: max-content;">${result[0]}<span style="font-size: 0.5em;">${result[1]}</span></p>
         `
     ))
     return tileFeed;

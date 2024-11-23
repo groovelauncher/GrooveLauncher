@@ -77,6 +77,9 @@ const TileType = {
     CAROUSEL: "carousel",
     NOTIFICATION: "notification"
 }
+const TilePresets = {
+
+}
 Object.freeze(TileType);
 // Define the enum for animation types
 const AnimationType = {
@@ -93,14 +96,19 @@ class Tile {
     }
 }
 class TileFeed {
-    constructor(type = TileType.PAGES, animationType = AnimationType.FLIP, showAppTitle = true, duration = (5000 + Math.random() * 500)) {
-        if (!Object.values(TileType).includes(type)) {
+    constructor(options = {}) {
+        const defaults = {
+            type: TileType.PAGES,
+            animationType: AnimationType.FLIP,
+            showAppTitle: true,
+            duration: 5000 + Math.random() * 500,
+            noticationCount: null
+        };
+        Object.assign(this, defaults, options);
+
+        if (!Object.values(TileType).includes(this.type)) {
             throw new Error(`Invalid tile type. Must be one of: ${Object.values(TileType).join(', ')}`);
         }
-        this.type = type;
-        this.duration = duration;
-        this.animationType = animationType;
-        this.showAppTitle = showAppTitle;
         this.tiles = [];
     }
     Tile(contentHTML, background) {

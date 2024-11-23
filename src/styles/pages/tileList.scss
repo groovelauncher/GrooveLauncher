@@ -11,7 +11,7 @@
     --tile-list-animation-duration: 1s;
     --tile-list-animation-easing: cubic-bezier(.5, 0, 0, 1);
     --tile-list-flip-animation-duration: 1s;
-    --tile-list-flip-animation-easing: cubic-bezier(.2,1.25,.5,1);
+    --tile-list-flip-animation-easing: cubic-bezier(.2, 1.25, .5, 1);
 }
 
 body {
@@ -423,6 +423,11 @@ div.groove-home-tile {
         div.live-tile-container {
             display: none;
         }
+
+        img.groove-home-tile-imageicon {
+            visibility: visible !important;
+            display: block !important;
+        }
     }
 
 
@@ -508,7 +513,7 @@ div.groove-home-tile {
             &.tile-type-notification,
             &.tile-type-carousel {
                 div.live-tile-page {
-                    overflow: hidden;
+                    //overflow: hidden;
                     visibility: hidden;
 
                     &.hide-direction-0 {
@@ -525,6 +530,38 @@ div.groove-home-tile {
 
                     &.show-direction-1 {
                         animation: show-direction-page-1 var(--tile-list-animation-duration) var(--tile-list-animation-easing) forwards;
+                    }
+                }
+
+                div.live-tile-background {
+                    animation: live-tile-background-slide-up var(--animation-duration);
+
+                    &.hide-direction-0 {
+                        animation: hide-direction-page-0 var(--tile-list-animation-duration) var(--tile-list-animation-easing) forwards;
+                    }
+
+                    &.hide-direction-1 {
+                        animation: hide-direction-page-1 var(--tile-list-animation-duration) var(--tile-list-animation-easing) forwards;
+                    }
+
+                    @keyframes live-tile-background-fade-in {
+                        from {
+                            opacity: 0;
+                        }
+
+                        to {
+                            opacity: 1;
+                        }
+                    }
+
+                    &.show-direction-0 {
+                        animation: show-direction-page-0 var(--tile-list-animation-duration) var(--tile-list-animation-easing) forwards,
+                            live-tile-background-fade-in var(--tile-list-animation-duration) var(--tile-list-animation-easing) forwards;
+                    }
+
+                    &.show-direction-1 {
+                        animation: show-direction-page-1 var(--tile-list-animation-duration) var(--tile-list-animation-easing) forwards,
+                            live-tile-background-fade-in var(--animation-duration) var(--tile-list-animation-easing) forwards;
                     }
                 }
             }
@@ -579,8 +616,8 @@ div.groove-home-tile {
                         top: 0px;
                         width: 100%;
                         height: 100%;
-                        background-size: cover !important;
                         background-position: center !important;
+                        background-size: cover !important;
                         background-repeat: no-repeat !important;
                         z-index: -1;
 

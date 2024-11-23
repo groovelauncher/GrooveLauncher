@@ -156,7 +156,6 @@ class tileController {
 
     async draw() {
         try {
-            // Get response from worker
             const response = await this.sendMessageToWorker({
                 action: "draw",
                 data: { message: "Drawing from tile controller" },
@@ -167,64 +166,47 @@ class tileController {
                 throw new Error('Invalid response format: missing result');
             }
 
-            // Get DOM elements
             const tile = this.getDOMTile();
             const liveTileContainer = tile.querySelector('div.live-tile-container');
             const result = response.result;
-
-            // Store tile properties
             this.tileType = result.type;
             this.animationType = result.animationType;
-
-            // Update container attributes
+            // Update tile attributes and classes
             liveTileContainer.setAttribute("max-page",
                 result.type == TileType.STATIC ? 1 :
-                result.type == TileType.CAROUSEL ? result.tiles.length :
-                result.tiles.length + 1
+                    result.type == TileType.CAROUSEL ? result.tiles.length :
+                        result.tiles.length + 1
             );
-            liveTileContainer.style.setProperty('--animation-duration', result.duration);
-            liveTileContainer.setAttribute("current-page", Number(liveTileContainer.getAttribute("current-page")) || 0);
-            liveTileContainer.setAttribute("show-app-title", result.showAppTitle ? "true" : "false");
-
-            // Update tile classes
+            liveTileContainer.style.setProperty('--animation-duration', Math.ceil(result.duration) + "ms");
             liveTileContainer.classList.remove('tile-type-static', 'tile-type-carousel', 'tile-type-notification');
             liveTileContainer.classList.add(`tile-type-${result.type}`);
             tile.classList.remove('tile-type-static', 'tile-type-carousel', 'tile-type-notification');
             tile.classList.add(`tile-type-${result.type}`);
-            
-            // Handle app title visibility
+            liveTileContainer.setAttribute("current-page", Number(liveTileContainer.getAttribute("current-page")) || 0);
+            liveTileContainer.setAttribute("show-app-title", result.showAppTitle ? "true" : "false");
             tile.classList.remove("hide-app-title");
-            if (!result.showAppTitle) {
-                tile.classList.add("hide-app-title");
-            }
+            if (!result.showAppTitle) tile.classList.add("hide-app-title");
 
-            // Generate tile content HTML
+            // Build and sanitize content
             const content = result.tiles.map((tile, index) => {
-                const backgroundDiv = tile.background ? 
-                    `<div style="background: ${tile.background}" class="live-tile-background${tile.contentHTML ? ' bg-shade' : ''}"></div>` 
-                    : '';
-                return `<div class="live-tile-page" style="--page-index: ${index}">
-                    ${backgroundDiv}${tile.contentHTML}
-                </div>`;
+                return `<div class="live-tile-page" style="--page-index: ${index}">${tile.background ?
+                    `<div style="background: ${tile.background}" class="live-tile-background${tile.contentHTML ? ' bg-shade' : ''}"></div>` : ''
+                    }${tile.contentHTML}</div > `;
             }).join('');
 
-            // Sanitize and insert content
             const sanitized = DOMPurify.sanitize(content, {
                 ALLOWED_TAGS,
                 ALLOWED_ATTR
             });
             liveTileContainer.innerHTML = sanitized;
-
-            // Handle carousel first page visibility
+            // Set first page visible for carousel type
             if (result.type === TileType.CAROUSEL) {
                 const firstPage = liveTileContainer.querySelector('.live-tile-page');
                 if (firstPage) {
                     firstPage.style.visibility = 'visible';
                 }
             }
-
             return response;
-
         } catch (error) {
             console.error('Error in draw():', error);
             throw error;
@@ -276,10 +258,12 @@ class tileController {
         const pages = liveTileContainer.querySelectorAll('.live-tile-page');
         pages.forEach((page, index) => {
             page.classList.remove('show-direction-0', 'show-direction-1', 'hide-direction-0', 'hide-direction-1');
+            page.querySelector('div.live-tile-background').classList.remove('show-direction-0', 'show-direction-1', 'hide-direction-0', 'hide-direction-1');
             const pageIndex = this.tileType === TileType.NOTIFICATION ? index + 1 : index;
             if (pageIndex === nextPage || pageIndex === currentPage) {
                 page.style.visibility = "visible"
                 page.classList.add(`${pageIndex === nextPage ? 'show' : 'hide'}-direction-${direction}`);
+                if (!(nextPage == 0 || currentPage == 0)) page.querySelector('div.live-tile-background').classList.add(`${pageIndex === nextPage ? 'show' : 'hide'}-direction-${1 - direction}`);
             } else {
                 page.style.visibility = "hidden"
             }

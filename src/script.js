@@ -267,6 +267,15 @@ requestAnimationFrame(() => {
                 GrooveBoard.backendMethods.wallpaper.loadBlob(await imageStore.loadImage("wallpaper"))
             }
             next()
+        },
+        (next) => {
+            document.querySelector("#main-home-slider div.tile-list-inner-container").querySelectorAll("div.groove-home-tile").forEach(i => {
+                //console.log(i.getAttribute("packagename"))
+                //liveTileManager.registerLiveTileWorker(i.getAttribute("packagename"),"http://127.0.0.1:5500/www/assets/defaultlivetiles/helloworld.js")
+            })
+            liveTileManager.registerLiveTileWorker("com.google.android.deskclock","http://127.0.0.1:5500/www/assets/defaultlivetiles/clock.js")
+
+            next()
         }
     ],
         function () {
@@ -280,4 +289,4 @@ i18n.init()
 
 window.liveTileManager = liveTileManager
 
-liveTileManager.registerLiveTileWorker("com.google.android.deskclock","http://127.0.0.1:5500/www/assets/defaultlivetiles/helloworld.js")
+

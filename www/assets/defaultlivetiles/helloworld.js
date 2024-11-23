@@ -15,13 +15,16 @@ function getLocalTime() {
 
 liveTileHelper.eventListener.on("draw", draw);
 function draw(args) {
-    const tileFeed = new liveTileHelper.TileFeed(liveTileHelper.TileType.NOTIFICATION, liveTileHelper.AnimationType.SLIDE);
-
+    const tileFeed = new liveTileHelper.TileFeed({
+        type: liveTileHelper.TileType.NOTIFICATION,
+        animationType: liveTileHelper.AnimationType.SLIDE,
+        noticationCount: 2
+    });
     // Add both tiles to create rotation
     tileFeed.addTile(tileFeed.Tile(
-        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 100; text-align: center;">Hello</p>`, "red"));
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;">Hello</p>`, `url(https://picsum.photos/200?${Math.random() * 100})`));
     tileFeed.addTile(tileFeed.Tile(
-        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 100; text-align: center;">World</p>`, "blue"
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;">World</p>`, `url(https://picsum.photos/200?${Math.random() * 100})`
     ));
 
     return tileFeed;
@@ -31,16 +34,17 @@ function draw(args) {
 function scheduleRotation() {
     setInterval(() => {
         liveTileHelper.requestGoToNextPage();
-    }, 10000); // 10 seconds
+    }, 10000 + Math.random() * 5000); // 5 to 10 seconds
 }
 
 // Start the rotation
-scheduleRotation();
 
 liveTileHelper.eventListener.on("init", init);
 function init(args) {
     console.log("Init called:", args);
     liveTileHelper.requestRedraw();
+    scheduleRotation();
+
 }
 /*setInterval(() => {
     postMessage({

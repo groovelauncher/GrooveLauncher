@@ -279,3 +279,5 @@ requestAnimationFrame(() => {
 i18n.init()
 
 window.liveTileManager = liveTileManager
+
+liveTileManager.registerLiveTileWorker("com.google.android.deskclock","http://127.0.0.1:5500/www/assets/defaultlivetiles/helloworld.js")

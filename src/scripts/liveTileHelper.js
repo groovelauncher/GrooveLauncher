@@ -5,11 +5,23 @@ function requestRedraw(params) {
         data: params || {}
     });
 }
-function requestNextTile(params) {
-    console.log("Worker: Sending requestNextTile message");
+function requestGoToPage(page) {
+    console.log("Worker: Sending requestGoToPage message");
     postMessage({
-        action: "requestNextTile",
-        data: params || {}
+        action: "requestGoToPage",
+        data: page
+    });
+}
+function requestGoToNextPage() {
+    console.log("Worker: Sending requestGoToNextPage message");
+    postMessage({
+        action: "requestGoToNextPage",
+    });
+}
+function requestGoToPreviousPage() {
+    console.log("Worker: Sending requestGoToPreviousPage message");
+    postMessage({
+        action: "requestGoToPreviousPage",
     });
 }
 onmessage = async function (event) {
@@ -63,6 +75,7 @@ const eventListener = {
 const TileType = {
     STATIC: "static",
     CAROUSEL: "carousel",
+    NOTIFICATION: "notification"
 }
 Object.freeze(TileType);
 // Define the enum for animation types
@@ -73,23 +86,25 @@ const AnimationType = {
 Object.freeze(AnimationType);
 
 class Tile {
-    constructor(id, foregroundSvg, backgroundSvg) {
+    constructor(id, contentHTML, background) {
         this.id = id || Math.random().toString(36).substring(2, 15);
-        this.foregroundSvg = foregroundSvg
-        this.backgroundSvg = backgroundSvg
+        this.contentHTML = contentHTML;
+        this.background = background;
     }
 }
 class TileFeed {
-    constructor(type = TileType.PAGES, animationType = AnimationType.FLIP) {
+    constructor(type = TileType.PAGES, animationType = AnimationType.FLIP, showAppTitle = true, duration = (5000 + Math.random() * 500)) {
         if (!Object.values(TileType).includes(type)) {
             throw new Error(`Invalid tile type. Must be one of: ${Object.values(TileType).join(', ')}`);
         }
         this.type = type;
+        this.duration = duration;
         this.animationType = animationType;
+        this.showAppTitle = showAppTitle;
         this.tiles = [];
     }
-    Tile(foregroundSvg, backgroundSvg) {
-        return new Tile(foregroundSvg, backgroundSvg);
+    Tile(contentHTML, background) {
+        return new Tile(Math.random().toString(36).substring(2, 15), contentHTML, background);
     }
     addTile(tile) {
         this.tiles.push(tile);
@@ -106,8 +121,14 @@ class TileFeed {
             this.tiles = this.tiles.filter(t => t !== tileOrId);
         }
     }
+    stringify() {
+        return JSON.stringify(this);
+    }
 }
 global.liveTileHelper = {
-    requestRedraw, requestNextTile, eventListener, TileFeed, Tile, TileType, AnimationType
+    requestRedraw, requestGoToPage, requestGoToNextPage, requestGoToPreviousPage, eventListener, TileFeed, Tile, TileType, AnimationType
+}
+export {
+    requestRedraw, requestGoToPage, requestGoToNextPage, requestGoToPreviousPage, eventListener, TileFeed, Tile, TileType, AnimationType
 }
 export default liveTileHelper

@@ -1,4 +1,14 @@
-import * as liveTileHelper from "./liveTileHelper.js";
+import DOMPurify from 'dompurify';
+import { TileType, AnimationType } from "./liveTileHelper.js";
+const ALLOWED_TAGS = [
+    'div', 'span', 'a', 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'p', 'ul', 'ol', 'li', 'button', 'i', 'b', 'u', 'em', 'strong',
+    'br', 'figure', 'figcaption', 'svg', 'video', 'audio'
+];
+const ALLOWED_ATTR = [
+    'href', 'src', 'alt', 'style', 'class', 'id', 'title', 'target',
+    'data-*', 'aria-*', 'controls', 'autoplay', 'loop'
+];
 function isOnMainThread() {
     return !!document.querySelector("div.tile-list-inner-container") && window["GrooveRole"] === "main";
 }
@@ -80,8 +90,14 @@ function onWorkerMessage(event) {
                 }
             }, 1000);
             break;
-        case 'requestNextTile':
-            console.log('Handling requestNextTile with data:', message.data);
+        case 'requestGoToPage':
+            controller.goToPage(message.data);
+            break;
+        case 'requestGoToNextPage':
+            controller.goToNextPage();
+            break;
+        case 'requestGoToPreviousPage':
+            controller.goToPreviousPage();
             break;
         case 'test':
             console.log('Received test message from worker:', message.data);
@@ -123,17 +139,96 @@ class tileController {
     constructor(packageName, worker) {
         this.packageName = packageName;
         this.page = 0;
-        this.tileType = 0;
+        this.tileType = TileType.STATIC;
+        this.animationType = AnimationType.SLIDE;
         this.worker = worker || window.liveTiles[packageName]["worker"];
         this.lastDrawTime = 0;
     }
+    getDOMTile() {
+        let tile = document.querySelector(`div.groove-home-tile.live-tile[packagename="${this.packageName}"]`);
+        if (!tile) {
+            initializeLiveTiles();
+            tile = document.querySelector(`div.groove-home-tile.live-tile[packagename="${this.packageName}"]`);
+            if (!tile) throw new Error(`Tile for package ${this.packageName} not found`);
+        }
+        return tile;
+    }
+
     async draw() {
-        const response = await this.sendMessageToWorker({
-            action: "draw",
-            data: { message: "Drawing from tile controller" },
-        });
-        return response;
-        console.log('Worker response:', response);
+        try {
+            // Get response from worker
+            const response = await this.sendMessageToWorker({
+                action: "draw",
+                data: { message: "Drawing from tile controller" },
+            });
+            console.log("Drawing from tile controller", response);
+
+            if (!response.result) {
+                throw new Error('Invalid response format: missing result');
+            }
+
+            // Get DOM elements
+            const tile = this.getDOMTile();
+            const liveTileContainer = tile.querySelector('div.live-tile-container');
+            const result = response.result;
+
+            // Store tile properties
+            this.tileType = result.type;
+            this.animationType = result.animationType;
+
+            // Update container attributes
+            liveTileContainer.setAttribute("max-page",
+                result.type == TileType.STATIC ? 1 :
+                result.type == TileType.CAROUSEL ? result.tiles.length :
+                result.tiles.length + 1
+            );
+            liveTileContainer.style.setProperty('--animation-duration', result.duration);
+            liveTileContainer.setAttribute("current-page", Number(liveTileContainer.getAttribute("current-page")) || 0);
+            liveTileContainer.setAttribute("show-app-title", result.showAppTitle ? "true" : "false");
+
+            // Update tile classes
+            liveTileContainer.classList.remove('tile-type-static', 'tile-type-carousel', 'tile-type-notification');
+            liveTileContainer.classList.add(`tile-type-${result.type}`);
+            tile.classList.remove('tile-type-static', 'tile-type-carousel', 'tile-type-notification');
+            tile.classList.add(`tile-type-${result.type}`);
+            
+            // Handle app title visibility
+            tile.classList.remove("hide-app-title");
+            if (!result.showAppTitle) {
+                tile.classList.add("hide-app-title");
+            }
+
+            // Generate tile content HTML
+            const content = result.tiles.map((tile, index) => {
+                const backgroundDiv = tile.background ? 
+                    `<div style="background: ${tile.background}" class="live-tile-background${tile.contentHTML ? ' bg-shade' : ''}"></div>` 
+                    : '';
+                return `<div class="live-tile-page" style="--page-index: ${index}">
+                    ${backgroundDiv}${tile.contentHTML}
+                </div>`;
+            }).join('');
+
+            // Sanitize and insert content
+            const sanitized = DOMPurify.sanitize(content, {
+                ALLOWED_TAGS,
+                ALLOWED_ATTR
+            });
+            liveTileContainer.innerHTML = sanitized;
+
+            // Handle carousel first page visibility
+            if (result.type === TileType.CAROUSEL) {
+                const firstPage = liveTileContainer.querySelector('.live-tile-page');
+                if (firstPage) {
+                    firstPage.style.visibility = 'visible';
+                }
+            }
+
+            return response;
+
+        } catch (error) {
+            console.error('Error in draw():', error);
+            throw error;
+        }
     }
     sendMessageToWorker(message, timeout = 10000) {
         message.id = generateUniqueId();
@@ -155,8 +250,92 @@ class tileController {
             this.worker.postMessage(message);
         });
     }
-    goToPage() {
-        console.log("Going to page for package:", this.packageName);
+    _goToPage_slide(page, direction) {
+        const tile = this.getDOMTile();
+        const liveTileContainer = tile.querySelector('div.live-tile-container');
+        const maxPage = parseInt(liveTileContainer.getAttribute("max-page")) || 1;
+        const currentPage = parseInt(liveTileContainer.getAttribute("current-page")) || 0;
+        const nextPage = Math.min(Math.max(0, page), maxPage - 1);
+        // Calculate direction considering circular navigation
+        if (currentPage === nextPage) {
+            return false;
+        } else if (
+            (nextPage > currentPage && nextPage - currentPage <= maxPage / 2) ||
+            (nextPage < currentPage && currentPage - nextPage > maxPage / 2)
+        ) {
+            direction = direction == undefined ? 1 : direction; // Forward
+        } else {
+            direction = direction == undefined ? 0 : direction; // Backward
+        }
+        liveTileContainer.classList.remove('direction-forward', 'direction-backward');
+        liveTileContainer.classList.add(`direction-${direction}`);
+        liveTileContainer.setAttribute("current-page", nextPage);
+        liveTileContainer.style.setProperty('--current-page', nextPage);
+
+        // Update direction classes for all pages
+        const pages = liveTileContainer.querySelectorAll('.live-tile-page');
+        pages.forEach((page, index) => {
+            page.classList.remove('show-direction-0', 'show-direction-1', 'hide-direction-0', 'hide-direction-1');
+            const pageIndex = this.tileType === TileType.NOTIFICATION ? index + 1 : index;
+            if (pageIndex === nextPage || pageIndex === currentPage) {
+                page.style.visibility = "visible"
+                page.classList.add(`${pageIndex === nextPage ? 'show' : 'hide'}-direction-${direction}`);
+            } else {
+                page.style.visibility = "hidden"
+            }
+        });
+
+        const iconElement = tile.querySelector('img.groove-home-tile-imageicon');
+        iconElement.classList.add('hide-dsfgasdirection-0');
+        console.log("iconElement", this.tileType)
+        iconElement.classList.remove('hide-direction-0', 'hide-direction-1', 'show-direction-0', 'show-direction-1');
+        // Handle notification tile icon visibility
+        if (this.tileType == TileType.NOTIFICATION && iconElement) {
+            if (nextPage == 0 || currentPage == 0) {
+                iconElement.style.visibility = 'visible';
+                if (nextPage == 0) {
+                    iconElement.classList.add(`show-direction-${direction}`);
+                } else {
+                    iconElement.classList.add(`hide-direction-${direction}`);
+                }
+            } else {
+                iconElement.style.visibility = 'hidden';
+            }
+        }
+
+        console.log("icon direction", direction)
+        return true;
+    }
+    _goToPage_flip(page, direction) {
+        const tile = this.getDOMTile();
+        const liveTileContainer = tile.querySelector('div.live-tile-container');
+        const maxPage = parseInt(liveTileContainer.getAttribute("max-page")) || 1;
+        const currentPage = parseInt(liveTileContainer.getAttribute("current-page")) || 0;
+        const nextPage = Math.min(Math.max(0, page), maxPage - 1);
+
+    }
+    goToPage(page, direction) {
+        if (this.animationType === AnimationType.SLIDE) {
+            return this._goToPage_slide(page, direction);
+        } else {
+            return this._goToPage_flip(page, direction);
+        }
+    }
+    goToNextPage() {
+        const tile = this.getDOMTile();
+        const liveTileContainer = tile.querySelector('div.live-tile-container');
+        const maxPage = parseInt(liveTileContainer.getAttribute("max-page")) || 1;
+        const currentPage = parseInt(liveTileContainer.getAttribute("current-page")) || 0;
+        const nextPage = (currentPage + 1) % maxPage;
+        return this.goToPage(nextPage);
+    }
+    goToPreviousPage() {
+        const tile = this.getDOMTile();
+        const liveTileContainer = tile.querySelector('div.live-tile-container');
+        const maxPage = parseInt(liveTileContainer.getAttribute("max-page")) || 1;
+        const currentPage = parseInt(liveTileContainer.getAttribute("current-page")) || 0;
+        const nextPage = (currentPage - 1 + maxPage) % maxPage;
+        return this.goToPage(nextPage);
     }
 }
 function initializeLiveTiles() {
@@ -165,9 +344,9 @@ function initializeLiveTiles() {
         const packageName = tile.getAttribute('packagename');
         if (packageName && window.liveTiles[packageName]) {
             const innerTile = tile.querySelector('div.groove-home-inner-tile');
-            if (innerTile && !innerTile.querySelector('div.liveTileContainer')) {
+            if (innerTile && !innerTile.querySelector('div.live-tile-container')) {
                 const liveTileContainer = document.createElement('div');
-                liveTileContainer.className = 'liveTileContainer';
+                liveTileContainer.className = 'live-tile-container';
                 innerTile.appendChild(liveTileContainer);
             }
             tile.classList.add('live-tile');

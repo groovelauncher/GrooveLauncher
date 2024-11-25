@@ -7,14 +7,14 @@
     "build-watch:webpack": "npx webpack --watch",
     "build-watch:scss": "npx sass --no-source-map --watch src/styles.scss www/dist/styles.css",
     "build-watch:android": "npx concurrently \"npm run build:android\" \"chokidar 'www/**/*' -c 'npm run build:android'\"",
-    "build-watch:internal-apps": "npx concurrently \"node build-internal-apps.js\" \"chokidar 'src/apps/**/*' -c 'npm run build:internal-apps'\"",
+    "build-watch:internal-apps": "npx concurrently \"node ./scripts/build-internal-apps.js\" \"chokidar 'src/apps/**/*' -c 'npm run build:internal-apps'\"",
     "build-watch:web": "npx concurrently \"npm run build-watch:webpack\" \"npm run build-watch:scss\" \"npm run build-watch:internal-apps\"",
     "build": "npm run build:webpack && npm run build:scss && npm run build:internal-apps && npm run build:android",
     "build:webpack": "npx webpack",
     "build:scss": "npx sass --no-source-map src/styles.scss www/dist/styles.css",
-    "build:android": "rm -rf android/app/src/main/assets/* && cp -R www/* android/app/src/main/assets/",
-    "build:internal-apps": "node build-internal-apps.js",
-    "build:production": "rm -rf android/app/src/main/assets/* && npx webpack --env production && npx sass --no-source-map --style=compressed src/styles.scss www/dist/styles.css && node build-internal-apps.js --production && npm run build:android && echo Compilation completed."
+    "build:android": "node ./scripts/build-android.js",
+    "build:internal-apps": "node ./scripts/build-internal-apps.js",
+    "build:production": "rm -rf android/app/src/main/assets/* && npx webpack --env production && npx sass --no-source-map --style=compressed src/styles.scss www/dist/styles.css && node ./scripts/build-internal-apps.js --production && npm run build:android && echo Compilation completed."
   },
   "author": "",
   "license": "UNLICENSED",
@@ -28,6 +28,7 @@
     "gridstack": "^10.3.1",
     "isotolanguage": "^1.3.1",
     "jquery": "^3.7.1",
+    "json5": "^2.2.3",
     "normalize-diacritics-es": "^1.0.8"
   },
   "devDependencies": {

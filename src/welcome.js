@@ -9,6 +9,7 @@ window.i18n = i18n;
 const GrooveMockInstance = !window.Groove
 window.GrooveMockInstance = GrooveMockInstance
 if (GrooveMockInstance) {
+    //window.Groove = new GrooveMock("./mock/apps.json")
     window.Groove = new GrooveMock("./mock/apps.json")
     document.body.classList.add("groove-mock")
 }

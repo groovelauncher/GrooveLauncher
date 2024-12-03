@@ -202,61 +202,61 @@ const boardMethods = {
     return el;
   },
   createAppMenu: (packageName) => {
-    const el = GrooveElements.wAppMenu(packageName, {
-      "pin to home": () => {
-        const findTile = $(
-          `div.inner-page.app-list-page > div.app-list > div.app-list-container > div.groove-element.groove-app-tile[packagename="${packageName}"]`
-        )[0];
-        const iconpack = findTile.classList.contains("iconpack0")
-          ? 0
-          : findTile.classList.contains("iconpack1")
-            ? 1
-            : 2;
-        const el = GrooveBoard.boardMethods.createHomeTile(
-          [2, 2],
-          {
-            packageName: findTile.getAttribute("packagename"),
-            title: findTile.getAttribute("title"),
-            icon: findTile.getAttribute("icon"),
-            iconbg: findTile.getAttribute("icon-bg"),
-            imageIcon: findTile.getAttribute("imageicon") == "true",
-            //  supportedSizes: ["s", "m", "w", "l"]
-            supportedSizes: ["s", "m", "w"],
-          },
-          true
-        );
+    var entries = {}
+    entries[window.i18n.t("common.app_menu.pin_to_home")] = () => {
+      const findTile = $(
+        `div.inner-page.app-list-page > div.app-list > div.app-list-container > div.groove-element.groove-app-tile[packagename="${packageName}"]`
+      )[0];
+      const iconpack = findTile.classList.contains("iconpack0")
+        ? 0
+        : findTile.classList.contains("iconpack1")
+          ? 1
+          : 2;
+      const el = GrooveBoard.boardMethods.createHomeTile(
+        [2, 2],
+        {
+          packageName: findTile.getAttribute("packagename"),
+          title: findTile.getAttribute("title"),
+          icon: findTile.getAttribute("icon"),
+          iconbg: findTile.getAttribute("icon-bg"),
+          imageIcon: findTile.getAttribute("imageicon") == "true",
+          //  supportedSizes: ["s", "m", "w", "l"]
+          supportedSizes: ["s", "m", "w"],
+        },
+        true
+      );
 
-        el.classList.add("iconpack" + iconpack);
-        scrollers.tile_page_scroller.refresh();
+      el.classList.add("iconpack" + iconpack);
+      scrollers.tile_page_scroller.refresh();
+      setTimeout(() => {
+        scrollers.main_home_scroller.scrollTo(0, 0, 750);
         setTimeout(() => {
-          scrollers.main_home_scroller.scrollTo(0, 0, 750);
-          setTimeout(() => {
-            scrollers.tile_page_scroller.scrollTo(
-              0,
-              -el.offsetTop - el.offsetHeight / 2 + window.innerHeight / 2,
-              500
-            );
-          }, 300);
-        }, 300);
-
-        backendMethods.homeConfiguration.save()
-      },
-      uninstall: () => {
-        if (GrooveBoard.backendMethods.packageManagerProvider.get() == 0) {
-          Groove.uninstallApp(packageName, 0);
-        } else {
-          parent.GrooveBoard.alert(
-            "Uninstall this app?",
-            "This app, plus any information it contains, will be deleted from your device.",
-            [{
-              title: "Yes", style: "default", inline: true, action: () => {
-                Groove.uninstallApp(packageName, GrooveBoard.backendMethods.packageManagerProvider.get());
-              }
-            }, { title: "No", style: "default", inline: true, action: () => { } }]
+          scrollers.tile_page_scroller.scrollTo(
+            0,
+            -el.offsetTop - el.offsetHeight / 2 + window.innerHeight / 2,
+            500
           );
-        }
-      },
-    });
+        }, 300);
+      }, 300);
+
+      backendMethods.homeConfiguration.save()
+    }
+    entries[window.i18n.t("common.app_menu.uninstall")] = () => {
+      if (GrooveBoard.backendMethods.packageManagerProvider.get() == 0) {
+        Groove.uninstallApp(packageName, 0);
+      } else {
+        parent.GrooveBoard.alert(
+          window.i18n.t("common.alerts.uninstall.title"),
+          window.i18n.t("common.alerts.uninstall.message"),
+          [{
+            title: window.i18n.t("common.actions.yes"), style: "default", inline: true, action: () => {
+              Groove.uninstallApp(packageName, GrooveBoard.backendMethods.packageManagerProvider.get());
+            }
+          }, { title: window.i18n.t("common.actions.no"), style: "default", inline: true, action: () => { } }]
+        );
+      }
+    }
+    const el = GrooveElements.wAppMenu(packageName, entries);
     document.querySelector("div.app-list-page").appendChild(el);
     if (document.querySelectorAll(`div.groove-home-tile[packagename="${packageName}"]`).length > 0) {
       el.querySelector("div:nth-child(1)").classList.add("disabled")

@@ -56,6 +56,7 @@ class GrooveMock {
         return "App"
     }
     getAppIconURL(packageName = 'undefined') {
+        //const baseURL = new URL('./mock/apps.json', window.location.href);
         const baseURL = new URL('./mock/apps.json', window.location.href);
         const iconPath = baseURL.href.split('/').slice(0, -1).join('/') + CONSTANTS.MOCK_ICON_PATH;
 
@@ -111,10 +112,13 @@ class GrooveMock {
         window.open(url, "_blank")
     }
     getAppVersion() {
-        return "0.4.3-beta.4"
+        return "0.4.2-beta.4"
     }
     getWebViewVersion() {
-        return "chrome"
+        const versionName = "chrome"
+        const versionCode = "chrome"
+        return versionName + " (code: " + versionCode + ")";
+
     }
     isDeviceRooted() { return false }
     isShizukuAvailable() { return true }

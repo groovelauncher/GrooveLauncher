@@ -5,14 +5,14 @@ document.querySelector("#uninstallappbutton").addEventListener("flowClick", e =>
         pageNavigation.settingsHome()
     } else {
         parent.GrooveBoard.alert(
-            "Uninstall this app?",
-            "This app, plus any information it contains, will be deleted from your device.",
+            window.i18n.t("common.alerts.uninstall.title"),
+            window.i18n.t("common.alerts.uninstall.message"),
             [{
-                title: "Yes", style: "default", inline: true, action: () => {
+                title: window.i18n.t("common.actions.yes"), style: "default", inline: true, action: () => {
                     Groove.uninstallApp(packageName, parent.GrooveBoard.backendMethods.packageManagerProvider.get());
                     pageNavigation.settingsHome()
                 }
-            }, { title: "No", style: "default", inline: true, action: () => { } }]
+            }, { title: window.i18n.t("common.actions.no"), style: "default", inline: true, action: () => { } }]
         );
     }
 })

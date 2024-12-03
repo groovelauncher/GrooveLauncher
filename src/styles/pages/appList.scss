@@ -74,6 +74,10 @@ input.app-list-search {
   &:focus {
     background: white;
     box-shadow: inset 0px 0px 0px 4px var(--accent-color);
+
+    &::placeholder {
+      color: transparent;
+    }
   }
 
   font-size: 23px;
@@ -120,7 +124,7 @@ div.inner-page.app-list-page {
     div.app-list-container,
     #search-icon,
     input.app-list-search {
-      transition: transform .25s;
+      transition: transform .4s cubic-bezier(.5,0,0,1);
     }
 
     &.search-mode {
@@ -142,7 +146,8 @@ div.inner-page.app-list-page {
         // transform: translateY(30px);
         @keyframes randanim00 {
           from {
-            transform: translateY(-20px);
+            transform: translateY(-50px);
+            padding-left: 83px;
           }
 
           to {
@@ -150,7 +155,7 @@ div.inner-page.app-list-page {
           }
         }
 
-        animation: randanim00 .25s;
+        animation: randanim00 .4s cubic-bezier(.5,0,0,1);
         padding-top: calc(83px + var(--window-inset-top));
         padding-left: 19px;
         padding-right: 19px;
@@ -186,7 +191,9 @@ div.inner-page.app-list-page {
           }
 
           from {
-            transform: translateY(20px);
+            transform: translateY(50px);
+            //transform: translateY(-50px);
+            padding-left: 19px;
           }
         }
 

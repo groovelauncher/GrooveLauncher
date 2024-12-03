@@ -1,5 +1,6 @@
 import jQuery from "jquery";
 import _ from "lodash";
+import i18n from "../localeManager";
 var $ = jQuery
 
 const appListPage = $("div.inner-page.app-list-page")
@@ -12,16 +13,17 @@ var isSearchModeOn = false
 $("div.groove-element.groove-app-tile.groove-letter-tile")
 function searchResultClick(e) {
     if (!e.target.canClick || e.target.appMenuState) return;
-    
+
     $("div.groove-app-tile").off("flowClick", searchResultClick)
     e.target.classList.add("app-transition-selected")
     appTransition.onPause()
+    const packageName = e.target.getAttribute("packagename")
     setTimeout(() => {
-        Groove.launchApp(e.target.getAttribute("packagename"))
+        Groove.launchApp(packageName)
         setTimeout(() => {
             searchModeSwitch.off()
         }, 100);
-    }, 1000);
+    }, packageName.startsWith("groove.internal") ? 500 : 1000);
 
 
 }
@@ -214,7 +216,7 @@ $(window).on("pointerdown", function (e) {
         e.target.appMenu = false
         e.target.appMenuState = false
         e.target.appRect = e.target.getBoundingClientRect()
-        
+
         clearTimeout(window.appMenuCreationFirstTimeout)
         clearTimeout(window.appMenuCreationSecondTimeout)
         $("div.groove-app-menu").remove()
@@ -239,7 +241,7 @@ $(window).on("pointerdown", function (e) {
             }, 0);
             e.target.style.visibility = "hidden"
 
-            if (optionalTop + 154  >= window.innerHeight - windowInsets().bottom) appMenu.classList.add("intro-bottom")
+            if (optionalTop + 154 >= window.innerHeight - windowInsets().bottom) appMenu.classList.add("intro-bottom")
 
             e.target.appMenu = appMenu
             GrooveBoard.backendMethods.navigation.push("appMenuOn", () => { }, () => {
@@ -359,3 +361,17 @@ function stickyLetter(scroll) {
     window.stickyLetterTimeout = setTimeout(() => {
     }, 10);
 }
+
+const appSearchNoResult = document.querySelector("div.app-search-no-result")
+async function updateLocaleInfo() {
+    appListSearch.attr("placeholder", i18n.toLowerCase(i18n.t("common.search.title")))
+    appSearchNoResult.innerHTML = i18n.t("common.search.no_results", {
+        query: `<span style="color: var(--accent-color);">SEARCH</span>`
+    })
+}
+updateLocaleInfo()
+window.addEventListener("localeChanged", async () => {
+    await i18n.init(true)
+    updateLocaleInfo()
+})
+window.addEventListener("localeLoaded", updateLocaleInfo)

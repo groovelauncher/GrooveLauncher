@@ -1,22 +1,25 @@
+import { version } from "dompurify";
+
 window.Groove = window.Groove || window.parent.Groove
 document.querySelector("#resetbtn").addEventListener("flowClick", () => {
 
     window.parent.GrooveBoard.alert(
-        "Reset Groove Launcher?",
-        "This will reset your launcher to its default settings. All customizations will be lost.",
+        window.i18n.t("settings.alerts.reset.title"),
+        window.i18n.t("settings.alerts.reset.message"),
         [{
-            title: "Yes", style: "default", inline: true, action: async () => {
+            title: window.i18n.t("common.actions.yes"), style: "default", inline: true, action: async () => {
                 await window.parent.GrooveBoard.backendMethods.reset()
                 appViewEvents.reloadApp()
             }
-        }, { title: "No", style: "default", inline: true, action: () => { } }]
+        }, { title: window.i18n.t("common.actions.no"), style: "default", inline: true, action: () => { } }]
     );
 })
 function alreadyUpToDate() {
     window.parent.GrooveBoard.alert(
-        "Up to Date!",
+        window.i18n.t("settings.alerts.up_to_date.title"),
+        window.i18n.t("settings.alerts.up_to_date.message"),
         "You have the grooviest version of Groove Launcher.",
-        [{ title: "Ok", style: "default", inline: true, action: () => { } }]
+        [{ title: window.i18n.t("common.actions.ok"), style: "default", inline: true, action: () => { } }]
     );
 }
 function formatFileSize(size) {
@@ -45,14 +48,17 @@ document.querySelector("#updatebutton").addEventListener("flowClick", (e) => {
                 } else {
                     const updateUrl = update.assets.length == 1 ? update.assets[0].browser_download_url : update.html_url
                     parent.GrooveBoard.alert(
-                        "Update Available!",
-                        update.assets.length == 1 ? `A new version <strong>(${update.name})</strong> is available, sized at ${formatFileSize(update.assets[0].size)}. Would you like to download it?`
-                            : `A new version <strong>${update.name}</strong> is available. Would you like to download it?`,
+                        window.i18n.t("settings.alerts.update_available.title"),
+                        update.assets.length == 1 ?
+                            //`A new version <strong>(${update.name})</strong> is available, sized at ${formatFileSize(update.assets[0].size)}. Would you like to download it?`
+                            window.i18n.t("settings.alerts.update_available.message", { version: update.name, size: formatFileSize(update.assets[0].size) })
+                            :
+                            window.i18n.t("settings.alerts.update_available.message2", { version: update.name }),
                         [{
-                            title: "Yes", style: "default", inline: true, action: () => {
+                            title: window.i18n.t("common.actions.yes"), style: "default", inline: true, action: () => {
                                 Groove.openURL(updateUrl)
                             }
-                        }, { title: "No", style: "default", inline: true, action: () => { } }]
+                        }, { title: window.i18n.t("common.actions.no"), style: "default", inline: true, action: () => { } }]
                     );
                 }
 
@@ -63,9 +69,9 @@ document.querySelector("#updatebutton").addEventListener("flowClick", (e) => {
         })
         .catch(error => {
             window.parent.GrooveBoard.alert(
-                "Update Check Failed!",
-                "Unable to check for app updates. Please try again later.",
-                [{ title: "Ok", style: "default", inline: true, action: () => { } }]
+                window.i18n.t("settings.alerts.update_check_failed.title"),
+                window.i18n.t("settings.alerts.update_check_failed.message"),
+                [{ title: window.i18n.t("common.actions.ok"), style: "default", inline: true, action: () => { } }]
             );
             console.error('Error:', error)
         });

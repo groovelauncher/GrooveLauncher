@@ -884,15 +884,18 @@ button.metro-button.spinner {
             height: 192px;
 
             div.expanded-panel {
-                animation: expand-panel .2s ease-in forwards;
+                animation: expand-panel .5s .2s cubic-bezier(.25, 2, .5, 1) forwards;
+                opacity: 0;
                 transform: perspective(var(--flow-perspective)) rotateX(-0deg);
                 transform-origin: 50% -25%;
                 @keyframes expand-panel {
                     from {
+                        opacity: 1;
                         transform: perspective(var(--flow-perspective)) rotateX(-90deg);
                     }
 
                     to {
+                        opacity: 1;
                         transform: perspective(var(--flow-perspective)) rotateX(-0deg);
                     }
                 }

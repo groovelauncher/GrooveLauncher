@@ -3,6 +3,7 @@ window.GrooveRole = "main"
 const GrooveMockInstance = !window.Groove
 window.GrooveMockInstance = GrooveMockInstance
 if (GrooveMockInstance) {
+    //window.Groove = new GrooveMock("./mock/apps.json")
     window.Groove = new GrooveMock("./mock/apps.json")
     window.BuildConfig = new BuildConfigMock()
     document.body.classList.add("groove-mock")
@@ -28,6 +29,7 @@ window.normalizeDiacritics = (input = "") => {
     return normalize(input)
 }
 import BScroll from "better-scroll";
+import i18n from "./scripts/localeManager.js";
 
 window.imageStore = imageStore
 
@@ -273,8 +275,8 @@ requestAnimationFrame(() => {
                 //console.log(i.getAttribute("packagename"))
                 //liveTileManager.registerLiveTileWorker(i.getAttribute("packagename"),"http://127.0.0.1:5500/www/assets/defaultlivetiles/helloworld.js")
             })
-            liveTileManager.registerLiveTileWorker("com.google.android.deskclock","http://127.0.0.1:5500/www/assets/defaultlivetiles/clock.js")
-
+            liveTileManager.registerLiveTileWorker("com.google.android.deskclock",new URL("./www/assets/defaultlivetiles/clock.js",location.origin).href)
+            //liveTileManager.registerLiveTileWorker("com.google.android.apps.youtube.music",new URL("./www/assets/defaultlivetiles/helloworld.js",location.origin).href)
             next()
         }
     ],
@@ -285,8 +287,10 @@ requestAnimationFrame(() => {
 })
 
 //GrooveBoard.alert("CAK", BuildConfig.CAK())
-i18n.init()
+
 
 window.liveTileManager = liveTileManager
 
 
+await i18n.init()
+i18n.translateDOM()

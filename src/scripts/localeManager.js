@@ -1,4 +1,5 @@
 import * as ITL from 'ISOToLanguage';
+import JSON5 from 'json5';
 window.ITL = ITL;
 class Locale {
   constructor(locale) {
@@ -11,32 +12,34 @@ function remoteFiles(locale = "en-US") {
   return Object.fromEntries(files.map(file => [file, `${mainURL}/${file}.json`]))
 }
 const localeNames = {
+  "key": { name: "DebugKey", nativeName: "DebugKey" },
+  "index": { name: "DebugIndex", nativeName: "DebugIndex" },
+  "ar": { name: "Arabic", nativeName: "العربية" },
   "az": { name: "Azerbaijani", nativeName: "Azərbaycan Dili" },
   "bg": { name: "Bulgarian", nativeName: "Български" },
   "bs": { name: "Bosnian", nativeName: "Bosanski" },
+  "zh-CN": { name: "Chinese (Simplified)", nativeName: "中文 (简体)" },
+  "zh-TW": { name: "Chinese (Traditional)", nativeName: "中文 (繁體)" },
   "cs": { name: "Czech", nativeName: "Čeština" },
   "da": { name: "Danish", nativeName: "Dansk" },
-  "el": { name: "Greek", nativeName: "Ελληνικά" },
-  "ar": { name: "Arabic", nativeName: "العربية" },
-  "he": { name: "Hebrew", nativeName: "עברית" },
   "nl": { name: "Dutch", nativeName: "Nederlands" },
-  "pl": { name: "Polish", nativeName: "Polski" },
-  "uk": { name: "Ukranian", nativeName: "Українська" },
-  "es-419": { name: "Spanish (Latin America)", nativeName: "Español (Latinoamérica)" },
-  "es-ES": { name: "Spanish (Spain)", nativeName: "Español (España)" },
   "fi": { name: "Finnish", nativeName: "Suomi" },
   "fr": { name: "French", nativeName: "Français" },
+  "el": { name: "Greek", nativeName: "Ελληνικά" },
+  "he": { name: "Hebrew", nativeName: "עברית" },
   "ja": { name: "Japanese", nativeName: "日本語" },
   "ko": { name: "Korean", nativeName: "한국어" },
+  "pl": { name: "Polish", nativeName: "Polski" },
   "ro": { name: "Romanian", nativeName: "Română" },
   "ru": { name: "Russian", nativeName: "Русский" },
-  "zh-CN": { name: "Chinese (Simplified)", nativeName: "中文 (简体)" },
-  "zh-TW": { name: "Chinese (Traditional)", nativeName: "中文 (繁體)" }
+  "es-419": { name: "Spanish (Latin America)", nativeName: "Español (Latinoamérica)" },
+  "es-ES": { name: "Spanish (Spain)", nativeName: "Español (España)" },
+  "uk": { name: "Ukranian", nativeName: "Українська" }
 }
 window.remoteFiles = remoteFiles;
 const localization = {
   setLanguage: (languageId) => {
-    LocaleStore.setLocale(languageId);
+    //localeStore.setLocale(languageId);
   },
   getAllLanguages: (() => {
     let lastCall = 0;
@@ -148,6 +151,9 @@ class LocaleManager {
   getLocaleName(locale) {
     const localeCode = locale || window._i18n.currentLocale;
 
+    if (locale == "lol" || locale == "lol-US") {
+      return { name: "LOLCAT", nativeName: "LOLCAT" }
+    }
     // First check if we have it in localeNames
     const simpleCode = localeCode.split('-')[0];
     if (localeNames[localeCode]) {
@@ -211,6 +217,7 @@ class LocaleManager {
       console.error('Failed to load translations:', err);
       throw err;
     }
+    window.dispatchEvent(new CustomEvent("localeLoaded"));
   }
 
   t(key, params = {}) {
@@ -315,8 +322,7 @@ class LocaleManager {
     const paramsAttr = el.getAttribute('data-i18n-params');
     if (paramsAttr) {
       try {
-        const quotedJson = paramsAttr.replace(/(\b\w+\b)\s*:/g, '"$1":');
-        Object.assign(params, JSON.parse(quotedJson));
+        Object.assign(params, JSON5.parse(paramsAttr));
       } catch (e) {
         console.warn('Invalid i18n params:', paramsAttr);
         throw e;
@@ -414,6 +420,8 @@ class LocaleManager {
           ));
 
           window._i18n.translations[key] = data;
+          if (window.parent != window) window.parent._i18n.translations[key] = data;
+
           downloadedFiles++;
 
         } catch (error) {
@@ -434,18 +442,25 @@ class LocaleManager {
     console.log(window._i18n.translations)
     localeStore.setLocaleJSON(window._i18n.translations);
     window._i18n.currentLocale = locale;
+    if (window.parent != window) window.parent._i18n.currentLocale = locale;
+
+
     localStorage.setItem('language', locale);
     await this.init();
     this.translateDOM();
 
     if (progressCallback) {
-      progressCallback({
+      await progressCallback({
         status: 'complete',
         locale: locale
       });
+
     }
 
+    console.log('Locale dispatch event:', window._i18n.currentLocale);
     window.dispatchEvent(new CustomEvent('localeChanged'));
+    if (window.parent != window) window.parent.dispatchEvent(new CustomEvent('localeChanged'));
+
     return true;
   }
 

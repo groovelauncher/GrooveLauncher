@@ -26,20 +26,21 @@ function handleFileInput(event) {
                 }, 100);
             });
         };
+        
         reader.onerror = function () {
             parent.GrooveBoard.alert(
-                "Can’t load font",
-                "We couldn’t read the font file. Only .ttf fonts are supported. Please try a different file.",
-                [, { title: "Ok", style: "default", inline: true, action: () => { } }]
+                window.i18n.t("settings.alerts.font_read_error.title"),
+                window.i18n.t("settings.alerts.font_read_error.message"),
+                [, { title: window.i18n.t("common.actions.ok"), style: "default", inline: true, action: () => { } }]
             );
         };
 
         reader.readAsArrayBuffer(file);
     } else {
         parent.GrooveBoard.alert(
-            "Unsupported file format",
-            "The font file isn’t valid. Make sure it’s a .ttf file and try uploading again.",
-            [, { title: "Ok", style: "default", inline: true, action: () => { } }]
+            window.i18n.t("settings.alerts.font_load_error.title"),
+            window.i18n.t("settings.alerts.font_load_error.message"),
+            [, { title: window.i18n.t("common.actions.ok"), style: "default", inline: true, action: () => { } }]
         );
     }
 }

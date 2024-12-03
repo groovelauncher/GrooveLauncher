@@ -28,7 +28,7 @@ function main_registerLiveTileWorker(packageName, workerScript) {
     // Create worker from URL or script string
     let worker;
     try {
-        if (workerScript.startsWith('http') || workerScript.startsWith('/')) {
+        if (workerScript.startsWith('http') || workerScript.startsWith('/') || workerScript.startsWith('./')) {
             worker = new Worker(workerScript);
         } else {
             const blob = new Blob([workerScript], { type: 'application/javascript' });

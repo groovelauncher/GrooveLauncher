@@ -3,7 +3,7 @@ const path = require('path');
 
 const androidAssetsPath = 'android/app/src/main/assets';
 const wwwPath = 'www';
-const excludedFolders = ['mock', 'heavymock'];
+const excludedFolders = ['mock'];
 
 async function buildAndroid() {
     try {

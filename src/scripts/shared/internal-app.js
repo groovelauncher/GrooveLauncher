@@ -8,6 +8,7 @@ import GrooveMock from "./../GrooveMock.js";
 // Initialize mock environment if Groove isn't available
 const GrooveMockInstance = !window.Groove
 if (GrooveMockInstance) {
+  //window.Groove = new GrooveMock("./../../mock/apps.json")
   window.Groove = new GrooveMock("./../../mock/apps.json")
 }
 

@@ -33,13 +33,15 @@ document.querySelector("#home-tab > div:nth-child(1) > div > div:nth-child(3)").
     Object.values(availableLocales)
         .sort((a, b) => a.languageId.localeCompare(b.languageId))
         .forEach(locale => {
+            console.log(locale)
             // Skip if this is the current language (already added)
             if (locale.languageId === currentLanguageId) return
-
+            console.log("check 0")
             if (!i18n.getLocaleName(locale.languageId).nativeName) return false
+            console.log("check 1")
             const stats = _i18n.availableLocales.userLocales[locale.languageId]
-            if (((stats.translationProgress + stats.approvalProgress) / 2) <= 10) return false
-
+            //if (((stats.translationProgress + stats.approvalProgress) / 2) <= 10) return false
+            console.log("check 2")
             const nativeName = i18n.getLocaleName(locale.languageId).nativeName
             const displayName = i18n.getLocaleName(locale.languageId).name
             const item = GrooveElements.wListViewItem(

@@ -13,7 +13,7 @@ const pmtryagaian = {
                         title: "Try again", style: "default", inline: true, action: () => {
                             pmtryagaian.root()
                         }
-                    }, { title: "Ok", style: "default", inline: true, action: () => { } }]
+                    }, { title: window.i18n.t("common.actions.ok"), style: "default", inline: true, action: () => { } }]
                 );
                 document.getElementById("pm-chooser").selectOption(parent.GrooveBoard.backendMethods.packageManagerProvider.get())
             }
@@ -33,7 +33,7 @@ const pmtryagaian = {
                         title: "Try again", style: "default", inline: true, action: () => {
                             pmtryagaian.shizuku()
                         }
-                    }, { title: "Ok", style: "default", inline: true, action: () => { } }]
+                    }, { title: window.i18n.t("common.actions.ok"), style: "default", inline: true, action: () => { } }]
                 );
                 document.getElementById("pm-chooser").selectOption(parent.GrooveBoard.backendMethods.packageManagerProvider.get())
             }
@@ -58,24 +58,24 @@ document.querySelector("#dumpbtn").addEventListener("flowClick", () => {
     try {
         navigator.clipboard.writeText(JSON.stringify(window.parent.allappsarchive)).then(() => {
             parent.GrooveBoard.alert(
-                "Copied to Clipbord!",
-                "Installed apps copied to JSON format successfully.",
-                [{ title: "Ok", style: "default", inline: true, action: () => { } }]
+                window.i18n.t("settings.alerts.copy_success.title"),
+                window.i18n.t("settings.alerts.copy_success.message"),
+                [{ title: window.i18n.t("common.actions.ok"), style: "default", inline: true, action: () => { } }]
             );
         }, () => {
             parent.GrooveBoard.alert(
-                "Copy Failed!",
-                "Unable to copy apps list. Please try again.",
-                [{ title: "Ok", style: "default", inline: true, action: () => { } }]
+                window.i18n.t("settings.alerts.copy_failed.title"),
+                window.i18n.t("settings.alerts.copy_failed.message"),
+                [{ title: window.i18n.t("common.actions.ok"), style: "default", inline: true, action: () => { } }]
             );
         });
 
     } catch (error) {
         parent.GrooveBoard.alert(
-            "Copy Failed!",
-            "Unable to copy apps list. Please try again.",
-            [{ title: "Ok", style: "default", inline: true, action: () => { } }]
+            window.i18n.t("settings.alerts.copy_failed.title"),
+            window.i18n.t("settings.alerts.copy_failed.message"),
+            [{ title: window.i18n.t("common.actions.ok"), style: "default", inline: true, action: () => { } }]
         );
     }
 })
-if(parent.GrooveBoard)document.getElementById("pm-chooser").selectOption(parent.GrooveBoard.backendMethods.packageManagerProvider.get())
+if (parent.GrooveBoard) document.getElementById("pm-chooser").selectOption(parent.GrooveBoard.backendMethods.packageManagerProvider.get())

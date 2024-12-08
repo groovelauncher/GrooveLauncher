@@ -1,30 +1,44 @@
+// Global Variables
 :root {
     --app-transition-scale: 1;
 }
 
+// Main Home Slider Component
 #main-home-slider {
-    &.app-transition {
-        pointer-events: none !important;
 
-        &,
-        & *,
-        &>* {
-            pointer-events: none !important;
+    // App Transition States
+    &.app-transition {
+
+        // Ensure all child elements also have pointer events disabled
+        &.app-transition-on-pause {
+
+            &,
+            & *,
+            &>* {
+                pointer-events: none !important;
+            }
         }
 
+
+        // Tile List Transitions
         &.app-transition-tile-list {
+
+            // Pause Animation (tiles moving out)
             &.app-transition-on-pause {
 
                 div.tile-list-inner-container>div.groove-home-tile,
                 div.app-page-icon-banner {
+                    transform-origin: 0% 50%;
+
+                    // Default tile animation
                     animation: tileListAppTransitionAnim0 calc(.2s) calc(var(--app-animation-index) * .15s * var(--app-transition-scale)) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
 
+                    // Selected tile animation (slightly different timing)
                     &.app-transition-selected {
                         animation: tileListAppTransitionAnim0 calc(.15s) calc(.15s * var(--app-transition-scale) + .2s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
                     }
 
-                    transform-origin: calc(0%) 50%;
-
+                    // Tile exit animation
                     @keyframes tileListAppTransitionAnim0 {
                         0% {
                             transform: rotateY(0deg);
@@ -36,35 +50,36 @@
                         }
 
                         100% {
-
-                            //transform: translateX(var(--app-page-distance)) translateX(calc(var(--flow-perspective) / -3)) rotateY(-45deg) translateX(calc(0%));
                             transform: translateX(-25vw) translate(var(--app-animation-distance)) rotateY(-30deg) translate(calc(0px - var(--app-animation-distance))) rotateY(-10deg);
-
                             opacity: 0;
                         }
                     }
                 }
             }
 
+            // Resume Animation (tiles moving in)
             &.app-transition-on-resume {
 
+                // Forward transition
                 &:not(.app-transition-back) {
 
                     div.tile-list-inner-container>div.groove-home-tile,
                     div.app-page-icon-banner {
                         --app-animation-distance: 0px;
-                        // animation: tileListAppTransitionAnim1 .4s calc(var(--app-animation-index) * .15s) cubic-bezier(0.00, 1.00, 0.51, 1.00) forwards;
-                        animation: tileListAppTransitionAnim1 .5s calc(var(--app-animation-index) * var(--app-transition-scale) * .2s) cubic-bezier(.3, 1, .2, 1) forwards;
-                        transform-origin: var(--app-animation-distance) 50%;
+                        --s0: calc(0px - var(--app-animation-distance));
+                        --s1: calc(0px + var(--app-animation-distance));
+
                         opacity: 0;
                         transform-style: preserve-3d;
+                        transform-origin: var(--app-animation-distance) 50%;
+
+                        // Tile entrance animation
+                        animation: tileListAppTransitionAnim1 .5s calc(var(--app-animation-index) * var(--app-transition-scale) * .2s) cubic-bezier(.3, 1, .2, 1) forwards;
 
                         @keyframes tileListAppTransitionAnim1 {
                             0% {
-                                // transform: translateX(-100px) rotateY(20deg) translateZ(-0px) translateX(150px);
-                                transform: rotateY(60deg) translateX(0px) translateZ(-0px) translateX(0px) translateX(calc(0px - var(--app-animation-distance))) rotateY(10deg) translateX(calc(0px + var(--app-animation-distance)));
+                                transform: rotateY(60deg) translateX(0px) translateZ(-0px) translateX(0px) translateX(var(--s0)) rotateY(10deg) translateX(var(--s1));
                                 opacity: 1;
-
                             }
 
                             10% {
@@ -72,40 +87,37 @@
                             }
 
                             100% {
-                                transform: rotateY(0deg) translateZ(0px) translateX(-0px) translateX(calc(0px - var(--app-animation-distance))) rotateY(0deg) translateX(calc(0px + var(--app-animation-distance)));
+                                transform: rotateY(0deg) translateZ(0px) translateX(-0px) translateX(var(--s0)) rotateY(0deg) translateX(var(--s1));
                                 opacity: 1;
                             }
-
-
                         }
 
+                        // Inner tile animation
                         &>div.groove-home-inner-tile {
-                            animation: innerTileListAppTransitionAnim0 .45s calc(var(--app-animation-index) * var(--app-transition-scale) * .2s) cubic-bezier(.2, .25, 0.25, 1) forwards;
                             transform-style: preserve-3d;
+                            animation: innerTileListAppTransitionAnim0 .45s calc(var(--app-animation-index) * var(--app-transition-scale) * .2s) cubic-bezier(.2, .25, 0.25, 1) forwards;
 
                             @keyframes innerTileListAppTransitionAnim0 {
                                 0% {
-                                    // transform: translateX(-100px) rotateY(20deg) translateZ(-0px) translateX(150px);
-                                    transform: translateX(30px);
+                                    transform: translateX(30px) rotateY(45deg);
                                 }
 
                                 100% {
                                     transform: translateX(0px);
-
                                 }
-
                             }
                         }
                     }
 
+                    // Slide page perspective settings
                     div.slide-content>div.slide-page:nth-child(2) {
                         perspective-origin: -100% 50%;
                         z-index: -1;
                     }
 
+                    // App list page animation
                     div.inner-page.app-list-page {
                         transform-origin: -100% 50%;
-
                         animation: tileListAppTransitionAnim9 .75s .1s cubic-bezier(.05, 1, .1, 1) forwards;
 
                         @keyframes tileListAppTransitionAnim9 {
@@ -117,46 +129,45 @@
                             to {
                                 transform: rotateY(0deg);
                                 opacity: 1;
-
                             }
                         }
                     }
                 }
 
+                // Back transition
                 &.app-transition-back {
 
                     div.tile-list-inner-container>div.groove-home-tile,
                     div.app-page-icon-banner {
-                        // animation: tileListAppTransitionAnim1 .4s calc(var(--app-animation-index) * .15s) cubic-bezier(0.00, 1.00, 0.51, 1.00) forwards;
-                        animation: tileListAppTransitionAnim2 .75s calc(var(--app-animation-index) * var(--app-transition-scale) * .2s) cubic-bezier(.05, 1, .1, 1) forwards;
                         transform-origin: var(--app-animation-distance) 50%;
                         opacity: 0;
 
+                        animation: tileListAppTransitionAnim2 .75s calc(var(--app-animation-index) * var(--app-transition-scale) * .2s) cubic-bezier(.05, 1, .1, 1) forwards;
+
                         @keyframes tileListAppTransitionAnim2 {
-                            100% {
-                                transform: rotateY(0deg);
-                                opacity: 1;
+                            0% {
+                                transform: translateX(-25vw) translate(var(--app-animation-distance)) rotateY(-30deg) translate(calc(0px - var(--app-animation-distance))) rotateY(-10deg);
+                                opacity: 0;
                             }
 
                             1% {
                                 opacity: 1;
                             }
 
-                            0% {
-
-                                //transform: translateX(var(--app-page-distance)) translateX(calc(var(--flow-perspective) / -3)) rotateY(-45deg) translateX(calc(0%));
-                                transform: translateX(-25vw) translate(var(--app-animation-distance)) rotateY(-30deg) translate(calc(0px - var(--app-animation-distance))) rotateY(-10deg);
-
-                                opacity: 0;
+                            100% {
+                                transform: rotateY(0deg);
+                                opacity: 1;
                             }
-
                         }
                     }
                 }
             }
         }
 
+        // App List Transitions
         &.app-transition-app-list {
+
+            // Pause Animation
             &.app-transition-on-pause {
                 input.app-list-search {
                     transform: translateY(calc(-100% - 4px - var(--window-inset-top))) !important;
@@ -165,13 +176,15 @@
                 div.app-list-container>div.groove-app-tile,
                 #sticky-letter,
                 #search-icon {
+                    transform-origin: var(--app-animation-distance) 50%;
+
+                    // Default app tile animation
                     animation: appListAppTransitionAnim0 .15s calc(var(--app-animation-index) * .35s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
 
+                    // Selected app tile animation
                     &.app-transition-selected {
                         animation: appListAppTransitionAnim0 .12s calc(1.5 * .3s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
                     }
-
-                    transform-origin: var(--app-animation-distance) 50%;
 
                     @keyframes appListAppTransitionAnim0 {
                         0% {
@@ -189,12 +202,7 @@
                         }
                     }
                 }
-
-
             }
-
-            &.app-transition-on-resume {}
         }
     }
-
 }

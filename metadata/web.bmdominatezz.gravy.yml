@@ -1,0 +1,33 @@
+Categories:
+  - System
+  - Theming
+License: MIT
+SourceCode: https://github.com/groovelauncher/GrooveLauncher
+
+RepoType: git
+Repo: https://github.com/groovelauncher/GrooveLauncher
+
+Summary: A groovy personalized home screen experience for Android
+Description: |
+  Groove Launcher is a metro-styled launcher designed for a customizable and sleek user experience. Users can personalize their launcher by adjusting tile sizes, changing tile positions, customizing the color theme, and setting their favorite wallpapers.
+
+  Features:
+  * Metro-Style Interface: A clean & modern design inspired by Windows Phone 8.
+  * Customizable Tiles: Drag and drop tiles, adjust their sizes, and move them around to fit your unique style.
+  * Theme Customization: Change the color of the launcher to match your mood or aesthetic.
+  * Wallpaper Personalization: Choose and set your own wallpapers to create a fully personalized setup.
+
+
+
+Builds:
+  - versionName: 0.4.3-beta.4
+    versionCode: 43
+    commit: v0.4.3-beta.4
+    subdir: android
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.4.3-beta.4
+CurrentVersionCode: 43

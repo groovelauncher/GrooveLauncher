@@ -17,7 +17,7 @@
     "build:production": "rm -rf android/app/src/main/assets/* && npx webpack --env production && npx sass --no-source-map --style=compressed src/styles.scss www/dist/styles.css && node ./scripts/build-internal-apps.js --production && npm run build:android && echo Compilation completed."
   },
   "author": "",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "description": "",
   "dependencies": {
     "better-scroll": "^2.5.1",

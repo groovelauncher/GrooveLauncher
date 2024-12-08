@@ -6,7 +6,7 @@ import BuildConfigMock from "./BuildConfigMock";
 // Add constants at the top
 const CONSTANTS = {
     INTERNAL_SETTINGS_APP: 'groove.internal.settings',
-    DEFAULT_SYSTEM_INSETS: { left: 0, top: 32, right: 0, bottom: 50 },
+    DEFAULT_SYSTEM_INSETS: { left: 0, top: 32, right: 0, bottom: 0 },
     MOCK_ICON_PATH: '/icons/default/',
     EMPTY_SVG: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>'
 };

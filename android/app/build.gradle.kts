@@ -22,10 +22,10 @@ android {
 
     defaultConfig {
         applicationId = "web.bmdominatezz.gravy"
-        minSdk = 21
+        minSdk = 24
         targetSdk = 34
-        versionCode = 43
-        versionName = "0.4.3-beta.4"
+        versionCode = 49
+        versionName = "0.4.9-beta.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
         // Add the API key
@@ -61,7 +61,6 @@ dependencies {
     implementation(libs.webkit)
     implementation("org.nanohttpd:nanohttpd:2.3.1")
     implementation("dev.rikka.shizuku:api:13.1.5")
-    implementation("dev.rikka.shizuku:provider:13.1.5")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

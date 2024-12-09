@@ -125,6 +125,24 @@
             "packageName": "com.google.android.apps.youtube.music",
             "label": "YouTube Music",
             "type": 1
+        },
+        {
+            "uid": 10,
+            "packageName": "test.clock",
+            "label": "A TEST CLOCK",
+            "type": 2
+        },
+        {
+            "uid": 11,
+            "packageName": "test.weather",
+            "label": "A TEST WEATHER",
+            "type": 2
+        },
+        {
+            "uid": 12,
+            "packageName": "test.people",
+            "label": "A TEST PEOPLE",
+            "type": 2
         }
     ]
 }

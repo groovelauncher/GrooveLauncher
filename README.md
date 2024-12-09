@@ -22,10 +22,12 @@ You can download the latest prebuilt APK from the [Releases](https://github.com/
 
 <table>
     <tr>
-        <td><img src="metadata/screenshots/00.gif" title="Edit Mode"></td>
-        <td><img src="metadata/screenshots/01.gif" title="Launch Animation"></td>
-        <td><img src="metadata/screenshots/02.gif" title="Alphabetical Sort"></td>
-        <td><img src="metadata/screenshots/03.gif" title="App Search"></td>
+        <td><img src="metadata/screenshots/phoneScreenshots/ss0.png"></td>
+        <td><img src="metadata/screenshots/phoneScreenshots/ss1.png"></td>
+        <td><img src="metadata/screenshots/phoneScreenshots/ss2.png"></td>
+        <td><img src="metadata/screenshots/phoneScreenshots/ss3.png"></td>
+        <td><img src="metadata/screenshots/phoneScreenshots/ss4.png"></td>
+        <td><img src="metadata/screenshots/phoneScreenshots/ss5.png"></td>
     </tr>
 </table>
 

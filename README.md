@@ -22,16 +22,16 @@ You can download the latest prebuilt APK from the [Releases](https://github.com/
 
 <table>
     <tr>
-        <td><img src="metadata/screenshots/phoneScreenshots/ss0.png"></td>
-        <td><img src="metadata/screenshots/phoneScreenshots/ss1.png"></td>
-        <td><img src="metadata/screenshots/phoneScreenshots/ss2.png"></td>
-        <td><img src="metadata/screenshots/phoneScreenshots/ss3.png"></td>
-        <td><img src="metadata/screenshots/phoneScreenshots/ss4.png"></td>
-        <td><img src="metadata/screenshots/phoneScreenshots/ss5.png"></td>
+        <td><img src="metadata/en-US/images/phoneScreenshots/ss0.png"></td>
+        <td><img src="metadata/en-US/images/phoneScreenshots/ss1.png"></td>
+        <td><img src="metadata/en-US/images/phoneScreenshots/ss2.png"></td>
+    </tr>
+    <tr>
+        <td><img src="metadata/en-US/images/phoneScreenshots/ss3.png"></td>
+        <td><img src="metadata/en-US/images/phoneScreenshots/ss4.png"></td>
+        <td><img src="metadata/en-US/images/phoneScreenshots/ss5.png"></td>
     </tr>
 </table>
-
-## Installation
 
 If you prefer to build the app yourself:
 

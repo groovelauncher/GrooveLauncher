@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -29,6 +30,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.jar.JarException;
 
 import rikka.shizuku.Shizuku;
 import rikka.shizuku.ShizukuApiConstants;
@@ -63,10 +66,14 @@ public class WebInterface {
     @JavascriptInterface
     public String getSystemInsets() throws JSONException {
         JSONObject systemInsets = new JSONObject();
-        systemInsets.put("left", (mainActivity.webView.lastInsets == null) ? 0 : mainActivity.webView.lastInsets.left / getDevicePixelRatio());
-        systemInsets.put("top", (mainActivity.webView.lastInsets == null) ? 0 : mainActivity.webView.lastInsets.top / getDevicePixelRatio());
-        systemInsets.put("right", (mainActivity.webView.lastInsets == null) ? 0 : mainActivity.webView.lastInsets.right / getDevicePixelRatio());
-        systemInsets.put("bottom", (mainActivity.webView.lastInsets == null) ? 0 : mainActivity.webView.lastInsets.bottom / getDevicePixelRatio());
+        systemInsets.put("left", (mainActivity.webView.lastInsets == null) ? 0
+                : mainActivity.webView.lastInsets.left / getDevicePixelRatio());
+        systemInsets.put("top", (mainActivity.webView.lastInsets == null) ? 0
+                : mainActivity.webView.lastInsets.top / getDevicePixelRatio());
+        systemInsets.put("right", (mainActivity.webView.lastInsets == null) ? 0
+                : mainActivity.webView.lastInsets.right / getDevicePixelRatio());
+        systemInsets.put("bottom", (mainActivity.webView.lastInsets == null) ? 0
+                : mainActivity.webView.lastInsets.bottom / getDevicePixelRatio());
         return systemInsets.toString();
     }
 
@@ -78,7 +85,9 @@ public class WebInterface {
         for (ResolveInfo resolveInfo : mainActivity.webView.retrievedApps) {
             if (!resolveInfo.activityInfo.packageName.equals("web.bmdominatezz.gravy")) {
                 JSONObject appInfo = new JSONObject();
-                appInfo.put("packageName", resolveInfo.activityInfo.packageName);
+                String packageNameWithIntent = resolveInfo.activityInfo.packageName + "/"
+                        + resolveInfo.activityInfo.name;
+                appInfo.put("packageName", packageNameWithIntent);
                 appInfo.put("label", resolveInfo.loadLabel(mainActivity.packageManager).toString());
                 if ((resolveInfo.activityInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
                     appInfo.put("type", 0);
@@ -97,6 +106,47 @@ public class WebInterface {
     }
 
     @JavascriptInterface
+    public String retrieveContacts() throws JSONException {
+        JSONArray contactsArray = new JSONArray();
+        android.content.ContentResolver contentResolver = mainActivity.getContentResolver();
+
+        // Columns to retrieve
+        String[] projection = {
+                ContactsContract.Contacts._ID,
+                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY
+        };
+
+        // Query contacts
+        android.database.Cursor cursor = contentResolver.query(
+                ContactsContract.Contacts.CONTENT_URI,
+                projection,
+                null,
+                null,
+                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY + " ASC");
+
+        if (cursor != null && cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                // Get contact ID
+                int idIndex = cursor.getColumnIndex(ContactsContract.Contacts._ID);
+                int nameIndex = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY);
+
+                String contactId = cursor.getString(idIndex);
+                String contactName = cursor.getString(nameIndex);
+
+                // Create JSON object for contact
+                JSONObject contactObject = new JSONObject();
+                contactObject.put("id", contactId);
+                contactObject.put("name", contactName != null ? contactName : "");
+
+                contactsArray.put(contactObject);
+            }
+            cursor.close();
+        }
+
+        return contactsArray.toString();
+    }
+
+    @JavascriptInterface
     public String getAppLabel(String packageName) {
         try {
             ApplicationInfo appInfo = mainActivity.packageManager.getApplicationInfo(packageName, 0);
@@ -109,31 +159,104 @@ public class WebInterface {
 
     @JavascriptInterface
     public String getAppIconURL(String packageName) throws JSONException {
-        // '{"foreground":"http://localhost:5500/www/mock/icons/default/.png","background":"data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\"/>"}
+        PackageNameInfo packageNameInfo = parsePackageName(packageName);
+
+        // '{"foreground":"http://localhost:5500/www/mock/icons/default/.png","background":"data:image/svg+xml,<svg
+        // xmlns=\\"http://www.w3.org/2000/svg\\"/>"}
         JSONObject appicon = new JSONObject();
-        appicon.put("foreground", "https://appassets.androidplatform.net/assets/icons/" + (packageName == null ? "undefined" : packageName) + ".webp");
-        appicon.put("background", "https://appassets.androidplatform.net/assets/icons-bg/" + (packageName == null ? "undefined" : packageName) + ".webp");
+        appicon.put("foreground", "https://appassets.androidplatform.net/assets/icons/"
+                + (packageNameInfo.packageName == null ? "undefined" : packageNameInfo.packageName + "|" + packageNameInfo.intentId) + ".webp");
+        appicon.put("background", "https://appassets.androidplatform.net/assets/icons-bg/"
+                + (packageNameInfo.packageName == null ? "undefined" : packageNameInfo.packageName + "|" + packageNameInfo.intentId) + ".webp");
         return appicon.toString();
-        //return "https://appassets.androidplatform.net/assets/icons/" + (packageName == null ? "undefined" : packageName) + ".webp";
+        // return "https://appassets.androidplatform.net/assets/icons/" + (packageName
+        // == null ? "undefined" : packageName) + ".webp";
+    }
+
+    // Inner class to hold package name and intent ID
+    public static class PackageNameInfo {
+        public final String packageName;
+        public final String intentId;
+
+        public PackageNameInfo(String packageName, String intentId) {
+            this.packageName = packageName;
+            this.intentId = intentId;
+        }
+    }
+
+    public PackageNameInfo parsePackageName(String packageNameWithIntent) {
+        String packageName, intentId;
+
+        // Check if packageNameWithIntent contains '/'
+        if (packageNameWithIntent.contains("/")) {
+            String[] parts = packageNameWithIntent.split("/", 2);
+            packageName = parts[0];
+            intentId = parts[1];
+        } else {
+            packageName = packageNameWithIntent;
+            intentId = null;
+        }
+
+        return new PackageNameInfo(packageName, intentId);
     }
 
     @JavascriptInterface
-    public boolean launchApp(String packageName) {
-        Intent intent = mainActivity.packageManager.getLaunchIntentForPackage(packageName);
+    public boolean launchApp(String packageNameWithIntent) {
+        String packageName, intentId;
+
+        // Check if packageNameWithIntent contains '/'
+        if (packageNameWithIntent.contains("/")) {
+            String[] parts = packageNameWithIntent.split("/", 2);
+            packageName = parts[0];
+            intentId = parts[1];
+        } else {
+            packageName = packageNameWithIntent;
+            intentId = null;
+        }
+
         if (packageName.startsWith("groove.internal")) {
             mainActivity.webView.post(new Runnable() {
                 @Override
                 public void run() {
-                    mainActivity.webView.evaluateJavascript("window.GrooveBoard.backendMethods.launchInternalApp(\"" + packageName + "\")", null);
+                    mainActivity.webView.evaluateJavascript(
+                            "window.GrooveBoard.backendMethods.launchInternalApp(\"" + packageName + "\")", null);
                 }
             });
-            //mainActivity.webView.evaluateJavascript("window.GrooveBoard.BackendMethods.launchInternalApp(\"" + packageName + "\")", null);
             return true;
-        } else if (intent != null) {
-            mainActivity.startActivity(intent);
-            return true;
+        } else {
+            Intent intent = null;
+
+            // If intentId is null, use default launch intent
+            if (intentId == null) {
+                intent = mainActivity.packageManager.getLaunchIntentForPackage(packageName);
+                if (intent != null) {
+                    mainActivity.startActivity(intent);
+                    return true;
+                }
+                return false;
+            }
+
+            // Otherwise, search for specific intent
+            List<ResolveInfo> activities = mainActivity.packageManager.queryIntentActivities(
+                    new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER),
+                    PackageManager.MATCH_ALL);
+
+            for (ResolveInfo resolveInfo : activities) {
+                if (resolveInfo.activityInfo.packageName.equals(packageName) &&
+                        resolveInfo.activityInfo.name.equals(intentId)) {
+                    intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                    intent.setClassName(packageName, resolveInfo.activityInfo.name);
+                    break;
+                }
+            }
+
+            if (intent != null) {
+                mainActivity.startActivity(intent);
+                return true;
+            }
+            return false;
         }
-        return false;
     }
 
     String TAG = "groovelauncher";
@@ -193,12 +316,20 @@ public class WebInterface {
     }
 
     @JavascriptInterface
-    public boolean uninstallApp(String packageName) {
+    public boolean uninstallApp(String packageNameWithIntent) {
+        String packageName = packageNameWithIntent;
+        if (packageNameWithIntent.contains("/")) {
+            packageName = packageNameWithIntent.split("/", 2)[0];
+        }
         return uninstallApp(packageName, 0);
     }
 
     @JavascriptInterface
-    public boolean uninstallApp(String packageName, int packageManagerProvider) {
+    public boolean uninstallApp(String packageNameWithIntent, int packageManagerProvider) {
+        String packageName = packageNameWithIntent;
+        if (packageNameWithIntent.contains("/")) {
+            packageName = packageNameWithIntent.split("/", 2)[0];
+        }
         Log.d("groovelaauncher", "uninstallApp pm provider: " + packageManagerProvider);
         switch (packageManagerProvider) {
             case 0:
@@ -219,7 +350,12 @@ public class WebInterface {
     }
 
     @JavascriptInterface
-    public boolean launchAppInfo(String packageName) {
+    public boolean launchAppInfo(String packageNameWithIntent) {
+        String packageName = packageNameWithIntent;
+        if (packageNameWithIntent.contains("/")) {
+            packageName = packageNameWithIntent.split("/", 2)[0];
+        }
+
         Intent appIntent = mainActivity.packageManager.getLaunchIntentForPackage(packageName);
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.parse("package:" + packageName));
@@ -237,7 +373,7 @@ public class WebInterface {
         statusBarAppearance = appearance;
         Window window = mainActivity.getWindow();
         View decorView = window.getDecorView();
-        
+
         mainActivity.runOnUiThread(() -> {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -251,16 +387,14 @@ public class WebInterface {
                             case "dark":
                                 insetsController.show(WindowInsets.Type.statusBars());
                                 insetsController.setSystemBarsAppearance(
-                                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                                );
+                                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
                                 break;
                             case "light":
                                 insetsController.show(WindowInsets.Type.statusBars());
                                 insetsController.setSystemBarsAppearance(
-                                    0,
-                                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                                );
+                                        0,
+                                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
                                 break;
                         }
                     }
@@ -299,7 +433,7 @@ public class WebInterface {
         navigationBarAppearance = appearance;
         Window window = mainActivity.getWindow();
         View decorView = window.getDecorView();
-        
+
         mainActivity.runOnUiThread(() -> {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -314,17 +448,15 @@ public class WebInterface {
                                 insetsController.show(WindowInsets.Type.navigationBars());
                                 window.setNavigationBarColor(android.graphics.Color.WHITE);
                                 insetsController.setSystemBarsAppearance(
-                                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
-                                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-                                );
+                                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
+                                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
                                 break;
                             case "light":
                                 insetsController.show(WindowInsets.Type.navigationBars());
                                 window.setNavigationBarColor(android.graphics.Color.BLACK);
                                 insetsController.setSystemBarsAppearance(
-                                    0,
-                                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-                                );
+                                        0,
+                                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
                                 break;
                         }
                     }
@@ -374,7 +506,8 @@ public class WebInterface {
             @Override
             public void run() {
                 mainActivity.webView.setInitialScale(Math.round(scale * 100 * getDevicePixelRatio()));
-                mainActivity.webView.evaluateJavascript("document.body.style.setProperty('--ui-scale'," + scale + ")", null);
+                mainActivity.webView.evaluateJavascript("document.body.style.setProperty('--ui-scale'," + scale + ")",
+                        null);
             }
         });
     }
@@ -449,6 +582,12 @@ public class WebInterface {
             return false;
         }
     }
+
+    @JavascriptInterface
+    public String getContactPhotoURL(String contactId) {
+        return "https://appassets.androidplatform.net/assets/contacts/" + contactId;
+    }
+
     @JavascriptInterface
     public String getDefaultApps() {
         JSONObject json = new JSONObject();
@@ -489,7 +628,8 @@ public class WebInterface {
                 if (data[i] != null) {
                     intent.setData(Uri.parse(data[i]));
                 }
-                ResolveInfo resolveInfo = mainActivity.packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                ResolveInfo resolveInfo = mainActivity.packageManager.resolveActivity(intent,
+                        PackageManager.MATCH_DEFAULT_ONLY);
                 json.put(keys[i], resolveInfo != null ? resolveInfo.activityInfo.packageName : null);
             }
         } catch (JSONException e) {

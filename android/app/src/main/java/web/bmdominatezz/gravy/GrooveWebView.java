@@ -77,7 +77,11 @@ public class GrooveWebView extends WebView {
         return resultHolder[0];
     }
 
-    public Bitmap getAppIcon(PackageManager mPackageManager, String packageName) {
+    public Bitmap getAppIcon(PackageManager mPackageManager, String packageNameWithIntent) {
+        String packageName = packageNameWithIntent;
+        if (packageNameWithIntent.contains("/")) {
+            packageName = packageNameWithIntent.split("/")[0];
+        }
         Drawable drawable = null;
         try {
             drawable = mPackageManager.getApplicationIcon(packageName);
@@ -124,7 +128,11 @@ public class GrooveWebView extends WebView {
 
     }
 
-    public Bitmap getAppIconBackground(PackageManager mPackageManager, String packageName) {
+    public Bitmap getAppIconBackground(PackageManager mPackageManager, String packageNameWithIntent) {
+        String packageName = packageNameWithIntent;
+        if (packageNameWithIntent.contains("/")) {
+            packageName = packageNameWithIntent.split("/")[0];
+        }
         Drawable drawable = null;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return null;

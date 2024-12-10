@@ -69,24 +69,56 @@ public class GrooveWebView extends WebView {
         }));
 
         try {
-            latch.await();  // Wait until the JavaScript result is available
+            latch.await(); // Wait until the JavaScript result is available
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         return resultHolder[0];
     }
-
+    public ResolveInfo getResolveInfo(PackageManager packageManager, String packageName, String activityName) {
+        Intent intent = new Intent();
+        intent.setClassName(packageName, activityName);
+    
+        // Query the activities for the intent
+        List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(intent, 0);
+    
+        if (resolveInfos != null && !resolveInfos.isEmpty()) {
+            return resolveInfos.get(0); // Return the first match
+        }
+        return null; // No match found
+    }
+    
     public Bitmap getAppIcon(PackageManager mPackageManager, String packageNameWithIntent) {
         String packageName = packageNameWithIntent;
-        if (packageNameWithIntent.contains("/")) {
-            packageName = packageNameWithIntent.split("/")[0];
+        String intentId = null;
+        
+        if (packageNameWithIntent.contains("|")) {
+            String[] parts = packageNameWithIntent.split("\\|");
+            packageName = parts[0];
+            if (parts.length > 1) {
+                intentId = parts[1];
+            }
         }
+
         Drawable drawable = null;
         try {
-            drawable = mPackageManager.getApplicationIcon(packageName);
+            if (intentId != null) {
+                // Try to get icon for specific intent
+                Intent intent = new Intent(intentId);
+                intent.setPackage(packageName);
+                ResolveInfo resolveInfo = getResolveInfo(mPackageManager, packageName, intentId);
+                if (resolveInfo != null) {
+                    drawable = resolveInfo.loadIcon(mPackageManager);
+                }
+            }
+            
+            // Fallback to default app icon if no specific intent icon found
+            if (drawable == null) {
+                drawable = mPackageManager.getApplicationIcon(packageName);
+            }
         } catch (PackageManager.NameNotFoundException e) {
-            Log.d("groovelauncher", "getAppIcon:  OLMADI " + packageName);
+            Log.d("groovelauncher", "getAppIcon: OLMADI " + packageName);
             throw new RuntimeException(e);
         }
 
@@ -102,67 +134,77 @@ public class GrooveWebView extends WebView {
                     return transparentBitmap;
                 } else {
                     double zoom = 1.5;
-                    // Create a bitmap with specified width and height
                     Bitmap bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
-                    // Create a canvas to draw on the bitmap
                     Canvas canvas = new Canvas(bitmap);
-                    // Calculate the size after zoom
                     int width = (int) (canvas.getWidth() * zoom);
                     int height = (int) (canvas.getHeight() * zoom);
-                    // Calculate the offsets to center the zoomed drawable
                     int offsetX = (canvas.getWidth() - width) / 2;
                     int offsetY = (canvas.getHeight() - height) / 2;
-                    // Set the bounds of the drawable with zoom
                     foregroundDr.setBounds(offsetX, offsetY, offsetX + width, offsetY + height);
-                    // Draw the drawable onto the canvas
                     foregroundDr.draw(canvas);
                     return bitmap;
                 }
-
-
             }
         }
         Log.d("groovalauncher", "getAppIcon: invalid " + packageName);
         return null;
-
-
     }
 
     public Bitmap getAppIconBackground(PackageManager mPackageManager, String packageNameWithIntent) {
         String packageName = packageNameWithIntent;
-        if (packageNameWithIntent.contains("/")) {
-            packageName = packageNameWithIntent.split("/")[0];
+        String intentId = null;
+        
+        if (packageNameWithIntent.contains("|")) {
+            String[] parts = packageNameWithIntent.split("\\|");
+            packageName = parts[0];
+            if (parts.length > 1) {
+                intentId = parts[1];
+            }
         }
-        Drawable drawable = null;
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return null;
         }
+
+        Drawable drawable = null;
         try {
-            drawable = mPackageManager.getApplicationIcon(packageName);
+            if (intentId != null) {
+                // Try to get icon for specific intent
+                Intent intent = new Intent(intentId);
+                intent.setPackage(packageName);
+                ResolveInfo resolveInfo = getResolveInfo(mPackageManager, packageName, intentId);
+                if (resolveInfo != null) {
+                    drawable = resolveInfo.loadIcon(mPackageManager);
+                }
+            }
+            
+            // Fallback to default app icon if no specific intent icon found
+            if (drawable == null) {
+                drawable = mPackageManager.getApplicationIcon(packageName);
+            }
         } catch (PackageManager.NameNotFoundException e) {
-            Log.d("groovelauncher", "getAppIcon:  OLMADI " + packageName);
+            Log.d("groovelauncher", "getAppIcon: OLMADI " + packageName);
             throw new RuntimeException(e);
         }
+
         if (drawable instanceof AdaptiveIconDrawable) {
-            Drawable foregroundDr = ((AdaptiveIconDrawable) drawable).getBackground();
-            if (foregroundDr == null) {
+            Drawable backgroundDr = ((AdaptiveIconDrawable) drawable).getBackground();
+            if (backgroundDr == null) {
                 Bitmap transparentBitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
                 transparentBitmap.eraseColor(android.graphics.Color.TRANSPARENT);
                 return transparentBitmap;
             } else {
                 Bitmap bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bitmap);
-                foregroundDr.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-                foregroundDr.draw(canvas);
+                backgroundDr.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                backgroundDr.draw(canvas);
                 return bitmap;
             }
-
         }
+        
         Bitmap transparentBitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
         transparentBitmap.eraseColor(android.graphics.Color.TRANSPARENT);
         return transparentBitmap;
-
-
     }
 
     public GrooveWebView(Context context) {
@@ -181,7 +223,7 @@ public class GrooveWebView extends WebView {
     }
 
     public void retrieveApps() {
-        // are these categories even enough 💀 idk hope it is
+        // are these categories even enough idk hope it is
         final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         retrievedApps = packageManager.queryIntentActivities(mainIntent, 0);
@@ -196,7 +238,6 @@ public class GrooveWebView extends WebView {
                 .build();
 
         this.setWebViewClient(new WebViewClientCompat() {
-
 
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
@@ -214,18 +255,31 @@ public class GrooveWebView extends WebView {
                 if (segments.length == 4 && "icons".equals(segments[2])) {
                     String iconFileName = segments[3];
                     if (iconFileName.length() > 5) {
-                        String iconPackageName = iconFileName.substring(0, iconFileName.length() - 5);
-                        Intent intent = packageManager.getLaunchIntentForPackage(iconPackageName);
+                        String iconPackageNameWithIntent = iconFileName.substring(0, iconFileName.length() - 5);
+                        String[] parts = iconPackageNameWithIntent.split("\\|");
+                        String iconPackageName = parts[0];
+                        Intent intent;
+
+                        if (parts.length > 1) {
+                            // If there's an intent ID specified, use it
+                            String intentId = parts[1];
+                            intent = packageManager.getLaunchIntentForPackage(iconPackageName);
+                            if (intent != null) {
+                                intent.setAction(intentId);
+                            }
+                        } else {
+                            // If no intent ID, just get the default launch intent
+                            intent = packageManager.getLaunchIntentForPackage(iconPackageName);
+                        }
+
                         if (intent != null) {
-                            ResolveInfo resolveInfo = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                            ResolveInfo resolveInfo = packageManager.resolveActivity(intent,
+                                    PackageManager.MATCH_DEFAULT_ONLY);
                             if (resolveInfo != null) {
-                                // Drawable appIcon = resolveInfo.loadIcon(packageManager);
-                                // AdaptiveIconGenerator generator = new AdaptiveIconGenerator(m_context, appIcon);
-                                // Generate the adaptive icon
-                                // Drawable resultDrawable = generator.generateIcon();
                                 InputStream inputStream = null;
-                                Bitmap dra = getAppIcon(packageManager, iconPackageName);
-                                if (dra != null) inputStream = Utils.loadBitmapAsStream(dra);
+                                Bitmap dra = getAppIcon(packageManager, iconPackageNameWithIntent);
+                                if (dra != null)
+                                    inputStream = Utils.loadBitmapAsStream(dra);
                                 if (inputStream != null) {
                                     return new WebResourceResponse("image/webp", "UTF-8", inputStream);
                                 }
@@ -235,36 +289,35 @@ public class GrooveWebView extends WebView {
                         } else {
                             Log.d("ResolveInfo", "Intent is null. Package may not be installed.");
                         }
-
-                       /* couldnt decide which one is faster :(
-                        for (ResolveInfo resolveInfo : retrievedApps) {
-                            if (iconPackageName.equals(resolveInfo.activityInfo.packageName)) {
-
-                                Drawable appIcon = resolveInfo.activityInfo.loadIcon(packageManager);
-
-                                InputStream inputStream = loadDrawableAsStream(appIcon);
-                                if (inputStream != null) {
-                                    return new WebResourceResponse("image/png", "UTF-8", inputStream);
-                                }
-                            }
-                        }*/
-
-
-                    } else {
-
                     }
 
                 } else if (segments.length == 4 && "icons-bg".equals(segments[2])) {
                     String iconFileName = segments[3];
                     if (iconFileName.length() > 5) {
-                        String iconPackageName = iconFileName.substring(0, iconFileName.length() - 5);
-                        Intent intent = packageManager.getLaunchIntentForPackage(iconPackageName);
+                        String iconPackageNameWithIntent = iconFileName.substring(0, iconFileName.length() - 5);
+                        String[] parts = iconPackageNameWithIntent.split("\\|");
+                        String iconPackageName = parts[0];
+                        Intent intent;
+
+                        if (parts.length > 1) {
+                            // If there's an intent ID specified, use it
+                            String intentId = parts[1];
+                            intent = packageManager.getLaunchIntentForPackage(iconPackageName);
+                            if (intent != null) {
+                                intent.setAction(intentId);
+                            }
+                        } else {
+                            // If no intent ID, just get the default launch intent
+                            intent = packageManager.getLaunchIntentForPackage(iconPackageName);
+                        }
                         if (intent != null) {
-                            ResolveInfo resolveInfo = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                            ResolveInfo resolveInfo = packageManager.resolveActivity(intent,
+                                    PackageManager.MATCH_DEFAULT_ONLY);
                             if (resolveInfo != null) {
                                 InputStream inputStream = null;
-                                Bitmap dra = getAppIconBackground(packageManager, iconPackageName);
-                                if (dra != null) inputStream = Utils.loadBitmapAsStream(dra);
+                                Bitmap dra = getAppIconBackground(packageManager, iconPackageNameWithIntent);
+                                if (dra != null)
+                                    inputStream = Utils.loadBitmapAsStream(dra);
                                 if (inputStream != null) {
                                     return new WebResourceResponse("image/webp", "UTF-8", inputStream);
                                 }
@@ -274,12 +327,8 @@ public class GrooveWebView extends WebView {
                         } else {
                             Log.d("ResolveInfo", "Intent is null. Package may not be installed.");
                         }
-                    } else {
-
                     }
-
                 }
-
                 return assetLoader.shouldInterceptRequest(requestUri);
             }
         });
@@ -287,7 +336,7 @@ public class GrooveWebView extends WebView {
 
             // For Android 5.0+
             public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> filePath,
-                                             FileChooserParams fileChooserParams) {
+                    FileChooserParams fileChooserParams) {
                 mainActivity.activityDispatchEvent = false;
 
                 if (mainActivity.mFilePathCallback != null) {
@@ -310,14 +359,14 @@ public class GrooveWebView extends WebView {
                 if (isFontFile) {
                     // If it's a font file, accept font file types
                     contentSelectionIntent.setType("font/*");
-                    contentSelectionIntent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{
+                    contentSelectionIntent.putExtra(Intent.EXTRA_MIME_TYPES, new String[] {
                             "application/x-font-ttf",
                             "application/x-font-woff",
                             "application/x-font-woff2",
                             "font/otf",
                             "font/ttf",
                             "font/woff",
-                            "font/woff2"});
+                            "font/woff2" });
                 } else {
                     // If it's not a font file, fall back to image chooser
                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -338,7 +387,8 @@ public class GrooveWebView extends WebView {
 
                     contentSelectionIntent.setType("image/*");
 
-                    Intent[] intentArray = takePictureIntent != null ? new Intent[]{takePictureIntent} : new Intent[0];
+                    Intent[] intentArray = takePictureIntent != null ? new Intent[] { takePictureIntent }
+                            : new Intent[0];
                     Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
                     chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
                     chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
@@ -364,7 +414,7 @@ public class GrooveWebView extends WebView {
                     Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
                     i.setType("font/*");
-                    i.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{
+                    i.putExtra(Intent.EXTRA_MIME_TYPES, new String[] {
                             "application/x-font-ttf",
                             "application/x-font-woff",
                             "application/x-font-woff2",
@@ -396,7 +446,7 @@ public class GrooveWebView extends WebView {
                     i.setType("image/*");
 
                     Intent chooserIntent = Intent.createChooser(i, "Image Chooser");
-                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Parcelable[]{captureIntent});
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Parcelable[] { captureIntent });
                     mainActivity.startActivityForResult(chooserIntent, mainActivity.FILECHOOSER_RESULTCODE);
                 }
             }
@@ -419,7 +469,7 @@ public class GrooveWebView extends WebView {
         // Assets are hosted under http(s)://appassets.androidplatform.net/assets/... .
         this.addJavascriptInterface(new WebInterface((MainActivity) mainActivity, this), "Groove");
         this.addJavascriptInterface(new BuildConfigInterface(m_context), "BuildConfig");
-        
+
         this.loadUrl("https://appassets.androidplatform.net/assets/index.html");
         retrieveApps();
     }

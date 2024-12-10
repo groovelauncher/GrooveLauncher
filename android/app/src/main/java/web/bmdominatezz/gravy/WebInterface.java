@@ -30,7 +30,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.JarException;
 
 import rikka.shizuku.Shizuku;
@@ -82,11 +84,28 @@ public class WebInterface {
         mainActivity.webView.retrieveApps();
         Log.d("groovelauncher", "retrieveApps: " + mainActivity.webView.retrievedApps.toString());
         JSONArray retrievedApps = new JSONArray();
+
+        // First, count how many intents each package has
+        Map<String, Integer> packageIntentCount = new HashMap<>();
+        for (ResolveInfo resolveInfo : mainActivity.webView.retrievedApps) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            packageIntentCount.put(packageName, packageIntentCount.getOrDefault(packageName, 0) + 1);
+        }
+
+        // Now process each app
         for (ResolveInfo resolveInfo : mainActivity.webView.retrievedApps) {
             if (!resolveInfo.activityInfo.packageName.equals("web.bmdominatezz.gravy")) {
                 JSONObject appInfo = new JSONObject();
-                String packageNameWithIntent = resolveInfo.activityInfo.packageName + "/"
-                        + resolveInfo.activityInfo.name;
+                String packageName = resolveInfo.activityInfo.packageName;
+                String packageNameWithIntent;
+                
+                // Only add activity name if package has multiple intents
+                if (packageIntentCount.get(packageName) > 1) {
+                    packageNameWithIntent = packageName + "/" + resolveInfo.activityInfo.name;
+                } else {
+                    packageNameWithIntent = packageName;
+                }
+                
                 appInfo.put("packageName", packageNameWithIntent);
                 appInfo.put("label", resolveInfo.loadLabel(mainActivity.packageManager).toString());
                 if ((resolveInfo.activityInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {

@@ -54,21 +54,22 @@ document.getElementById("pm-chooser").addEventListener('selected', (e) => {
     }
 });
 
-document.querySelector("#dumpbtn").addEventListener("flowClick", () => {
+document.querySelector("#dumpbtn").addEventListener("flowClick", async () => {
     try {
-        navigator.clipboard.writeText(JSON.stringify(window.parent.allappsarchive)).then(() => {
+
+        if (await Groove.copyToClipboard(JSON.stringify(window.parent.allappsarchive))) {
             parent.GrooveBoard.alert(
                 window.i18n.t("settings.alerts.copy_success.title"),
                 window.i18n.t("settings.alerts.copy_success.message"),
                 [{ title: window.i18n.t("common.actions.ok"), style: "default", inline: true, action: () => { } }]
             );
-        }, () => {
+        } else {
             parent.GrooveBoard.alert(
                 window.i18n.t("settings.alerts.copy_failed.title"),
                 window.i18n.t("settings.alerts.copy_failed.message"),
                 [{ title: window.i18n.t("common.actions.ok"), style: "default", inline: true, action: () => { } }]
             );
-        });
+        }
 
     } catch (error) {
         parent.GrooveBoard.alert(

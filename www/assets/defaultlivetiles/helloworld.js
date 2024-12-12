@@ -1,30 +1,43 @@
+/**
+ * @name string Hello World
+ * @provide packageName test.example
+ * @author string berkaytumal
+ * @description string This script displays the current local time in a live tile format.
+ * @minVersion number 50
+ * @targetVersion number 50
+ */
 importScripts('./../../dist/liveTileHelper.js');
-
-// Immediately send a test message when the worker starts
-function getLocalTime() {
-    const now = new Date();
-    const formattedTime = new Intl.DateTimeFormat(undefined, {
-        hour: 'numeric',
-        minute: 'numeric',
-    }).format(now);
-
-    const parts = formattedTime.split(" ");
-    return parts.length === 2 ? [parts[0], parts[1]] : [parts[0]];
-}
-
 
 liveTileHelper.eventListener.on("draw", draw);
 function draw(args) {
     const tileFeed = new liveTileHelper.TileFeed({
-        type: liveTileHelper.TileType.NOTIFICATION,
-        animationType: liveTileHelper.AnimationType.SLIDE,
+        type: liveTileHelper.TileType.MATRIX,
+        animationType: liveTileHelper.AnimationType.FLIP,
+        showAppTitle: false,
         noticationCount: 2
     });
     // Add both tiles to create rotation
     tileFeed.addTile(tileFeed.Tile(
-        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;">Hello</p>`, `url(https://picsum.photos/200?${Math.random() * 100})`));
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;">A</p>`));
     tileFeed.addTile(tileFeed.Tile(
-        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;">World</p>`, `url(https://picsum.photos/200?${Math.random() * 100})`
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;">B</p>`
+    ));
+    tileFeed.addTile(tileFeed.Tile(
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;">C</p>`
+    ));
+    tileFeed.addTile(tileFeed.Tile(
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;"></p>`, `url(https://picsum.photos/200?${Math.random() * 100})`));
+    tileFeed.addTile(tileFeed.Tile(
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;"></p>`, `url(https://picsum.photos/200?${Math.random() * 100})`
+    ));
+    tileFeed.addTile(tileFeed.Tile(
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;"></p>`, `url(https://picsum.photos/200?${Math.random() * 100})`
+    ));
+    tileFeed.addTile(tileFeed.Tile(
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;"></p>`, `url(https://picsum.photos/200?${Math.random() * 100})`
+    ));
+    tileFeed.addTile(tileFeed.Tile(
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;"></p>`, `url(https://picsum.photos/200?${Math.random() * 100})`
     ));
 
     return tileFeed;

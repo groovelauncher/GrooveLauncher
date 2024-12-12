@@ -145,6 +145,8 @@ const appTransition = {
         setTimeout(() => {
             scrollers.main_home_scroller.scrollTo(0, 0);
             mainHomeSlider.style.visibility = 'hidden';
+            mainHomeSlider.classList.add('visibility-hidden');
+
             document.querySelectorAll('.app-transition-selected')
                 .forEach(e => e.classList.remove('app-transition-selected'));
         }, ANIMATION_TIMINGS.launchHide());
@@ -153,6 +155,7 @@ const appTransition = {
     // Handle app resume state
     onResume: (back = false, firstIntro = false) => {
         mainHomeSlider.style.removeProperty('visibility');
+        mainHomeSlider.classList.remove('visibility-hidden');
         clearTimeout(window.appTransitionLaunchError);
         
         scrollers.main_home_scroller.scrollTo(0, 0);

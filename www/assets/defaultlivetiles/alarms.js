@@ -1,5 +1,13 @@
-importScripts('./../../dist/liveTileHelper.js');
+/**
+ * @name string Clock
+ * @provide type alarms
+ * @author string berkaytumal
+ * @description string This script displays the current local time in a live tile format.
+ * @minVersion number 50
+ * @targetVersion number 50
+ */
 
+importScripts('./../../dist/liveTileHelper.js');
 // Immediately send a test message when the worker starts
 function getLocalTime() {
     const now = new Date();

@@ -108,9 +108,10 @@ const iconPackConverter = [
         ],
         "icon": "camera"
     },
-    //CONTACTS
+    //PEOPLE
     {
         "apps": [
+            "test.people",
             "com.android.contacts",
             "com.android.dialer",
             "com.android.htccontacts",
@@ -242,6 +243,7 @@ const iconPackConverter = [
     //ALARM
     {
         "apps": [
+            "test.clock",
             "com.acer.deskclock",
             "com.android.BBKClock",
             "com.android.alarmclock",
@@ -338,6 +340,7 @@ const iconPackConverter = [
     //PHOTOS
     {
         "apps": [
+            "test.photos",
             "com.acer.muse",
             "com.android.camera",
             "com.android.gallery",
@@ -487,6 +490,7 @@ const iconPackConverter = [
     //WEATHER
     {
         "apps": [
+            "test.weather",
             "com.accuweather.android",
             "com.amazon.weather",
             "com.ape.weather3",

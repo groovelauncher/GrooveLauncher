@@ -14,12 +14,26 @@ function isOnMainThread() {
 }
 if (isOnMainThread()) {
     window.liveTiles = window.liveTiles || {};
+    window.liveTileProviders = window.liveTileProviders || []
 } else {
     window.parent.liveTiles = window.parent.liveTiles || {};
+    window.parent.liveTileProviders = window.parent.liveTileProviders || []
+
 }
-function main_registerLiveTileWorker(packageName, workerScript) {
+
+function main_registerLiveTileWorker(packageName, uid) {
+    //const [packageName, workerScript] = liveTileProviders[];
+    const provider = liveTileProviders.find(provider => provider.id === uid);
+    console.log('provider', provider, packageName)
+    if (!provider) {
+        throw new Error('Provider not found');
+    }
+    if (!provider.metadata.provide.includes(packageName)) {
+        console.error('Package not provided by provider');
+    }
+    const workerScript = provider.script;
     if (!packageName || !workerScript) {
-        throw new Error('Both packageName and workerScript are required');
+        console.error('Both packageName and workerScript are required');
     }
 
     // Stop existing worker if present
@@ -46,7 +60,7 @@ function main_registerLiveTileWorker(packageName, workerScript) {
         };
 
         // Register new worker
-        window.liveTiles[packageName] = { controller: new tileController(packageName, worker), worker: worker };
+        window.liveTiles[packageName] = { controller: new tileController(packageName, worker), worker: worker, uid: uid };
 
         //console.log("Sending init message to worker");
         worker.postMessage({
@@ -120,9 +134,9 @@ function main_unregisterLiveTileWorker(packageName) {
         delete window.liveTiles[packageName];
     }
 }
-const registerLiveTileWorker = function (packageName, workerScript) {
+const registerLiveTileWorker = function (packageName, uid) {
     if (isOnMainThread()) {
-        return main_registerLiveTileWorker(packageName, workerScript);
+        return main_registerLiveTileWorker(packageName, uid);
     }
 }
 const unregisterLiveTileWorker = function (packageName) {
@@ -130,11 +144,129 @@ const unregisterLiveTileWorker = function (packageName) {
         return main_unregisterLiveTileWorker(packageName);
     }
 }
+async function getLiveTileMetadata(workerScript) {
+    const response = await fetch(workerScript);
+    const content = await response.text();
 
+    const metadataRegex = /\/\*\*\s*([\s\S]*?)\*\//; // Regex to match the metadata block
+    const match = content.match(metadataRegex);
+
+    if (match && match[1]) {
+        const metadataLines = match[1].trim().split('\n');
+        const metadata = {};
+        function addProvide(packageName) {
+            if (metadata["provide"]) {
+                if (metadata["provide"].includes(packageName)) return
+                metadata.provide.push(packageName)
+            } else {
+                metadata["provide"] = [packageName]
+            }
+        }
+        metadataLines.forEach(line => {
+            const parts = line.replace(/^\s*\*\s*/, '').split(' ');
+            const key = parts[0].replace(/^@/, '');
+            const type = parts[1]; // Get the type
+            const value = parts.slice(2).join(' '); // Join the remaining parts as the value
+            if (key == "provide" && parts.length == 3) {
+                switch (type) {
+                    case 'type':
+                        const typeToPackageNames = (Object.entries(window.iconPackDB).filter(e => e[1].icon == value)).map(e => e[0])
+                        typeToPackageNames.forEach(e => {
+                            addProvide(e)
+                        })
+                        break;
+                    case 'packageName':
+                        addProvide(value)
+                        break;
+                }
+            } else {
+                // Convert value based on type
+                switch (type) {
+                    case 'number':
+                        metadata[key] = Number(value);
+                        break;
+                    case 'string':
+                        metadata[key] = value; // Keep as string
+                        break;
+                    // Add more cases for other types as needed
+                    default:
+                        metadata[key] = value; // Default to string
+                        break;
+                }
+            }
+        });
+
+        return metadata;
+    }
+
+    return null; // Return null if no metadata found
+}
+async function main_registerLiveTileProvider(workerScript) {
+    const uid = generateUniqueId();
+    const metadata = await getLiveTileMetadata(workerScript);
+    if (!metadata) {
+        throw new Error(`Metadata not found for package: ${uid}`);
+    }
+    liveTileProviders.push({ id: uid, script: workerScript, metadata: Object.assign({ name: "Unknown", author: "Unknown", minVersion: 50, targetVersion: 50, description: "Unknown" }, metadata) });
+    return uid;
+}
+function main_unregisterLiveTileProvider(uid) {
+    liveTileProviders = liveTileProviders.filter(provider => provider.id !== uid);
+}
+function main_getLiveTileProviders(packageName) {
+    return liveTileProviders.filter(provider => provider.packageName === packageName) || [];
+}
+const registerLiveTileProvider = function (workerScript) {
+    if (isOnMainThread()) {
+        return main_registerLiveTileProvider(workerScript);
+    }
+}
+const unregisterLiveTileProvider = function (uid) {
+    if (isOnMainThread()) {
+        return main_unregisterLiveTileProvider(uid);
+    }
+}
+const getLiveTileProviders = function (packageName) {
+    if (isOnMainThread()) {
+        return main_getLiveTileProviders(packageName);
+    }
+}
 function generateUniqueId() {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
+function hexToRgb(hex) {
+    // Remove the hash at the start if it's there
+    hex = hex.replace(/^#/, '');
+
+    // Parse r, g, b values
+    let bigint = parseInt(hex, 16);
+    let r = (bigint >> 16) & 255;
+    let g = (bigint >> 8) & 255;
+    let b = bigint & 255;
+
+    return { r, g, b };
+}
+
+function rgbToHex(r, g, b) {
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+}
+
+function adjustColor(hex, amount) {
+    let { r, g, b } = hexToRgb(hex);
+
+    // Adjust the color
+    r = Math.min(255, Math.max(0, r + amount));
+    g = Math.min(255, Math.max(0, g + amount));
+    b = Math.min(255, Math.max(0, b + amount));
+
+    return rgbToHex(r, g, b);
+}
+function generateRandomAccent() {
+    const accentColor = GrooveBoard.backendMethods.serveConfig().accentcolor;
+    return adjustColor(accentColor, Math.floor(Math.random() * 100) - 50);
+
+}
 class tileController {
     constructor(packageName, worker) {
         this.packageName = packageName;
@@ -175,7 +307,8 @@ class tileController {
             liveTileContainer.setAttribute("max-page",
                 result.type == TileType.STATIC ? 1 :
                     result.type == TileType.CAROUSEL ? result.tiles.length :
-                        result.tiles.length + 1
+                        result.type == TileType.MATRIX ? result.tiles.length :
+                            result.tiles.length + 1
             );
             liveTileContainer.style.setProperty('--animation-duration', Math.ceil(result.duration) + "ms");
             liveTileContainer.classList.remove('tile-type-static', 'tile-type-carousel', 'tile-type-notification');
@@ -198,7 +331,60 @@ class tileController {
                 ALLOWED_TAGS,
                 ALLOWED_ATTR
             });
-            liveTileContainer.innerHTML = sanitized;
+            console.log("type", result.type);
+            if (result.type == TileType.MATRIX) {
+                liveTileContainer.innerHTML = `<div class="live-tile-matrix-source">${sanitized}</div>
+                <div class="live-tile-matrix show-m"><div class="live-tile-matrix-container">${`<div class='live-tile-matrix-column'>${"<div class='live-tile-matrix-row'></div>".repeat(3)}</div>`.repeat(3)
+                    }</div></div>
+                <div class="live-tile-matrix show-w"><div class="live-tile-matrix-container">${`<div class='live-tile-matrix-column'>${"<div class='live-tile-matrix-row'></div>".repeat(6)}</div>`.repeat(3)
+                    }</div></div>`;
+                const sizes = [liveTileContainer.querySelector("div.live-tile-matrix.show-m"), liveTileContainer.querySelector("div.live-tile-matrix.show-w")];
+                const dataTiles = liveTileContainer.querySelector("div.live-tile-matrix-source").querySelectorAll("div.live-tile-page");
+
+                liveTileContainer.querySelectorAll("div.live-tile-matrix-row").forEach(matrixTile => {
+                    sizes.forEach(size => {
+                        const allMatrixTiles = size.querySelectorAll("div.live-tile-matrix-row")
+                        if (dataTiles.length < allMatrixTiles.length) {
+                            allMatrixTiles.forEach((tile, index) => {
+                                const randomTile = dataTiles[Math.floor(Math.random() * dataTiles.length)]
+                                tile.innerHTML = randomTile.innerHTML;
+                            })
+                        } else {
+                            var unplacedTiles = dataTiles;
+                            allMatrixTiles.forEach((tile, index) => {
+                                const randomUnplacedTile = unplacedTiles[Math.floor(Math.random() * unplacedTiles.length)]
+                                tile.innerHTML = randomUnplacedTile.innerHTML;
+                                unplacedTiles = unplacedTiles.filter(tile => tile !== randomUnplacedTile);
+                            })
+                        }
+                    });
+                    matrixTile.style.backgroundColor = generateRandomAccent();
+                });
+                setInterval(() => {
+                    sizes.forEach((size) => {
+                        const allMatrixTiles = size.querySelectorAll("div.live-tile-matrix-row")
+                        const randomTile = allMatrixTiles[Math.floor(Math.random() * allMatrixTiles.length)]
+
+                        randomTile.classList.add("flip")
+                        setTimeout(() => {
+
+                            const randomDataTile = dataTiles[Math.floor(Math.random() * dataTiles.length)]
+                            randomTile.innerHTML = randomDataTile.innerHTML;
+
+                            randomTile.style.backgroundColor = generateRandomAccent();
+
+
+                        }, 200);
+                        setTimeout(() => {
+                            randomTile.classList.remove("flip")
+                        }, 400);
+
+                    })
+                }, 3000);
+            } else {
+                liveTileContainer.innerHTML = sanitized;
+            }
+
             // Set first page visible for carousel type
             if (result.type === TileType.CAROUSEL) {
                 const firstPage = liveTileContainer.querySelector('.live-tile-page');
@@ -346,12 +532,18 @@ function uninitializeLiveTile(packageName) {
     });
 }
 export {
+    registerLiveTileProvider,
+    unregisterLiveTileProvider,
+    getLiveTileProviders,
     registerLiveTileWorker,
     unregisterLiveTileWorker,
     initializeLiveTiles,
     uninitializeLiveTile
 }
 const liveTileManager = {
+    registerLiveTileProvider,
+    unregisterLiveTileProvider,
+    getLiveTileProviders,
     registerLiveTileWorker,
     unregisterLiveTileWorker,
     initializeLiveTiles,

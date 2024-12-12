@@ -1,7 +1,8 @@
-import { GrooveMock, BuildConfigMock } from "./scripts/GrooveMock.js";
-window.GrooveRole = "main"
 const GrooveMockInstance = !window.Groove
 window.GrooveMockInstance = GrooveMockInstance
+console.log(window.GrooveMockInstance)
+import { GrooveMock, BuildConfigMock } from "./scripts/GrooveMock.js";
+window.GrooveRole = "main"
 if (GrooveMockInstance) {
     //window.Groove = new GrooveMock("./mock/apps.json")
     window.Groove = new GrooveMock("./mock/apps.json")
@@ -270,13 +271,17 @@ requestAnimationFrame(() => {
             }
             next()
         },
-        (next) => {
-            document.querySelector("#main-home-slider div.tile-list-inner-container").querySelectorAll("div.groove-home-tile").forEach(i => {
-                //console.log(i.getAttribute("packagename"))
-                //liveTileManager.registerLiveTileWorker(i.getAttribute("packagename"),"http://127.0.0.1:5500/www/assets/defaultlivetiles/helloworld.js")
-            })
-            liveTileManager.registerLiveTileWorker("com.google.android.deskclock",new URL("./www/assets/defaultlivetiles/clock.js",location.origin).href)
-            //liveTileManager.registerLiveTileWorker("com.google.android.apps.youtube.music",new URL("./www/assets/defaultlivetiles/helloworld.js",location.origin).href)
+        async (next) => {
+            const baseURL = !window.GrooveMockInstance ? new URL('/assets/', location.origin).href : new URL('/www/', location.origin).href
+            GrooveBoard.backendMethods.liveTiles.init = {
+                alarms: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/alarms.js", baseURL).href),
+                people: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/people.js", baseURL).href),
+                photos: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/photos.js", baseURL).href),
+                weather: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/weather.js", baseURL).href),
+                example: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/helloworld.js", baseURL).href)
+
+            }
+            GrooveBoard.backendMethods.liveTiles.refresh()
             next()
         }
     ],

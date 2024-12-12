@@ -1,6 +1,9 @@
 package web.bmdominatezz.gravy;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -656,5 +659,16 @@ public class WebInterface {
         }
 
         return json.toString();
+    }
+    @JavascriptInterface
+    public String copyToClipboard(String text) {
+        try {
+            ClipboardManager clipboard = (ClipboardManager) mainActivity.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("text", text);
+            clipboard.setPrimaryClip(clip);
+            return "true";
+        } catch (Exception e) {
+            return "";
+        }
     }
 }

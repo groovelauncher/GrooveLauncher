@@ -14,6 +14,7 @@ import imageStore from "./imageStore";
 import fontStore from "./fontStore";
 import LocaleStore from "./localeManager";
 import { localization } from "./localeManager";
+import liveTileManager from './liveTileManager';
 window.grooveTileColumns = grooveTileColumns;
 window.grooveColors = grooveColors;
 window.grooveThemes = grooveThemes;
@@ -672,6 +673,11 @@ const backendMethods = {
   },
   homeConfiguration: {
     save: () => {
+      try {
+        backendMethods.liveTiles.refresh()
+      } catch (error) {
+        console.error("Couldn't refresh live tiles!")
+      }
       if (window.cantSaveHomeConfig) return;
       const config = [];
       document.querySelectorAll("div.tile-list-inner-container > div.groove-home-tile").forEach(el => {
@@ -875,7 +881,10 @@ const backendMethods = {
   },
   appUninstall: (packagename) => {
     const tileElem = document.querySelector(`div.groove-home-tile[packagename="${packagename}"]`)
-    if (tileElem) window.tileListGrid.removeWidget(tileElem)
+    if (tileElem) {
+      window.tileListGrid.removeWidget(tileElem)
+      backendMethods.liveTiles.refresh()
+    }
     backendMethods.reloadApps()
   },
   serveConfig: () => {
@@ -890,8 +899,51 @@ const backendMethods = {
     else if (localStorage["lastVersion"] != Groove.getAppVersion()) return true;
     else return false;
   },
-  localization: localization
+  localization: localization,
+  liveTiles: {
+    init: {
+      alarms: undefined,
+      people: undefined,
+      photos: undefined,
+      weather: undefined,
+      example: undefined
+    },
+    defaults: () => {
+      const iconpackdbentries = Object.keys(iconPackDB)
+      const installedApps = allappsarchive.map(e => e.packageName).filter(e => iconpackdbentries.includes(e) || e == "test.example")
+      return Object.fromEntries(installedApps.filter(e =>
+        e == "test.example" ? true : (["alarms", "people", "photos", "weather"].includes(iconPackDB[e].icon))
+      ).map(
+        e => [e, e == "test.example" ? backendMethods.liveTiles.init.example : backendMethods.liveTiles.init[iconPackDB[e].icon]]
+      )
+      )
+    },
+    get: () => Object.assign(localStorage.getItem("liveTiles") || {}, backendMethods.liveTiles.defaults()),
+    //setTileProvider: (provider) => {}
+    getProviders: () => window.liveTileProviders || [],
+    refresh: () => {
+      const initializeLiveTiles = backendMethods.liveTiles.get()
+      console.log("initializeLiveTiles", initializeLiveTiles)
+      const homeTiles = document.querySelector("#main-home-slider div.tile-list-inner-container").querySelectorAll("div.groove-home-tile")
+      homeTiles.forEach(i => {
+        const packageName = i.getAttribute("packagename")
+        if (window.liveTiles[packageName]) {
+          delete initializeLiveTiles[packageName]
+          return
+        };
+        if (initializeLiveTiles[packageName]) {
+          liveTileManager.registerLiveTileWorker(packageName, initializeLiveTiles[packageName])
+        }
+        delete initializeLiveTiles[packageName]
+      })
+      Object.keys(initializeLiveTiles).forEach(packageName => {
+        console.log("unregisterLiveTileWorker", packageName)
+        liveTileManager.unregisterLiveTileWorker(packageName)
+      })
 
+    }
+    //getAppProvider:
+  }
 };
 function listHistory() {
   return
@@ -955,3 +1007,4 @@ function getCanvasBlob(canvas, mimeType = 'image/png') {
 }
 
 export default { boardMethods, backendMethods, alert };
+

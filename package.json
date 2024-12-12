@@ -6,15 +6,18 @@
     "build-watch": "npx concurrently \"npm run build-watch:webpack\" \"npm run build-watch:scss\" \"npm run build-watch:internal-apps\" \"npm run build-watch:android\"",
     "build-watch:webpack": "npx webpack --watch",
     "build-watch:scss": "npx sass --no-source-map --watch src/styles.scss www/dist/styles.css",
-    "build-watch:android": "npx concurrently \"npm run build:android\" \"chokidar 'www/**/*' -c 'npm run build:android'\"",
+    "build-watch:android": "npx concurrently \"npm run build:android-assets\" \"chokidar 'www/**/*' -c 'npm run build:android-assets'\"",
     "build-watch:internal-apps": "npx concurrently \"node ./scripts/build-internal-apps.js\" \"chokidar 'src/apps/**/*' -c 'npm run build:internal-apps'\"",
     "build-watch:web": "npx concurrently \"npm run build-watch:webpack\" \"npm run build-watch:scss\" \"npm run build-watch:internal-apps\"",
-    "build": "npm run build:webpack && npm run build:scss && npm run build:internal-apps && npm run build:android",
+    "build": "npm run build:webpack && npm run build:scss && npm run build:internal-apps && npm run build:android-assets",
     "build:webpack": "npx webpack",
     "build:scss": "npx sass --no-source-map src/styles.scss www/dist/styles.css",
-    "build:android": "node ./scripts/build-android.js",
+    "build:android-assets": "node ./scripts/build-android.js",
     "build:internal-apps": "node ./scripts/build-internal-apps.js",
-    "build:production": "rm -rf android/app/src/main/assets/* && npx webpack --env production && npx sass --no-source-map --style=compressed src/styles.scss www/dist/styles.css && node ./scripts/build-internal-apps.js --production && npm run build:android && echo Compilation completed."
+    "build:production": "rm -rf android/app/src/main/assets/* && npx webpack --env production && npx sass --no-source-map --style=compressed src/styles.scss www/dist/styles.css && node ./scripts/build-internal-apps.js --production && npm run build:android-assets && echo Compilation completed.",
+    "build:debug": "rm -rf android/app/src/main/assets/* && npx webpack && npx sass --no-source-map src/styles.scss www/dist/styles.css && node ./scripts/build-internal-apps.js && npm run build:android-assets && echo Compilation completed.",
+    "debug:android": "npm run build:debug && cd android && ./gradlew assembleDebug && cd .. && adb install android/app/build/outputs/apk/debug/app-debug.apk && adb shell am start -n web.bmdominatezz.gravy/web.bmdominatezz.gravy.MainActivity",
+    "debug:web": "npx concurrently \"npm run build-watch:web\" \"npx http-server -p 8080\""
   },
   "author": "",
   "license": "MIT",
@@ -36,6 +39,7 @@
     "concurrently": "^9.0.1",
     "sass": "^1.77.8",
     "webpack": "^5.93.0",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "http-server": "^14.2.0"
   }
 }

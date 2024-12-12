@@ -143,6 +143,18 @@
             "packageName": "test.people",
             "label": "A TEST PEOPLE",
             "type": 2
+        },
+        {
+            "uid": 13,
+            "packageName": "test.photos",
+            "label": "A TEST PHOTOS",
+            "type": 2
+        },
+        {
+            "uid": 13,
+            "packageName": "test.example",
+            "label": "A TEST EXAMPLE",
+            "type": 2
         }
     ]
 }

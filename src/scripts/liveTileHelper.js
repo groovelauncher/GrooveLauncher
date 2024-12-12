@@ -75,7 +75,8 @@ const eventListener = {
 const TileType = {
     STATIC: "static",
     CAROUSEL: "carousel",
-    NOTIFICATION: "notification"
+    NOTIFICATION: "notification",
+    MATRIX:"matrix"
 }
 const TilePresets = {
 
@@ -139,4 +140,5 @@ global.liveTileHelper = {
 export {
     requestRedraw, requestGoToPage, requestGoToNextPage, requestGoToPreviousPage, eventListener, TileFeed, Tile, TileType, AnimationType
 }
+
 export default liveTileHelper

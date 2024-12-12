@@ -134,6 +134,16 @@ class GrooveMock {
             "galleryApp": "com.google.android.apps.photos"
         })
     }
+    async copyToClipboard(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            console.log("Copied to clipboard:", text);
+            return true;
+        } catch (error) {
+            console.error("Failed to copy to clipboard:", error);
+            return false;
+        }
+    }
 }
 export default GrooveMock;
 export { BuildConfigMock, GrooveMock }

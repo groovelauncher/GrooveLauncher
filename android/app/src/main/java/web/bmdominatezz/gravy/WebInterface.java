@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
+import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
@@ -101,14 +103,14 @@ public class WebInterface {
                 JSONObject appInfo = new JSONObject();
                 String packageName = resolveInfo.activityInfo.packageName;
                 String packageNameWithIntent;
-                
+
                 // Only add activity name if package has multiple intents
                 if (packageIntentCount.get(packageName) > 1) {
                     packageNameWithIntent = packageName + "/" + resolveInfo.activityInfo.name;
                 } else {
                     packageNameWithIntent = packageName;
                 }
-                
+
                 appInfo.put("packageName", packageNameWithIntent);
                 appInfo.put("label", resolveInfo.loadLabel(mainActivity.packageManager).toString());
                 if ((resolveInfo.activityInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
@@ -187,9 +189,13 @@ public class WebInterface {
         // xmlns=\\"http://www.w3.org/2000/svg\\"/>"}
         JSONObject appicon = new JSONObject();
         appicon.put("foreground", "https://appassets.androidplatform.net/assets/icons/"
-                + (packageNameInfo.packageName == null ? "undefined" : packageNameInfo.packageName + "|" + packageNameInfo.intentId) + ".webp");
+                + (packageNameInfo.packageName == null ? "undefined"
+                        : packageNameInfo.packageName + "|" + packageNameInfo.intentId)
+                + ".webp");
         appicon.put("background", "https://appassets.androidplatform.net/assets/icons-bg/"
-                + (packageNameInfo.packageName == null ? "undefined" : packageNameInfo.packageName + "|" + packageNameInfo.intentId) + ".webp");
+                + (packageNameInfo.packageName == null ? "undefined"
+                        : packageNameInfo.packageName + "|" + packageNameInfo.intentId)
+                + ".webp");
         return appicon.toString();
         // return "https://appassets.androidplatform.net/assets/icons/" + (packageName
         // == null ? "undefined" : packageName) + ".webp";
@@ -308,7 +314,7 @@ public class WebInterface {
     public boolean uninstallAppWithRoot(String packageName) {
         try {
             // Run the uninstall command as root
-            Process process = Runtime.getRuntime().exec(new String[]{"pm uninstall " + packageName});
+            Process process = Runtime.getRuntime().exec(new String[] { "pm uninstall " + packageName });
 
             // Optional: read output if you need to handle success or failure
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -660,6 +666,7 @@ public class WebInterface {
 
         return json.toString();
     }
+
     @JavascriptInterface
     public String copyToClipboard(String text) {
         try {
@@ -670,5 +677,28 @@ public class WebInterface {
         } catch (Exception e) {
             return "";
         }
+    }
+
+    @JavascriptInterface
+    public String getDisplayOrientation() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        WindowManager windowManager = (WindowManager) mainActivity.getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        if (metrics.widthPixels > metrics.heightPixels) {
+            return "landscape";
+        } else {
+            return "portrait";
+        }
+    }
+
+    @JavascriptInterface
+    public void setDisplayOrientationLock(String key) {
+        if (key.equals("auto")) {
+            mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        } else if (key.equals("landscape")) {
+            mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else if (key.equals("portrait")) {
+            mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } 
     }
 }

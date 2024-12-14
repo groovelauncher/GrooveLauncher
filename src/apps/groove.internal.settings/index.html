@@ -24,9 +24,9 @@
                 <p class="groove-list-view-item-title" data-i18n="settings.theme.title">home+theme</p>
                 <p class="groove-list-view-item-description">violet</p>
               </div>
-              <div class="groove-list-view-item hidden">
+              <div class="groove-list-view-item">
                 <p class="groove-list-view-item-title" data-i18n="settings.screen_rotation.title">screen rotation</p>
-                <p class="groove-list-view-item-description">locked</p>
+                <p class="groove-list-view-item-description" data-i18n="common.actions.unlocked" data-i18n-transform="lc">unlocked</p>
               </div>
               <div class="groove-list-view-item">
                 <p class="groove-list-view-item-title" data-i18n="settings.language.title">language</p>
@@ -264,12 +264,12 @@
                 80%</div>
               <div class="metro-dropdown-option" data-i18n="common.numbers.percent" data-i18n-params="{value: 90}">
                 90%</div>
-              <div class="metro-dropdown-option" data-i18n="common.numbers.percent"
-                data-i18n-params="{value: 100}">100%</div>
-              <div class="metro-dropdown-option" data-i18n="common.numbers.percent"
-                data-i18n-params="{value: 110}">110%</div>
-              <div class="metro-dropdown-option" data-i18n="common.numbers.percent"
-                data-i18n-params="{value: 125}">125%</div>
+              <div class="metro-dropdown-option" data-i18n="common.numbers.percent" data-i18n-params="{value: 100}">100%
+              </div>
+              <div class="metro-dropdown-option" data-i18n="common.numbers.percent" data-i18n-params="{value: 110}">110%
+              </div>
+              <div class="metro-dropdown-option" data-i18n="common.numbers.percent" data-i18n-params="{value: 125}">125%
+              </div>
             </div>
           </div>
           <div class="group">
@@ -336,10 +336,11 @@
             <h2 id="about-webview-version" style="margin-bottom: 20px;" data-i18n="settings.about.webview_version"
               data-i18n-params='{version: "Loading..."}'>WebView Version: Loading...</h2>
             <div class="double-buttons">
-              <button class="metro-button" id="resetbtn" data-i18n="settings.about.reset_launcher">Reset
+              <button class="metro-button" id="resetbtn" data-i18n="settings.about.reset_launcher"
+                style="margin-left: 0px;">Reset
                 Launcher</button>
-              <button class="metro-button" id="updatebutton"><span data-i18n-init="settings.about.check_updates"
-                  style="pointer-events: none;">Check Updates</span>
+              <button class="metro-button" id="updatebutton" style="margin-right: 0px;"><span
+                  data-i18n-init="settings.about.check_updates" style="pointer-events: none;">Check Updates</span>
                 <img src="./../../assets/loader.png">
               </button>
 
@@ -432,9 +433,36 @@
       <div class="settings-pages-container">
         <div class="settings-page-2" id="app-detail-tab">
           <div class="group" style="pointer-events: auto;">
-            <p class="group-title">com.example</p>
-            <button class="metro-button" id="uninstallappbutton" data-i18n="settings.apps.uninstall_app">Uninstall
+            <p class="group-title">Info</p>
+            <p class="group-description" style="color: var(--metro-foreground);margin-bottom: 15px;"></p>
+            <button class="metro-button" id="uninstallappbutton" data-i18n="settings.apps.uninstall_app"
+              style="margin: 0px;">Uninstall
               App</button>
+          </div>
+          <div class="group">
+            <p class="group-title" data-i18n="settings.apps.name">Name</p>
+            <input type="text" class="metro-text-input">
+          </div>
+          <div class="group">
+            <p class="group-title" data-i18n="settings.apps.icon">Icon</p>
+            <div class="metro-dropdown-menu" selected="1">
+              <div class="metro-dropdown-option" data-i18n="settings.theme.themes.light">Light</div>
+              <div class="metro-dropdown-option" data-i18n="settings.theme.themes.dark">Dark</div>
+            </div>
+          </div>
+          <div class="group">
+            <p class="group-title" data-i18n="settings.apps.background">Background</p>
+            <div class="metro-dropdown-menu" selected="1">
+              <div class="metro-dropdown-option" data-i18n="settings.theme.themes.light">Light</div>
+              <div class="metro-dropdown-option" data-i18n="settings.theme.themes.dark">Dark</div>
+            </div>
+          </div>
+          <div class="group">
+            <p class="group-title" data-i18n="settings.apps.live_tile">Live tile</p>
+            <div class="metro-dropdown-menu" selected="1">
+              <div class="metro-dropdown-option" data-i18n="settings.theme.themes.light">Light</div>
+              <div class="metro-dropdown-option" data-i18n="settings.theme.themes.dark">Dark</div>
+            </div>
           </div>
         </div>
       </div>

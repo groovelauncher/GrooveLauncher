@@ -144,6 +144,16 @@ class GrooveMock {
             return false;
         }
     }
+    getDisplayOrientation() {
+        if (window.innerWidth > window.innerHeight) {
+            return "landscape"
+        } else {
+            return "portrait"
+        }
+    }
+    setDisplayOrientationLock(orientation) {
+        console.log("setDisplayOrientationLock:", orientation)
+    }
 }
 export default GrooveMock;
 export { BuildConfigMock, GrooveMock }

@@ -888,7 +888,7 @@ const backendMethods = {
     backendMethods.reloadApps()
   },
   serveConfig: () => {
-    var response = { "uiscale": "1", "theme": "1", "accentcolor": "#3E65FF" }
+    var response = { "uiscale": "1", "theme": "1", "accentcolor": "#AA00FF" }
     if (localStorage["UIScale"]) response.uiscale = localStorage.UIScale
     if (localStorage["accentColor"]) response.accentcolor = localStorage.accentColor
     if (localStorage["theme"]) response.theme = localStorage.theme

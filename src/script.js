@@ -221,6 +221,8 @@ requestAnimationFrame(() => {
             if (!!localStorage.getItem("reducedMotion")) GrooveBoard.backendMethods.setReduceMotion(localStorage.getItem("reducedMotion") == "true", true)
             if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true)
             if (!!localStorage.getItem("font")) GrooveBoard.backendMethods.font.set(localStorage.getItem("font"), true)
+            if (!!localStorage.getItem("rotationLock")) Groove.setDisplayOrientationLock(localStorage.getItem("rotationLock"))
+            
             //if (!!localStorage.getItem("packageManagerProvider")) GrooveBoard.backendMethods.packageManagerProvider.set(Number(localStorage.getItem("packageManagerProvider")), true)
             next()
         },

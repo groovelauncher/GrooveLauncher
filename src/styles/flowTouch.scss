@@ -39,6 +39,22 @@
     @include flow-touch;
 }
 
+@mixin metro-text-input {
+    border: none;
+    height: 48px;
+    box-sizing: border-box;
+    background: rgb(206, 207, 206);
+    color: black;
+    &:focus {
+        background: white;
+        box-shadow: inset 0px 0px 0px 4px var(--accent-color);
+        &::placeholder {
+            //color: transparent;
+        }
+    }
+    font-size: 23px;
+    padding: 10px;
+}
 
 @mixin metro-button {
     @include flow-touch;
@@ -71,6 +87,10 @@
         }
     }
 
+}
+
+.metro-text-input {
+    @include metro-text-input();
 }
 
 .metro-button {

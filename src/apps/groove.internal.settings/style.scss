@@ -599,6 +599,12 @@ a {
     margin-bottom: 0px;
 }
 
+#about-app-version,
+#about-webview-version {
+    font-size: 20px;
+    opacity: .5;
+}
+
 #about-app-version {
     margin: 0px;
 }
@@ -781,6 +787,10 @@ body:not(.soft-exit):not(.soft-exit-home) {
             flex-grow: 1;
             text-align: center;
 
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+
             img {
                 display: none;
 
@@ -888,6 +898,7 @@ button.metro-button.spinner {
                 opacity: 0;
                 transform: perspective(var(--flow-perspective)) rotateX(-0deg);
                 transform-origin: 50% -25%;
+
                 @keyframes expand-panel {
                     from {
                         opacity: 1;

@@ -328,12 +328,12 @@ class LocaleManager {
         throw e;
       }
     }
+    const transform = el.getAttribute('data-i18n-transform');
 
     if (el.hasAttribute('data-i18n-init')) {
       let text = this.t(el.getAttribute('data-i18n-init'), params);
 
       // Handle text transformation if attribute exists
-      const transform = el.getAttribute('data-i18n-transform');
       if (transform) {
         switch (transform.toLowerCase()) {
           case 'lc':
@@ -350,8 +350,18 @@ class LocaleManager {
       return;
     }
     const key = el.getAttribute('data-i18n');
-
-    el.innerHTML = this.t(key, params);
+    var translation = this.t(key, params);
+    if (transform) {
+      switch (transform.toLowerCase()) {
+        case 'lc':
+          translation = this.toLowerCase(translation);
+          break;
+        case 'uc':
+          text = this.toUpperCase(translation);
+          break;
+      }
+    }
+    el.innerHTML = translation
   }
 
   async setLocale(locale, progressCallback = null) {

@@ -105,7 +105,16 @@
     "check_updates": "Check Updates"
   },
   "apps": {
-    "uninstall_app": "Uninstall App"
+    "uninstall_app": "Uninstall App",
+    "name": "Name",
+    "icon": "Icon",
+    "icon_selections": {
+      "default": "Default (Groove Icons)",
+      "original":"Original icon",
+      
+    },
+    "background": "Background",
+    "live_tile": "Live Tile"
   },
   "roles": {
     "team_groove": "Team Groove",

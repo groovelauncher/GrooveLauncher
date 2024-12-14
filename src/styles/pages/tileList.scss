@@ -168,7 +168,8 @@ div.tile-list-page {
 
 
         div.groove-home-tile:not(.home-menu-selected) {
-            transition: left .25s, top .25s, opacity .25s, transform .1s;
+            //transition: left .25s, top .25s, opacity .25s, transform .1s;
+            transition: left .25s, top .25s, opacity .25s, transform .05s;
             opacity: .6;
             --shake-x: 0px;
             --shake-y: 0px;
@@ -631,24 +632,26 @@ div.groove-home-tile {
                                             opacity: 1;
                                         }
 
-                                        49% {
-                                            animation-timing-function: ease-out;
+                                        9% {
+                                            animation-timing-function: ease-in;
                                             transform: rotateX(-90deg);
                                             opacity: .5;
                                         }
 
-                                        50% {
+                                        10% {
+                                            animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
                                             transform: rotateX(90deg);
                                             opacity: .5;
                                         }
 
                                         100% {
+                                            animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
                                             transform: rotateX(0deg);
                                             opacity: 1;
                                         }
                                     }
 
-                                    animation: live-tile-matrix-tile-flip 400ms forwards;
+                                    animation: live-tile-matrix-tile-flip 2s forwards;
                                 }
                             }
                         }

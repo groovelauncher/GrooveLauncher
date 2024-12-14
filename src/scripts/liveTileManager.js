@@ -24,7 +24,7 @@ if (isOnMainThread()) {
 function main_registerLiveTileWorker(packageName, uid) {
     //const [packageName, workerScript] = liveTileProviders[];
     const provider = liveTileProviders.find(provider => provider.id === uid);
-    console.log('provider', provider, packageName)
+    //console.log('provider', provider, packageName)
     if (!provider) {
         throw new Error('Provider not found');
     }
@@ -96,7 +96,7 @@ function onWorkerMessage(event) {
     switch (message.action) {
         case 'requestRedraw':
             setTimeout(() => {
-                console.log('Handling requestRedraw');
+                //console.log('Handling requestRedraw');
                 const now = Date.now();
                 if (now - controller.lastDrawTime >= 20000) { // 20 seconds in milliseconds
                     controller.lastDrawTime = now;
@@ -114,10 +114,10 @@ function onWorkerMessage(event) {
             controller.goToPreviousPage();
             break;
         case 'test':
-            console.log('Received test message from worker:', message.data);
+            //console.log('Received test message from worker:', message.data);
             break;
         default:
-            console.log('Unknown message action:', message.action);
+            //console.log('Unknown message action:', message.action);
     }
 }
 function main_unregisterLiveTileWorker(packageName) {
@@ -292,7 +292,7 @@ class tileController {
                 action: "draw",
                 data: { message: "Drawing from tile controller" },
             });
-            console.log("Drawing from tile controller", response);
+            //console.log("Drawing from tile controller", response);
 
             if (!response.result) {
                 throw new Error('Invalid response format: missing result');
@@ -331,7 +331,7 @@ class tileController {
                 ALLOWED_TAGS,
                 ALLOWED_ATTR
             });
-            console.log("type", result.type);
+            //console.log("type", result.type);
             if (result.type == TileType.MATRIX) {
                 liveTileContainer.innerHTML = `<div class="live-tile-matrix-source">${sanitized}</div>
                 <div class="live-tile-matrix show-m"><div class="live-tile-matrix-container">${`<div class='live-tile-matrix-column'>${"<div class='live-tile-matrix-row'></div>".repeat(3)}</div>`.repeat(3)
@@ -360,7 +360,8 @@ class tileController {
                     });
                     matrixTile.style.backgroundColor = generateRandomAccent();
                 });
-                setInterval(() => {
+
+                function drawNextFlip() {
                     sizes.forEach((size) => {
                         const allMatrixTiles = size.querySelectorAll("div.live-tile-matrix-row")
                         const randomTile = allMatrixTiles[Math.floor(Math.random() * allMatrixTiles.length)]
@@ -377,10 +378,17 @@ class tileController {
                         }, 200);
                         setTimeout(() => {
                             randomTile.classList.remove("flip")
-                        }, 400);
+                        }, 2000);
 
                     })
-                }, 3000);
+                    const duration = Math.random() * 2900 + 100
+                    //console.log("duration", duration)
+                    setTimeout(() => {
+                        drawNextFlip()
+                    }, duration);
+                }
+                drawNextFlip();
+
             } else {
                 liveTileContainer.innerHTML = sanitized;
             }
@@ -457,7 +465,7 @@ class tileController {
 
         const iconElement = tile.querySelector('img.groove-home-tile-imageicon');
         iconElement.classList.add('hide-dsfgasdirection-0');
-        console.log("iconElement", this.tileType)
+        //console.log("iconElement", this.tileType)
         iconElement.classList.remove('hide-direction-0', 'hide-direction-1', 'show-direction-0', 'show-direction-1');
         // Handle notification tile icon visibility
         if (this.tileType == TileType.NOTIFICATION && iconElement) {
@@ -473,7 +481,7 @@ class tileController {
             }
         }
 
-        console.log("icon direction", direction)
+        //console.log("icon direction", direction)
         return true;
     }
     _goToPage_flip(page, direction) {
@@ -520,7 +528,7 @@ function initializeLiveTiles() {
                 innerTile.appendChild(liveTileContainer);
             }
             tile.classList.add('live-tile');
-            console.log(`Initialized live tile for package: ${packageName}`);
+            //console.log(`Initialized live tile for package: ${packageName}`);
         }
     });
 }
@@ -528,7 +536,7 @@ function uninitializeLiveTile(packageName) {
     const tiles = document.querySelectorAll(`div.groove-home-tile.live-tile[packagename="${packageName}"]`);
     tiles.forEach(tile => {
         tile.classList.remove('live-tile');
-        console.log(`Uninitialized live tile for package: ${packageName}`);
+        //console.log(`Uninitialized live tile for package: ${packageName}`);
     });
 }
 export {

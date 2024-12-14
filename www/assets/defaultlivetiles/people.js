@@ -8,52 +8,57 @@
  */
 
 importScripts('./../../dist/liveTileHelper.js');
-// Immediately send a test message when the worker starts
-function getLocalTime() {
-    const now = new Date();
-    const formattedTime = new Intl.DateTimeFormat(undefined, {
-        hour: 'numeric',
-        minute: 'numeric',
-    }).format(now);
-
-    const parts = formattedTime.split(" ");
-    return parts.length === 2 ? [parts[0], parts[1]] : [parts[0]];
-}
-
 
 liveTileHelper.eventListener.on("draw", draw);
 function draw(args) {
     const tileFeed = new liveTileHelper.TileFeed({
-        type: liveTileHelper.TileType.STATIC
+        type: liveTileHelper.TileType.MATRIX,
+        animationType: liveTileHelper.AnimationType.FLIP,
+        showAppTitle: false,
+        noticationCount: 2
     });
-
-    const result = getLocalTime();
-    console.log(result);
+    // Add both tiles to create rotation
     tileFeed.addTile(tileFeed.Tile(
-        `<p class="show-m" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: left; width: min-content; position: absolute; left: 12px;">PEOPLE <span style="font-size: 0.5em;position: relative; top: -20px;">TEST</span></p>
-        <p class="show-w" style="margin: 0px; font-size: 100px; font-weight: 200; text-align: center; width: max-content;">PEOPLE<span style="font-size: 0.5em;">TEST</span></p>
-        `
-    ))
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;">A</p>`));
+    tileFeed.addTile(tileFeed.Tile(
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;">B</p>`
+    ));
+    tileFeed.addTile(tileFeed.Tile(
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;">C</p>`
+    ));
+    tileFeed.addTile(tileFeed.Tile(
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;"></p>`, `url(https://picsum.photos/200?${Math.random() * 100})`));
+    tileFeed.addTile(tileFeed.Tile(
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;"></p>`, `url(https://picsum.photos/200?${Math.random() * 100})`
+    ));
+    tileFeed.addTile(tileFeed.Tile(
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;"></p>`, `url(https://picsum.photos/200?${Math.random() * 100})`
+    ));
+    tileFeed.addTile(tileFeed.Tile(
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;"></p>`, `url(https://picsum.photos/200?${Math.random() * 100})`
+    ));
+    tileFeed.addTile(tileFeed.Tile(
+        `<p class="show-m show-w" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: center;"></p>`, `url(https://picsum.photos/200?${Math.random() * 100})`
+    ));
+
     return tileFeed;
 }
-// Set up minute change detector
-function scheduleNextMinuteUpdate() {
-    const now = new Date();
-    const msUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
 
-    setTimeout(() => {
-        liveTileHelper.requestRedraw();
-        scheduleNextMinuteUpdate(); // Schedule next update
-    }, msUntilNextMinute);
+// Replace the minute scheduler with a 10-second rotation using requestGoToNextPage
+function scheduleRotation() {
+    setInterval(() => {
+        liveTileHelper.requestGoToNextPage();
+    }, 10000 + Math.random() * 5000); // 5 to 10 seconds
 }
 
-// Start the scheduling
-scheduleNextMinuteUpdate();
+// Start the rotation
 
 liveTileHelper.eventListener.on("init", init);
 function init(args) {
     console.log("Init called:", args);
     liveTileHelper.requestRedraw();
+    scheduleRotation();
+
 }
 /*setInterval(() => {
     postMessage({

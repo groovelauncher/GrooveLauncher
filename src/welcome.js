@@ -293,17 +293,22 @@ if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Num
 i18n.translateDOM();
 
 const welcomeTitle = document.querySelector("#page-welcome > div.setup-body > h1")
-const welcomeType = welcomeTitle.getAttribute("data-i18n")
-const firstWelcome = welcomeType == "welcome.welcome.install"
-console.log("welcomeType", welcomeType)
-welcomeTitle.removeAttribute("data-i18n")
+const firstWelcome = localStorage["lastVersion"] ? !localStorage.lastVersion == Groove.getAppVersion() : true
+const welcomeType = firstWelcome ? "welcome.welcome.install" : "welcome.welcome.update"
+
+console.log("updatedapp", updatedApp)
+window.firstWelcome = firstWelcome
 var welcomei = 0
+welcomeTitle.innerText = i18n.t(welcomeType)
 setInterval(() => {
     welcomei++;
     welcomeTitle.style.animation = "none"
     welcomeTitle.classList.add(welcomei % 2 == 0 ? "flip2" : "flip")
     setTimeout(() => {
-        welcomeTitle.innerText = welcomei % 2 == 0 ? i18n.t(welcomeType) : greetings.getRandomWelcome()[firstWelcome ? "welcome" : "welcome_back"] || (firstWelcome ? "Welcome" : "Welcome back");
+        welcomeTitle.removeAttribute("data-i18n")
+        welcomeTitle.innerText = welcomei % 2 == 0 ?
+            i18n.t(welcomeType) :
+            (greetings.getRandomWelcome()[firstWelcome ? "welcome" : "welcome_back"] || (firstWelcome ? "Welcome" : "Welcome back"));
     }, 200);
     setTimeout(() => {
         welcomeTitle.classList.remove("flip", "flip2")

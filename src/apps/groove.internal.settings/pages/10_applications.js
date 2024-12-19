@@ -42,8 +42,14 @@ function refreshAppList(params) {
             delete window.lastSelectedApp
 
             const appdetail = parent.GrooveBoard.backendMethods.getAppDetails(e.target.getAttribute("packagename"))
-            document.querySelector("div.app-preference-form > div:nth-child(1) > input").value = getAppPreferences(e.target.getAttribute("packagename"))["label"] ? (getAppPreferences(e.target.getAttribute("packagename"))["label"] != "auto" ? getAppPreferences(e.target.getAttribute("packagename"))["label"] : appdetail.label) : appdetail.label
-            document.querySelector("div.app-preference-form > div:nth-child(1) > input").setAttribute("placeholder", window.parent.GrooveBoard.backendMethods.getAppDetails(e.target.getAttribute("packagename"), true).label)
+            appNameChangerInput.value = getAppPreferences(e.target.getAttribute("packagename"))["label"] ? (getAppPreferences(e.target.getAttribute("packagename"))["label"] != "auto" ? getAppPreferences(e.target.getAttribute("packagename"))["label"] : appdetail.label) : appdetail.label
+            appNameChangerInput.setAttribute("placeholder", window.parent.GrooveBoard.backendMethods.getAppDetails(e.target.getAttribute("packagename"), true).label)
+            if (appdetail.shown) {
+                document.querySelector("#app-list-show-toggle-switch").setAttribute("checked", "")
+            } else {
+                document.querySelector("#app-list-show-toggle-switch").removeAttribute("checked")
+            }
+            document.querySelector("#app-detail-tab > div.flow-scrollable > div.app-preference-form > div:nth-child(1) > div > p").innerText = appdetail.shown ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
             if (!appdetail.packageName.startsWith("com.unknown")) {
                 document.querySelector("div.app-preference-form").style.removeProperty("display")
             }
@@ -110,7 +116,8 @@ function updateAppDetailsRender(packageName) {
         refreshAppList()
     }
 }
-document.querySelector("div.app-preference-form > div:nth-child(1) > input").addEventListener("change", e => {
+const appNameChangerInput = document.querySelector("div.app-preference-form > div:nth-child(2) > input")
+appNameChangerInput.addEventListener("change", e => {
     if (!window["lastSelectedApp"]) return
     var value = e.target.value
     if (e.target.value == " " || e.target.value == "") value = auto
@@ -119,4 +126,16 @@ document.querySelector("div.app-preference-form > div:nth-child(1) > input").add
     setAppPreferences(window.lastSelectedApp.packageName, appPreference)
     updateAppDetailsRender(window.lastSelectedApp.packageName)
     // const perAppPreferences = JSON.parse(localStorage["perAppPreferences"])
-}) 
+})
+
+document.querySelector("#app-list-show-toggle-switch").addEventListener("checked", (e) => {
+    document.querySelector("#app-detail-tab > div.flow-scrollable > div.app-preference-form > div:nth-child(1) > div > p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
+    const appPreference = getAppPreferences(window.lastSelectedApp.packageName)
+    if (e.target.hasAttribute("checked")) {
+        appPreference.shown = true
+    } else {
+        appPreference.shown = false
+    }
+    setAppPreferences(window.lastSelectedApp.packageName, appPreference)
+    updateAppDetailsRender(window.lastSelectedApp.packageName)
+})

@@ -626,7 +626,7 @@ const greetings = {
     },
     "ru": {
       "welcome": "Добро пожаловать",
-      "welcome_back": "С возвращением"
+      "welcome_back": "СДобро пожаловать обратно!"
     },
     "tr": {
       "welcome": "Hoş geldiniz",

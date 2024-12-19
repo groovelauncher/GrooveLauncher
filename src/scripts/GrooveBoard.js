@@ -419,7 +419,7 @@ const backendMethods = {
     }
     localStorage.clear()
   },
-reloadApps: function (callback) {
+  reloadApps: function (callback) {
     document.querySelector("#main-home-slider > div > div:nth-child(2) > div > div.app-list > div.app-list-container").querySelectorAll(".groove-letter-tile, .groove-app-tile").forEach(e => e.remove());
     Object.keys(appSortCategories).forEach(key => {
       delete appSortCategories[key];
@@ -429,6 +429,9 @@ reloadApps: function (callback) {
       const appPreference = GrooveBoard.backendMethods.getAppPreferences(e.packageName);
       if (appPreference.label != "auto") e.label = appPreference.label;
       return e;
+    }).filter(e => {
+      const appPreference = GrooveBoard.backendMethods.getAppPreferences(e.packageName);
+      return appPreference.shown
     });
 
     appsWithPreferences.forEach((entry) => {
@@ -470,7 +473,7 @@ reloadApps: function (callback) {
       });
     });
     scrollers.app_page_scroller.refresh();
-},
+  },
   getAppDetails: (packageName, rawDetails = false) => {
     if (!window["allappsarchive"]) backendMethods.reloadAppDatabase(); else if (window["allappsarchive"].length == 0) backendMethods.reloadAppDatabase();
     const search = window["allappsarchive"].filter(e => e.packageName == packageName)[0]
@@ -987,7 +990,8 @@ reloadApps: function (callback) {
         background: "auto"
       },
       textColor: "auto",
-      accent: "auto"
+      accent: "auto",
+      shown: true
     }
 
     if (localStorage["perAppPreferences"]) {

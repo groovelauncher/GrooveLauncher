@@ -118,13 +118,14 @@
       "default": "Default",
       "transparent": "Transparent"
     },
-    "text_color":"Text color",
+    "text_color": "Text color",
     "text_color_selections": {
       "auto": "Auto",
       "dark": "dark",
       "light": "light"
     },
-    "live_tile": "Live tile"
+    "live_tile": "Live tile",
+    "show_app": "Show in apps list"
   },
   "roles": {
     "team_groove": "Team Groove",

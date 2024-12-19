@@ -245,7 +245,7 @@ function isColorSupported(colorHex) {
     const whiteContrast = contrastRatio(colorHex, "#FFFFFF");
     console.log("blackContrast", blackContrast)
     console.log("whiteContrast", whiteContrast)
-    return blackContrast >= 2 && whiteContrast >= 2;
+    return blackContrast >= 1.5 && whiteContrast >= 1.5;
 }
 colorInputs.hex.addEventListener("change", (e) => {
     if (isValidHexColor(e.target.value)) {

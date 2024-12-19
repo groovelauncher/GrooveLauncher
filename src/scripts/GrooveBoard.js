@@ -279,6 +279,71 @@ const boardMethods = {
     document.body.appendChild(appView);
     return appView;
   },
+  liveTiles: {
+    init: {
+      alarms: undefined,
+      people: undefined,
+      photos: undefined,
+      weather: undefined,
+      example: undefined
+    },
+    defaults: () => {
+      const iconpackdbentries = Object.keys(iconPackDB)
+      const installedApps = allappsarchive.map(e => e.packageName).filter(e => iconpackdbentries.includes(e) || e == "test.example")
+      return Object.fromEntries(installedApps.filter(e =>
+        e == "test.example" ? true : (["alarms", "people", "photos", "weather"].includes(iconPackDB[e].icon))
+      ).map(
+        e => [e, e == "test.example" ? boardMethods.liveTiles.init.example : boardMethods.liveTiles.init[iconPackDB[e].icon]]
+      )
+      )
+    },
+    get: () => Object.assign(localStorage.getItem("liveTiles") || {}, boardMethods.liveTiles.defaults()),
+    //setTileProvider: (provider) => {}
+    getProviders: () => window.liveTileProviders || [],
+    refresh: () => {
+      const initializeLiveTiles = boardMethods.liveTiles.get()
+      console.log("initializeLiveTiles", initializeLiveTiles)
+      const homeTiles = document.querySelector("#main-home-slider div.tile-list-inner-container").querySelectorAll("div.groove-home-tile")
+      homeTiles.forEach(i => {
+        const packageName = i.getAttribute("packagename")
+        if (window.liveTiles[packageName]) {
+          delete initializeLiveTiles[packageName]
+          return
+        };
+        if (initializeLiveTiles[packageName]) {
+          liveTileManager.registerLiveTileWorker(packageName, initializeLiveTiles[packageName])
+        }
+        delete initializeLiveTiles[packageName]
+      })
+      Object.keys(initializeLiveTiles).forEach(packageName => {
+        console.log("unregisterLiveTileWorker", packageName)
+        liveTileManager.unregisterLiveTileWorker(packageName)
+      })
+      Object.entries(window.liveTiles).forEach(liveTileBundle => {
+        const packageName = liveTileBundle[0]
+        const liveTile = liveTileBundle[1]
+        if (liveTile.uid == GrooveBoard.boardMethods.liveTiles.init.people) {
+          liveTile.worker.postMessage({
+            action: "contacts-data",
+            data: { timestamp: Date.now(), contacts: window.contactsCache }
+          })
+
+        }
+      })
+      Object.entries(window.liveTiles).forEach(liveTileBundle => {
+        const packageName = liveTileBundle[0]
+        const liveTile = liveTileBundle[1]
+        if (liveTile.uid == GrooveBoard.boardMethods.liveTiles.init.photos) {
+          liveTile.worker.postMessage({
+            action: "photos-data",
+            data: { timestamp: Date.now(), photos: window.photosCache }
+          })
+
+        }
+      })
+    }
+    //getAppProvider:
+  },
 };
 window.appSortCategories = {};
 function getLabelRank(char) {
@@ -354,22 +419,34 @@ const backendMethods = {
     }
     localStorage.clear()
   },
-  reloadApps: function (callback) {
-    document.querySelector("#main-home-slider > div > div:nth-child(2) > div > div.app-list > div.app-list-container").querySelectorAll(".groove-letter-tile, .groove-app-tile").forEach(e => e.remove())
-    //appSortCategories = {}
+reloadApps: function (callback) {
+    document.querySelector("#main-home-slider > div > div:nth-child(2) > div > div.app-list > div.app-list-container").querySelectorAll(".groove-letter-tile, .groove-app-tile").forEach(e => e.remove());
     Object.keys(appSortCategories).forEach(key => {
       delete appSortCategories[key];
-    })
-    var apps = backendMethods.reloadAppDatabase()
-    apps.forEach((entry) => {
+    });
+
+    var appsWithPreferences = JSON.parse(JSON.stringify(backendMethods.reloadAppDatabase())).map(e => {
+      const appPreference = GrooveBoard.backendMethods.getAppPreferences(e.packageName);
+      if (appPreference.label != "auto") e.label = appPreference.label;
+      return e;
+    });
+
+    appsWithPreferences.forEach((entry) => {
       const labelSortCategory = getLabelSortCategory(entry.label);
       if (!!!appSortCategories[labelSortCategory])
         appSortCategories[labelSortCategory] = [];
       appSortCategories[labelSortCategory].push(entry);
     });
+
+    // Sort apps within each letter category
+    Object.keys(appSortCategories).forEach((labelSortCategory) => {
+      appSortCategories[labelSortCategory].sort((a, b) => a.label.localeCompare(b.label));
+    });
+
     appSortCategories = Object.fromEntries(
       Object.entries(appSortCategories).sort(sortObjectsByKey)
     );
+
     Object.keys(appSortCategories).forEach((labelSortCategory) => {
       let letter = boardMethods.createLetterTile(
         labelSortCategory == "0-9"
@@ -380,9 +457,8 @@ const backendMethods = {
       );
       appSortCategories[labelSortCategory].forEach((app) => {
         const ipe = window.iconPackDB[app.packageName];
-        const iconurl = JSON.parse(Groove.getAppIconURL(app.packageName))
-        const appdetail = backendMethods.getAppDetails(app.packageName)
-        // console.log("bavk",appdetail.icon.background)
+        const iconurl = JSON.parse(Groove.getAppIconURL(app.packageName));
+        const appdetail = backendMethods.getAppDetails(app.packageName);
 
         const el = boardMethods.createAppTile({
           title: appdetail.label,
@@ -391,17 +467,11 @@ const backendMethods = {
           icon: appdetail.icon.foreground,
           iconbg: appdetail.icon.background,
         });
-        /* if (ipe) if (ipe["accent"]) {
-           el.querySelector("img.groove-app-tile-imageicon").style.backgroundColor = `var(--metro-color-${ipe.accent})`
-         }
-         console.log("ipe", ipe)
-         console.log("el", el)*/
-
       });
     });
     scrollers.app_page_scroller.refresh();
-  },
-  getAppDetails: (packageName) => {
+},
+  getAppDetails: (packageName, rawDetails = false) => {
     if (!window["allappsarchive"]) backendMethods.reloadAppDatabase(); else if (window["allappsarchive"].length == 0) backendMethods.reloadAppDatabase();
     const search = window["allappsarchive"].filter(e => e.packageName == packageName)[0]
     const icon = JSON.parse(Groove.getAppIconURL(packageName))
@@ -424,6 +494,10 @@ const backendMethods = {
         //el.querySelector("img.groove-app-tile-imageicon").style.backgroundColor = `var(--metro-color-${idb.accent})`
         //<svg viewBox="0 0 1 1" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" style="fill: rgb(255, 0, 0);"></rect></svg>
       }
+    }
+    if (!rawDetails) {
+      const appPreference = backendMethods.getAppPreferences(packageName)
+      if (appPreference.label != "auto") returnee.label = appPreference.label
     }
     return returnee;
   },
@@ -674,7 +748,7 @@ const backendMethods = {
   homeConfiguration: {
     save: () => {
       try {
-        backendMethods.liveTiles.refresh()
+        boardMethods.liveTiles.refresh()
       } catch (error) {
         console.error("Couldn't refresh live tiles!")
       }
@@ -879,11 +953,15 @@ const backendMethods = {
   appInstall: (packagename) => {
     backendMethods.reloadApps()
   },
+  appUpdate: (packagename) => {
+    backendMethods.reloadApps()
+    boardMethods.liveTiles.refresh()
+  },
   appUninstall: (packagename) => {
     const tileElem = document.querySelector(`div.groove-home-tile[packagename="${packagename}"]`)
     if (tileElem) {
       window.tileListGrid.removeWidget(tileElem)
-      backendMethods.liveTiles.refresh()
+      boardMethods.liveTiles.refresh()
     }
     backendMethods.reloadApps()
   },
@@ -900,49 +978,26 @@ const backendMethods = {
     else return false;
   },
   localization: localization,
-  liveTiles: {
-    init: {
-      alarms: undefined,
-      people: undefined,
-      photos: undefined,
-      weather: undefined,
-      example: undefined
-    },
-    defaults: () => {
-      const iconpackdbentries = Object.keys(iconPackDB)
-      const installedApps = allappsarchive.map(e => e.packageName).filter(e => iconpackdbentries.includes(e) || e == "test.example")
-      return Object.fromEntries(installedApps.filter(e =>
-        e == "test.example" ? true : (["alarms", "people", "photos", "weather"].includes(iconPackDB[e].icon))
-      ).map(
-        e => [e, e == "test.example" ? backendMethods.liveTiles.init.example : backendMethods.liveTiles.init[iconPackDB[e].icon]]
-      )
-      )
-    },
-    get: () => Object.assign(localStorage.getItem("liveTiles") || {}, backendMethods.liveTiles.defaults()),
-    //setTileProvider: (provider) => {}
-    getProviders: () => window.liveTileProviders || [],
-    refresh: () => {
-      const initializeLiveTiles = backendMethods.liveTiles.get()
-      console.log("initializeLiveTiles", initializeLiveTiles)
-      const homeTiles = document.querySelector("#main-home-slider div.tile-list-inner-container").querySelectorAll("div.groove-home-tile")
-      homeTiles.forEach(i => {
-        const packageName = i.getAttribute("packagename")
-        if (window.liveTiles[packageName]) {
-          delete initializeLiveTiles[packageName]
-          return
-        };
-        if (initializeLiveTiles[packageName]) {
-          liveTileManager.registerLiveTileWorker(packageName, initializeLiveTiles[packageName])
-        }
-        delete initializeLiveTiles[packageName]
-      })
-      Object.keys(initializeLiveTiles).forEach(packageName => {
-        console.log("unregisterLiveTileWorker", packageName)
-        liveTileManager.unregisterLiveTileWorker(packageName)
-      })
-
+  getAppPreferences: (packageName) => {
+    //const rawAppDetails = backendMethods.getAppDetails(packageName, true)
+    var defaultPref = {
+      label: "auto",
+      icon: {
+        foreground: "auto",
+        background: "auto"
+      },
+      textColor: "auto",
+      accent: "auto"
     }
-    //getAppProvider:
+
+    if (localStorage["perAppPreferences"]) {
+      const perAppPreferences = JSON.parse(localStorage["perAppPreferences"])
+      if (perAppPreferences[packageName]) {
+        var appPreference = perAppPreferences[packageName]
+        defaultPref = Object.assign(defaultPref, appPreference)
+      }
+    }
+    return defaultPref
   }
 };
 function listHistory() {
@@ -962,12 +1017,39 @@ window.addEventListener("homeButtonPress", function () {
   //if(!!window.canPressHomeButton)
   backendMethods.navigation.home();
 });
+
+var appUninstallLimbo = {}
 window.addEventListener("appInstall", function (e) {
-  backendMethods.appInstall(e.detail.packagename)
+  if (appUninstallLimbo[e.detail.packagename]) {
+    clearTimeout(appUninstallLimbo[e.detail.packagename])
+    backendMethods.appUpdate(e.detail.packagename)
+  } else {
+    backendMethods.appInstall(e.detail.packagename)
+  }
 });
 window.addEventListener("appUninstall", function (e) {
-  backendMethods.appUninstall(e.detail.packagename)
+  clearTimeout(appUninstallLimbo[e.detail.packagename])
+  appUninstallLimbo[e.detail.packagename] = setTimeout(() => {
+    backendMethods.appUninstall(e.detail.packagename)
+    clearOldAppPreferences()
+  }, 20000)
 });
+function clearOldAppPreferences() {
+  setTimeout(() => {
+    if (localStorage["perAppPreferences"]) {
+      const allApps = window["allappsarchive"].map(e => e.packageName) || []
+      if (localStorage["perAppPreferences"]) {
+        const perAppPreferences = JSON.parse(localStorage["perAppPreferences"])
+        Object.keys(perAppPreferences).forEach(e => {
+          if (!allApps.includes(e)) {
+            delete perAppPreferences[e]
+          }
+        })
+        localStorage["perAppPreferences"] = JSON.stringify(perAppPreferences)
+      }
+    }
+  }, 2000)
+}
 window.addEventListener('message', (event) => {
   if (event.data["action"]) {
     if (event.data.action == "setTheme") {

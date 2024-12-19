@@ -1,11 +1,15 @@
 import iconPackConverter from "./scripts/iconPack.js";
+import { newerThan, olderThan, compareVersions } from "./scripts/versioning.js";
+window.newerThan = newerThan
+window.olderThan = olderThan
+window.compareVersions = compareVersions
 import jQuery from "jquery";
 window.$ = jQuery
 import GrooveMock from "./scripts/GrooveMock.js";
-import { i18n } from './scripts/localeManager';
+import { i18n, greetings } from './scripts/localeManager';
 await i18n.init();
 window.i18n = i18n;
-
+window.greetings = greetings
 const GrooveMockInstance = !window.Groove
 window.GrooveMockInstance = GrooveMockInstance
 if (GrooveMockInstance) {
@@ -135,11 +139,18 @@ document.querySelector("#page-wizard button.right-btn").addEventListener("flowCl
     goToPage(2);
     setTimeout(() => {
         const loader = document.getElementById("update-loader");
+
+        try {
+            updateScript()
+        } catch (error) {
+
+        }
+        localStorage.setItem("lastVersion", Groove.getAppVersion())
+
         loader.classList.add("finished");
         document.querySelector("#update-loading p").innerText = "All done!"
         document.querySelector("#update-loading div.setup-footer").style.removeProperty("display")
         $("#update-loading").addClass("active").addClass("button-anim")
-        localStorage.setItem("lastVersion", Groove.getAppVersion())
         setup.update_wizard = false
         history = history.filter(e => e != 1 || e != 2)
         setTimeout(() => {
@@ -277,6 +288,38 @@ document.querySelectorAll("div.accent-color-catalogue-item").forEach(e => e.addE
 if (!!localStorage.getItem("tileColumns")) GrooveBoard.backendMethods.setTileColumns(Number(localStorage.getItem("tileColumns")), true)
 if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
 if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
-if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true)
+if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true); else GrooveBoard.backendMethods.setUIScale(.8, true)
 
 i18n.translateDOM();
+
+const welcomeTitle = document.querySelector("#page-welcome > div.setup-body > h1")
+const welcomeType = welcomeTitle.getAttribute("data-i18n")
+const firstWelcome = welcomeType == "welcome.welcome.install"
+console.log("welcomeType", welcomeType)
+welcomeTitle.removeAttribute("data-i18n")
+var welcomei = 0
+setInterval(() => {
+    welcomei++;
+    welcomeTitle.style.animation = "none"
+    welcomeTitle.classList.add(welcomei % 2 == 0 ? "flip2" : "flip")
+    setTimeout(() => {
+        welcomeTitle.innerText = welcomei % 2 == 0 ? i18n.t(welcomeType) : greetings.getRandomWelcome()[firstWelcome ? "welcome" : "welcome_back"] || (firstWelcome ? "Welcome" : "Welcome back");
+    }, 200);
+    setTimeout(() => {
+        welcomeTitle.classList.remove("flip", "flip2")
+    }, 2000);
+}, 4000);
+
+import { isChristmas, snowStorm } from "./scripts/fun/snow.js";
+if (isChristmas()) snowStorm.start()
+
+
+function updateScript() {
+    if (olderThan("0.5.0-beta.5")) {
+        if (localStorage["UIScale"]) {
+            if (localStorage["UIScale"] == "1") GrooveBoard.backendMethods.setUIScale(0.8)
+        } else {
+            GrooveBoard.backendMethods.setUIScale(0.8)
+        }
+    }
+}

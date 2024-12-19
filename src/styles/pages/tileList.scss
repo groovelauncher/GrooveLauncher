@@ -513,6 +513,10 @@ div.groove-home-tile {
 
             &.tile-type-notification,
             &.tile-type-carousel {
+                div.groove-home-inner-tile {
+                    overflow: hidden !important;
+                }
+
                 div.live-tile-page {
                     //overflow: hidden;
                     visibility: hidden;
@@ -727,6 +731,10 @@ div.groove-home-tile {
             }
 
             &.tile-type-static {
+                div.groove-home-inner-tile {
+                    overflow: hidden !important;
+                }
+
                 img.groove-home-tile-imageicon {
                     display: none;
                 }

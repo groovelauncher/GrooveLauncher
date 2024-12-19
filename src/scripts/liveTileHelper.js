@@ -32,10 +32,15 @@ onmessage = async function (event) {
         case 'draw':
             const result = await eventListener.dispatch("draw", message.data);
             postMessage({ id: message.id, status: "success", result: result });
-
             break;
         case 'init':
             eventListener.dispatch("init", message.data);
+            break;
+        case 'contacts-data':
+            eventListener.dispatch("contactsdata", message.data);
+            break;
+        case 'photos-data':
+            eventListener.dispatch("photosdata", message.data);
             break;
         default:
             console.log("Worker: Unknown action received:", message.action);
@@ -76,7 +81,7 @@ const TileType = {
     STATIC: "static",
     CAROUSEL: "carousel",
     NOTIFICATION: "notification",
-    MATRIX:"matrix"
+    MATRIX: "matrix"
 }
 const TilePresets = {
 

@@ -1,8 +1,12 @@
 package web.bmdominatezz.gravy;
 
+import static web.bmdominatezz.gravy.DefaultApps.*;
+import static web.bmdominatezz.gravy.GrooveExperience.*;
+
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -10,6 +14,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
@@ -26,6 +31,8 @@ import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -190,11 +197,11 @@ public class WebInterface {
         JSONObject appicon = new JSONObject();
         appicon.put("foreground", "https://appassets.androidplatform.net/assets/icons/"
                 + (packageNameInfo.packageName == null ? "undefined"
-                        : packageNameInfo.packageName + "|" + packageNameInfo.intentId)
+                : packageNameInfo.packageName + "|" + packageNameInfo.intentId)
                 + ".webp");
         appicon.put("background", "https://appassets.androidplatform.net/assets/icons-bg/"
                 + (packageNameInfo.packageName == null ? "undefined"
-                        : packageNameInfo.packageName + "|" + packageNameInfo.intentId)
+                : packageNameInfo.packageName + "|" + packageNameInfo.intentId)
                 + ".webp");
         return appicon.toString();
         // return "https://appassets.androidplatform.net/assets/icons/" + (packageName
@@ -314,7 +321,7 @@ public class WebInterface {
     public boolean uninstallAppWithRoot(String packageName) {
         try {
             // Run the uninstall command as root
-            Process process = Runtime.getRuntime().exec(new String[] { "pm uninstall " + packageName });
+            Process process = Runtime.getRuntime().exec(new String[]{"pm uninstall " + packageName});
 
             // Optional: read output if you need to handle success or failure
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -611,60 +618,19 @@ public class WebInterface {
         }
     }
 
-    @JavascriptInterface
-    public String getContactPhotoURL(String contactId) {
-        return "https://appassets.androidplatform.net/assets/contacts/" + contactId;
-    }
 
     @JavascriptInterface
-    public String getDefaultApps() {
-        JSONObject json = new JSONObject();
-        String[] actions = {
-                Intent.ACTION_DIAL,
-                Intent.ACTION_SENDTO,
-                Intent.ACTION_VIEW,
-                Intent.ACTION_SENDTO,
-                Intent.ACTION_VIEW,
-                Intent.ACTION_VIEW,
-                Intent.ACTION_VIEW,
-                Intent.ACTION_VIEW
-        };
-        String[] data = {
-                null,
-                "smsto:",
-                "http://",
-                "mailto:",
-                "market:",
-                "content://contacts/",
-                "music://",
-                "content://media/external/images/media"
-        };
-        String[] keys = {
-                "phoneApp",
-                "messageApp",
-                "browserApp",
-                "mailApp",
-                "storeApp",
-                "contactsApp",
-                "musicApp",
-                "galleryApp"
-        };
-
-        try {
-            for (int i = 0; i < actions.length; i++) {
-                Intent intent = new Intent(actions[i]);
-                if (data[i] != null) {
-                    intent.setData(Uri.parse(data[i]));
-                }
-                ResolveInfo resolveInfo = mainActivity.packageManager.resolveActivity(intent,
-                        PackageManager.MATCH_DEFAULT_ONLY);
-                json.put(keys[i], resolveInfo != null ? resolveInfo.activityInfo.packageName : null);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return json.toString();
+    public String getDefaultApps() throws JSONException {
+        JSONObject defaultApps = new JSONObject();
+        defaultApps.put("phoneApp", getDefaultPhoneAppPackageName(mainActivity));
+        defaultApps.put("messageApp", getDefaultMessagingAppPackageName(mainActivity));
+        defaultApps.put("browserApp", getDefaultBrowserPackageName(mainActivity));
+        defaultApps.put("mailApp", getDefaultMailAppPackageName(mainActivity));
+        defaultApps.put("storeApp", getDefaultStoreAppPackageName(mainActivity));
+        defaultApps.put("contactsApp", getDefaultContactsAppPackageName(mainActivity));
+        defaultApps.put("musicApp", getDefaultMusicPlayerAppPackageName(mainActivity));
+        defaultApps.put("galleryApp", getDefaultGalleryAppPackageName(mainActivity));
+        return defaultApps.toString();
     }
 
     @JavascriptInterface
@@ -699,6 +665,24 @@ public class WebInterface {
             mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else if (key.equals("portrait")) {
             mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } 
+        }
+    }
+
+    @JavascriptInterface
+    public String getContacts() throws JSONException {
+        return GrooveExperience.getContacts(mainActivity);
+    }
+    @JavascriptInterface
+    public String getPhotos() throws JSONException {
+        return GrooveExperience.getPhotos(mainActivity);
+    }
+    @JavascriptInterface
+    public String getContactAvatarURL(String contactId) {
+        return "https://appassets.androidplatform.net/assets/contact-icon/" + contactId + ".webp";
+    }
+    @JavascriptInterface
+    public String getPhotoURL(String photoId){
+        return "https://appassets.androidplatform.net/assets/photos/" + photoId + ".webp";
+
     }
 }

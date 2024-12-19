@@ -73,6 +73,9 @@ function GrooveScroll(selector, options = {}) {
   }, 500);
   scroller.cancelScroll = () => { cancelScroll(scroller) }
   scroller.content.style.setProperty("will-change","transform")
+  scroller.content.classList.add("flow-scrollable")
+  scroller.content.GrooveScroll = scroller
+  scroller.wrapper.GrooveScroll = scroller
   return scroller
 }
 function GrooveSlide(selector, options = {}) {

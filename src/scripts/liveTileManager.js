@@ -117,7 +117,7 @@ function onWorkerMessage(event) {
             //console.log('Received test message from worker:', message.data);
             break;
         default:
-            //console.log('Unknown message action:', message.action);
+        //console.log('Unknown message action:', message.action);
     }
 }
 function main_unregisterLiveTileWorker(packageName) {
@@ -344,7 +344,7 @@ class tileController {
                 liveTileContainer.querySelectorAll("div.live-tile-matrix-row").forEach(matrixTile => {
                     sizes.forEach(size => {
                         const allMatrixTiles = size.querySelectorAll("div.live-tile-matrix-row")
-                        if (dataTiles.length < allMatrixTiles.length) {
+                        /*if (dataTiles.length < allMatrixTiles.length) {
                             allMatrixTiles.forEach((tile, index) => {
                                 const randomTile = dataTiles[Math.floor(Math.random() * dataTiles.length)]
                                 tile.innerHTML = randomTile.innerHTML;
@@ -356,7 +356,7 @@ class tileController {
                                 tile.innerHTML = randomUnplacedTile.innerHTML;
                                 unplacedTiles = unplacedTiles.filter(tile => tile !== randomUnplacedTile);
                             })
-                        }
+                        }*/
                     });
                     matrixTile.style.backgroundColor = generateRandomAccent();
                 });
@@ -365,21 +365,23 @@ class tileController {
                     sizes.forEach((size) => {
                         const allMatrixTiles = size.querySelectorAll("div.live-tile-matrix-row")
                         const randomTile = allMatrixTiles[Math.floor(Math.random() * allMatrixTiles.length)]
+                        if (!randomTile["flipping"]) {
+                            randomTile["flipping"] = true
+                            randomTile.classList.add("flip")
+                            setTimeout(() => {
 
-                        randomTile.classList.add("flip")
-                        setTimeout(() => {
+                                const randomDataTile = dataTiles[Math.floor(Math.random() * dataTiles.length)]
+                                randomTile.innerHTML = randomDataTile.innerHTML;
 
-                            const randomDataTile = dataTiles[Math.floor(Math.random() * dataTiles.length)]
-                            randomTile.innerHTML = randomDataTile.innerHTML;
-
-                            randomTile.style.backgroundColor = generateRandomAccent();
+                                randomTile.style.backgroundColor = generateRandomAccent();
 
 
-                        }, 200);
-                        setTimeout(() => {
-                            randomTile.classList.remove("flip")
-                        }, 2000);
-
+                            }, 200);
+                            setTimeout(() => {
+                                delete randomTile["flipping"]
+                                randomTile.classList.remove("flip")
+                            }, 2000);
+                        }
                     })
                     const duration = Math.random() * 2900 + 100
                     //console.log("duration", duration)
@@ -452,12 +454,13 @@ class tileController {
         const pages = liveTileContainer.querySelectorAll('.live-tile-page');
         pages.forEach((page, index) => {
             page.classList.remove('show-direction-0', 'show-direction-1', 'hide-direction-0', 'hide-direction-1');
-            page.querySelector('div.live-tile-background').classList.remove('show-direction-0', 'show-direction-1', 'hide-direction-0', 'hide-direction-1');
+            const liveTileBackground = page.querySelector('div.live-tile-background')
+            if (liveTileBackground) liveTileBackground.classList.remove('show-direction-0', 'show-direction-1', 'hide-direction-0', 'hide-direction-1');
             const pageIndex = this.tileType === TileType.NOTIFICATION ? index + 1 : index;
             if (pageIndex === nextPage || pageIndex === currentPage) {
                 page.style.visibility = "visible"
                 page.classList.add(`${pageIndex === nextPage ? 'show' : 'hide'}-direction-${direction}`);
-                if (!(nextPage == 0 || currentPage == 0)) page.querySelector('div.live-tile-background').classList.add(`${pageIndex === nextPage ? 'show' : 'hide'}-direction-${1 - direction}`);
+                if (liveTileBackground) if (!(nextPage == 0 || currentPage == 0)) page.querySelector('div.live-tile-background').classList.add(`${pageIndex === nextPage ? 'show' : 'hide'}-direction-${1 - direction}`);
             } else {
                 page.style.visibility = "hidden"
             }
@@ -465,7 +468,7 @@ class tileController {
 
         const iconElement = tile.querySelector('img.groove-home-tile-imageicon');
         iconElement.classList.add('hide-dsfgasdirection-0');
-        //console.log("iconElement", this.tileType)
+        console.log("iconElement", this.tileType)
         iconElement.classList.remove('hide-direction-0', 'hide-direction-1', 'show-direction-0', 'show-direction-1');
         // Handle notification tile icon visibility
         if (this.tileType == TileType.NOTIFICATION && iconElement) {
@@ -481,7 +484,80 @@ class tileController {
             }
         }
 
-        //console.log("icon direction", direction)
+        console.log("icon direction", direction)
+        return true;
+    }
+    _goToPage_flip(page, direction) {
+        const tile = this.getDOMTile();
+        const liveTileContainer = tile.querySelector('div.live-tile-container');
+        const maxPage = parseInt(liveTileContainer.getAttribute("max-page")) || 1;
+        const currentPage = parseInt(liveTileContainer.getAttribute("current-page")) || 0;
+        const nextPage = Math.min(Math.max(0, page), maxPage - 1);
+    }
+    _goToPage_matrix(page, direction) {
+
+    }
+
+
+
+    ///ESKİ
+    /*
+    _goToPage_slide(page, direction) {
+        const tile = this.getDOMTile();
+        const liveTileContainer = tile.querySelector('div.live-tile-container');
+        const maxPage = parseInt(liveTileContainer.getAttribute("max-page")) || 1;
+        const currentPage = parseInt(liveTileContainer.getAttribute("current-page")) || 0;
+        const nextPage = Math.min(Math.max(0, page), maxPage - 1);
+        // Calculate direction considering circular navigation
+        if (currentPage === nextPage) {
+            return false;
+        } else if (
+            (nextPage > currentPage && nextPage - currentPage <= maxPage / 2) ||
+            (nextPage < currentPage && currentPage - nextPage > maxPage / 2)
+        ) {
+            direction = direction == undefined ? 1 : direction; // Forward
+        } else {
+            direction = direction == undefined ? 0 : direction; // Backward
+        }
+        liveTileContainer.classList.remove('direction-forward', 'direction-backward');
+        liveTileContainer.classList.add(`direction-${direction}`);
+        liveTileContainer.setAttribute("current-page", nextPage);
+        liveTileContainer.style.setProperty('--current-page', nextPage);
+
+        // Update direction classes for all pages
+        const pages = liveTileContainer.querySelectorAll('.live-tile-page');
+        pages.forEach((page, index) => {
+            page.classList.remove('show-direction-0', 'show-direction-1', 'hide-direction-0', 'hide-direction-1');
+            page.querySelector('div.live-tile-background').classList.remove('show-direction-0', 'show-direction-1', 'hide-direction-0', 'hide-direction-1');
+            const pageIndex = this.tileType === TileType.NOTIFICATION ? index + 1 : index;
+            if (pageIndex === nextPage || pageIndex === currentPage) {
+                page.style.visibility = "visible"
+                page.classList.add(`${pageIndex === nextPage ? 'show' : 'hide'}-direction-${direction}`);
+                if (!(nextPage == 0 || currentPage == 0)) page.querySelector('div.live-tile-background').classList.add(`${pageIndex === nextPage ? 'show' : 'hide'}-direction-${1 - direction}`);
+            } else {
+                page.style.visibility = "hidden"
+            }
+        });
+
+        const iconElement = tile.querySelector('img.groove-home-tile-imageicon');
+        iconElement.classList.add('hide-dsfgasdirection-0');
+        console.log("iconElement", this.tileType)
+        iconElement.classList.remove('hide-direction-0', 'hide-direction-1', 'show-direction-0', 'show-direction-1');
+        // Handle notification tile icon visibility
+        if (this.tileType == TileType.NOTIFICATION && iconElement) {
+            if (nextPage == 0 || currentPage == 0) {
+                iconElement.style.visibility = 'visible';
+                if (nextPage == 0) {
+                    iconElement.classList.add(`show-direction-${direction}`);
+                } else {
+                    iconElement.classList.add(`hide-direction-${direction}`);
+                }
+            } else {
+                iconElement.style.visibility = 'hidden';
+            }
+        }
+
+        console.log("icon direction", direction)
         return true;
     }
     _goToPage_flip(page, direction) {
@@ -497,6 +573,21 @@ class tileController {
             return this._goToPage_slide(page, direction);
         } else {
             return this._goToPage_flip(page, direction);
+        }
+    }
+        */
+    //ESKİ
+
+
+
+
+    goToPage(page, direction) {
+        if (this.animationType === AnimationType.SLIDE) {
+            return this._goToPage_slide(page, direction);
+        } else if (this.animationType === AnimationType.FLIP) {
+            return this._goToPage_flip(page, direction);
+        } else if (this.animationType === AnimationType.MATRIX) {
+            return this._goToPage_matrix(page, direction);
         }
     }
     goToNextPage() {

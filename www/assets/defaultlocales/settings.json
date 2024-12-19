@@ -106,15 +106,25 @@
   },
   "apps": {
     "uninstall_app": "Uninstall App",
+    "show_in_app_list": "Show this app in App List",
     "name": "Name",
     "icon": "Icon",
     "icon_selections": {
-      "default": "Default (Groove Icons)",
-      "original":"Original icon",
-      
+      "default": "Default",
+      "monochrome": "Monochrome"
     },
     "background": "Background",
-    "live_tile": "Live Tile"
+    "background_selections": {
+      "default": "Default",
+      "transparent": "Transparent"
+    },
+    "text_color":"Text color",
+    "text_color_selections": {
+      "auto": "Auto",
+      "dark": "dark",
+      "light": "light"
+    },
+    "live_tile": "Live tile"
   },
   "roles": {
     "team_groove": "Team Groove",

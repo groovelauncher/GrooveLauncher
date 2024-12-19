@@ -342,7 +342,6 @@ const iconPackConverter = [
         "apps": [
             "test.photos",
             "com.acer.muse",
-            "com.android.camera",
             "com.android.gallery",
             "com.android.gallery3d",
             "com.asus.ephoto",

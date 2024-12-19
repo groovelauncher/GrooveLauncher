@@ -1,14 +1,13 @@
 import { applyOverscroll, appViewEvents, grooveColors, grooveThemes, setAccentColor } from "../../scripts/shared/internal-app";
-console.log("check",{
+console.log("check", {
     setAccentColor,
-    setTheme, 
+    setTheme,
     setFont,
     setReduceMotion
 });
 import { GrooveScroll, GrooveSlide } from "../../scripts/overscrollFramework";
 import imageStore from "../../scripts/imageStore";
 import fontStore from "../../scripts/fontStore";
-import GrooveElements from "../../scripts/GrooveElements";
 import jQuery from "jquery";
 import i18n from "../../scripts/localeManager";
 window.i18n = i18n
@@ -189,6 +188,19 @@ window.scrollers = {
         outOfBoundaryDampingFactor: 1,
         scrollbar: true
     }),
+    accentColorCatalogue: new GrooveScroll("div.accent-color-catalogue", {
+        bounceTime: 300,
+        swipeBounceTime: 200,
+        outOfBoundaryDampingFactor: 1,
+        scrollbar: false
+    }),
+    customColorSelector: new GrooveScroll("div.custom-color-selector", {
+        bounceTime: 300,
+        swipeBounceTime: 200,
+        outOfBoundaryDampingFactor: 1,
+        scrollbar: false,
+        eventPassthrough: "horizontal"
+    }),
     apps: new GrooveScroll("#apps-tab", {
         bounceTime: 300,
         swipeBounceTime: 200,
@@ -256,16 +268,8 @@ function showPageAnim() {
         activeTabScroll()
     }, 500);
 }
-requestAnimationFrame(() => {
-    showPageAnim()
-});
 
 
-if (window.parent.GrooveBoard) (!!window.parent.allappsarchive ? window.parent.allappsarchive : window.parent.GrooveBoard.backendMethods.reloadAppDatabase()).forEach(e => {
-    const el = GrooveElements.wListViewItem(e.label, "")
-    el.setAttribute("packagename", e.packageName)
-    document.querySelector("#apps-tab > div.scroller > div.groove-list-view").append(el)
-});
 window.animPlaying = false
 const navigation = {
     goToPage: (index) => {
@@ -303,32 +307,11 @@ window.pageNavigation = navigation
 $("#home-tab > div > div.groove-list-view > div.groove-list-view-item").on("flowClick", e => {
     navigation.goToPage($(e.target).index())
 })
-$("#apps-tab > div.scroller > div.groove-list-view > div.groove-list-view-item").on("flowClick", e => {
-    try {
-        const appdetail = parent.GrooveBoard.backendMethods.getAppDetails(e.target.getAttribute("packagename"))
-        window.lastSelectedApp = appdetail
-        document.querySelector("#appDetailPage > div.app-tabs > p").innerText = appdetail.label
-        document.querySelector("#appDetailPage > div.settings-pages > div > div > div > p.group-description").innerText = appdetail.packageName
-        if (appdetail.type == 0) {
-            document.querySelector("#uninstallappbutton").style.display = "none"
-        } else {
-            document.querySelector("#uninstallappbutton").style.display = "block"
-        }
-        pageNavigation.goToPage(6)
-    } catch (error) {
-        throw error
-        parent.GrooveBoard.alert(
-            "Unable to Get App Details!",
-            "Couldn’t retrieve details for this app.",
-            [{ title: "Ok", style: "default", inline: true, action: () => { } }]
-        );
-    }
 
-})
 window.Groove = window.Groove || window.parent.Groove
 console.log({
     setAccentColor,
-    setTheme, 
+    setTheme,
     setFont,
     setReduceMotion
 });
@@ -340,3 +323,6 @@ import "./pages/04_advanced"
 import "./pages/05_about"
 import "./pages/10_applications"
 //i18n.translateDOM()
+requestAnimationFrame(() => {
+    showPageAnim()
+});

@@ -1,5 +1,6 @@
 import GrooveBoard from "./GrooveBoard";
-
+import * as colorContrastDetector from "./colorContrastDetector"
+window.colorContrastDetector = colorContrastDetector
 const GrooveElements = {
   wHomeTile: wHomeTile,
   wAppTile: wAppTile,
@@ -20,6 +21,7 @@ function wHomeTile(
   color = "default",
   supportedSizes
 ) {
+  console.log("HOME TILE ", iconbg)
   if (!supportedSizes) supportedSizes = ["s"];
   const homeTile = document.createElement("div");
   homeTile.classList.add("groove-element");
@@ -51,8 +53,48 @@ function wHomeTile(
   homeTile.querySelector("img.groove-home-tile-imageicon").src = icon;
   homeTile.querySelector("p.groove-home-tile-title").innerText = title;
   if (iconbg) homeTile.querySelector(".groove-home-inner-tile").style.backgroundImage = " url(" + iconbg + ")";
+  requestAnimationFrame(() => {
+    console.log("iconbg", iconbg)
+    const appPreference = GrooveBoard.backendMethods.getAppPreferences(packageName)
+    if (appPreference.textColor == "auto") {
+      colorContrastDetector.getAverageColor(iconbg).then((color) => {
+        homeTile.querySelector("p.groove-home-tile-title").style.color = colorContrastDetector.getTextColor(color);
+        console.log('Text color should be:', color);
+      });
+    } else {
+      homeTile.querySelector("p.groove-home-tile-title").style.color = appPreference.textColor == "dark" ? "#000000" : "#FFFFFF";
+    }
 
+  })
   return homeTile;
+}
+function getImage(url) {
+  return new Promise(function (resolve, reject) {
+    var img = new Image()
+    img.onload = function () {
+      resolve(img)
+    }
+    img.onerror = function () {
+      reject(url)
+    }
+    img.src = url
+  })
+}
+function getTextColor(imagePath) {
+  return new Promise((resolve) => {
+    getImage(imagePath).then((img) => {
+      const color = colorThief.getColor(img);
+      console.log("color", color);
+      const [r, g, b] = color.map((val) => val / 255).map((val) => {
+        return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
+      });
+      const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+      // Return luminance value
+      console.log("luminance", luminance)
+      resolve(luminance > 0.5 ? '#000000' : '#FFFFFF');
+    })
+  });
 }
 function wAppTile(
   //imageIcon = false,
@@ -245,7 +287,7 @@ function wListViewItem(title, description) {
               <p class="groove-list-view-item-description"></p>`
   listViewItem.querySelector("p.groove-list-view-item-title").innerText = title
   listViewItem.querySelector("p.groove-list-view-item-description").innerText = description
-  if(description == undefined || description == ""){
+  if (description == undefined || description == "") {
     listViewItem.classList.add("single-line")
   }
   return listViewItem;

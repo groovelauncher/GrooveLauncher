@@ -16,7 +16,7 @@
 }
 
 .innerAppPage {
-    max-width: 768px;
+    //max-width: calc(768px - 22px * 2);
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -24,9 +24,9 @@
     height: 100%;
     position: absolute;
     left: 22px;
-    left: calc(50% - min(768px, 100vw)/2 + 22px);
+    left: calc(50vw - min(min(100vw - 44px, 768px), 100vw)/2);
     top: 18px;
-    width: calc(100% - 44px);
+    width: calc(min(100vw - 44px, 768px));
     height: calc(100% - 36px);
     pointer-events: none;
 
@@ -47,7 +47,7 @@
                 float: left;
                 width: calc(100% - 22px * 0);
                 opacity: 0;
-                overflow: hidden;
+                //overflow: hidden;
                 --page-swipe-translate: 0px;
                 animation: page-swipe-translate .5s cubic-bezier(0.075, 0.82, 0.165, 1);
                 perspective: var(--flow-perspective);
@@ -193,9 +193,27 @@ h1.app-title {
     margin: 0px;
     font-size: 23px;
     font-weight: 400;
+    position: relative;
+    z-index: 11;
 }
 
 div.app-tabs {
+    background: var(--metro-background);
+    z-index: 10;
+    position: relative;
+
+    &:after {
+        content: "";
+        display: block;
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+        z-index: -1;
+        width: 100%;
+        height: 100vh;
+        background: var(--metro-background);
+    }
+
     margin-bottom: 20px;
     --duration: 0s;
     display: flex;
@@ -208,7 +226,7 @@ div.app-tabs {
     max-width: 100vw;
     padding-left: 22px;
     width: 100vw;
-    overflow: hidden;
+    //overflow: hidden;
 
     p {
         white-space: nowrap;
@@ -268,7 +286,7 @@ div.app-tabs {
             float: left;
             width: calc(100vw - 22px * 2);
             opacity: 0;
-            overflow: hidden;
+            //overflow: hidden;
 
             &:not(.original) {
                 visibility: hidden;
@@ -524,6 +542,40 @@ a {
         width: 100%;
     }
 
+    div.custom-color-selector {
+        overflow: hidden;
+        height: 0px;
+        max-width: 724px;
+        width: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        margin-top: 30px;
+
+        input[type=text],
+        input[type=number] {
+            &:not(:focus) {
+                background: rgb(255, 255, 255, .8);
+            }
+        }
+
+        #hex-color-input {
+            text-transform: uppercase;
+        }
+
+        p.color-not-supported {
+            color: var(--metro-color-yellow);
+            font-size: 20px;
+            font-weight: 400;
+        }
+
+        button.apply-custom-color {
+            pointer-events: auto;
+            margin: 30px 0px 0px;
+            --metro-background: transparent;
+        }
+    }
+
     div.accent-color-catalogue {
         height: 0px;
         max-width: 724px;
@@ -585,7 +637,7 @@ a {
 }
 
 #settings-pages>div>div.settings-page.first-page.original.active-page>div {
-    perspective: var(--flow-perspective);
+    //perspective: var(--flow-perspective);
 }
 
 #about-app-name,
@@ -912,5 +964,120 @@ button.metro-button.spinner {
                 }
             }
         }
+    }
+}
+
+.about-text {
+    font-weight: 200;
+    font-size: 20px;
+    transform-style: preserve-3d;
+
+    strong {
+        color: var(--accent-color);
+        font-weight: 300;
+    }
+
+    h2 {
+        display: block;
+        margin-bottom: 0px;
+        width: 436px;
+        font-size: 32px;
+        font-weight: 300;
+    }
+}
+
+#iro-color-picker {
+    &>div>div>svg>circle:nth-child(2) {
+        transform: scale(3);
+        transform-origin: center;
+        clip-path: circle(43%);
+    }
+
+    &>div>div>svg>circle:nth-child(1) {
+        transform-origin: center;
+        clip-path: circle(50%);
+        transform: scale(2.25);
+    }
+
+    div.IroWheelHue,
+    div.IroWheelLightness {
+        border-radius: 0px !important;
+    }
+
+    div.IroSliderGradient {
+        border-radius: 0px !important;
+    }
+
+    div.IroHandle {
+        &::after {
+            content: "";
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: var(--accent-color)
+        }
+    }
+
+}
+
+div.color-picker-controls {
+    div.color-picker-controls-row {
+        display: flex !important;
+        flex-direction: column !important;
+        margin-top: 5px;
+
+        label {
+            font-size: 20px;
+            margin: 6px 0px;
+            font-weight: 400;
+        }
+
+        div.color-picker-controls-column {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center;
+
+            input[type=text] {
+                //width: 120px !important;
+                //text-align: center;
+                @include metro-text-input();
+                color: black !important;
+            }
+
+            input[type=number] {
+                @include metro-text-input();
+                color: black !important;
+                width: 80px !important;
+                text-align: center;
+                margin-right: 20px;
+            }
+
+            input[type=range] {
+                @include metro-range-input();
+            }
+        }
+    }
+}
+
+#choose-wallpaper {
+    span {
+        pointer-events: none !important;
+    }
+}
+
+#custom-color-item {
+    box-shadow: var(--metro-foreground) 0px 0px 0px 4px inset;
+    width: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 60px;
+    font-weight: 200;
+    color: var(--metro-foreground) !important;
+
+    &.t_active {
+        background: var(--metro-foreground) !important;
+        color: var(--metro-background) !important;
     }
 }

@@ -8,6 +8,7 @@
 @import "./styles/flowTouch.scss";
 @import "./styles/fonts.scss";
 @import "./styles/systemBars.scss";
+@import "./styles/fun/snow.scss";
 
 body,
 html {
@@ -133,5 +134,20 @@ div.bscroll-vertical-scrollbar {
       background: #A6A6A6 !important;
 
     }
+  }
+}
+
+div.flow-scrollable {
+  transform-style: preserve-3d;
+  will-change: transform;
+  &:not(.no-bottom-padding)::after {
+    content: "";
+    display: flex;
+    height: 50px;
+    width: 100%;
+    position: relative;
+    background: transparent;
+    margin: 0px;
+    padding: 0px;
   }
 }

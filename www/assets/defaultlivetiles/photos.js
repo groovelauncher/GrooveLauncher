@@ -1,59 +1,61 @@
 /**
- * @name string Clock
+ * @name string Photos
  * @provide type photos
  * @author string berkaytumal
- * @description string This script displays the current local time in a live tile format.
+ * @description string This script displays photos from gallery.
  * @minVersion number 50
+ * @supportedSizes s,m,w
  * @targetVersion number 50
  */
 
 importScripts('./../../dist/liveTileHelper.js');
-// Immediately send a test message when the worker starts
-function getLocalTime() {
-    const now = new Date();
-    const formattedTime = new Intl.DateTimeFormat(undefined, {
-        hour: 'numeric',
-        minute: 'numeric',
-    }).format(now);
-
-    const parts = formattedTime.split(" ");
-    return parts.length === 2 ? [parts[0], parts[1]] : [parts[0]];
-}
-
 
 liveTileHelper.eventListener.on("draw", draw);
+var photos = [];
+liveTileHelper.eventListener.on("photosdata", (data) => {
+    console.log("photos data!!!!!!!!", data)
+    photos = data.photos;
+    liveTileHelper.requestRedraw();
+
+});
+
+
 function draw(args) {
     const tileFeed = new liveTileHelper.TileFeed({
-        type: liveTileHelper.TileType.STATIC
+        type: liveTileHelper.TileType.CAROUSEL,
+        animationType: liveTileHelper.AnimationType.SLIDE,
+        showAppTitle: true,
+        noticationCount: 0
     });
+    const limitedPhotos = photos.sort(() => 0.5 - Math.random()).slice(0, 10);
 
-    const result = getLocalTime();
-    console.log(result);
-    tileFeed.addTile(tileFeed.Tile(
-        `<p class="show-m" style="margin: 0px; font-size: 60px; font-weight: 200; text-align: left; width: min-content; position: absolute; left: 12px;">PHOTOS <span style="font-size: 0.5em;position: relative; top: -20px;">TEST</span></p>
-        <p class="show-w" style="margin: 0px; font-size: 100px; font-weight: 200; text-align: center; width: max-content;">PHOTOS<span style="font-size: 0.5em;">TEST</span></p>
-        `
-    ))
+    limitedPhotos.forEach(photo => {
+        tileFeed.addTile(tileFeed.Tile(`<img src='${photo.photoURL}' style='position:absolute; top: 0; left: 0; width:100%; height:100%; object-fit:cover;' loading='lazy'/>`, ``));
+
+    })
     return tileFeed;
 }
-// Set up minute change detector
-function scheduleNextMinuteUpdate() {
-    const now = new Date();
-    const msUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
 
-    setTimeout(() => {
-        liveTileHelper.requestRedraw();
-        scheduleNextMinuteUpdate(); // Schedule next update
-    }, msUntilNextMinute);
+// Replace the minute scheduler with a 10-second rotation using requestGoToNextPage
+var page = 0
+function scheduleRotation() {
+    setInterval(() => {
+        liveTileHelper.requestGoToNextPage();
+        page++;
+        if (page == 10) {
+            liveTileHelper.requestRedraw()
+        }
+    }, 10000 + Math.random() * 5000); // 5 to 10 seconds
 }
 
-// Start the scheduling
-scheduleNextMinuteUpdate();
+// Start the rotation
 
 liveTileHelper.eventListener.on("init", init);
 function init(args) {
     console.log("Init called:", args);
-    liveTileHelper.requestRedraw();
+    //liveTileHelper.requestRedraw();
+    scheduleRotation();
+
 }
 /*setInterval(() => {
     postMessage({

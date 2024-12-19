@@ -180,15 +180,21 @@ class LocaleManager {
         : window._i18n.currentLocale;
 
       if (force || Object.keys(window._i18n.translations).length === 0) {
-        const translations = await localeStore.getLocaleJSON();
-        if (!translations) {
-          // Try loading default locales
+        //
+        // Try loading default locales
+        if (window != window.parent) {
+          window._i18n.translations = window.parent._i18n.translations
+          window._i18n.defaultTranslations = window.parent._i18ndefaultTranslations
+
+        } else {
           const defaultTranslations = {};
+          window._i18n.defaultTranslations = {}
           await Promise.all(files.map(async (file) => {
             try {
               const response = await fetch(`./assets/defaultlocales/${file}.json`);
               if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
               defaultTranslations[file] = await response.json();
+              window._i18n.defaultTranslations[file] = defaultTranslations[file]
             } catch (error) {
               console.error(`Failed to load default locale file ${file}:`, error);
             }
@@ -198,14 +204,18 @@ class LocaleManager {
             throw new Error('Failed to load translations and default locales');
           }
 
-          window._i18n.translations = defaultTranslations;
-          localStorage.setItem('language', "en-US");
+          //window._i18n.translations = defaultTranslations;
+          //localStorage.setItem('language', "en-US");
 
-          localeStore.setLocaleJSON(defaultTranslations);
-          return;
+          //localeStore.setLocaleJSON(defaultTranslations);
+
+          //
+
+          const translations = await localeStore.getLocaleJSON();
+          if (!translations) localStorage.setItem('language', "en-US");
+          window._i18n.translations = Object.assign(defaultTranslations, translations || {});
         }
 
-        window._i18n.translations = translations;
         console.log("tyküledim")
       }
     } catch (err) {
@@ -270,16 +280,36 @@ class LocaleManager {
     if (key in window._i18n.translations) {
       return window._i18n.translations[key];
     }
-
+    if (key in window._i18n.translations) {
+      return window._i18n.defaultTranslations[key];
+    }
+    if (!key) return 'undefined!'
+    if (!key["split"]) return 'undefined!'
     const keys = key.split('.');
-    let value = window._i18n.translations;
+    var returnee = (() => {
+      let value = window._i18n.translations;
 
-    for (const k of keys) {
-      value = value[k];
-      if (!value) return 'undefined!';
+      for (const k of keys) {
+        value = value[k];
+        returnee = value;
+        if (!value) return 'undefined!';
+      }
+      return value
+    })()
+    if (returnee == "undefined!" && (window._i18n["defaultTranslations"] || window.parent._i18n["defaultTranslations"])) {
+      let value2 = window._i18n.defaultTranslations || window.parent._i18n.defaultTranslations;
+
+      for (const k of keys) {
+        console.log("default", _i18n.defaultTranslations)
+
+        value2 = value2[k];
+        if (!value2) return 'undefined!';
+      }
+      returnee = value2
     }
 
-    return value.replace(/\{\{(\w+)\}\}/g, (_, param) => params[param] || '');
+    console.log("returnee", returnee)
+    return returnee.replace(/\{\{(\w+)\}\}/g, (_, param) => params[param] || '');
   }
 
   translateDOM() {
@@ -350,7 +380,9 @@ class LocaleManager {
       return;
     }
     const key = el.getAttribute('data-i18n');
+    console.log("T AGAIN")
     var translation = this.t(key, params);
+    console.log("T TRANSLAT", translation)
     if (transform) {
       switch (transform.toLowerCase()) {
         case 'lc':
@@ -542,10 +574,81 @@ class LocaleStore {
     });
   }
 }
+const greetings = {
+  entries: {
+    "az": {
+      "welcome": "Xoş gəldiniz",
+      "welcome_back": "Yenidən xoş gəldiniz"
+    },
+    "bg": {
+      "welcome": "Добре дошли",
+      "welcome_back": "Добре дошли отново"
+    },
+    "de": {
+      "welcome": "Willkommen",
+      "welcome_back": "Willkommen zurück"
+    },
+    "es-419": {
+      "welcome": "Bienvenido",
+      "welcome_back": "Bienvenido de vuelta"
+    },
+    "es-ES": {
+      "welcome": "Bienvenido",
+      "welcome_back": "Bienvenido de vuelta"
+    },
+    "fi": {
+      "welcome": "Tervetuloa",
+      "welcome_back": "Tervetuloa takaisin"
+    },
+    "fr": {
+      "welcome": "Bienvenue",
+      "welcome_back": "Bienvenue de nouveau"
+    },
+    "hu": {
+      "welcome": "Üdvözöljük",
+      "welcome_back": "Üdv újra"
+    },
+    "lol": {
+      "welcome": "Hai dere! Welcomz!",
+      "welcome_back": "Ooh hai 'gain!"
+    },
+    "mk": {
+      "welcome": "Добредојдовте",
+      "welcome_back": "Добредојдовте назад"
+    },
+    "nl": {
+      "welcome": "Welkom",
+      "welcome_back": "Welkom terug"
+    },
+    "ro": {
+      "welcome": "Bine ați venit",
+      "welcome_back": "Bine ați revenit"
+    },
+    "ru": {
+      "welcome": "Добро пожаловать",
+      "welcome_back": "С возвращением"
+    },
+    "tr": {
+      "welcome": "Hoş geldiniz",
+      "welcome_back": "Tekrar hoş geldiniz"
+    },
+    "vi": {
+      "welcome": "Chào mừng",
+      "welcome_back": "Chào mừng trở lại"
+    }
+  },
+  getRandomWelcome: function () {
+    //Object.values(this.entries)
+    //get random welcome from entries
+    return Object.values(this.entries)[Math.floor(Object.keys(this.entries).length * Math.random())]
+  }
+
+}
+
 const i18n = new LocaleManager();
 const localeStore = new LocaleStore();
 window.localeStore = localeStore
 window.i18n = i18n
 export default i18n;
-export { LocaleStore, LocaleManager, i18n, localization };
+export { LocaleStore, LocaleManager, i18n, localization, greetings };
 

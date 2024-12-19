@@ -55,3 +55,18 @@ img {
   outline: transparent;
   cursor: default !important;
 }
+
+div.flow-scrollable {
+  transform-style: preserve-3d;
+  will-change: transform;
+  &:not(.no-bottom-padding)::after {
+    content: "";
+    display: flex;
+    height: 50px;
+    width: 100%;
+    position: relative;
+    background: transparent;
+    margin: 0px;
+    padding: 0px;
+  }
+}

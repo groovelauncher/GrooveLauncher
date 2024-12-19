@@ -48,6 +48,7 @@ $metro-color-taupe: #87794E; //#87794E;
 body:not(.light-mode) {
     --metro-background: black;
     --metro-foreground: white;
+    --metro-elevated: rgb(255, 255, 255, 0.14);
     --metro-opaque: #111511;
     --metro-opaque-2: white;
     --metro-transparent: rgb(0, 0, 0, .5);
@@ -58,6 +59,7 @@ body:not(.light-mode) {
 body.light-mode {
     --metro-background: white;
     --metro-foreground: black;
+    --metro-elevated: rgb(0, 0, 0, 0.14);
     --metro-opaque: #dfe0df;
     --metro-opaque-2: #a6a8a7;
     --metro-transparent: rgb(255, 255, 255, .5);

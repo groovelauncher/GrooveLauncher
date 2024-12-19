@@ -219,7 +219,7 @@ requestAnimationFrame(() => {
             if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
             if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
             if (!!localStorage.getItem("reducedMotion")) GrooveBoard.backendMethods.setReduceMotion(localStorage.getItem("reducedMotion") == "true", true)
-            if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true)
+            if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true); else GrooveBoard.backendMethods.setUIScale(.8, true)
             if (!!localStorage.getItem("font")) GrooveBoard.backendMethods.font.set(localStorage.getItem("font"), true)
             if (!!localStorage.getItem("rotationLock")) Groove.setDisplayOrientationLock(localStorage.getItem("rotationLock"))
             
@@ -275,15 +275,22 @@ requestAnimationFrame(() => {
         },
         async (next) => {
             const baseURL = !window.GrooveMockInstance ? new URL('/assets/', location.origin).href : new URL('/www/', location.origin).href
-            GrooveBoard.backendMethods.liveTiles.init = {
+            GrooveBoard.boardMethods.liveTiles.init = {
                 alarms: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/alarms.js", baseURL).href),
                 people: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/people.js", baseURL).href),
                 photos: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/photos.js", baseURL).href),
-                weather: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/weather.js", baseURL).href),
+                //weather: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/weather.js", baseURL).href),
                 example: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/helloworld.js", baseURL).href)
-
             }
-            GrooveBoard.backendMethods.liveTiles.refresh()
+            window.contactsCache = JSON.parse(Groove.getContacts()).map(e=>{
+                e.avatarURL = Groove.getContactAvatarURL(e.id)
+                return e
+            })
+            window.photosCache = JSON.parse(Groove.getPhotos()).map(e=>{
+                e.photoURL = Groove.getPhotoURL(e.id)
+                return e
+            })
+            GrooveBoard.boardMethods.liveTiles.refresh()
             next()
         }
     ],

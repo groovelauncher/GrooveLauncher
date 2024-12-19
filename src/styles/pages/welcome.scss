@@ -85,7 +85,7 @@ body {
                     }
 
                     h1 {
-                        animation: page-enter-0-title .75s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+                        //animation: page-enter-0-title .75s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
 
                         @keyframes page-enter-0-title {
 
@@ -242,6 +242,77 @@ body {
                     flex-direction: column;
 
                     h1 {
+                        &.small {
+                            font-size: 23px;
+                            font-weight: 500;
+                            margin-top: 0px;
+                            text-transform: uppercase;
+                        }
+
+                        &.flip {
+
+                            @keyframes welcome-title-flip {
+                                0% {
+                                    animation-timing-function: ease-in;
+                                    transform: rotateX(0deg);
+                                    opacity: 1;
+                                }
+
+                                19% {
+                                    animation-timing-function: ease-in;
+                                    transform: rotateX(-90deg);
+                                    opacity: .5;
+
+                                }
+
+                                20% {
+                                    animation-timing-function: cubic-bezier(.35, 2.5, .5, 1);
+                                    transform: rotateX(90deg);
+                                    opacity: .5;
+                                }
+
+                                100% {
+                                    animation-timing-function: cubic-bezier(.35, 2.5, .5, 1);
+                                    transform: rotateX(0deg);
+                                    opacity: 1;
+                                }
+                            }
+
+                            animation: welcome-title-flip 1s !important;
+                        }
+
+                        &.flip2 {
+
+                            @keyframes welcome-title-flip2 {
+                                0% {
+                                    animation-timing-function: ease-in;
+                                    transform: rotateX(0deg);
+                                    opacity: 1;
+                                }
+
+                                9% {
+                                    animation-timing-function: ease-in;
+                                    transform: rotateX(90deg);
+                                    opacity: .5;
+
+                                }
+
+                                10% {
+                                    animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+                                    transform: rotateX(-90deg);
+                                    opacity: .5;
+                                }
+
+                                100% {
+                                    animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+                                    transform: rotateX(0deg);
+                                    opacity: 1;
+                                }
+                            }
+
+                            animation: welcome-title-flip2 2s !important;
+                        }
+
                         text-transform: uppercase;
                         margin: 0px;
                         font-size: 23px;
@@ -531,8 +602,9 @@ body.fade-out #background {
     filter: brightness(0);
     opacity: 1;
 }
-#page-welcome > div.setup-body > p:nth-child(2) > img{
-    body.light-mode &{
+
+#page-welcome>div.setup-body>p:nth-child(2)>img {
+    body.light-mode & {
         filter: brightness(0) !important;
     }
 }

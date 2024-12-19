@@ -47,7 +47,13 @@ function flowTouchRotate(el, pageX, pageY) {
         el.style.setProperty("--flow-rotate-y", rotateY + "deg")
     }
 }
-
+function updateFlowRangeInputBackground(el) {
+    console.log("updateFlowRangeInputBackground")
+    const max = el.max
+    const min = el.min
+    const percent = ((el.value - min) / (max - min)) * 100
+    el.style.background = `linear-gradient(90deg, var(--accent-color) ${percent}%, var(--metro-elevated) ${percent}%)`
+}
 // Event Listeners
 window.addEventListener("pointerdown", (e) => {
 
@@ -80,14 +86,23 @@ window.addEventListener("pointerup", (e) => {
     if (!!pointerDownElements[e.pointerId]) {
         const el = getElementFromPointerId(e.pointerId)
         const hypotenuse = Math.sqrt(Math.pow(el.lastPointerPosition[0] - e.pageX, 2) + Math.pow(el.lastPointerPosition[1] - e.pageY, 2))
-
         if (hypotenuse <= clickDetectorConfig.tapDistanceThreshold) {
             const event = new CustomEvent("flowClick", { pageX: e.pageX, pageY: e.pageY, target: el });
             el.dispatchEvent(event);
+            (window.allMetroDropDowns || []).forEach(e => {
+                if (e !== el) {
+                    try {
+                        e.blurElement()
+                    } catch (error) {
+
+                    }
+                }
+            });
 
             if (el.classList.contains("metro-dropdown-menu")) { metroDropdownMenu.click(el) }
             if (el.classList.contains("metro-dropdown-option")) { metroDropdownMenu.select($(el).parent()[0], $(el).index()) }
             if (el.classList.contains("metro-toggle-switch")) metroToggleSwitch.pointerUp(el, true)
+
         } else {
             if (el.classList.contains("metro-toggle-switch")) metroToggleSwitch.pointerUp(el, false)
         }
@@ -178,6 +193,20 @@ var focusedElements = new Set()
 const metroDropdownMenu = {
     click: (el) => {
         el.blurElement = () => { metroDropdownMenu.blur(el) }
+        window.allMetroDropDowns = window.allMetroDropDowns || []
+        if (!window.allMetroDropDowns.includes(el)) window.allMetroDropDowns.push(el)
+        window.allMetroDropDowns.forEach(e => {
+            if (e !== el) {
+                try {
+                    e.blurElement()
+                } catch (error) {
+
+                }
+            }
+        });
+        setTimeout(() => {
+            try { el.closest("div.flow-scrollable").GrooveScroll.refresh() } catch (error) { }
+        }, 300);
         focusedElements.add("el")
         el.classList.add("clicked")
         el.querySelector("div.metro-dropdown-option").style.marginTop = 0
@@ -194,6 +223,9 @@ const metroDropdownMenu = {
         }
         el.style.removeProperty("height")
         el.querySelectorAll("div.metro-dropdown-option").forEach(el => { el.style.removeProperty("color") })
+        setTimeout(() => {
+            try { el.closest("div.flow-scrollable").GrooveScroll.refresh() } catch (error) { }
+        }, 300);
     },
     select: (el, index, event = true, animate = true) => {
         const lastIndex = el.getAttribute("selected")
@@ -220,6 +252,19 @@ document.querySelectorAll("div.metro-dropdown-menu").forEach(el => {
         metroDropdownMenu.select(el, index, false, false)
     }
     metroDropdownMenu.select(el, index, false)
+})
+
+document.querySelectorAll("input[type=range]").forEach(el => {
+    el.supportsFlowRangeInput = window.getComputedStyle(el).getPropertyValue("--flow-metro-range-input") == "true"
+    if (el.supportsFlowRangeInput) {
+        el.addEventListener("input", () => {
+            updateFlowRangeInputBackground(el)
+        })
+        el.addEventListener("change", () => {
+            updateFlowRangeInputBackground(el)
+        })
+        updateFlowRangeInputBackground(el)
+    }
 })
 
 export default clickDetectorConfig;

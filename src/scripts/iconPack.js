@@ -548,8 +548,7 @@ const iconPackConverter = [
             "com.tct.email",
             "com.vivo.email"
         ],
-        "icon": "mail",
-        "accent": "cyan"
+        "icon": "mail"
     },
     //NEWS
     {

@@ -54,14 +54,20 @@ function wHomeTile(
   if (iconbg) homeTile.querySelector(".groove-home-inner-tile").style.backgroundImage = `url('${iconbg}')`;
   requestAnimationFrame(() => {
     const appPreference = GrooveBoard.backendMethods.getAppPreferences(packageName)
-    if (appPreference.textColor == "auto") {
-      colorContrastDetector.getAverageColor(iconbg).then((color) => {
+    var colorContrastDetectorOutput
+    colorContrastDetector.getAverageColor(iconbg).then((color) => {
+      if (appPreference.textColor == "auto") {
         homeTile.querySelector("p.groove-home-tile-title").style.color = colorContrastDetector.getTextColor(color);
-      });
-    } else {
+
+      }
+      const isPlainWhite = color.r >= 250 && color.g >= 250 && color.b >= 250 && color.a >= 250
+      if (isPlainWhite) {
+        homeTile.querySelector("div.groove-home-inner-tile").style.boxShadow = `0px 0px 0px 1px rgba(170,170,170, 0.3)`
+      }
+    });
+    if (appPreference.textColor != "auto") {
       homeTile.querySelector("p.groove-home-tile-title").style.color = appPreference.textColor == "dark" ? "#000000" : "#FFFFFF";
     }
-
   })
   return homeTile;
 }

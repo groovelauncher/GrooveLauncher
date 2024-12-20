@@ -78,14 +78,6 @@ function refreshAppList(params) {
     })
 }
 refreshAppList()
-
-
-/*const perAppPreferences = JSON.parse(localStorage["perAppPreferences"])
-if (perAppPreferences[packageName]) {
-  const appPreference = perAppPreferences[packageName]
-  defaultPref = Object.assign(defaultPref, getAppPreferences)
-}
-*/
 function getAppPreferences(packageName) {
     if (!localStorage["perAppPreferences"]) localStorage["perAppPreferences"] = JSON.stringify({})
     const perAppPreferences = JSON.parse(localStorage["perAppPreferences"])

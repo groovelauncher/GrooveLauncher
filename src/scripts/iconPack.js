@@ -461,6 +461,7 @@ const iconPackConverter = [
             "com.coloros.gamespaceui",
             "com.google.android.play.games",
             "com.oneplus.gamespace",
+            "com.razer.bianca",
             "com.samsung.android.game.gamehome",
             "com.xiaomi.gamecenter",
             "com.xiaomi.gamecenter.pad",

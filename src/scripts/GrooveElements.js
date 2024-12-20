@@ -51,13 +51,12 @@ function wHomeTile(
   //else 
   homeTile.querySelector("img.groove-home-tile-imageicon").src = icon;
   homeTile.querySelector("p.groove-home-tile-title").innerText = title;
-  if (iconbg) homeTile.querySelector(".groove-home-inner-tile").style.backgroundImage = " url(" + iconbg + ")";
+  if (iconbg) homeTile.querySelector(".groove-home-inner-tile").style.backgroundImage = `url('${iconbg}')`;
   requestAnimationFrame(() => {
     const appPreference = GrooveBoard.backendMethods.getAppPreferences(packageName)
     if (appPreference.textColor == "auto") {
       colorContrastDetector.getAverageColor(iconbg).then((color) => {
         homeTile.querySelector("p.groove-home-tile-title").style.color = colorContrastDetector.getTextColor(color);
-        //console.log('Text color should be:', color);
       });
     } else {
       homeTile.querySelector("p.groove-home-tile-title").style.color = appPreference.textColor == "dark" ? "#000000" : "#FFFFFF";

@@ -113,6 +113,7 @@ const iconPackConverter = [
         "apps": [
             "test.people",
             "com.android.contacts",
+            "com.android.contacts/com.android.contacts.activities.PeopleActivity",
             "com.android.dialer",
             "com.android.htccontacts",
             "com.asus.cncontacts",
@@ -138,6 +139,7 @@ const iconPackConverter = [
     //PHONE
     {
         "apps": [
+            "com.android.contacts/com.android.contacts.activities.TwelveKeyDialer",
             "com.android.dialer",
             "com.android.htcdialer",
             "com.android.incallui",

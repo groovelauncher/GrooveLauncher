@@ -18,7 +18,6 @@ function alreadyUpToDate() {
     window.parent.GrooveBoard.alert(
         window.i18n.t("settings.alerts.up_to_date.title"),
         window.i18n.t("settings.alerts.up_to_date.message"),
-        "You have the grooviest version of Groove Launcher.",
         [{ title: window.i18n.t("common.actions.ok"), style: "default", inline: true, action: () => { } }]
     );
 }
@@ -39,6 +38,7 @@ document.querySelector("#updatebutton").addEventListener("flowClick", (e) => {
     fetch('https://api.github.com/repos/groovelauncher/GrooveLauncher/releases?per_page=10')
         .then(response => response.json())
         .then(releases => {
+            console.log("releases", releases)
             const availableReleases = releases.filter(release => (release.name.includes("beta") == isBeta))
             if (availableReleases.length) {
                 const update = availableReleases[0]
@@ -73,6 +73,7 @@ document.querySelector("#updatebutton").addEventListener("flowClick", (e) => {
                 window.i18n.t("settings.alerts.update_check_failed.message"),
                 [{ title: window.i18n.t("common.actions.ok"), style: "default", inline: true, action: () => { } }]
             );
+            document.querySelector("#updatebutton").classList.remove("loading")
             console.error('Error:', error)
         });
 })

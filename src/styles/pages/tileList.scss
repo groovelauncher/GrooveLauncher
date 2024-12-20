@@ -847,6 +847,10 @@ div.groove-home-tile {
         background: var(--accent-color);
         background-size: 100% 100% !important;
 
+        &.svg-background {
+            background-size: cover !important;
+        }
+
         img.groove-home-tile-imageicon {
             //filter: saturate(0) brightness(0.6) contrast(10);
             //mix-blend-mode: plus-lighter;

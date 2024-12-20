@@ -51,7 +51,12 @@ function wHomeTile(
   //else 
   homeTile.querySelector("img.groove-home-tile-imageicon").src = icon;
   homeTile.querySelector("p.groove-home-tile-title").innerText = title;
-  if (iconbg) homeTile.querySelector(".groove-home-inner-tile").style.backgroundImage = `url('${iconbg}')`;
+  if (iconbg) {
+    homeTile.querySelector(".groove-home-inner-tile").style.backgroundImage = `url('${iconbg}')`;
+    if (iconbg.includes("data:image/svg+xml")) homeTile.querySelector(".groove-home-inner-tile").classList.add("svg-background");
+
+  }
+
   requestAnimationFrame(() => {
     const appPreference = GrooveBoard.backendMethods.getAppPreferences(packageName)
     var colorContrastDetectorOutput

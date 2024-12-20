@@ -42,14 +42,16 @@ function refreshAppList(params) {
             delete window.lastSelectedApp
 
             const appdetail = parent.GrooveBoard.backendMethods.getAppDetails(e.target.getAttribute("packagename"))
+            const appPreference = parent.GrooveBoard.backendMethods.getAppPreferences(e.target.getAttribute("packagename"))
             appNameChangerInput.value = getAppPreferences(e.target.getAttribute("packagename"))["label"] ? (getAppPreferences(e.target.getAttribute("packagename"))["label"] != "auto" ? getAppPreferences(e.target.getAttribute("packagename"))["label"] : appdetail.label) : appdetail.label
             appNameChangerInput.setAttribute("placeholder", window.parent.GrooveBoard.backendMethods.getAppDetails(e.target.getAttribute("packagename"), true).label)
-            if (appdetail.shown) {
+            console.log(appPreference)
+            if (appPreference.shown) {
                 document.querySelector("#app-list-show-toggle-switch").setAttribute("checked", "")
             } else {
                 document.querySelector("#app-list-show-toggle-switch").removeAttribute("checked")
             }
-            document.querySelector("#app-detail-tab > div.flow-scrollable > div.app-preference-form > div:nth-child(1) > div > p").innerText = appdetail.shown ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
+            document.querySelector("#app-detail-tab > div.flow-scrollable > div.app-preference-form > div:nth-child(1) > div > p").innerText = appPreference.shown ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
             if (!appdetail.packageName.startsWith("com.unknown")) {
                 document.querySelector("div.app-preference-form").style.removeProperty("display")
             }
@@ -62,6 +64,8 @@ function refreshAppList(params) {
                 document.querySelector("#uninstallappbutton").style.display = "block"
             }
             pageNavigation.goToPage(6)
+
+
         } catch (error) {
             throw error
             parent.GrooveBoard.alert(

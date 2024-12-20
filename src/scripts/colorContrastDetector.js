@@ -18,7 +18,7 @@ export function getAverageColor(imageUrl) {
 
             // Get the single pixel's color data
             const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-            console.log(`getAverageColor executed in ${performance.now() - startTime} ms`);
+            //console.log(`getAverageColor executed in ${performance.now() - startTime} ms`);
 
             resolve({ r, g, b });
         });

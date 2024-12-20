@@ -54,7 +54,7 @@ function scheduleRotation() {
 
 liveTileHelper.eventListener.on("init", init);
 function init(args) {
-    console.log("Init called:", args);
+    //console.log("Init called:", args);
     liveTileHelper.requestRedraw();
     scheduleRotation();
 

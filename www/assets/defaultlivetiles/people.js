@@ -12,7 +12,7 @@ importScripts('./../../dist/liveTileHelper.js');
 liveTileHelper.eventListener.on("draw", draw);
 var contacts = [];
 liveTileHelper.eventListener.on("contactsdata", (data) => {
-    console.log("people data", data)
+    //console.log("people data", data)
     contacts = data.contacts;
     liveTileHelper.requestRedraw();
 
@@ -44,7 +44,7 @@ function scheduleRotation() {
 
 liveTileHelper.eventListener.on("init", init);
 function init(args) {
-    console.log("Init called:", args);
+    //console.log("Init called:", args);
     //liveTileHelper.requestRedraw();
     //scheduleRotation();
 

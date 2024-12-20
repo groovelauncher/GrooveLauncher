@@ -49,10 +49,10 @@ const localization = {
     return async () => {
       const now = Date.now();
       if (cachedResult && now - lastCall < debounceTime) {
-        console.log("Returning cached result")
+        //console.log("Returning cached result")
         return cachedResult;
       }
-      console.log("Returning new result")
+      //console.log("Returning new result")
       const projectId = 737627;
       try {
         const response = await fetch(`https://api.crowdin.com/api/v2/projects/${projectId}/languages/progress?limit=100`, {
@@ -216,7 +216,7 @@ class LocaleManager {
           window._i18n.translations = Object.assign(defaultTranslations, translations || {});
         }
 
-        console.log("tyküledim")
+        //console.log("tyküledim")
       }
     } catch (err) {
       if (fallback) {
@@ -300,7 +300,7 @@ class LocaleManager {
       let value2 = window._i18n.defaultTranslations || window.parent._i18n.defaultTranslations;
 
       for (const k of keys) {
-        console.log("default", _i18n.defaultTranslations)
+        //console.log("default", _i18n.defaultTranslations)
 
         value2 = value2[k];
         if (!value2) return 'undefined!';
@@ -308,12 +308,12 @@ class LocaleManager {
       returnee = value2
     }
 
-    console.log("returnee", returnee)
+    //console.log("returnee", returnee)
     return returnee.replace(/\{\{(\w+)\}\}/g, (_, param) => params[param] || '');
   }
 
   translateDOM() {
-    console.log('translateDOM');
+   // console.log('translateDOM');
     if (this._observer) {
       this._observer.disconnect();
     }
@@ -380,9 +380,9 @@ class LocaleManager {
       return;
     }
     const key = el.getAttribute('data-i18n');
-    console.log("T AGAIN")
+    //console.log("T AGAIN")
     var translation = this.t(key, params);
-    console.log("T TRANSLAT", translation)
+    //console.log("T TRANSLAT", translation)
     if (transform) {
       switch (transform.toLowerCase()) {
         case 'lc':
@@ -481,7 +481,7 @@ class LocaleManager {
         }
       }
     }
-    console.log(window._i18n.translations)
+    //console.log(window._i18n.translations)
     localeStore.setLocaleJSON(window._i18n.translations);
     window._i18n.currentLocale = locale;
     if (window.parent != window) window.parent._i18n.currentLocale = locale;
@@ -499,7 +499,7 @@ class LocaleManager {
 
     }
 
-    console.log('Locale dispatch event:', window._i18n.currentLocale);
+    //console.log('Locale dispatch event:', window._i18n.currentLocale);
     window.dispatchEvent(new CustomEvent('localeChanged'));
     if (window.parent != window) window.parent.dispatchEvent(new CustomEvent('localeChanged'));
 

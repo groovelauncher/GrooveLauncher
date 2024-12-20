@@ -316,7 +316,7 @@ const boardMethods = {
         delete initializeLiveTiles[packageName]
       })
       Object.keys(initializeLiveTiles).forEach(packageName => {
-        console.log("unregisterLiveTileWorker", packageName)
+        //console.log("unregisterLiveTileWorker", packageName)
         liveTileManager.unregisterLiveTileWorker(packageName)
       })
       Object.entries(window.liveTiles).forEach(liveTileBundle => {

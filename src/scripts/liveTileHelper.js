@@ -1,25 +1,25 @@
 function requestRedraw(params) {
-    console.log("Worker: Sending requestRedraw message");
+    //console.log("Worker: Sending requestRedraw message");
     postMessage({
         action: "requestRedraw",
         data: params || {}
     });
 }
 function requestGoToPage(page) {
-    console.log("Worker: Sending requestGoToPage message");
+    //console.log("Worker: Sending requestGoToPage message");
     postMessage({
         action: "requestGoToPage",
         data: page
     });
 }
 function requestGoToNextPage() {
-    console.log("Worker: Sending requestGoToNextPage message");
+   // console.log("Worker: Sending requestGoToNextPage message");
     postMessage({
         action: "requestGoToNextPage",
     });
 }
 function requestGoToPreviousPage() {
-    console.log("Worker: Sending requestGoToPreviousPage message");
+    //console.log("Worker: Sending requestGoToPreviousPage message");
     postMessage({
         action: "requestGoToPreviousPage",
     });

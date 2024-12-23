@@ -498,7 +498,7 @@
                 App</button>
             </div>
             <div class="app-preference-form">
-              <div class="group">
+              <div class="group" id="app-preference-show">
                 <p class="group-title" data-i18n="settings.apps.show_app">Show in apps list</p>
                 <div class="tile-selector" style="margin-bottom: 0px;">
                   <p data-i18n-init="common.actions.on">On</p>
@@ -508,11 +508,11 @@
                 </div>
               </div>
 
-              <div class="group">
+              <div class="group" id="app-preference-name">
                 <p class="group-title" data-i18n="settings.apps.name">Name</p>
                 <input type="text" class="metro-text-input">
               </div>
-              <div class="group" style="display: none;">
+              <div class="group" style="display: none;" id="app-preference-icon">
                 <p class="group-title" data-i18n="settings.apps.icon">Icon</p>
                 <div class="metro-dropdown-menu" selected="1">
                   <div class="metro-dropdown-option" data-i18n="settings.apps.icon_selections.default">Default</div>
@@ -520,7 +520,7 @@
                   </div>
                 </div>
               </div>
-              <div class="group" style="display: none;">
+              <div class="group" style="display: none;" id="app-preference-background">
                 <p class="group-title" data-i18n="settings.apps.background">Background</p>
                 <div class="metro-dropdown-menu" selected="1">
                   <div class="metro-dropdown-option" data-i18n="settings.apps.background_selections.default">Default
@@ -529,7 +529,7 @@
                     Transparent</div>
                 </div>
               </div>
-              <div class="group" style="display: none;">
+              <div class="group" style="display: none;" id="app-preference-text-color">
                 <p class="group-title" data-i18n="settings.apps.text_color">Text color</p>
                 <div class="metro-dropdown-menu" selected="1">
                   <div class="metro-dropdown-option" data-i18n="settings.apps.text_color_selections.auto">Auto</div>
@@ -537,7 +537,7 @@
                   <div class="metro-dropdown-option" data-i18n="settings.apps.text_color_selections.light">Light</div>
                 </div>
               </div>
-              <div class="group" style="display: none;">
+              <div class="group" style="display: none;" id="app-preference-live-tile">
                 <p class="group-title" data-i18n="settings.apps.live_tile">Live tile</p>
                 <div class="metro-dropdown-menu" selected="1">
                   <div class="metro-dropdown-option" data-i18n="settings.theme.themes.light">Light</div>

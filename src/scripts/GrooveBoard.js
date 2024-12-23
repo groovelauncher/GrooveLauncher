@@ -1001,6 +1001,10 @@ const backendMethods = {
         defaultPref = Object.assign(defaultPref, appPreference)
       }
     }
+    if(packageName.startsWith("groove.internal")) {
+      defaultPref.shown = true
+      defaultPref.label = "auto"
+    }
     return defaultPref
   }
 };

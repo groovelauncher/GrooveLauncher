@@ -63,11 +63,17 @@ function refreshAppList(params) {
             } else {
                 document.querySelector("#uninstallappbutton").style.display = "block"
             }
+            if (appdetail.packageName.startsWith("groove.internal")) {
+                document.querySelector("#app-preference-show").style.display = "none"
+                document.querySelector("#app-preference-name").style.display = "none"
+            }else{
+                document.querySelector("#app-preference-show").style.removeProperty("display")
+                document.querySelector("#app-preference-name").style.removeProperty("display")
+            }
             pageNavigation.goToPage(6)
 
 
         } catch (error) {
-            throw error
             parent.GrooveBoard.alert(
                 "Unable to Get App Details!",
                 "Couldn’t retrieve details for this app.",

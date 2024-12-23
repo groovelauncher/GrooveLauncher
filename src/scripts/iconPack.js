@@ -30,7 +30,8 @@ const iconPackConverter = [
             "com.wingtech.calc",
             "com.zui.calculator",
             "my.android.calc",
-            "org.mmin.handycalc"
+            "org.mmin.handycalc",
+            "com.huawei.calculator"
         ],
         "icon": "calculator"
     },
@@ -114,6 +115,7 @@ const iconPackConverter = [
             "test.people",
             "com.android.contacts",
             "com.android.contacts/com.android.contacts.activities.PeopleActivity",
+            "com.android.contacts/com.android.contacts.PeopleActivityAlias",
             "com.android.dialer",
             "com.android.htccontacts",
             "com.asus.cncontacts",
@@ -140,6 +142,7 @@ const iconPackConverter = [
     {
         "apps": [
             "com.android.contacts/com.android.contacts.activities.TwelveKeyDialer",
+            "com.android.contacts/com.android.contacts.DialtactsActivityAlias",
             "com.android.dialer",
             "com.android.htcdialer",
             "com.android.incallui",
@@ -148,7 +151,6 @@ const iconPackConverter = [
             "com.cyngn.dialer",
             "com.google.android.dialer",
             "com.htc.htcdialer",
-            "com.huawei.systemmanager",
             "com.lenovo.ideafriend",
             "com.oneplus.dialer",
             "com.samsung.android.app.dialertab",
@@ -199,7 +201,8 @@ const iconPackConverter = [
             "com.heytap.market",
             "com.oneplus.store",
             "com.sec.android.app.samsungapps",
-            "com.xiaomi.market"
+            "com.xiaomi.market",
+            "com.huawei.appmarket"
         ],
         "icon": "store"
     },
@@ -238,7 +241,8 @@ const iconPackConverter = [
             "com.xiaomi.calendar",
             "com.yulong.android.calendar",
             "org.lineageos.etar",
-            "ws.xsoh.etar"
+            "ws.xsoh.etar",
+            "com.huawei.calendar"
         ],
         "icon": "calendar"
     },
@@ -416,7 +420,8 @@ const iconPackConverter = [
             "com.sony.snei.mu.phone",
             "com.sonyericsson.music",
             "net.oneplus.music",
-            "org.lineageos.eleven"
+            "org.lineageos.eleven",
+            "com.huawei.music"
         ],
         "icon": "music",
         "accent": "emerald"
@@ -461,6 +466,7 @@ const iconPackConverter = [
             "com.coloros.gamespaceui",
             "com.google.android.play.games",
             "com.oneplus.gamespace",
+            "com.oplus.games",
             "com.razer.bianca",
             "com.samsung.android.game.gamehome",
             "com.xiaomi.gamecenter",
@@ -475,7 +481,11 @@ const iconPackConverter = [
         "apps": [
             "com.google.android.apps.fitness",
             "com.sec.android.app.shealth",
-            "com.huawei.health"
+            "com.huawei.health",
+            "com.oneplus.health.international",
+            "com.mi.health",
+            "com.heytap.health.international",
+            "com.microsoft.kapp"
         ],
         "icon": "health",
         "accent": "orange"
@@ -631,6 +641,66 @@ const iconPackConverter = [
         ],
         "icon": "radio"
     },
+    //VIDEO
+    {
+        "apps": [
+            "com.coloros.video",
+            "com.huawei.himovie",
+            "com.miui.videoplayer",
+            "com.samsung.android.video",    
+            "com.coloros.video",
+            "com.vivo.videoplayer",
+            "com.sonyericsson.video",
+            "com.lge.videoplayer",
+            "com.htc.video",
+            "com.asus.videoplayer",
+            "com.lenovo.videoplayer"
+        ],
+        "icon": "video",
+        "accent": "emerald"
+    },
+    //WALLET
+    {
+        "apps": [
+            "com.mipay.wallet",
+            "com.huawei.wallet",
+            "com.google.android.apps.walletnfcrel",
+            "com.sec.android.wallet",
+            "com.samsung.android.spay",
+            "com.pazarama.spay.prod"
+        ],
+        "icon": "wallet"
+    },
+    //STORAGE SENSE
+    {
+        "apps": [
+            "com.huawei.systemmanager",
+            "com.samsung.android.lool",
+            "com.coloros.phonemanager",
+            "com.miui.securitycenter",
+            "com.vivo.securedaemonservice",
+            "com.oneplus.security",
+        ],
+        "icon":"storage-sense"
+    },
+    //NOTES
+    {
+        "apps":[
+            "com.samsung.android.app.notes",
+            "com.samsung.android.snote",
+            "com.samsung.android.app.memo",
+            "com.huawei.notepad",
+            "com.miui.notes",
+            "com.coloros.note",
+            "com.vivo.notes",
+            "com.oneplus.note",
+            "com.lge.qmemo",
+            "com.sonymobile.notes",
+            "com.asus.quickmemo",
+            "com.lenovo.ideanotepad"
+        ],
+        "icon":"notes"
+    }
 
     /* {
          "apps": [

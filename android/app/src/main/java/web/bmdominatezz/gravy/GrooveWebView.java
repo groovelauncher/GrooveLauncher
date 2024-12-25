@@ -371,7 +371,7 @@ public class GrooveWebView extends WebView {
         WebSettings webViewSettings = this.getSettings();
         webViewSettings.setJavaScriptEnabled(true);
         webViewSettings.setDomStorageEnabled(true);
-
+        webViewSettings.setTextZoom(100);
         // Assets are hosted under http(s)://appassets.androidplatform.net/assets/... .
         this.addJavascriptInterface(new WebInterface((MainActivity) mainActivity, this), "Groove");
         this.addJavascriptInterface(new BuildConfigInterface(m_context), "BuildConfig");

@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId = "web.bmdominatezz.gravy"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 53
         versionName = "0.5.3-beta.5"
@@ -62,6 +62,7 @@ dependencies {
     implementation("org.nanohttpd:nanohttpd:2.3.1")
     implementation("dev.rikka.shizuku:api:13.1.5")
     implementation("dev.rikka.shizuku:provider:13.1.5")
+    implementation(project(":GravyServices"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

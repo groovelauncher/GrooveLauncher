@@ -1,29 +1,15 @@
 package web.bmdominatezz.gravy;
 
-import web.bmdominatezz.gravy.BuildConfig;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.os.Handler;
-import android.os.Looper;
-import android.view.KeyEvent;
 import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -32,19 +18,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.io.File;
 import java.io.IOException;
-import java.sql.Time;
-import java.util.Date;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import fi.iki.elonen.NanoHTTPD;
+import web.bmdominatezz.gravyservices.GravyServer;
 
 public class MainActivity extends AppCompatActivity {
     public WebEvents webEvents;
+    public GravyServer gravyServer = new GravyServer();
     public GrooveWebView webView;
     public PackageManager packageManager;
     private Handler handler;
@@ -84,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             return res;
         }
     }
+
     @Override
     protected void onPause() {
         pauseRunnable = new Runnable() {
@@ -108,7 +90,8 @@ public class MainActivity extends AppCompatActivity {
                     webEvents.dispatchEvent(WebEvents.events.activityResume, null);
                 activityPaused = false;
             }
-            if(activityDispatchHomeEvent) webEvents.dispatchEvent(WebEvents.events.homeButtonPress, null);
+            if (activityDispatchHomeEvent)
+                webEvents.dispatchEvent(WebEvents.events.homeButtonPress, null);
             Log.d("groovelauncher", "homeButtonPress: ");
         } else {
             if (activityDispatchEvent)
@@ -152,10 +135,13 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        gravyServer.init(this);
+        gravyServer.start();
     }
 
     Handler activityDispatchEventTimeout;
-    public void activityDispatchEventAutoTimeout(){
+
+    public void activityDispatchEventAutoTimeout() {
         Log.d(TAG, "activityDispatchEventAutoTimeout: false");
         activityDispatchHomeEvent = false;
         activityDispatchEvent = false;
@@ -171,11 +157,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 100);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult: ");
 
-      activityDispatchEventAutoTimeout();
+        activityDispatchEventAutoTimeout();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (requestCode != INPUT_FILE_REQUEST_CODE || mFilePathCallback == null) {
@@ -226,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return;
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

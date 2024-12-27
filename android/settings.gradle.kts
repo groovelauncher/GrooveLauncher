@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Groove Launcher"
 include(":app")
+include(":GravyServices")
+include(":gravyservicestest")

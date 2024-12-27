@@ -39,6 +39,13 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.GrooveLauncher"
         tools:targetApi="31">
+        <receiver android:name="web.bmdominatezz.gravyservices.GravyServer"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="web.bmdominatezz.gravy.client"/>
+            </intent-filter>
+        </receiver>
         <provider
             android:name="rikka.shizuku.ShizukuProvider"
             android:authorities="${applicationId}.shizuku"
@@ -60,7 +67,6 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

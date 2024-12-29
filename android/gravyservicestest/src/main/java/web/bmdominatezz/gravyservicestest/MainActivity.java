@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -19,10 +20,10 @@ public class MainActivity extends AppCompatActivity {
     GravyClient gravyClient;
     // Declare TextView variables for both keys and values
     private TextView keyAndroidVersion, valueAndroidVersion;
-    private TextView keyGravyServicesVersion, valueGravyServicesVersion;
     private TextView keyGravyHostVersion, valueGravyHostVersion;
     private TextView keyGravyClientVersion, valueGravyClientVersion;
     private TextView keyTheme, valueTheme;
+    private TextView keyUIScale, valueUIScale;
     private TextView keyAccentColor, valueAccentColor;
 
     @Override
@@ -47,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
         keyGravyClientVersion = findViewById(R.id.key_gravy_client_version);
         valueGravyClientVersion = findViewById(R.id.value_gravy_client_version);
 
+        keyUIScale = findViewById(R.id.key_ui_scale);
+        valueUIScale = findViewById(R.id.value_ui_scale);
+
         keyTheme = findViewById(R.id.key_theme);
         valueTheme = findViewById(R.id.value_theme);
 
@@ -61,9 +65,29 @@ public class MainActivity extends AppCompatActivity {
                 super.onReceive(context, intent);
                 Log.d("GravyClient", "Received response: " + intent.getStringExtra("response_key"));
             }
+
+            @Override
+            public void applyUIScale(String uiScale) {
+                super.applyUIScale(uiScale);
+                valueUIScale.setText(uiScale);
+            }
+
+            @Override
+            public void applyTheme(String theme) {
+                super.applyTheme(theme);
+                valueTheme.setText(theme);
+            }
+
+            @Override
+            public void applyAccentColor(String accentColor) {
+               super.applyAccentColor(accentColor);
+               valueAccentColor.setText(accentColor);
+            }
+
         };
         gravyClient.init(this);
         gravyClient.start();
+        onButtonRefresh();
     }
 
     private String getAndroidVersion() {
@@ -82,10 +106,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateValues(String androidVer, String gravyHostVer,
                               String gravyClientVer, String themeValue, String accentColorValue) {
+        /*
         valueAndroidVersion.setText(androidVer);
         valueGravyHostVersion.setText(gravyHostVer);
         valueGravyClientVersion.setText(gravyClientVer);
         valueTheme.setText(themeValue);
-        valueAccentColor.setText(accentColorValue);
+        valueAccentColor.setText(accentColorValue);*/
+    }
+    public void onButtonRefresh(View view){
+        onButtonRefresh();
+    }
+    public void onButtonRefresh(){
+        valueAndroidVersion.setText(getAndroidVersion());
+        valueGravyClientVersion.setText(GravyClient.version.getVersion());
+        gravyClient.requestConfig();
     }
 }

@@ -12,7 +12,7 @@
     }
 
     &.finished {
-        animation: loader-finished 0.5s cubic-bezier(1, 0, 0.5, 1) forwards;
+        animation: loader-finished 0.25s cubic-bezier(1, 0, 0.5, 1) forwards;
 
         @keyframes loader-finished {
             from {
@@ -22,7 +22,7 @@
 
             to {
                 opacity: 0;
-                scale: 0.75;
+                scale: 1.25;
             }
         }
     }

@@ -140,6 +140,7 @@ div.bscroll-vertical-scrollbar {
 div.flow-scrollable {
   transform-style: preserve-3d;
   will-change: transform;
+
   &:not(.no-bottom-padding)::after {
     content: "";
     display: flex;
@@ -149,5 +150,34 @@ div.flow-scrollable {
     background: transparent;
     margin: 0px;
     padding: 0px;
+  }
+}
+
+#loader {
+  &:not(.finished) {
+    animation: none !important;
+  }
+
+  box-shadow: none !important;
+
+  #loader-icon {
+    position: absolute;
+    width: 288px;
+    height: 288px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  background: var(--accent-color);
+
+  div {
+    width: 175px !important;
+    max-width: 175px !important;
+    transform: translateY(120px);
+  }
+
+  div>span {
+    background: white !important;
   }
 }

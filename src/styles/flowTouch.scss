@@ -73,7 +73,7 @@
     text-align: left;
     width: max-content;
     height: min-content;
-
+    max-width: calc(100% - 5px);
     &.t_active {
         background: var(--accent-color);
         color: white;

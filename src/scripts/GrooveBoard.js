@@ -705,6 +705,7 @@ const backendMethods = {
     document.body.style.setProperty("--accent-color", color);
     document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setAccentColor(e, color))
     if (!doNotSave) localStorage.setItem("accentColor", color)
+    Groove.setAccentColor(color)
   },
   setTheme: (theme, doNotSave = false) => {
     if (Object.values(grooveThemes).includes(theme)) {
@@ -1001,7 +1002,7 @@ const backendMethods = {
         defaultPref = Object.assign(defaultPref, appPreference)
       }
     }
-    if(packageName.startsWith("groove.internal")) {
+    if (packageName.startsWith("groove.internal")) {
       defaultPref.shown = true
       defaultPref.label = "auto"
     }

@@ -4,11 +4,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.os.Handler;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.ValueCallback;
 import android.widget.Toast;
 
@@ -17,6 +20,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.splashscreen.SplashScreen;
+import androidx.core.splashscreen.SplashScreen.Companion;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -24,8 +32,9 @@ import fi.iki.elonen.NanoHTTPD;
 import web.bmdominatezz.gravyservices.GravyServer;
 
 public class MainActivity extends AppCompatActivity {
+
     public WebEvents webEvents;
-    public GravyServer gravyServer = new GravyServer();
+    public GravyServer gravyServer;
     public GrooveWebView webView;
     public PackageManager packageManager;
     private Handler handler;
@@ -42,8 +51,10 @@ public class MainActivity extends AppCompatActivity {
     public ValueCallback<Uri[]> mFilePathCallback;
     public String mCameraPhotoPath;
     private MyLocalServer myServer;
+    public boolean isAppReady = false;
 
     public class MyLocalServer extends NanoHTTPD {
+
         public MyLocalServer(int port) throws IOException {
             super(port);
             start(SOCKET_READ_TIMEOUT, false);
@@ -72,8 +83,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 activityPaused = true;
-                if (activityDispatchEvent)
+                if (activityDispatchEvent) {
                     webEvents.dispatchEvent(WebEvents.events.activityPause, null);
+                }
                 Log.d("groovelauncher", "onPause: ");
             }
         };
@@ -86,16 +98,19 @@ public class MainActivity extends AppCompatActivity {
         if (pauseRunnable != null) {
             handler.removeCallbacks(pauseRunnable);
             if (activityPaused) {
-                if (activityDispatchEvent)
+                if (activityDispatchEvent) {
                     webEvents.dispatchEvent(WebEvents.events.activityResume, null);
+                }
                 activityPaused = false;
             }
-            if (activityDispatchHomeEvent)
+            if (activityDispatchHomeEvent) {
                 webEvents.dispatchEvent(WebEvents.events.homeButtonPress, null);
+            }
             Log.d("groovelauncher", "homeButtonPress: ");
         } else {
-            if (activityDispatchEvent)
+            if (activityDispatchEvent) {
                 webEvents.dispatchEvent(WebEvents.events.activityResume, null);
+            }
             activityPaused = false;
             Log.d("groovelauncher", "onResume: ");
         }
@@ -106,11 +121,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         webEvents.dispatchEvent(WebEvents.events.backButtonPress, null);
-        //super.onBackPressed();
+        // super.onBackPressed();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        String accentColor = getSharedPreferences("GrooveLauncherPrefs", MODE_PRIVATE).getString("accent_color", "#AA00FF");
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+        View rootView = findViewById(android.R.id.content);
+        rootView.setBackgroundColor(Color.GREEN);
+        ViewGroup root = (ViewGroup) findViewById(android.R.id.content).getRootView().getRootView();
+        root.setBackgroundColor(Color.GREEN);
+        // Keep the splash screen visible until the app is ready
+        splashScreen.setKeepOnScreenCondition(() -> !isAppReady);
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -118,13 +143,14 @@ public class MainActivity extends AppCompatActivity {
         packageManager = getPackageManager();
         handler = new Handler();
         webView.init(packageManager, this);
-        //webView.setWebChromeClient(new ChromeClient());
+        // webView.setWebChromeClient(new ChromeClient());
         appChangeReceiver = new AppChangeReceiver(this);
         webEvents = webView.webEvents;
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            //Don't uncomment this cause webview itself will deal with inset paddings
-            //v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            // Don't uncomment this cause webview itself will deal with inset paddings
+            // v.setPadding(systemBars.left, systemBars.top, systemBars.right,
+            // systemBars.bottom);
             webEvents.dispatchEvent(WebEvents.events.systemInsetsChange, null);
             webView.lastInsets = systemBars;
             return insets;
@@ -135,6 +161,16 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // Simulate some initialization work
+        /*
+         * handler.postDelayed(() -> {
+         * isAppReady = true;
+         * }, 3000); // Delay of 3 seconds
+         */
+        gravyServer = new GravyServer() {
+
+        };
         gravyServer.init(this);
         gravyServer.start();
     }
@@ -175,12 +211,12 @@ public class MainActivity extends AppCompatActivity {
                 if (data == null) {
                     // If there is not data, then we may have taken a photo
                     if (mCameraPhotoPath != null) {
-                        results = new Uri[]{Uri.parse(mCameraPhotoPath)};
+                        results = new Uri[] { Uri.parse(mCameraPhotoPath) };
                     }
                 } else {
                     String dataString = data.getDataString();
                     if (dataString != null) {
-                        results = new Uri[]{Uri.parse(dataString)};
+                        results = new Uri[] { Uri.parse(dataString) };
                     }
                 }
             }

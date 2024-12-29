@@ -12,18 +12,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:padding="16dp"
         android:orientation="vertical"
+        android:padding="16dp"
         tools:ignore="MissingConstraints">
 
         <TableRow>
+
             <TextView
                 android:id="@+id/key_android_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Android version:"
                 android:paddingEnd="8dp"
+                android:text="Android version:"
                 android:textSize="16sp" />
+
             <TextView
                 android:id="@+id/value_android_version"
                 android:layout_width="wrap_content"
@@ -33,13 +35,15 @@
         </TableRow>
 
         <TableRow>
+
             <TextView
                 android:id="@+id/key_gravy_host_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Gravy Host version:"
                 android:paddingEnd="8dp"
+                android:text="Gravy Host version:"
                 android:textSize="16sp" />
+
             <TextView
                 android:id="@+id/value_gravy_host_version"
                 android:layout_width="wrap_content"
@@ -49,13 +53,15 @@
         </TableRow>
 
         <TableRow>
+
             <TextView
                 android:id="@+id/key_gravy_client_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Gravy Client version:"
                 android:paddingEnd="8dp"
+                android:text="Gravy Client version:"
                 android:textSize="16sp" />
+
             <TextView
                 android:id="@+id/value_gravy_client_version"
                 android:layout_width="wrap_content"
@@ -65,13 +71,33 @@
         </TableRow>
 
         <TableRow>
+
+            <TextView
+                android:id="@+id/key_ui_scale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="8dp"
+                android:text="UI Scale:"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/value_ui_scale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UNKNOWN"
+                android:textSize="16sp" />
+        </TableRow>
+
+        <TableRow>
+
             <TextView
                 android:id="@+id/key_theme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Theme:"
                 android:paddingEnd="8dp"
+                android:text="Theme:"
                 android:textSize="16sp" />
+
             <TextView
                 android:id="@+id/value_theme"
                 android:layout_width="wrap_content"
@@ -81,13 +107,15 @@
         </TableRow>
 
         <TableRow>
+
             <TextView
                 android:id="@+id/key_accent_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Accent color:"
                 android:paddingEnd="8dp"
+                android:text="Accent color:"
                 android:textSize="16sp" />
+
             <TextView
                 android:id="@+id/value_accent_color"
                 android:layout_width="wrap_content"
@@ -96,6 +124,13 @@
                 android:textSize="16sp" />
         </TableRow>
 
+        <Button
+            android:id="@+id/refresh_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onButtonRefresh"
+            android:text="Refresh" />
     </android.widget.TableLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

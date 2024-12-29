@@ -1,5 +1,6 @@
 package web.bmdominatezz.gravy;
 
+import static android.content.Context.MODE_PRIVATE;
 import static web.bmdominatezz.gravy.DefaultApps.*;
 import static web.bmdominatezz.gravy.GrooveExperience.*;
 
@@ -9,6 +10,7 @@ import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -53,6 +55,7 @@ import rikka.shizuku.ShizukuBinderWrapper;
 import rikka.shizuku.SystemServiceHelper;
 
 public class WebInterface {
+    private static final String PREFS_NAME = "GrooveLauncherPrefs";
     private final MainActivity mainActivity;
     private final GrooveWebView webView;
 
@@ -546,7 +549,12 @@ public class WebInterface {
             }
         });
     }
-
+    @JavascriptInterface
+    public void setAccentColor(String color) {
+        SharedPreferences.Editor editor = mainActivity.getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putString("accent_color", color);
+        editor.apply();
+    }
     @JavascriptInterface
     public void openURL(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -684,5 +692,9 @@ public class WebInterface {
     public String getPhotoURL(String photoId){
         return "https://appassets.androidplatform.net/assets/photos/" + photoId + ".webp";
 
+    }
+    @JavascriptInterface
+    public void appReady(){
+        mainActivity.isAppReady = true;
     }
 }

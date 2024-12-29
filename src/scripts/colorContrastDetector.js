@@ -32,5 +32,5 @@ export function getTextColor({ r, g, b, a }) {
     const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
 
     // If luminance is high, return dark text color, else return light text color
-    return a <= 128 ? '#FFFFFF' : luminance > 255 * (2 / 3) ? '#000000' : '#FFFFFF'; // Black or White
+    return a <= 128 ? '#FFFFFF' : luminance > 255 * (5 / 6) ? '#000000' : '#FFFFFF'; // Black or White
 }

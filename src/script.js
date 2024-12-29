@@ -1,7 +1,7 @@
 const GrooveMockInstance = !window.Groove
 window.GrooveMockInstance = GrooveMockInstance
 console.log(window.GrooveMockInstance)
-import { GrooveMock, BuildConfigMock } from "./scripts/GrooveMock.js";
+import { GrooveMock, BuildConfigMock } from "./scripts/grooveMock.js";
 window.GrooveRole = "main"
 if (GrooveMockInstance) {
     //window.Groove = new GrooveMock("./mock/apps.json")
@@ -181,124 +181,132 @@ window.addEventListener("activityResume", () => {
     }, 200);
 })
 
+if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
 
-requestAnimationFrame(() => {
-    startUpSequence([
-        (next) => {
-            if (GrooveBoard.backendMethods.setupNeeded()) {
-                location.href = !GrooveMockInstance ? '/assets/welcome.html' : '/www/welcome.html'
-            } else {
-                next()
-            }
-        },
-        (next) => {
-            GrooveBoard.backendMethods.reloadAppDatabase()
+startUpSequence([
+    (next) => {
+        if (GrooveBoard.backendMethods.setupNeeded()) {
+            location.href = !GrooveMockInstance ? '/assets/welcome.html' : '/www/welcome.html'
+        } else {
             next()
-        },
-        (next) => {
-            window.iconPackDB = {}
-            iconPackConverter.forEach(icon => {
-                icon.apps.forEach(packageName => {
-                    window.iconPackDB[packageName] = { icon: icon.icon, accent: icon["accent"] }
-                });
+        }
+    },
+    (next) => {
+        GrooveBoard.backendMethods.reloadAppDatabase()
+        next()
+    },
+    (next) => {
+        window.iconPackDB = {}
+        iconPackConverter.forEach(icon => {
+            icon.apps.forEach(packageName => {
+                window.iconPackDB[packageName] = { icon: icon.icon, accent: icon["accent"] }
             });
+        });
+        next()
+    },
+    /*    (next) => {
+    
+            GrooveBoard.alert(
+                "Warning!",
+                "WebView you are using is old/unsupported!",
+                [{ title: "Ok", style: "default", action: next }]
+            );
+    
+        },*/
+    (next) => {
+        //Load customization
+        if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
+        if (!!localStorage.getItem("tileColumns")) GrooveBoard.backendMethods.setTileColumns(Number(localStorage.getItem("tileColumns")), true)
+        if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
+        if (!!localStorage.getItem("reducedMotion")) GrooveBoard.backendMethods.setReduceMotion(localStorage.getItem("reducedMotion") == "true", true)
+        if (!!localStorage.getItem("font")) GrooveBoard.backendMethods.font.set(localStorage.getItem("font"), true)
+        if (!!localStorage.getItem("rotationLock")) Groove.setDisplayOrientationLock(localStorage.getItem("rotationLock"))
+
+        //if (!!localStorage.getItem("packageManagerProvider")) GrooveBoard.backendMethods.packageManagerProvider.set(Number(localStorage.getItem("packageManagerProvider")), true)
+        next()
+    },
+    (next) => {
+        if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
+        Groove.appReady()
+        next();
+    },
+    (next) => {
+        GrooveBoard.backendMethods.navigation.push("homescreen", () => { }, () => { })
+        if (Groove.constructor.toString().includes("GrooveMock")) {
+            setTimeout(next, 500);
+        } else {
             next()
-        },
-        /*    (next) => {
-        
-                GrooveBoard.alert(
-                    "Warning!",
-                    "WebView you are using is old/unsupported!",
-                    [{ title: "Ok", style: "default", action: next }]
-                );
-        
-            },*/
-        (next) => {
-            //Load customization
-            if (!!localStorage.getItem("tileColumns")) GrooveBoard.backendMethods.setTileColumns(Number(localStorage.getItem("tileColumns")), true)
-            if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
-            if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
-            if (!!localStorage.getItem("reducedMotion")) GrooveBoard.backendMethods.setReduceMotion(localStorage.getItem("reducedMotion") == "true", true)
+        }
+    },
+    (next) => {
+        detectDeviceType();
+        GrooveBoard.backendMethods.reloadApps()
+        window.scrollers.tile_page_scroller.refresh()
+        window.scrollers.app_page_scroller.refresh()
+        next()
+    },
+    (next) => {
+        const letter_selector_entries = ["#abcdefghijklmnopqrstuvwxyz"]
+        const groupedEntries = [];
+        for (let i = 0; i < letter_selector_entries[0].length; i += 4) {
+            groupedEntries.push(letter_selector_entries[0].slice(i, i + 4));
+        }
+        const letterSelectorDiv = $('.letter-selector > div');
+        groupedEntries.forEach(group => {
+            const $rowDiv = $('<div>', { class: 'letter-selector-row' });
+            for (let letter of group) {
+                const $letterDiv = $('<div>', { class: 'letter-selector-letter', text: letter });
+                $rowDiv.append($letterDiv);
+            }
+            letterSelectorDiv.append($rowDiv);
+        });
+        next()
+    },
+    (next) => {
+        try {
+            GrooveBoard.backendMethods.homeConfiguration.load()
+        } catch (error) {
+            alert("Your home screen was reset because of a fatal error :( Please report this:\n" + error.message)
+        }
+        next()
+    },
+    async (next) => {
+        const wallpaper = await imageStore.hasImage("wallpaper")
+        if (wallpaper) {
+            GrooveBoard.backendMethods.wallpaper.loadBlob(await imageStore.loadImage("wallpaper"))
+        }
+        next()
+    },
+    async (next) => {
+        const baseURL = !window.GrooveMockInstance ? new URL('/assets/', location.origin).href : new URL('/www/', location.origin).href
+        GrooveBoard.boardMethods.liveTiles.init = {
+            alarms: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/alarms.js", baseURL).href),
+            people: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/people.js", baseURL).href),
+            photos: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/photos.js", baseURL).href),
+            //weather: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/weather.js", baseURL).href),
+            example: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/helloworld.js", baseURL).href)
+        }
+        window.contactsCache = JSON.parse(Groove.getContacts()).map(e => {
+            e.avatarURL = Groove.getContactAvatarURL(e.id)
+            return e
+        })
+        window.photosCache = JSON.parse(Groove.getPhotos()).map(e => {
+            e.photoURL = Groove.getPhotoURL(e.id)
+            return e
+        })
+        GrooveBoard.boardMethods.liveTiles.refresh()
+        next()
+    }
+],
+    function () {
+        GrooveBoard.boardMethods.finishLoading()
+        setTimeout(() => {
             if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true); else GrooveBoard.backendMethods.setUIScale(.8, true)
-            if (!!localStorage.getItem("font")) GrooveBoard.backendMethods.font.set(localStorage.getItem("font"), true)
-            if (!!localStorage.getItem("rotationLock")) Groove.setDisplayOrientationLock(localStorage.getItem("rotationLock"))
-            
-            //if (!!localStorage.getItem("packageManagerProvider")) GrooveBoard.backendMethods.packageManagerProvider.set(Number(localStorage.getItem("packageManagerProvider")), true)
-            next()
-        },
-        (next) => {
-            GrooveBoard.backendMethods.navigation.push("homescreen", () => { }, () => { })
-            if (Groove.constructor.toString().includes("GrooveMock")) {
-                setTimeout(next, 500);
-            } else {
-                next()
-            }
-        },
-        (next) => {
-            detectDeviceType();
-            GrooveBoard.backendMethods.reloadApps()
-            window.scrollers.tile_page_scroller.refresh()
-            window.scrollers.app_page_scroller.refresh()
-            next()
-        },
-        (next) => {
-            const letter_selector_entries = ["#abcdefghijklmnopqrstuvwxyz"]
-            const groupedEntries = [];
-            for (let i = 0; i < letter_selector_entries[0].length; i += 4) {
-                groupedEntries.push(letter_selector_entries[0].slice(i, i + 4));
-            }
-            const letterSelectorDiv = $('.letter-selector > div');
-            groupedEntries.forEach(group => {
-                const $rowDiv = $('<div>', { class: 'letter-selector-row' });
-                for (let letter of group) {
-                    const $letterDiv = $('<div>', { class: 'letter-selector-letter', text: letter });
-                    $rowDiv.append($letterDiv);
-                }
-                letterSelectorDiv.append($rowDiv);
-            });
-            next()
-        },
-        (next) => {
-            try {
-                GrooveBoard.backendMethods.homeConfiguration.load()
-            } catch (error) {
-                alert("Your home screen was reset because of a fatal error :( Please report this:\n" + error.message)
-            }
-            next()
-        },
-        async (next) => {
-            const wallpaper = await imageStore.hasImage("wallpaper")
-            if (wallpaper) {
-                GrooveBoard.backendMethods.wallpaper.loadBlob(await imageStore.loadImage("wallpaper"))
-            }
-            next()
-        },
-        async (next) => {
-            const baseURL = !window.GrooveMockInstance ? new URL('/assets/', location.origin).href : new URL('/www/', location.origin).href
-            GrooveBoard.boardMethods.liveTiles.init = {
-                alarms: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/alarms.js", baseURL).href),
-                people: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/people.js", baseURL).href),
-                photos: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/photos.js", baseURL).href),
-                //weather: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/weather.js", baseURL).href),
-                example: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/helloworld.js", baseURL).href)
-            }
-            window.contactsCache = JSON.parse(Groove.getContacts()).map(e=>{
-                e.avatarURL = Groove.getContactAvatarURL(e.id)
-                return e
-            })
-            window.photosCache = JSON.parse(Groove.getPhotos()).map(e=>{
-                e.photoURL = Groove.getPhotoURL(e.id)
-                return e
-            })
-            GrooveBoard.boardMethods.liveTiles.refresh()
-            next()
-        }
-    ],
-        function () {
-            GrooveBoard.boardMethods.finishLoading()
-        }
-    )
-})
+        }, 250);
+    }
+)
+
+
 
 //GrooveBoard.alert("CAK", BuildConfig.CAK())
 

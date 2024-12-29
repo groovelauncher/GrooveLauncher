@@ -9,6 +9,7 @@ import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -32,10 +33,26 @@ public class GravyServer extends BroadcastReceiver {
                 JSONObject receivedData = new JSONObject(jsonData);
                 Log.d("GravyServer", "Received JSON: " + receivedData.toString());
                 // Process JSON data here as needed
+                if (receivedData.has("request")) {
+                    String request = receivedData.optString("request", "");
+                    switch (request) {
+                        case "config":
+                            sendAction(onConfigRequest());
+                            break;
+                        default:
+                            Log.d("GravyServer", "Invalid request: " + request);
+                            break;
+                    }
+                }
             } catch (Exception e) {
                 Log.e("GravyServer", "Invalid JSON received", e);
             }
         }
+    }
+
+    public JSONObject onConfigRequest() throws JSONException {
+        JSONObject response = new JSONObject();
+        return response;
     }
 
     public void init(Context ncontext) {
@@ -91,17 +108,16 @@ public class GravyServer extends BroadcastReceiver {
     }
 
     public void sendAction(JSONObject data) {
-        Intent intent = new Intent(ACTION_RECEIVE);
+        Intent intent = new Intent(ACTION_SEND);
         intent.putExtra("data_key", data.toString());
         context.sendBroadcast(intent);
         Log.d("GravyServer", "Action sent with JSON: " + data.toString());
     }
 
-    public void sendActionToApp(String packageName, String data) {
+    public void sendActionToApp(String packageName, JSONObject data) {
         Intent intent = new Intent(ACTION_SEND);
-        intent.putExtra("data_key", data);
+        intent.putExtra("data_key", data.toString());
         intent.setPackage(packageName); // Target the specific app
-
         try {
             context.sendBroadcast(intent);
             Log.d("GravyServer", "Action sent to " + packageName + ": " + data);

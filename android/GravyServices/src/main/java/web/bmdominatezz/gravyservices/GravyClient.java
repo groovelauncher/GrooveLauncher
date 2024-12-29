@@ -45,7 +45,7 @@ public class GravyClient extends BroadcastReceiver {
         // Apply changes dynamically
         if (data.has("uiscale")) {
             String uiScale = data.optString("uiscale", ".8");
-            applyUiScale(uiScale);
+            applyUIScale(uiScale);
         }
         if (data.has("theme")) {
             String theme = data.optString("theme", "1");
@@ -57,17 +57,17 @@ public class GravyClient extends BroadcastReceiver {
         }
     }
 
-    private void applyUiScale(String uiScale) {
+    public void applyUIScale(String uiScale) {
         // Code to adjust UI scale
         Log.d("GravyClient", "Applied UI scale: " + uiScale);
     }
 
-    private void applyTheme(String theme) {
+    public void applyTheme(String theme) {
         // Code to switch themes
         Log.d("GravyClient", "Applied theme: " + theme);
     }
 
-    private void applyAccentColor(String accentColor) {
+    public void applyAccentColor(String accentColor) {
         // Code to change accent color
         Log.d("GravyClient", "Applied accent color: " + accentColor);
     }
@@ -93,6 +93,7 @@ public class GravyClient extends BroadcastReceiver {
         }
         isStarted = true;
         Log.d("GravyClient", "Client started.");
+        requestConfig();
     }
 
     public void stop() {
@@ -107,7 +108,15 @@ public class GravyClient extends BroadcastReceiver {
 
         Log.d("GravyClient", "Client stopped.");
     }
-
+    public void requestConfig(){
+        JSONObject data = new JSONObject();
+        try {
+            data.put("request", "config");
+        } catch (Exception e) {
+            Log.e("GravyClient", "Failed to create JSON object", e);
+        }
+        sendRequest(data);
+    }
     public void sendRequest(JSONObject data) {
         Intent intent = new Intent(ACTION_SEND);
         intent.putExtra("data_key", data.toString());

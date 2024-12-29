@@ -5,7 +5,7 @@ window.olderThan = olderThan
 window.compareVersions = compareVersions
 import jQuery from "jquery";
 window.$ = jQuery
-import GrooveMock from "./scripts/GrooveMock.js";
+import GrooveMock from "./scripts/grooveMock.js";
 import { i18n, greetings } from './scripts/localeManager';
 await i18n.init();
 window.i18n = i18n;
@@ -328,3 +328,5 @@ function updateScript() {
         }
     }
 }
+
+Groove.appReady()

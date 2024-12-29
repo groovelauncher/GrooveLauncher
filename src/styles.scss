@@ -154,6 +154,21 @@ div.flow-scrollable {
 }
 
 #loader {
+  #loader-icon {
+    fill: white;
+  }
+
+  &.finished {
+    #loader-icon {
+      transition: fill .5s;
+      fill: var(--accent-color);
+    }
+    div.loader-animation span{
+      transition: background-color .5s;
+      background-color: var(--accent-color) !important;
+    }
+  }
+
   &:not(.finished) {
     animation: none !important;
   }
@@ -169,12 +184,12 @@ div.flow-scrollable {
     transform: translate(-50%, -50%);
   }
 
-  background: var(--accent-color);
+  background: black;
 
   div {
-    width: 175px !important;
+    width: 100px !important;
     max-width: 175px !important;
-    transform: translateY(120px);
+    transform: translateY(100px);
   }
 
   div>span {

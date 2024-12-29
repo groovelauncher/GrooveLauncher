@@ -1,6 +1,6 @@
 #loader,
 .loader {
-    box-shadow: 0px 0px 0px 10000px black;
+    //box-shadow: 0px 0px 0px 10px black;
     animation: 0.5s loader-show cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
 
     @keyframes loader-show {
@@ -12,7 +12,7 @@
     }
 
     &.finished {
-        animation: loader-finished 0.25s cubic-bezier(1, 0, 0.5, 1) forwards;
+        animation: loader-finished 0.5s cubic-bezier(1, 0, 0.5, 1) forwards;
 
         @keyframes loader-finished {
             from {
@@ -22,7 +22,7 @@
 
             to {
                 opacity: 0;
-                scale: 1.25;
+                scale: 1.5;
             }
         }
     }

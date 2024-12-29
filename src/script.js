@@ -302,7 +302,7 @@ startUpSequence([
         GrooveBoard.boardMethods.finishLoading()
         setTimeout(() => {
             if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true); else GrooveBoard.backendMethods.setUIScale(.8, true)
-        }, 250);
+        }, 750);
     }
 )
 

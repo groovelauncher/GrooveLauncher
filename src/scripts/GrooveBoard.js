@@ -98,7 +98,7 @@ const boardMethods = {
     setTimeout(() => {
       loader.remove();
       appTransition.onResume(false, true);
-    }, 500);
+    }, 1000);
   },
   createHomeTile: (size = [1, 1], options = {}, append = false) => {
     options = Object.assign(

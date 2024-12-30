@@ -193,11 +193,14 @@ class GrooveMock {
         const iconPath = baseURL.href.split('/').slice(0, -1).join('/') + CONSTANTS.MOCK_CONTACT_AVATAR_PATH;
         return `${iconPath}${id}.jpeg`;
     }
-    appReady(){
+    appReady() {
         console.log("App ready")
     }
-    setAccentColor(){
-        
+    setAccentColor(color) {
+        console.log("Set accent color:", color)
+    }
+    setAppIconColor(color) {
+        console.log("Set app icon color:", color)
     }
 }
 export default GrooveMock;

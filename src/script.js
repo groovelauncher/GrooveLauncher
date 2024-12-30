@@ -171,11 +171,14 @@ window.generateShakeAnimations = generateShakeAnimations
 
 window.addEventListener("activityPause", () => {
     clearTimeout(window.appTransitionLaunchError)
-    document.body.style.visibility = "hidden"
+    //document.body.style.visibility = "hidden"
+    document.body.classList.add("activity-paused")
 })
 window.addEventListener("activityResume", () => {
+    document.body.classList.remove("activity-paused")
     setTimeout(() => {
-        document.body.style.removeProperty("visibility")
+        //document.body.style.removeProperty("visibility")
+        
         appTransition.onResume()
 
     }, 200);
@@ -302,7 +305,7 @@ startUpSequence([
         GrooveBoard.boardMethods.finishLoading()
         setTimeout(() => {
             if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true); else GrooveBoard.backendMethods.setUIScale(.8, true)
-        }, 750);
+        }, 500);
     }
 )
 

@@ -24,6 +24,13 @@ html {
   margin: 0px;
   padding: 0px;
 
+  &.activity-paused {
+    visibility: hidden;
+    * {
+      visibility: hidden !important;
+    }
+  }
+
 }
 
 body {
@@ -154,6 +161,25 @@ div.flow-scrollable {
 }
 
 #loader {
+  &.finished {
+    animation: loader-finished .5s cubic-bezier(1, 0, 0.5, 1) forwards;
+
+    @keyframes loader-finished {
+      0% {
+        opacity: 1;
+        scale: 1;
+      }
+
+
+
+      100% {
+        opacity: 0;
+        scale: 3;
+        filter: blur(20px) contrast(3);
+      }
+    }
+  }
+
   #loader-icon {
     fill: white;
   }
@@ -162,8 +188,32 @@ div.flow-scrollable {
     #loader-icon {
       transition: fill .5s;
       fill: var(--accent-color);
+
+      #g_0 {
+        path {
+          transition: filter .5s cubic-bezier(1, 0, 0.5, 1);
+
+          &:nth-child(6),
+          &:nth-child(5) {
+            filter: brightness(.8);
+          }
+
+          &:nth-child(1),
+          &:nth-child(2),
+          &:nth-child(3) {
+            filter: brightness(1.3);
+          }
+
+          &:nth-child(4) {
+            filter: brightness(.4);
+          }
+        }
+
+
+      }
     }
-    div.loader-animation span{
+
+    div.loader-animation span {
       transition: background-color .5s;
       background-color: var(--accent-color) !important;
     }

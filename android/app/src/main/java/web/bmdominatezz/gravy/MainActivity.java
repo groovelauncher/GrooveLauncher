@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -12,6 +14,8 @@ import android.util.Log;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.webkit.ValueCallback;
 import android.widget.Toast;
 
@@ -129,10 +133,12 @@ public class MainActivity extends AppCompatActivity {
 
         String accentColor = getSharedPreferences("GrooveLauncherPrefs", MODE_PRIVATE).getString("accent_color", "#AA00FF");
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
-        View rootView = findViewById(android.R.id.content);
-        rootView.setBackgroundColor(Color.GREEN);
-        ViewGroup root = (ViewGroup) findViewById(android.R.id.content).getRootView().getRootView();
-        root.setBackgroundColor(Color.GREEN);
+        splashScreen.setOnExitAnimationListener(splashScreenView -> {
+            new android.os.Handler().postDelayed(() -> {
+                // Start your animation here
+                splashScreenView.remove();
+            }, 100); // Delay in millisecon
+        });
         // Keep the splash screen visible until the app is ready
         splashScreen.setKeepOnScreenCondition(() -> !isAppReady);
 
@@ -211,12 +217,12 @@ public class MainActivity extends AppCompatActivity {
                 if (data == null) {
                     // If there is not data, then we may have taken a photo
                     if (mCameraPhotoPath != null) {
-                        results = new Uri[] { Uri.parse(mCameraPhotoPath) };
+                        results = new Uri[]{Uri.parse(mCameraPhotoPath)};
                     }
                 } else {
                     String dataString = data.getDataString();
                     if (dataString != null) {
-                        results = new Uri[] { Uri.parse(dataString) };
+                        results = new Uri[]{Uri.parse(dataString)};
                     }
                 }
             }
@@ -256,5 +262,25 @@ public class MainActivity extends AppCompatActivity {
         if (myServer != null) {
             myServer.stop();
         }
+    }
+
+    @Override
+    public boolean onCreateThumbnail(Bitmap outBitmap, Canvas canvas) {
+        String response = "1";
+        try {
+            response = new JSONObject(webView.evaluateJavascriptSync("GrooveBoard.backendMethods.serveConfig()")).optString("theme", "1");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        //Create a black bitmap with the desired dimensions
+        Bitmap blackBitmap = Bitmap.createBitmap(outBitmap.getWidth(), outBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        blackBitmap.eraseColor(response == "1" ? Color.BLACK : Color.WHITE);
+
+        // Draw the black bitmap onto the canvas
+        canvas.drawBitmap(blackBitmap, 0, 0, null);
+
+        // Return true to indicate that you've created a custom thumbnail
+        return true;
     }
 }

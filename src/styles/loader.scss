@@ -5,27 +5,12 @@
 
     @keyframes loader-show {
         from {
-            transform: translateY(100px);
+            //transform: translateY(100px);
         }
 
         to {}
     }
 
-    &.finished {
-        animation: loader-finished 0.5s cubic-bezier(1, 0, 0.5, 1) forwards;
-
-        @keyframes loader-finished {
-            from {
-                opacity: 1;
-                scale: 1;
-            }
-
-            to {
-                opacity: 0;
-                scale: 1.5;
-            }
-        }
-    }
 
     position: fixed;
     z-index: 999;

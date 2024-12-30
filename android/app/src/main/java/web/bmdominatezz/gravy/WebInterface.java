@@ -7,6 +7,7 @@ import static web.bmdominatezz.gravy.GrooveExperience.*;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -44,6 +45,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -549,12 +551,14 @@ public class WebInterface {
             }
         });
     }
+
     @JavascriptInterface
     public void setAccentColor(String color) {
         SharedPreferences.Editor editor = mainActivity.getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
         editor.putString("accent_color", color);
         editor.apply();
     }
+
     @JavascriptInterface
     public void openURL(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -680,21 +684,56 @@ public class WebInterface {
     public String getContacts() throws JSONException {
         return GrooveExperience.getContacts(mainActivity);
     }
+
     @JavascriptInterface
     public String getPhotos() throws JSONException {
         return GrooveExperience.getPhotos(mainActivity);
     }
+
     @JavascriptInterface
     public String getContactAvatarURL(String contactId) {
         return "https://appassets.androidplatform.net/assets/contact-icon/" + contactId + ".webp";
     }
+
     @JavascriptInterface
-    public String getPhotoURL(String photoId){
+    public String getPhotoURL(String photoId) {
         return "https://appassets.androidplatform.net/assets/photos/" + photoId + ".webp";
 
     }
+
     @JavascriptInterface
-    public void appReady(){
+    public void appReady() {
         mainActivity.isAppReady = true;
+    }
+
+    @JavascriptInterface
+    public void setAppIconColor(String color) {
+        PackageManager packageManager = mainActivity.packageManager;
+        Log.d(TAG, "setAppIconColor: '" + color + "'");
+        // List of aliases
+        String[] aliases = {
+                "icon_default",
+                "icon_lime", "icon_green", "icon_emerald", "icon_teal", "icon_cyan",
+                "icon_cobalt", "icon_indigo", "icon_violet", "icon_pink", "icon_magenta",
+                "icon_crimson", "icon_red", "icon_orange", "icon_amber", "icon_yellow",
+                "icon_brown", "icon_olive", "icon_steel", "icon_mauve", "icon_taupe"
+        };
+        String selectedColor = Arrays.asList(aliases).contains("icon_" + color) ? "icon_" + color : "icon_default";
+        // Disable all aliases except the one for the selected color
+        for (String alias : aliases) {
+            String fullAliasName = mainActivity.getPackageName() + "." + alias;
+            packageManager.setComponentEnabledSetting(
+                    new ComponentName(mainActivity, fullAliasName),
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP // Avoid killing the app
+            );
+        }
+        String aliasName = mainActivity.getPackageName() + "." + selectedColor;
+        packageManager.setComponentEnabledSetting(
+                new ComponentName(mainActivity, aliasName),
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP // Avoid killing the app
+        );
+
     }
 }

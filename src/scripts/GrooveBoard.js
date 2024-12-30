@@ -98,7 +98,7 @@ const boardMethods = {
     setTimeout(() => {
       loader.remove();
       appTransition.onResume(false, true);
-    }, 1000);
+    }, 750);
   },
   createHomeTile: (size = [1, 1], options = {}, append = false) => {
     options = Object.assign(
@@ -697,15 +697,16 @@ const backendMethods = {
     }
   },
   setAccentColor: (color, doNotSave = false) => {
-    if (Object.values(grooveColors).includes(color)) {
-
-    } else {
-      console.error("Custom color detected!");
-    }
     document.body.style.setProperty("--accent-color", color);
     document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setAccentColor(e, color))
     if (!doNotSave) localStorage.setItem("accentColor", color)
     Groove.setAccentColor(color)
+    if (Object.values(grooveColors).includes(color)) {
+      Groove.setAppIconColor(Object.entries(grooveColors).filter(e => e[1].toLowerCase() == color.toLowerCase())[0][0])
+    } else {
+      console.error("Custom color detected!");
+      Groove.setAppIconColor("default")
+    }
   },
   setTheme: (theme, doNotSave = false) => {
     if (Object.values(grooveThemes).includes(theme)) {

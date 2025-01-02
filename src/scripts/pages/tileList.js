@@ -4,6 +4,7 @@ const $ = jQuery;
 import perlin from "../perlin";
 
 import { GridStack } from "gridstack";
+
 window.GridStack = GridStack;
 const tileListInnerContainer = document.querySelector(
   "div.tile-list-inner-container"
@@ -20,17 +21,24 @@ const grid = GridStack.init({
 });
 var isDragging
 var lastDragEl
+function _removeDragScale(el) {
+  el.style.removeProperty("width")
+  el.style.removeProperty("height")
+}
 grid.on("dragstart", function (event, el) {
   // el.classList.add("grid-dragging")
   scrollers.tile_page_scroller.cancelScroll()
   lastDragEl = el
   isDragging = true
-  $(el).css({
+  _removeDragScale(el)
+  /*$(el).css({
     left: $(el).position().left + 15,
     top: $(el).position().top + 15
-  })
+  })*/
 });
 grid.on('drag', function (event, el) {
+  console.log("bababa")
+  _removeDragScale(el)
 });
 grid.on('change', function (event, items) {
 });
@@ -242,12 +250,13 @@ $(window).on("pointerdown", function (e) {
         GrooveBoard.boardMethods.createTileMenu(e.target);
         generateShakeAnimations();
         e.target.homeTileMenuState = true;
-        setTimeout(() => {
-          $(e.target).trigger(
-            "mousedown",
-            Object.assign(e, { target: e.target })
-          );
-        }, 1000);
+        const mouseDown = new MouseEvent('mousedown', {
+          bubbles: true,
+          cancelable: true,
+          clientX: e.target.getBoundingClientRect().left,
+          clientY: e.target.getBoundingClientRect().top
+        });
+        e.target.dispatchEvent(mouseDown);
       });
       e.target.classList.add("home-menu-selected");
     }, 500);

@@ -25,7 +25,7 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 53
-        versionName = "0.5.3-beta.5"
+        versionName = "0.5.4-beta.5"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
         // Add the API key

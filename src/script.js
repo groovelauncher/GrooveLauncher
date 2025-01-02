@@ -26,6 +26,7 @@ import { normalize } from 'normalize-diacritics-es';
 import liveTileManager from "./scripts/liveTileManager.js";
 import { grooveThemes } from "./scripts/GrooveProperties.js";
 import applyOverscroll from "./scripts/overscrollFramework.js";
+import { } from "./scripts/updateManager.js"
 window.normalizeDiacritics = (input = "") => {
     return normalize(input)
 }
@@ -178,11 +179,12 @@ window.addEventListener("activityResume", () => {
     document.body.classList.remove("activity-paused")
     setTimeout(() => {
         //document.body.style.removeProperty("visibility")
-        
+
         appTransition.onResume()
 
     }, 200);
 })
+
 
 if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
 

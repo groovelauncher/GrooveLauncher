@@ -132,6 +132,9 @@ const boardMethods = {
       ),
       config
     );
+    widget.addEventListener("pointermove", () => {
+      console.log("fs")
+    })
     if (window.scrollers) window.scrollers.tile_page_scroller.refresh();
     return widget;
 

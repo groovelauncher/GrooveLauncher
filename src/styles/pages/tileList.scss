@@ -45,7 +45,12 @@ div.tile-list-page {
         }
 
         .app-page-icon-banner {
-            visibility: hidden;
+            transition: .25s .25s ease-in !important;
+            opacity: 0;
+            &,
+            & * {
+                pointer-events: none;
+            }
         }
     }
 
@@ -180,7 +185,7 @@ div.tile-list-page {
         }
 
         .app-page-icon-banner {
-            visibility: hidden;
+           visibility: hidden;
         }
     }
 
@@ -251,6 +256,7 @@ div.tile-list-inner-container {
 }
 
 div.app-page-icon-banner {
+    transition: opacity .25s ease-out !important;
     width: 100%;
     height: calc(42px + 33px * 2 + var(--window-inset-top) + var(--window-inset-bottom));
     position: relative;
@@ -297,6 +303,84 @@ div.app-page-icon-banner {
 
     div.tile-list-inner-container[gs-current-row="0"]+& {
         top: var(--window-inset-top);
+    }
+
+    div.update-banner {
+        font-weight: 400;
+        padding: 15px 25px;
+        padding-right: 10px;
+        position: relative;
+        transform-style: preserve-3d;
+        width: calc(100vw - 90px);
+        box-sizing: border-box;
+        @include flow-touch;
+
+        &.active {
+            opacity: .75;
+        }
+
+        * {
+            pointer-events: none;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 20px;
+            right: 0px;
+            width: 2px;
+            height: calc(100% - 40px);
+            background: rgb(127, 127, 127, .5);
+        }
+
+        h1.update-title {
+            font-weight: 700;
+            margin: 0px;
+            font-size: 20px;
+            width: max-content;
+            float: left;
+            margin-right: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+
+        }
+
+        p.update-version {
+            margin: 0px;
+            font-size: 20px;
+            opacity: .5;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        div.update-actions {
+            transform-style: preserve-3d;
+            white-space: nowrap;
+            overflow: hidden;
+
+            button {
+                position: relative;
+                color: var(--accent-color);
+                background: transparent;
+                border: none;
+                margin: 0px;
+                padding: 0px;
+                margin-right: 5px;
+                pointer-events: auto;
+                font-size: 20px;
+
+                &.t_active {
+                    color: var(--metro-foreground);
+                }
+
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
     }
 }
 

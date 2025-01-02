@@ -3,7 +3,7 @@ import { grooveColors, grooveThemes } from "../GrooveProperties";
 import "../flowTouch.js";
 import applyOverscroll from "../overscrollFramework.js";
 import fontStore from "../fontStore.js";
-import GrooveMock from "./../GrooveMock.js";
+import GrooveMock from "./../grooveMock.js";
 
 // Initialize mock environment if Groove isn't available
 const GrooveMockInstance = !window.Groove
@@ -65,6 +65,11 @@ function setReduceMotion(bool) {
   if (bool) document.body.classList.add("reduced-motion"); else document.body.classList.remove("reduced-motion")
 }
 
+function setAnimationDurationScale(scale) {
+  window.animationDurationScale = scale
+  document.body.style.setProperty("--animation-duration-scale", scale)
+  document.querySelector("html").style.setProperty("--animation-duration-scale", scale)
+}
 // Expose functions to window for external access
 window.setAccentColor = setAccentColor;
 window.setTheme = setTheme;
@@ -87,6 +92,8 @@ window.addEventListener("message", (event) => {
       } else {
         document.body.classList.add("soft-exit")
       }
+    } else if (event.data.action == "setAnimationDurationScale") {
+      setAnimationDurationScale(event.data.argument)
     }
   }
 });
@@ -129,3 +136,4 @@ const appViewEvents = {
 export {
   appViewEvents, grooveColors, grooveThemes, setAccentColor, setTheme, applyOverscroll
 };
+if (window.parent["animationDurationScale"]) setAnimationDurationScale(window.parent["animationDurationScale"])

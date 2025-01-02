@@ -30,7 +30,11 @@ const appViewEvents = Object.freeze({
     // Updates the app's font family
     setFont: (iframe, font) => {
         sendMessage(iframe, 'setFont', font);
+    },
+    setAnimationDurationScale: (iframe, scale) => {
+        sendMessage(iframe, 'setAnimationDurationScale', scale);
     }
+
 });
 
 export default appViewEvents;

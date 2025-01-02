@@ -132,9 +132,6 @@ const boardMethods = {
       ),
       config
     );
-    widget.addEventListener("pointermove", () => {
-      console.log("fs")
-    })
     if (window.scrollers) window.scrollers.tile_page_scroller.refresh();
     return widget;
 
@@ -571,7 +568,7 @@ const backendMethods = {
         if (count < 0) {
           clearInterval(countdown);
         }
-      }, 100);
+      }, 100 * animationDurationScale);
       scrollers.tile_page_scroller.scrollTo(0, 0, 500)
     },
     get lastPush() {
@@ -693,7 +690,7 @@ const backendMethods = {
       appViewEvents.softExit(document.querySelector(`iframe.groove-element.groove-app-view[packageName="${packageName}"]`), homeBack)
       setTimeout(() => {
         backendMethods.destroyInternalApp(packageName, homeBack)
-      }, 150);
+      }, 150 * animationDurationScale);
     } catch (error) {
       console.log("Soft exit failed! Destroying process")
       backendMethods.destroyInternalApp(packageName, homeBack)
@@ -1011,6 +1008,14 @@ const backendMethods = {
       defaultPref.label = "auto"
     }
     return defaultPref
+  },
+  setAnimationDurationScale: (scale) => {
+    scale = scale < 0 ? 0 : scale > 10 ? 10 : scale
+    window.animationDurationScale = scale
+    document.body.style.setProperty("--animation-duration-scale", scale)
+    document.querySelector("html").style.setProperty("--animation-duration-scale", scale)
+    document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setAnimationDurationScale(e, scale))
+
   }
 };
 function listHistory() {
@@ -1103,3 +1108,9 @@ function getCanvasBlob(canvas, mimeType = 'image/png') {
 
 export default { boardMethods, backendMethods, alert };
 
+window.addEventListener("load", () => {
+  backendMethods.setAnimationDurationScale(Groove.getAnimationDurationScale())
+  window.addEventListener("animationDurationScaleChange", function (e) {
+    backendMethods.setAnimationDurationScale(Groove.getAnimationDurationScale())
+  });
+})

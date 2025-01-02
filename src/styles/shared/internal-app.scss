@@ -15,6 +15,7 @@ html {
   margin: 0px;
   padding: 18px 22px;
   box-sizing: border-box;
+  --animation-duration-scale: 1;
 }
 
 body {
@@ -59,6 +60,7 @@ img {
 div.flow-scrollable {
   transform-style: preserve-3d;
   will-change: transform;
+
   &:not(.no-bottom-padding)::after {
     content: "";
     display: flex;

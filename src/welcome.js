@@ -5,16 +5,17 @@ window.olderThan = olderThan
 window.compareVersions = compareVersions
 import jQuery from "jquery";
 window.$ = jQuery
-import GrooveMock from "./scripts/grooveMock.js";
 import { i18n, greetings } from './scripts/localeManager';
 await i18n.init();
 window.i18n = i18n;
 window.greetings = greetings
-const GrooveMockInstance = !window.Groove
-window.GrooveMockInstance = GrooveMockInstance
+
+import { GrooveMock, BuildConfigMock } from "./scripts/grooveMock.js";
+window.GrooveRole = "main"
 if (GrooveMockInstance) {
     //window.Groove = new GrooveMock("./mock/apps.json")
     window.Groove = new GrooveMock("./mock/apps.json")
+    window.BuildConfig = new BuildConfigMock()
     document.body.classList.add("groove-mock")
 }
 
@@ -288,7 +289,6 @@ document.querySelectorAll("div.accent-color-catalogue-item").forEach(e => e.addE
 if (!!localStorage.getItem("tileColumns")) GrooveBoard.backendMethods.setTileColumns(Number(localStorage.getItem("tileColumns")), true)
 if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
 if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
-if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true); else GrooveBoard.backendMethods.setUIScale(.8, true)
 
 i18n.translateDOM();
 
@@ -300,23 +300,30 @@ console.log("updatedapp", updatedApp)
 window.firstWelcome = firstWelcome
 var welcomei = 0
 welcomeTitle.innerText = i18n.t(welcomeType)
-setInterval(() => {
-    welcomei++;
-    welcomeTitle.style.animation = "none"
-    welcomeTitle.classList.add(welcomei % 2 == 0 ? "flip2" : "flip")
+function startFlipping() {
+    if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true); else GrooveBoard.backendMethods.setUIScale(.8, true)
     setTimeout(() => {
-        welcomeTitle.removeAttribute("data-i18n")
-        welcomeTitle.innerText = welcomei % 2 == 0 ?
-            i18n.t(welcomeType) :
-            (greetings.getRandomWelcome()[firstWelcome ? "welcome" : "welcome_back"] || (firstWelcome ? "Welcome" : "Welcome back"));
+        setTimeout(() => {
+            if (isChristmas()) snowStorm.start()
+        }, 1000);
+        setInterval(() => {
+            welcomei++;
+            welcomeTitle.style.animation = "none"
+            welcomeTitle.classList.add(welcomei % 2 == 0 ? "flip2" : "flip")
+            setTimeout(() => {
+                welcomeTitle.removeAttribute("data-i18n")
+                welcomeTitle.innerText = welcomei % 2 == 0 ?
+                    i18n.t(welcomeType) :
+                    (greetings.getRandomWelcome()[firstWelcome ? "welcome" : "welcome_back"] || (firstWelcome ? "Welcome" : "Welcome back"));
+            }, 200);
+            setTimeout(() => {
+                welcomeTitle.classList.remove("flip", "flip2")
+            }, 2000);
+        }, 4000);
     }, 200);
-    setTimeout(() => {
-        welcomeTitle.classList.remove("flip", "flip2")
-    }, 2000);
-}, 4000);
+}
 
 import { isChristmas, snowStorm } from "./scripts/fun/snow.js";
-if (isChristmas()) snowStorm.start()
 
 
 function updateScript() {
@@ -328,5 +335,108 @@ function updateScript() {
         }
     }
 }
+const loaderText = document.querySelector("#loader p.loader-text")
+function updateLoaderText(string) {
+    loaderText.style.removeProperty("animation")
+    if (window.updateLoaderText_t2) loaderText.innerText = string
 
+    requestAnimationFrame(() => {
+        loaderText.style.setProperty("animation", "loader-text-flip 1s")
+        clearTimeout(window.updateLoaderText_t1)
+        clearTimeout(window.updateLoaderText_t2)
+
+        window.updateLoaderText_t1 = setTimeout(() => {
+            loaderText.innerText = string
+        }, 200);
+        window.updateLoaderText_t2 = setTimeout(() => {
+            loaderText.style.removeProperty("animation")
+            delete window.updateLoaderText_t1
+            delete window.updateLoaderText_t2
+        }, 1000);
+    })
+}
+window.updateLoaderText = updateLoaderText
+function finishLocale() {
+    setTimeout(() => {
+        document.querySelector("#loader").classList.add("finished")
+        setTimeout(() => {
+            document.querySelector("#loader").remove()
+            startFlipping()
+            document.body.classList.add("animate-intro")
+        }, 500);
+    }, 2000);
+}
+if (firstWelcome && localStorage["welcomeLocalesDownloaded"] != "true") {
+    //document.querySelector("#loader").classList.add("first-welcome")
+    //document.body.classList.add("animate-intro")
+
+    const systemLocale = Groove.getSystemLocale().replaceAll("_", "-");
+    var localesFinished = false
+    var localeProceed = true
+    setTimeout(async () => {
+        updateLoaderText("Querying locales...")
+        var userLocales = {}
+        if (!localeProceed) return
+        userLocales = (await i18n.getAvailableLocales()).userLocales
+        if (!localeProceed) return
+        if (!Object.keys(userLocales).length) {
+            //error locales oculdnt be fetched
+            updateLoaderText("Error: Locales couldn't be fetched.")
+            finishLocale()
+            return;
+        }
+        if (!localeProceed) return
+        var foundLocale = Object.entries(userLocales).filter(e =>
+            e[1].language.androidCode.replaceAll("_", "-") == systemLocale || e[1].language.id.replaceAll("_", "-") == systemLocale || e[1].language.locale.replaceAll("_", "-") == systemLocale
+        )
+        if (!foundLocale.length) {
+            updateLoaderText("Error: System locale not found.")
+            finishLocale()
+            return;
+        } else {
+            foundLocale = foundLocale[0][1].languageId
+        }
+        if (!localeProceed) return
+        updateLoaderText("Downloading locales...")
+        i18n.setLocale(foundLocale, (progress) => {
+            switch (progress.status) {
+                case 'downloading':
+                    //show total progress => progress.totalProgress
+                    updateLoaderText(`Downloading locales... ${progress.totalProgress}%`)
+                    break;
+                case 'error':
+                    //no error code
+                    updateLoaderText("Error: Locales couldn't be downloaded.")
+                    break;
+                case 'complete':
+                    //locales downloaded
+                    localesFinished = true
+                    updateLoaderText("Locales downloaded.")
+                    localStorage["welcomeLocalesDownloaded"] = "true"
+                    finishLocale()
+                    break;
+            }
+        });
+
+    }, 750);
+    setTimeout(() => {
+        if (!localesFinished) {
+            localeProceed = false
+            updateLoaderText("Timeout: Proceeding with default locale...")
+            finishLocale()
+        }
+    }, 15000);
+
+
+
+} else {
+    document.querySelector("#loader").classList.add("finished")
+    setTimeout(() => {
+        document.querySelector("#loader").remove()
+        startFlipping()
+        document.body.classList.add("animate-intro")
+    }, 500);
+
+}
+GrooveBoard.backendMethods.setUIScale(1, true)
 Groove.appReady()

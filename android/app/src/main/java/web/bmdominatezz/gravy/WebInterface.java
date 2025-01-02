@@ -48,6 +48,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.jar.JarException;
 
@@ -734,6 +735,19 @@ public class WebInterface {
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP // Avoid killing the app
         );
+    }
 
+    @JavascriptInterface
+    public String getSystemLocale() {
+        Locale locale = Locale.getDefault();
+        return locale.toString();
+    }
+    @JavascriptInterface
+    public float getAnimationDurationScale(){
+        return Settings.Global.getFloat(
+                mainActivity.getContentResolver(),
+                Settings.Global.ANIMATOR_DURATION_SCALE,
+                1.0f // Default value
+        );
     }
 }

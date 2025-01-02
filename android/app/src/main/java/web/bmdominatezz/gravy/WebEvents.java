@@ -17,7 +17,8 @@ public class WebEvents {
         activityPause,
         activityResume,
         appInstall,
-        appUninstall
+        appUninstall,
+        animationDurationScaleChange
     }
 
     WebEvents(Context c, WebView w) {
@@ -30,8 +31,15 @@ public class WebEvents {
         if (arguments == null) {
             script = "window.dispatchEvent(new CustomEvent(\"" + eventName + "\"))";
         } else {
-           script = "window.dispatchEvent(new CustomEvent(\"" + eventName + "\", {detail:" + arguments.toString() + "}))";
+            script = "window.dispatchEvent(new CustomEvent(\"" + eventName + "\", {detail:" + arguments.toString() + "}))";
         }
+        Log.d("groovelauncher", "dispatchEventScript: " + script);
+        webView.evaluateJavascript(script, null);
+    }
+
+    public void dispatchEvent(String eventName) {
+        String script = "";
+        script = "window.dispatchEvent(new CustomEvent(\"" + eventName + "\"))";
         Log.d("groovelauncher", "dispatchEventScript: " + script);
         webView.evaluateJavascript(script, null);
     }
@@ -39,4 +47,9 @@ public class WebEvents {
     public void dispatchEvent(events eventName, JSONObject arguments) {
         dispatchEvent(eventName.toString(), arguments);
     }
+
+    public void dispatchEvent(events eventName) {
+        dispatchEvent(eventName.toString());
+    }
+
 }

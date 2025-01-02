@@ -121,7 +121,9 @@ function showUpdateBanner(update) {
     updateBanner.querySelector("button.update-dismiss").addEventListener("flowClick", () => {
         dismissUpdate(update)
         updateBanner.classList.add("hide-banner")
-        setTimeout(updateBanner.remove, 200);
+        setTimeout(() => {
+            updateBanner.remove()
+        }, 200);
     })
     bottomBar.appendChild(updateBanner)
 }

@@ -202,6 +202,13 @@ class GrooveMock {
     setAppIconColor(color) {
         console.log("Set app icon color:", color)
     }
+    getSystemLocale() {
+        return "en-US"
+    }
+    getAnimationDurationScale() {
+        return 2;
+    }
 }
+
 export default GrooveMock;
 export { BuildConfigMock, GrooveMock }

@@ -94,4 +94,39 @@
             }
         }
     }
+
+    p.loader-text {
+        position: absolute;
+        font-size: 20px;
+        top: 50%;
+        transform: translateY(112px);
+        margin: 0px;
+
+        @keyframes loader-text-flip {
+            0% {
+                animation-timing-function: ease-in;
+                transform: translateY(112px) perspective(200px) rotateX(0deg);
+                opacity: 1;
+            }
+
+            19.9% {
+                animation-timing-function: ease-in;
+                transform: translateY(112px) perspective(200px) rotateX(-90deg);
+                opacity: .5;
+
+            }
+
+            20% {
+                animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+                transform: translateY(112px) perspective(200px) rotateX(90deg);
+                opacity: .5;
+            }
+
+            100% {
+                animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+                transform: translateY(112px) perspective(200px) rotateX(0deg);
+                opacity: 1;
+            }
+        }
+    }
 }

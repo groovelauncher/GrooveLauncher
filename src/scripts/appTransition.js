@@ -37,7 +37,7 @@ const ANIMATION_TIMINGS = {
     // Calculate base scale based on window height
     baseScale: () => window.innerHeight / 850 / 2 + 0.5,
     // Calculate launch hide timing with scale factor
-    launchHide: function() { return (0.15 * this.baseScale() + 0.35) * 1000 + 500 }
+    launchHide: function () { return ((0.15 * this.baseScale() + 0.35) * 1000 + 500) * animationDurationScale }
 };
 
 // Check if an element is visible within the viewport
@@ -46,7 +46,7 @@ function isElementVisible(el) {
         const rect = el.getBoundingClientRect();
         const viewHeight = window.innerHeight || document.documentElement.clientHeight;
         const viewWidth = window.innerWidth || document.documentElement.clientWidth;
-        
+
         return (
             rect.top >= (-rect.height * CONFIG.ANIMATION.VISIBILITY_MARGIN.height) &&
             rect.left >= (-rect.width * CONFIG.ANIMATION.VISIBILITY_MARGIN.width) &&
@@ -89,7 +89,7 @@ function indexElements(page) {
         element.style.removeProperty('--app-animation-distance');
     });
 
-    const elements = page 
+    const elements = page
         ? document.querySelectorAll(CONFIG.SELECTORS.APP_TILES)
         : tileListGrid.engine.nodes.map(e => e.el);
 
@@ -99,10 +99,10 @@ function indexElements(page) {
         // Handle app page elements
         const stickyLetter = document.querySelector(CONFIG.SELECTORS.STICKY_LETTER);
         const searchIcon = document.querySelector(CONFIG.SELECTORS.SEARCH_ICON);
-        
+
         if (stickyLetter) visibleElements.unshift(stickyLetter);
         if (searchIcon) visibleElements.unshift(searchIcon);
-        
+
         visibleElements.reverse().forEach((element, index) => {
             const normalizedIndex = (index / (visibleElements.length - 1)).toFixed(2);
             setElementAnimationProperties(element, normalizedIndex);
@@ -111,7 +111,7 @@ function indexElements(page) {
         // Handle tile list elements
         const iconBanner = document.querySelector(CONFIG.SELECTORS.ICON_BANNER);
         if (iconBanner) visibleElements.push(iconBanner);
-        
+
         visibleElements.reverse().forEach((element, index) => {
             const normalizedIndex = (index / (visibleElements.length - 1)).toFixed(2);
             setElementAnimationProperties(element, normalizedIndex, true);
@@ -134,14 +134,14 @@ const appTransition = {
     onPause: () => {
         mainHomeSlider.classList.remove(CONFIG.CLASSES.TRANSITION.RESUME);
         mainHomeSlider.classList.add(CONFIG.CLASSES.TRANSITION.PAUSE);
-        
+
         clearTimeout(window.appTransitionLaunchError);
         window.appTransitionLaunchError = setTimeout(() => {
             appTransition.onResume(true);
         }, ANIMATION_TIMINGS.launchHide() + CONFIG.ANIMATION.ERROR_TIMEOUT);
 
         startAnim();
-        
+
         setTimeout(() => {
             scrollers.main_home_scroller.scrollTo(0, 0);
             mainHomeSlider.style.visibility = 'hidden';
@@ -157,17 +157,17 @@ const appTransition = {
         mainHomeSlider.style.removeProperty('visibility');
         mainHomeSlider.classList.remove('visibility-hidden');
         clearTimeout(window.appTransitionLaunchError);
-        
+
         scrollers.main_home_scroller.scrollTo(0, 0);
         mainHomeSlider.classList.remove(CONFIG.CLASSES.TRANSITION.PAUSE);
         mainHomeSlider.classList.add(CONFIG.CLASSES.TRANSITION.RESUME);
-        
+
         startAnim();
-        
+
         if (back) mainHomeSlider.classList.add(CONFIG.CLASSES.TRANSITION.BACK);
         if (firstIntro) mainHomeSlider.style.removeProperty('visibility');
 
-        setTimeout(removeAnimClasses, CONFIG.ANIMATION.BASE_TIMEOUT);
+        setTimeout(removeAnimClasses, (CONFIG.ANIMATION.BASE_TIMEOUT) * animationDurationScale);
     }
 };
 
@@ -176,10 +176,10 @@ function startAnim() {
     const page = window.scrollers.main_home_scroller.getCurrentPage().pageX;
     indexElements(page);
     mainHomeSlider.classList.add(CONFIG.CLASSES.TRANSITION.BASE);
-    
+
     const addClass = page ? CONFIG.CLASSES.TRANSITION.APP_LIST : CONFIG.CLASSES.TRANSITION.TILE_LIST;
     const removeClass = page ? CONFIG.CLASSES.TRANSITION.TILE_LIST : CONFIG.CLASSES.TRANSITION.APP_LIST;
-    
+
     mainHomeSlider.classList.remove(removeClass);
     mainHomeSlider.classList.add(addClass);
 }

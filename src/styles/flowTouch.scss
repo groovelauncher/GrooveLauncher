@@ -1,8 +1,8 @@
 :root {
     --flow-touch-distance: -10px;
     --flow-rotate-scale: .25;
-    --flow-touch-down-transition: .025s;
-    --flow-touch-up-transition: .25s;
+    --flow-touch-down-transition: calc(.025s * var(--animation-duration-scale));
+    --flow-touch-up-transition: calc(.25s * var(--animation-duration-scale));
     --flow-perspective: 1000px; //calc(min(100vw, 100vh));
 }
 
@@ -74,6 +74,7 @@
     width: max-content;
     height: min-content;
     max-width: calc(100% - 5px);
+
     &.t_active {
         background: var(--accent-color);
         color: white;
@@ -176,11 +177,11 @@
     position: relative;
 
     &:not(.active) {
-        transition: transform var(--flow-touch-up-transition) ease-out, height .2s ease-in !important;
+        transition: transform var(--flow-touch-up-transition) ease-out, height calc(.2s * var(--animation-duration-scale)) ease-in !important;
     }
 
     &.active {
-        transition: transform var(--flow-touch-down-transition) ease-in-out, height .2s ease-in !important;
+        transition: transform var(--flow-touch-down-transition) ease-in-out, height calc(.2s * var(--animation-duration-scale)) ease-in !important;
 
     }
 
@@ -204,7 +205,7 @@
     .metro-dropdown-option {
         @include flow-touch;
         //transition: var(--flow-touch-up-transition) ease-out, transform var(--flow-touch-up-transition) ease-out, height .2s ease-in, margin-top .2s ease-in;
-        transition: transform var(--flow-touch-up-transition) ease-out, height .2s ease-in, margin-top .2s ease-in;
+        transition: transform var(--flow-touch-up-transition) ease-out, height calc(.2s * var(--animation-duration-scale)) ease-in, margin-top calc(.2s * var(--animation-duration-scale)) ease-in;
         font-size: 25px;
         margin: 0px 10px;
         height: 48px;
@@ -237,7 +238,7 @@
     &::after {
         position: absolute;
         z-index: 1;
-        transition: width .2s ease-in-out;
+        transition: width calc(.2s * var(--animation-duration-scale)) ease-in-out;
         content: "";
         display: block;
         width: calc(var(--value) * 100%);
@@ -248,7 +249,7 @@
     &::before {
         position: absolute;
         z-index: 2;
-        transition: width .2s ease-in-out;
+        transition: width calc(.2s * var(--animation-duration-scale)) ease-in-out;
         content: "";
         display: block;
         width: calc(var(--value-2) * 100%);

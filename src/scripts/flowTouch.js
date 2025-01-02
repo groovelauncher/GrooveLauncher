@@ -114,7 +114,7 @@ window.addEventListener("pointerup", (e) => {
 
         el.deletePropertiesTimeout = setTimeout(() => {
             deleteProperties(el)
-        }, 500);
+        }, 500 * animationDurationScale);
         delete pointerDownElements[e.pointerId]
 
     }
@@ -144,7 +144,7 @@ const metroToggleSwitch = {
         clearTimeout(el.mtstime)
         const isChecked = true //!el.hasAttribute("checked")
         const animstart = Date.now()
-        const duration = 200
+        const duration = 200 * animationDurationScale
         el.mtsanim = setInterval(() => {
             var transition = from + (to - from) * easing.easeOutExpo((Date.now() - animstart) / duration)
             // (to - from) + ((Date.now() - animstart) / duration) * to

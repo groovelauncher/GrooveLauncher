@@ -31,11 +31,11 @@
                     transform-origin: 0% 50%;
 
                     // Default tile animation
-                    animation: tileListAppTransitionAnim0 calc(.2s) calc(var(--app-animation-index) * .15s * var(--app-transition-scale)) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
+                    animation: tileListAppTransitionAnim0 calc(.2s * var(--animation-duration-scale)) calc((var(--app-animation-index) * .15s * var(--app-transition-scale)) * var(--animation-duration-scale)) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
 
                     // Selected tile animation (slightly different timing)
                     &.app-transition-selected {
-                        animation: tileListAppTransitionAnim0 calc(.15s) calc(.15s * var(--app-transition-scale) + .2s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
+                        animation: tileListAppTransitionAnim0 calc(.15s * var(--animation-duration-scale)) calc((.15s * var(--app-transition-scale) + .2s) * var(--animation-duration-scale)) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
                     }
 
                     // Tile exit animation
@@ -45,7 +45,7 @@
                             opacity: 1;
                         }
 
-                        99% {
+                        99.99% {
                             opacity: 1;
                         }
 
@@ -74,7 +74,7 @@
                         transform-origin: var(--app-animation-distance) 50%;
 
                         // Tile entrance animation
-                        animation: tileListAppTransitionAnim1 .5s calc(var(--app-animation-index) * var(--app-transition-scale) * .2s) cubic-bezier(.3, 1, .2, 1) forwards;
+                        animation: tileListAppTransitionAnim1 calc(.5s * var(--animation-duration-scale)) calc((var(--app-animation-index) * var(--app-transition-scale) * .2s) * var(--animation-duration-scale)) cubic-bezier(.3, 1, .2, 1) forwards;
 
                         @keyframes tileListAppTransitionAnim1 {
                             0% {
@@ -95,7 +95,7 @@
                         // Inner tile animation
                         &>div.groove-home-inner-tile {
                             transform-style: preserve-3d;
-                            animation: innerTileListAppTransitionAnim0 .45s calc(var(--app-animation-index) * var(--app-transition-scale) * .2s) cubic-bezier(.2, .25, 0.25, 1) forwards;
+                            animation: innerTileListAppTransitionAnim0 calc(.45s * var(--animation-duration-scale)) calc((var(--app-animation-index) * var(--app-transition-scale) * .2s) * var(--animation-duration-scale)) cubic-bezier(.2, .25, 0.25, 1) forwards;
 
                             @keyframes innerTileListAppTransitionAnim0 {
                                 0% {
@@ -118,7 +118,7 @@
                     // App list page animation
                     div.inner-page.app-list-page {
                         transform-origin: -100% 50%;
-                        animation: tileListAppTransitionAnim9 .75s .1s cubic-bezier(.05, 1, .1, 1) forwards;
+                        animation: tileListAppTransitionAnim9 calc(.75s * var(--animation-duration-scale)) calc(var(.1s) * var(--animation-duration-scale)) cubic-bezier(.05, 1, .1, 1) forwards;
 
                         @keyframes tileListAppTransitionAnim9 {
                             from {
@@ -142,7 +142,7 @@
                         transform-origin: var(--app-animation-distance) 50%;
                         opacity: 0;
 
-                        animation: tileListAppTransitionAnim2 .75s calc(var(--app-animation-index) * var(--app-transition-scale) * .2s) cubic-bezier(.05, 1, .1, 1) forwards;
+                        animation: tileListAppTransitionAnim2 calc(.75s * var(--animation-duration-scale)) calc((var(--app-animation-index) * var(--app-transition-scale) * .2s) * var(--animation-duration-scale)) cubic-bezier(.05, 1, .1, 1) forwards;
 
                         @keyframes tileListAppTransitionAnim2 {
                             0% {
@@ -179,11 +179,11 @@
                     transform-origin: var(--app-animation-distance) 50%;
 
                     // Default app tile animation
-                    animation: appListAppTransitionAnim0 .15s calc(var(--app-animation-index) * .35s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
+                    animation: appListAppTransitionAnim0 calc(.15s * var(--animation-duration-scale)) calc((var(--app-animation-index) * .35s) * var(--animation-duration-scale)) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
 
                     // Selected app tile animation
                     &.app-transition-selected {
-                        animation: appListAppTransitionAnim0 .12s calc(1.5 * .3s) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
+                        animation: appListAppTransitionAnim0 calc(.12s * var(--animation-duration-scale)) calc(1.5 * .3s * var(--animation-duration-scale)) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
                     }
 
                     @keyframes appListAppTransitionAnim0 {
@@ -192,7 +192,7 @@
                             opacity: 1;
                         }
 
-                        99% {
+                        99.99% {
                             opacity: 1;
                         }
 

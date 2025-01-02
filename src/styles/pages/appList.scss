@@ -124,7 +124,7 @@ div.inner-page.app-list-page {
     div.app-list-container,
     #search-icon,
     input.app-list-search {
-      transition: transform .4s cubic-bezier(.5,0,0,1);
+      transition: transform calc(.4s * var(--animation-duration-scale)) cubic-bezier(.5, 0, 0, 1);
     }
 
     &.search-mode {
@@ -155,7 +155,7 @@ div.inner-page.app-list-page {
           }
         }
 
-        animation: randanim00 .4s cubic-bezier(.5,0,0,1);
+        animation: randanim00 calc(.4s * var(--animation-duration-scale)) cubic-bezier(.5, 0, 0, 1);
         padding-top: calc(83px + var(--window-inset-top));
         padding-left: 19px;
         padding-right: 19px;
@@ -181,7 +181,7 @@ div.inner-page.app-list-page {
       div.app-list-container,
       #search-icon,
       input.app-list-search {
-        transition: transform .1s cubic-bezier(.5, 0, 1, 1);
+        transition: transform calc(.1s * var(--animation-duration-scale)) cubic-bezier(.5, 0, 1, 1);
       }
 
       div.app-list-container {
@@ -197,7 +197,7 @@ div.inner-page.app-list-page {
           }
         }
 
-        animation: randanim01 .1s cubic-bezier(.5, 0, 1, 1) !important;
+        animation: randanim01 calc(.1s * var(--animation-duration-scale)) cubic-bezier(.5, 0, 1, 1) !important;
       }
 
       #search-icon {
@@ -211,7 +211,7 @@ div.inner-page.app-list-page {
           }
         }
 
-        animation: randanim02 .1s cubic-bezier(.5, 0, 1, 1) !important;
+        animation: randanim02 calc(.1s * var(--animation-duration-scale)) cubic-bezier(.5, 0, 1, 1) !important;
       }
     }
   }
@@ -267,8 +267,8 @@ div.inner-page.app-list-page {
 
 .groove-element.groove-app-tile {
   @include flow-touch;
-  transition: transform 0.5s,
-    background-color 0.5s;
+  transition: transform calc(.5s * var(--animation-duration-scale)),
+    background-color calc(.5s * var(--animation-duration-scale));
   display: flex;
   position: relative;
   height: 64px;
@@ -379,17 +379,17 @@ div.letter-selector {
   }
 
   &.shown-animation {
-    transition: .25s, opacity 0s;
+    transition: calc(.25s * var(--animation-duration-scale)), opacity 0s;
     perspective: none !important;
 
     &.hidden {
       .letter-selector-row {
-        transition: .075s calc(var(--index)*.02s) ease-in;
+        transition: calc(.075s * var(--animation-duration-scale)) calc(var(--index)*.02s * var(--animation-duration-scale)) ease-in;
       }
     }
 
     .letter-selector-row {
-      transition: .075s calc(var(--index)*.02s) ease-out;
+      transition: calc(.075s * var(--animation-duration-scale)) calc(var(--index)*.02s * var(--animation-duration-scale)) ease-out;
     }
 
   }
@@ -399,7 +399,7 @@ div.letter-selector {
     pointer-events: all;
 
     &::before {
-      transition: background-color .2s .1s;
+      transition: background-color calc(.2s * var(--animation-duration-scale)) calc(.1s * var(--animation-duration-scale));
       background: var(--metro-transparent);
     }
 
@@ -483,7 +483,7 @@ div.letter-selector {
   top: var(--window-inset-top);
 
   &::before {
-    transition: background-color .1s;
+    transition: background-color calc(.1s * var(--animation-duration-scale));
     content: "";
     display: block;
     position: fixed;
@@ -646,7 +646,7 @@ div.app-list-page {
         pointer-events: none !important;
       }
 
-      transition: .5s ease-in !important;
+      transition: calc(.5s * var(--animation-duration-scale)) ease-in !important;
       transform: translateZ(-5px) !important;
       opacity: .9;
     }
@@ -655,7 +655,7 @@ div.app-list-page {
       opacity: 1 !important;
 
       p.groove-app-tile-icon {
-        transition: .5s ease-out !important;
+        transition: calc(.5s * var(--animation-duration-scale)) ease-out !important;
         opacity: .9;
       }
     }
@@ -673,7 +673,7 @@ div.app-list-page {
         pointer-events: none !important;
       }
 
-      transition: .35s ease-out !important;
+      transition: calc(.35s * var(--animation-duration-scale)) ease-out !important;
       transform: translateZ(-20px) !important;
       opacity: .5;
     }
@@ -682,7 +682,7 @@ div.app-list-page {
       opacity: 1 !important;
 
       p.groove-app-tile-icon {
-        transition: .35s ease-out !important;
+        transition: calc(.35s * var(--animation-duration-scale)) ease-out !important;
         opacity: .5;
       }
     }

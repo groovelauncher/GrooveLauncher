@@ -263,10 +263,10 @@ function showPageAnim() {
     clearTimeout(window.activeTabScrollTimeout)
     setTimeout(() => {
         document.querySelectorAll("div.groove-list-view.skew").forEach(listView => listView.classList.remove("skew"))
-    }, 2000);
+    }, 2000 * animationDurationScale);
     window.activeTabScrollTimeout = setTimeout(() => {
         activeTabScroll()
-    }, 500);
+    }, 500 * animationDurationScale);
 }
 
 
@@ -293,7 +293,7 @@ const navigation = {
         animPlaying = true
         setTimeout(() => {
             animPlaying = false
-        }, 1000);
+        }, 1000 * animationDurationScale);
         const beforePage = document.querySelector("div.shown-page")
         document.querySelectorAll("div.shown-page").forEach(e => { e.classList.remove("shown-page"); e.classList.remove("shown-page-no-anim"); })
         beforePage.classList.add("hidden-page")

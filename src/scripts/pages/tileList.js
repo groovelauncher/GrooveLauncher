@@ -216,7 +216,7 @@ $(window).on("click", function (e) {
       const packageName = e.target.getAttribute("packageName")
       setTimeout(() => {
         Groove.launchApp(packageName);
-      }, packageName.startsWith("groove.internal") ? 500 : 1000);
+      }, (packageName.startsWith("groove.internal") ? 500 : 1000) * window.animationDurationScale);
     }
   } else if (
     e.target ==
@@ -250,13 +250,24 @@ $(window).on("pointerdown", function (e) {
         GrooveBoard.boardMethods.createTileMenu(e.target);
         generateShakeAnimations();
         e.target.homeTileMenuState = true;
-        const mouseDown = new MouseEvent('mousedown', {
+        e.target.dispatchEvent(new MouseEvent('mousedown', {
           bubbles: true,
           cancelable: true,
           clientX: e.target.getBoundingClientRect().left,
           clientY: e.target.getBoundingClientRect().top
-        });
-        e.target.dispatchEvent(mouseDown);
+        }));
+        e.target.dispatchEvent(new TouchEvent('touchstart', {
+          bubbles: true,
+          cancelable: true,
+          clientX: e.target.getBoundingClientRect().left,
+          clientY: e.target.getBoundingClientRect().top
+        }));
+        e.target.dispatchEvent(new PointerEvent('pointerdown', {
+          bubbles: true,
+          cancelable: true,
+          clientX: e.target.getBoundingClientRect().left,
+          clientY: e.target.getBoundingClientRect().top
+        }));
       });
       e.target.classList.add("home-menu-selected");
     }, 500);

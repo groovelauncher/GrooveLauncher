@@ -23,7 +23,7 @@ document.querySelector("div.color-picker").addEventListener("flowClick", (e) => 
         window.accentColorPickerTimeout = setTimeout(() => {
             accentColorPicker.classList.remove("shown-animation", "hidden")
 
-        }, 500);
+        }, 500 * animationDurationScale);
     })
 })
 document.querySelectorAll("div.accent-color-catalogue-item").forEach(e => e.addEventListener("flowClick", (e) => {
@@ -44,7 +44,7 @@ document.querySelectorAll("div.accent-color-catalogue-item").forEach(e => e.addE
         window.accentColorPickerTimeout = setTimeout(() => {
             accentColorPicker.classList.remove("shown-animation", "hidden")
 
-        }, 500);
+        }, 500 * animationDurationScale);
         appViewEvents.setAccentColor(grooveColors[e.target.style.background.slice(18).slice(0, -1)])
         document.querySelector("div.color-picker > div.picker-option").innerText = i18n.t(`colors.${e.target.style.background.slice(18).slice(0, -1).toLowerCase()}`)
         settingsListTag.setAttribute("data-i18n", `colors.${e.target.style.background.slice(18).slice(0, -1).toLowerCase()}`)

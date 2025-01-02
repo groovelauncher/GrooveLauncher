@@ -12,10 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.os.Handler;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.webkit.ValueCallback;
 import android.widget.Toast;
 
@@ -25,9 +21,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.splashscreen.SplashScreen;
-import androidx.core.splashscreen.SplashScreen.Companion;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -47,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     Boolean activityPaused = false;
     public Boolean activityDispatchEvent = true;
     public Boolean activityDispatchHomeEvent = true;
-    AppChangeReceiver appChangeReceiver;
+    SystemEvents systemEvents;
     public static final int INPUT_FILE_REQUEST_CODE = 1;
     public static final int FILECHOOSER_RESULTCODE = 1;
     public ValueCallback<Uri> mUploadMessage;
@@ -150,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         handler = new Handler();
         webView.init(packageManager, this);
         // webView.setWebChromeClient(new ChromeClient());
-        appChangeReceiver = new AppChangeReceiver(this);
+        systemEvents = new SystemEvents(this);
         webEvents = webView.webEvents;
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -259,6 +253,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        systemEvents.onDestroy();
+        //remove and free systemEvents
+        systemEvents = null;
         if (myServer != null) {
             myServer.stop();
         }

@@ -8,6 +8,8 @@ body {
     --window-inset-top: calc(var(--window-raw-inset-top) / var(--ui-scale));
     --window-inset-right: calc(var(--window-raw-inset-right) / var(--ui-scale));
     --window-inset-bottom: calc(var(--window-raw-inset-bottom) / var(--ui-scale));
+    --animation-duration-scale: 1;
+
 }
 
 .system-bar {
@@ -63,15 +65,18 @@ body {
         height: 100%;
         z-index: 999999;
         filter: none !important;
+
         body.groove-mock & {
             background-color: rgb(black, 0.5);
 
-           
+
         }
+
         body.light-mode.groove-mock & {
             background-color: rgb(white, 0.5);
 
         }
+
         --left: var(--window-inset-left);
         --top: var(--window-inset-top);
         --right: var(--window-inset-right);
@@ -132,7 +137,7 @@ body {
                 opacity: 1;
             }
 
-            29% {
+            29.99% {
                 opacity: 1;
             }
 
@@ -182,7 +187,7 @@ body {
                 transform: rotateX(0deg);
             }
 
-            99% {
+            99.99% {
                 opacity: 1;
             }
 

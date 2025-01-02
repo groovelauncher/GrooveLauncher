@@ -19,6 +19,7 @@ div.snowHolder {
     height: 100%;
     pointer-events: none;
     animation: snowHolderEnter 10s cubic-bezier(0.075, 0.82, 0.165, 1);
+    opacity: .75;
     --snow-color-0: white;
     --snow-color-1: white;
     --snow-color-2: white;

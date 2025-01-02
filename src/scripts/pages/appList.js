@@ -22,8 +22,8 @@ function searchResultClick(e) {
         Groove.launchApp(packageName)
         setTimeout(() => {
             searchModeSwitch.off()
-        }, 100);
-    }, packageName.startsWith("groove.internal") ? 500 : 1000);
+        }, 100 * animationDurationScale);
+    }, (packageName.startsWith("groove.internal") ? 500 : 1000) * animationDurationScale);
 
 
 }
@@ -48,8 +48,8 @@ const searchModeSwitch = {
             scrollers.app_page_scroller.refresh()
             appListSearch.focus()
             appListContainer.css("transition", "transform 0s")
-        }, 250);
-        setTimeout(() => { scrollers.app_page_scroller.refresh() }, 500);
+        }, 250 * animationDurationScale);
+        setTimeout(() => { scrollers.app_page_scroller.refresh() }, 500 * animationDurationScale);
         // history.pushState("searchmodeon", document.title, location.href);
         appListPage.removeClass("no-search-result")
         $("div.app-list-container > div.groove-app-tile:not(.groove-letter-tile)").removeClass("search-hidden")
@@ -68,9 +68,9 @@ const searchModeSwitch = {
             appListSearch.attr("disabled", "true")
             stickyLetter(scrollers.app_page_scroller.y)
             isSearchModeOn = false
-        }, 250);
+        }, 250 * animationDurationScale);
         scrollers.app_page_scroller.refresh()
-        setTimeout(() => { scrollers.app_page_scroller.refresh(); appListSearch.val("") }, 500);
+        setTimeout(() => { scrollers.app_page_scroller.refresh(); appListSearch.val("") }, 500 * animationDurationScale);
 
         $("div.app-list-container > div.groove-app-tile:not(.groove-letter-tile)").each(function (index, element) {
             try {
@@ -200,7 +200,7 @@ $(window).on("click", function (e) {
             appTransition.onPause()
             setTimeout(() => {
                 if (!isSearchModeOn) Groove.launchApp(e.target.getAttribute("packageName"))
-            }, 1000);
+            }, 1000 * animationDurationScale);
         }
     }
 })

@@ -72,7 +72,27 @@ const localization = {
         cachedResult["en-US"] = {
           "languageId": "en-US",
           "translationProgress": 100,
-          "approvalProgress": 100
+          "approvalProgress": 100,
+          "language": {
+            "id": "en-US",
+            "name": "English, United States",
+            "editorCode": "enus",
+            "twoLettersCode": "en",
+            "threeLettersCode": "eng",
+            "locale": "en-US",
+            "androidCode": "en-US",
+            "pluralCategoryNames": [
+              "one",
+              "other"
+            ],
+            "pluralRules": "(n != 1)",
+            "pluralExamples": [
+              "1",
+              "0, 2-999; 1.2, 2.07..."
+            ],
+            "textDirection": "ltr",
+            "dialectOf": "en"
+          }
         }
         lastCall = now;
         return cachedResult;
@@ -313,7 +333,7 @@ class LocaleManager {
   }
 
   translateDOM() {
-   // console.log('translateDOM');
+    // console.log('translateDOM');
     if (this._observer) {
       this._observer.disconnect();
     }

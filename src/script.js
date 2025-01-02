@@ -187,7 +187,7 @@ window.addEventListener("activityResume", () => {
 
 
 if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
-
+GrooveBoard.backendMethods.setUIScale(1, true)
 startUpSequence([
     (next) => {
         if (GrooveBoard.backendMethods.setupNeeded()) {

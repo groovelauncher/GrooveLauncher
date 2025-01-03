@@ -23,7 +23,7 @@ function searchResultClick(e) {
         setTimeout(() => {
             searchModeSwitch.off()
         }, 100 * animationDurationScale);
-    }, (packageName.startsWith("groove.internal") ? 500 : 1000) * animationDurationScale);
+    }, (packageName.startsWith("groove.internal") && false ? 500 : 1000) * animationDurationScale);
 
 
 }
@@ -99,10 +99,15 @@ const letterSelectorSwitch = {
         letterSelector.addClass("shown").addClass("shown-animation")
         setTimeout(() => {
             if (letterSelector.hasClass("shown")) letterSelector.removeClass("shown-animation")
-        }, 500);
+        }, 500 * GrooveBoard.backendMethods.animationDurationScale.get());
         $("div.letter-selector-row").each((index, element) => {
             $(element).css("--index", index)
         })
+        Array.from({ length: 7 }, (_, i) => {
+            setTimeout(() => {
+                Groove.triggerHapticFeedback("CLOCK_TICK");
+            }, i * 20 * GrooveBoard.backendMethods.animationDurationScale.get());
+        });
     },
     off: () => {
         GrooveBoard.backendMethods.navigation.invalidate("letterSelectOn")
@@ -114,7 +119,12 @@ const letterSelectorSwitch = {
 
             if (letterSelector.hasClass("hidden")) letterSelector.removeClass("shown-animation").removeClass("hidden")
 
-        }, 500);
+        }, 500 * GrooveBoard.backendMethods.animationDurationScale.get());
+        Array.from({ length: 7 }, (_, i) => {
+            setTimeout(() => {
+                Groove.triggerHapticFeedback("CLOCK_TICK");
+            }, (i * 20 + 60) * GrooveBoard.backendMethods.animationDurationScale.get());
+        });
     }
 }
 
@@ -220,6 +230,7 @@ $(window).on("pointerdown", function (e) {
         clearTimeout(window.appMenuCreationFirstTimeout)
         clearTimeout(window.appMenuCreationSecondTimeout)
         $("div.groove-app-menu").remove()
+
         window.appMenuCreationFirstTimeout = setTimeout(() => {
             e.target.canClick = false
             scrollers.main_home_scroller.enabled = false
@@ -247,11 +258,16 @@ $(window).on("pointerdown", function (e) {
             GrooveBoard.backendMethods.navigation.push("appMenuOn", () => { }, () => {
                 appMenuClose()
             })
-
+            setTimeout(() => {
+                Groove.triggerHapticFeedback("CLOCK_TICK")
+            }, 300);
             window.appMenuCreationSecondTimeout = setTimeout(() => {
                 $("div.app-list-page").addClass("app-menu-back").removeClass("app-menu-back-intro")
                 e.target.appMenuState = true
                 scrollers.app_page_scroller.cancelScroll()
+                setTimeout(() => {
+                    Groove.triggerHapticFeedback("CONFIRM")
+                }, 50);
             }, 375);
 
         }, 500);

@@ -1,5 +1,6 @@
 import jquery from "jquery"
 import easing from "./easings"
+import GrooveBoard from "./GrooveBoard"
 const $ = jquery
 
 // Configuration for touch/click detection thresholds
@@ -49,11 +50,22 @@ function flowTouchRotate(el, pageX, pageY) {
 }
 function updateFlowRangeInputBackground(el) {
     console.log("updateFlowRangeInputBackground")
-    const max = el.max
-    const min = el.min
+    const max = el.max || 100
+    const min = el.min || 0
+    const step = el.step || 1
     const percent = ((el.value - min) / (max - min)) * 100
-    el.style.background = `linear-gradient(90deg, var(--accent-color) ${percent}%, var(--metro-elevated) ${percent}%)`
+    el.style.setProperty("--percentage", percent + "%")
+    if (el.offsetWidth / (max - min) * step > 10) el.style.setProperty("--step", step / (max - min) * 100 + "%");
+    else el.style.setProperty("--step", "200%");
 }
+window.addEventListener("resize", () => {
+    document.querySelectorAll("input[type=range]").forEach(el => {
+        el.supportsFlowRangeInput = window.getComputedStyle(el).getPropertyValue("--flow-metro-range-input") == "true"
+        if (el.supportsFlowRangeInput) { 
+            updateFlowRangeInputBackground(el)
+        }
+    })
+})
 // Event Listeners
 window.addEventListener("pointerdown", (e) => {
 
@@ -79,6 +91,7 @@ window.addEventListener("pointerdown", (e) => {
     }
     pointerDownElements[e.pointerId] = el
     flowTouchRotate(el, e.pageX, e.pageY)
+    if (window["Groove"]) if (el.hasAttribute("haptic") || window.getComputedStyle(el).getPropertyValue("--flow-haptic") == "true") Groove.triggerHapticFeedback("KEYBOARD_PRESS")
 
 })
 
@@ -88,6 +101,7 @@ window.addEventListener("pointerup", (e) => {
         const hypotenuse = Math.sqrt(Math.pow(el.lastPointerPosition[0] - e.pageX, 2) + Math.pow(el.lastPointerPosition[1] - e.pageY, 2))
         if (hypotenuse <= clickDetectorConfig.tapDistanceThreshold) {
             const event = new CustomEvent("flowClick", { pageX: e.pageX, pageY: e.pageY, target: el });
+            if (window["Groove"]) if (el.hasAttribute("haptic") || window.getComputedStyle(el).getPropertyValue("--flow-haptic") == "true") Groove.triggerHapticFeedback("KEYBOARD_RELEASE")
             el.dispatchEvent(event);
             (window.allMetroDropDowns || []).forEach(e => {
                 if (e !== el) {
@@ -114,7 +128,7 @@ window.addEventListener("pointerup", (e) => {
 
         el.deletePropertiesTimeout = setTimeout(() => {
             deleteProperties(el)
-        }, 500 * animationDurationScale);
+        }, 500 * GrooveBoard.backendMethods.animationDurationScale.get());
         delete pointerDownElements[e.pointerId]
 
     }
@@ -144,7 +158,7 @@ const metroToggleSwitch = {
         clearTimeout(el.mtstime)
         const isChecked = true //!el.hasAttribute("checked")
         const animstart = Date.now()
-        const duration = 200 * animationDurationScale
+        const duration = 200 * GrooveBoard.backendMethods.animationDurationScale.get()
         el.mtsanim = setInterval(() => {
             var transition = from + (to - from) * easing.easeOutExpo((Date.now() - animstart) / duration)
             // (to - from) + ((Date.now() - animstart) / duration) * to
@@ -206,13 +220,16 @@ const metroDropdownMenu = {
         });
         setTimeout(() => {
             try { el.closest("div.flow-scrollable").GrooveScroll.refresh() } catch (error) { }
-        }, 300);
+        }, 300 * GrooveBoard.backendMethods.animationDurationScale.get());
         focusedElements.add("el")
         el.classList.add("clicked")
         el.querySelector("div.metro-dropdown-option").style.marginTop = 0
         const children = el.querySelectorAll("div.metro-dropdown-option")
         el.style.height = children.length * 56 + "px"
         children[el.getAttribute("selected")].style.color = "var(--accent-color)"
+        setTimeout(() => {
+            if (window["Groove"]) Groove.triggerHapticFeedback("CONFIRM")
+        }, 200 * GrooveBoard.backendMethods.animationDurationScale.get());
     },
     blur: (el) => {
         if (focusedElements.has(el)) {
@@ -225,7 +242,8 @@ const metroDropdownMenu = {
         el.querySelectorAll("div.metro-dropdown-option").forEach(el => { el.style.removeProperty("color") })
         setTimeout(() => {
             try { el.closest("div.flow-scrollable").GrooveScroll.refresh() } catch (error) { }
-        }, 300);
+        }, 300 * GrooveBoard.backendMethods.animationDurationScale.get());
+
     },
     select: (el, index, event = true, animate = true) => {
         const lastIndex = el.getAttribute("selected")
@@ -234,14 +252,16 @@ const metroDropdownMenu = {
         const children = el.querySelectorAll("div.metro-dropdown-option")
         if (animate) {
             el.querySelector("div.metro-dropdown-option").style.removeProperty("transition")
+            if (window["Groove"]) if (event) setTimeout(() => { Groove.triggerHapticFeedback("CONFIRM") }, 200);
         } else {
             el.querySelector("div.metro-dropdown-option").style.setProperty("transition", "0s")
         }
         el.querySelector("div.metro-dropdown-option").style.marginTop = index * -48 + "px"
         setTimeout(() => {
             el.querySelector("div.metro-dropdown-option").style.removeProperty("transition")
-        }, 10);
-        if (event) setTimeout(() => { el.dispatchEvent(new CustomEvent("selected", { detail: { index: index, prevIndex: lastIndex } })) }, 200);
+        }, 10 * GrooveBoard.backendMethods.animationDurationScale.get());
+
+        if (event) setTimeout(() => { el.dispatchEvent(new CustomEvent("selected", { detail: { index: index, prevIndex: lastIndex } })) }, 200 * GrooveBoard.backendMethods.animationDurationScale.get());
     }
 }
 
@@ -253,15 +273,23 @@ document.querySelectorAll("div.metro-dropdown-menu").forEach(el => {
     }
     metroDropdownMenu.select(el, index, false)
 })
-
+window.addEventListener("pointerup", () => {
+    delete window.pointerDownRanges
+})
 document.querySelectorAll("input[type=range]").forEach(el => {
     el.supportsFlowRangeInput = window.getComputedStyle(el).getPropertyValue("--flow-metro-range-input") == "true"
     if (el.supportsFlowRangeInput) {
         el.addEventListener("input", () => {
             updateFlowRangeInputBackground(el)
+            if (window["Groove"]) if (window["pointerDownRanges"]) if (window.pointerDownRanges.includes(el)) Groove.triggerHapticFeedback("CLOCK_TICK")
+        })
+        el.addEventListener("pointerdown", () => {
+            window.pointerDownRanges = window.pointerDownRanges || []
+            window.pointerDownRanges.push(el)
         })
         el.addEventListener("change", () => {
             updateFlowRangeInputBackground(el)
+            //if (window["pointerDownRanges"]) if (window.pointerDownRanges.contains(el)) Groove.triggerHapticFeedback("CLOCK_TICK")
         })
         updateFlowRangeInputBackground(el)
     }

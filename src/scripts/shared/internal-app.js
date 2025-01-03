@@ -4,7 +4,6 @@ import "../flowTouch.js";
 import applyOverscroll from "../overscrollFramework.js";
 import fontStore from "../fontStore.js";
 import GrooveMock from "./../grooveMock.js";
-
 // Initialize mock environment if Groove isn't available
 const GrooveMockInstance = !window.Groove
 if (GrooveMockInstance) {

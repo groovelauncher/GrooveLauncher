@@ -1,6 +1,7 @@
 package web.bmdominatezz.gravy;
 
 import static android.content.Context.MODE_PRIVATE;
+import static androidx.core.content.ContextCompat.getSystemService;
 import static web.bmdominatezz.gravy.DefaultApps.*;
 import static web.bmdominatezz.gravy.GrooveExperience.*;
 
@@ -23,10 +24,12 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
+import android.os.Vibrator;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
@@ -53,9 +56,7 @@ import java.util.Map;
 import java.util.jar.JarException;
 
 import rikka.shizuku.Shizuku;
-import rikka.shizuku.ShizukuApiConstants;
 import rikka.shizuku.ShizukuBinderWrapper;
-import rikka.shizuku.SystemServiceHelper;
 
 public class WebInterface {
     private static final String PREFS_NAME = "GrooveLauncherPrefs";
@@ -742,12 +743,154 @@ public class WebInterface {
         Locale locale = Locale.getDefault();
         return locale.toString();
     }
+
     @JavascriptInterface
-    public float getAnimationDurationScale(){
+    public float getAnimationDurationScale() {
         return Settings.Global.getFloat(
                 mainActivity.getContentResolver(),
                 Settings.Global.ANIMATOR_DURATION_SCALE,
                 1.0f // Default value
         );
+    }
+
+    @JavascriptInterface
+    public boolean triggerHapticFeedback(String feedbackConstant) {
+        if (feedbackConstant == "SUPPORTED") {
+            return true;
+        }
+        mainActivity.runOnUiThread(() -> {
+            View view = mainActivity.getWindow().getDecorView();
+            try {
+                int num = Integer.parseInt(feedbackConstant);
+                // is an integer!
+                view.performHapticFeedback(num, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            } catch (NumberFormatException e) {
+                // not an integer!
+                int num;
+                switch (feedbackConstant) {
+                    case "CLOCK_TICK":
+                        num = HapticFeedbackConstants.CLOCK_TICK;
+                        // The user has pressed either an hour or minute tick of a Clock.
+                        break;
+
+                    case "CONFIRM":
+                        num = HapticFeedbackConstants.CONFIRM;
+                        // A haptic effect to signal the confirmation or successful completion of a user interaction.
+                        break;
+
+                    case "CONTEXT_CLICK":
+                        num = HapticFeedbackConstants.CONTEXT_CLICK;
+                        // The user has performed a context click on an object.
+                        break;
+
+                    case "DRAG_START":
+                        num = HapticFeedbackConstants.DRAG_START;
+                        // The user has started a drag-and-drop gesture.
+                        break;
+
+                    case "FLAG_IGNORE_GLOBAL_SETTING":
+                        num = HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
+                        // Deprecated in API level 33. Only privileged apps can ignore user settings for touch feedback.
+                        break;
+
+                    case "FLAG_IGNORE_VIEW_SETTING":
+                        num = HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING;
+                        // Ignore the view setting and perform haptic feedback always.
+                        break;
+
+                    case "GESTURE_END":
+                        num = HapticFeedbackConstants.GESTURE_END;
+                        // The user has finished a gesture (e.g., on the soft keyboard).
+                        break;
+
+                    case "GESTURE_START":
+                        num = HapticFeedbackConstants.GESTURE_START;
+                        // The user has started a gesture (e.g., on the soft keyboard).
+                        break;
+
+                    case "GESTURE_THRESHOLD_ACTIVATE":
+                        num = HapticFeedbackConstants.GESTURE_THRESHOLD_ACTIVATE;
+                        // The user is executing a swipe/drag gesture where the action becomes eligible at a certain threshold.
+                        break;
+
+                    case "GESTURE_THRESHOLD_DEACTIVATE":
+                        num = HapticFeedbackConstants.GESTURE_THRESHOLD_DEACTIVATE;
+                        // The user is executing a swipe/drag gesture that can be canceled by moving back past the threshold.
+                        break;
+
+                    case "KEYBOARD_PRESS":
+                        num = HapticFeedbackConstants.KEYBOARD_PRESS;
+                        // The user has pressed a virtual or software keyboard key.
+                        break;
+
+                    case "KEYBOARD_RELEASE":
+                        num = HapticFeedbackConstants.KEYBOARD_RELEASE;
+                        // The user has released a virtual keyboard key.
+                        break;
+
+                    case "KEYBOARD_TAP":
+                        num = HapticFeedbackConstants.KEYBOARD_TAP;
+                        // The user has pressed a soft keyboard key.
+                        break;
+
+                    case "LONG_PRESS":
+                        num = HapticFeedbackConstants.LONG_PRESS;
+                        // The user has performed a long press on an object resulting in an action.
+                        break;
+
+                    case "NO_HAPTICS":
+                        num = HapticFeedbackConstants.NO_HAPTICS;
+                        // No haptic feedback should be performed.
+                        break;
+
+                    case "REJECT":
+                        num = HapticFeedbackConstants.REJECT;
+                        // A haptic effect to signal the rejection or failure of a user interaction.
+                        break;
+
+                    case "SEGMENT_FREQUENT_TICK":
+                        num = HapticFeedbackConstants.SEGMENT_FREQUENT_TICK;
+                        // The user is switching between a series of many potential choices, like minutes on a clock face.
+                        break;
+
+                    case "SEGMENT_TICK":
+                        num = HapticFeedbackConstants.SEGMENT_TICK;
+                        // The user is switching between a series of potential choices, like items in a list.
+                        break;
+
+                    case "TEXT_HANDLE_MOVE":
+                        num = HapticFeedbackConstants.TEXT_HANDLE_MOVE;
+                        // The user has performed a selection/insertion handle move on a text field.
+                        break;
+
+                    case "TOGGLE_OFF":
+                        num = HapticFeedbackConstants.TOGGLE_OFF;
+                        // The user has toggled a switch or button into the off position.
+                        break;
+
+                    case "TOGGLE_ON":
+                        num = HapticFeedbackConstants.TOGGLE_ON;
+                        // The user has toggled a switch or button into the on position.
+                        break;
+
+                    case "VIRTUAL_KEY":
+                        num = HapticFeedbackConstants.VIRTUAL_KEY;
+                        // The user has pressed on a virtual on-screen key.
+                        break;
+
+                    case "VIRTUAL_KEY_RELEASE":
+                        num = HapticFeedbackConstants.VIRTUAL_KEY_RELEASE;
+                        // The user has released a virtual key.
+                        break;
+
+                    default:
+                        num = HapticFeedbackConstants.CLOCK_TICK;
+                        // Default feedback: The user has performed a long press.
+                        break;
+                }
+                view.performHapticFeedback(num, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
+        });
+        return true;
     }
 }

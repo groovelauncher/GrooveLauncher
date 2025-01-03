@@ -60,6 +60,8 @@ document.querySelector("#updatebutton").addEventListener("flowClick", (e) => {
                             }
                         }, { title: window.i18n.t("common.actions.no"), style: "default", inline: true, action: () => { } }]
                     );
+                    if (update["id"] == localStorage["lastDismissedUpdate"]) localStorage.removeItem(lastDismissedUpdate)
+
                 }
 
             } else {

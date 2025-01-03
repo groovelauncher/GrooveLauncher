@@ -24,7 +24,17 @@ document.querySelector("div.color-picker").addEventListener("flowClick", (e) => 
             accentColorPicker.classList.remove("shown-animation", "hidden")
 
         }, 500 * animationDurationScale);
+        Array.from({ length: 6 }, (_, i) => {
+            setTimeout(() => {
+                Groove.triggerHapticFeedback("CLOCK_TICK");
+            }, (i * 20 + 60) * window.parent.GrooveBoard.backendMethods.animationDurationScale.get());
+        });
     })
+    Array.from({ length: 6 }, (_, i) => {
+        setTimeout(() => {
+            Groove.triggerHapticFeedback("CLOCK_TICK");
+        }, i * 20 * window.parent.GrooveBoard.backendMethods.animationDurationScale.get());
+    });
 })
 document.querySelectorAll("div.accent-color-catalogue-item").forEach(e => e.addEventListener("flowClick", (e) => {
     if (e.target.id == "custom-color-item") {
@@ -45,6 +55,11 @@ document.querySelectorAll("div.accent-color-catalogue-item").forEach(e => e.addE
             accentColorPicker.classList.remove("shown-animation", "hidden")
 
         }, 500 * animationDurationScale);
+        Array.from({ length: 6 }, (_, i) => {
+            setTimeout(() => {
+                Groove.triggerHapticFeedback("CLOCK_TICK");
+            }, (i * 20 + 60) * window.parent.GrooveBoard.backendMethods.animationDurationScale.get());
+        });
         appViewEvents.setAccentColor(grooveColors[e.target.style.background.slice(18).slice(0, -1)])
         document.querySelector("div.color-picker > div.picker-option").innerText = i18n.t(`colors.${e.target.style.background.slice(18).slice(0, -1).toLowerCase()}`)
         settingsListTag.setAttribute("data-i18n", `colors.${e.target.style.background.slice(18).slice(0, -1).toLowerCase()}`)

@@ -1009,14 +1009,19 @@ const backendMethods = {
     }
     return defaultPref
   },
-  setAnimationDurationScale: (scale) => {
-    scale = scale < 0 ? 0 : scale > 10 ? 10 : scale
-    window.animationDurationScale = scale
-    document.body.style.setProperty("--animation-duration-scale", scale)
-    document.querySelector("html").style.setProperty("--animation-duration-scale", scale)
-    document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setAnimationDurationScale(e, scale))
-
+  animationDurationScale: {
+    set: (scale) => {
+      scale = scale < 0 ? 0 : scale > 10 ? 10 : scale
+      window.animationDurationScale = scale
+      document.body.style.setProperty("--animation-duration-scale", scale)
+      document.querySelector("html").style.setProperty("--animation-duration-scale", scale)
+      document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setAnimationDurationScale(e, scale))
+    },
+    get: () => {
+      return window.animationDurationScale || window.parent.animationDurationScale || 1
+    }
   }
+
 };
 function listHistory() {
   return
@@ -1109,8 +1114,8 @@ function getCanvasBlob(canvas, mimeType = 'image/png') {
 export default { boardMethods, backendMethods, alert };
 
 window.addEventListener("load", () => {
-  backendMethods.setAnimationDurationScale(Groove.getAnimationDurationScale())
+  backendMethods.animationDurationScale.set(Groove.getAnimationDurationScale())
   window.addEventListener("animationDurationScaleChange", function (e) {
-    backendMethods.setAnimationDurationScale(Groove.getAnimationDurationScale())
+    backendMethods.animationDurationScale.set(Groove.getAnimationDurationScale())
   });
 })

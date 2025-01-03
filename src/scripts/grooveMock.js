@@ -206,9 +206,46 @@ class GrooveMock {
         return "en-US"
     }
     getAnimationDurationScale() {
-        return 2;
+        return 1;
     }
+    triggerHapticFeedback(haptic) {
+        if(haptic != "SUPPORTED" && haptic != "NO_HAPTICS"){
+            if(haptic == "CLOCK_TICK"){
+                playHapticTick(.25);
+            }else{
+                playHapticTick();
+            }
+        }
+        return "true"
+    }
+}// Create a reusable AudioContext
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+// Function to play haptic-like tick sound
+function playHapticTick(volume = 1) {
+    // Clamp volume between 0 and 1
+    volume = Math.max(0, Math.min(1, volume));
+
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(240, audioCtx.currentTime);
+
+    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.75 * volume, audioCtx.currentTime + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(
+        0.001 * volume,
+        audioCtx.currentTime + 0.025
+    );
+
+    oscillator.start(audioCtx.currentTime);
+    oscillator.stop(audioCtx.currentTime + 0.025);
 }
+
 
 export default GrooveMock;
 export { BuildConfigMock, GrooveMock }

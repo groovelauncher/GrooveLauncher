@@ -38,6 +38,7 @@ grid.on("dragstart", function (event, el) {
 });
 grid.on('drag', function (event, el) {
   console.log("bababa")
+  Groove.triggerHapticFeedback("CLOCK_TICK")
   _removeDragScale(el)
 });
 grid.on('change', function (event, items) {
@@ -83,7 +84,6 @@ function hashStringToNumber(str, max) {
 const homeTileEditSwitch = {
   on: (immediate = false, callback = () => { }) => {
     clearTimeout(window.homeTileEditTimeout)
-
     window.homeTileEditTimeout = setTimeout(() => { homeTileEditSwitch.off() }, 30000);
     GrooveBoard.backendMethods.navigation.push(
       "homeTileMenuOn",
@@ -108,6 +108,7 @@ const homeTileEditSwitch = {
           .removeClass("home-menu-back-intro");
         if (callback && typeof callback == "function") callback();
         shakeDistanceModifier.on();
+        Groove.triggerHapticFeedback("CONFIRM")
       }, 500);
     }
     perlin.seed()
@@ -216,7 +217,7 @@ $(window).on("click", function (e) {
       const packageName = e.target.getAttribute("packageName")
       setTimeout(() => {
         Groove.launchApp(packageName);
-      }, (packageName.startsWith("groove.internal") ? 500 : 1000) * window.animationDurationScale);
+      }, (packageName.startsWith("groove.internal") && false ? 500 : 1000) * window.animationDurationScale);
     }
   } else if (
     e.target ==

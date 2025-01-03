@@ -1,3 +1,5 @@
+import GrooveBoard from "./GrooveBoard"
+
 // Configuration object for all animation-related settings
 const CONFIG = {
     ANIMATION: {
@@ -37,7 +39,7 @@ const ANIMATION_TIMINGS = {
     // Calculate base scale based on window height
     baseScale: () => window.innerHeight / 850 / 2 + 0.5,
     // Calculate launch hide timing with scale factor
-    launchHide: function () { return ((0.15 * this.baseScale() + 0.35) * 1000 + 500) * animationDurationScale }
+    launchHide: function () { return ((0.15 * this.baseScale() + 0.35) * 1000 + 500) * GrooveBoard.backendMethods.animationDurationScale.get() }
 };
 
 // Check if an element is visible within the viewport
@@ -167,7 +169,7 @@ const appTransition = {
         if (back) mainHomeSlider.classList.add(CONFIG.CLASSES.TRANSITION.BACK);
         if (firstIntro) mainHomeSlider.style.removeProperty('visibility');
 
-        setTimeout(removeAnimClasses, (CONFIG.ANIMATION.BASE_TIMEOUT) * animationDurationScale);
+        setTimeout(removeAnimClasses, (CONFIG.ANIMATION.BASE_TIMEOUT) * GrooveBoard.backendMethods.animationDurationScale.get());
     }
 };
 

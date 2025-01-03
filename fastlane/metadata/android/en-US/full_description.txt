@@ -1,0 +1,8 @@
+<strong>Groove Launcher</strong> is a metro-styled launcher designed for a customizable and sleek user experience. Users can personalize their launcher by adjusting tile sizes, changing tile positions, customizing the color theme, and setting their favorite wallpapers.
+
+<ul>
+  <li><strong>Metro-Style Interface:</strong> A clean & modern design inspired by Windows Phone 8.</li>
+  <li><strong>Customizable Tiles:</strong> Drag and drop tiles, adjust their sizes, and move them around to fit your unique style.</li>
+  <li><strong>Theme Customization:</strong> Change the color of the launcher to match your mood or aesthetic.</li>
+  <li><strong>Wallpaper Personalization:</strong> Choose and set your own wallpapers to create a fully personalized setup.</li>
+</ul>

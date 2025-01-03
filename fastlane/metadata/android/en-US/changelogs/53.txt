@@ -1,0 +1,4 @@
+Groove Launcher 0.5.3  
+- Fixed icon pack tiles appearing as squares instead of wide tiles.  
+- Added support for more OEMs and new icon packs: Video, Wallet, Storage, Notes.  
+- Groove settings can no longer be hidden or renamed to prevent softlocks.  

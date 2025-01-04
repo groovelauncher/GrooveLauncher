@@ -126,6 +126,7 @@ dist
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+.vscode
 .idea/
 # yarn v2
 .yarn/cache
@@ -140,3 +141,6 @@ www/apps
 android/app/src/main/assets/*
 android/.idea/deploymentTargetSelector.xml
 build-internal-apps.sh
+
+finalize.js
+.dist

@@ -26,21 +26,28 @@ function resetUpdate() {
     localStorage.removeItem(lastFetchedUpdate)
     localStorage.removeItem(lastDismissedUpdate)
 }
+function formatFileSize(size) {
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    let index = 0;
 
+    while (size >= 1024 && index < units.length - 1) {
+        size /= 1024;
+        index++;
+    }
+
+    return `${size.toFixed(1)} ${units[index]}`;
+}
 setTimeout(() => {
     if (localStorage[lastFetchedUpdate]) {
         const lastF = JSON.parse(localStorage[lastFetchedUpdate])
         if (isUpdateValid(lastF)) {
-            console.log("vslid")
             if (isUpdateNew(lastF)) {
-                console.log("new")
                 showUpdateBanner(lastF)
             }
         }
     }
 }, 1000);
 function checkUpdate(force = false) {
-    console.log("chedk updatre")
     const isBeta = window.parent.Groove.getAppVersion().includes("beta") || window.parent.Groove.getAppVersion() == 'web-test'
     return new Promise((resolve, reject) => {
         if (!force && localStorage.getItem(lastFetchedUpdate)) {
@@ -50,26 +57,21 @@ function checkUpdate(force = false) {
                 return;
             }
         }
-        fetch('https://api.github.com/repos/window.parent.Groovelauncher/window.parent.GrooveLauncher/releases?per_page=10')
+        fetch('https://api.github.com/repos/groovelauncher/GrooveLauncher/releases?per_page=10')
             .then(response => response.json())
             .then(releases => {
                 if (releases["filter"]) {
                     const availableReleases = releases.filter(release => (release.name.includes("beta") == isBeta))
                     if (availableReleases.length) {
                         const update = availableReleases[0]
-                        console.log(update)
                         if (update.name == window.parent.Groove.getAppVersion()) {
-                            console.log("aynı")
                             resolve(false)
                         } else {
                             if (isUpdateValid(update)) {
                                 resolve(update)
                                 showUpdateBanner(update)
                                 localStorage.setItem(lastFetchedUpdate, JSON.stringify(update))
-                                console.log("releases var", releases)
-
                             } else {
-                                console.log("releases YOK", releases)
                                 reject(new Error("Unknown update package"))
                             }
                         }
@@ -104,7 +106,6 @@ function isUpdateNew(update) {
 function showUpdateBanner(update) {
     if (!isUpdateValid(update)) return
     if (isUpdateDismissed(update)) return
-    console.log("showbanenr", update)
     if (bottomBar.querySelector("div.update-banner")) bottomBar.querySelector("div.update-banner").remove()
     const updateBanner = document.createElement("div")
     updateBanner.classList.add("update-banner")
@@ -118,6 +119,34 @@ function showUpdateBanner(update) {
             <button class="update-dismiss">dismiss</button>
         </div>
 `
+    updateBanner.querySelector("button.update-read-more").addEventListener("flowClick", () => {
+        if (localStorage.getItem(lastFetchedUpdate)) {
+            const update = JSON.parse(localStorage.getItem(lastFetchedUpdate))
+            if (update.name == Groove.getAppVersion()) {
+                dismissUpdate(update)
+            } else {
+                const updateUrl = update.assets.length == 1 ? update.assets[0].browser_download_url : update.html_url
+                parent.GrooveBoard.alert(
+                    window.i18n.t("settings.alerts.update_available.title"),
+                    update.assets.length == 1 ?
+                        //`A new version <strong>(${update.name})</strong> is available, sized at ${formatFileSize(update.assets[0].size)}. Would you like to download it?`
+                        window.i18n.t("settings.alerts.update_available.message", { version: update.name, size: formatFileSize(update.assets[0].size) })
+                        :
+                        window.i18n.t("settings.alerts.update_available.message2", { version: update.name }),
+                    [{
+                        title: window.i18n.t("common.actions.yes"), style: "default", inline: true, action: () => {
+                            Groove.openURL(updateUrl)
+                        }
+                    }, { title: window.i18n.t("common.actions.no"), style: "default", inline: true, action: () => { } }]
+                );
+                if (update["id"] == localStorage["lastDismissedUpdate"]) localStorage.removeItem(lastDismissedUpdate)
+
+            }
+        } else {
+            dismissUpdate(update)
+        }
+
+    })
     updateBanner.querySelector("button.update-dismiss").addEventListener("flowClick", () => {
         dismissUpdate(update)
         updateBanner.classList.add("hide-banner")

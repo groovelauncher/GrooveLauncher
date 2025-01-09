@@ -32,6 +32,7 @@ window.normalizeDiacritics = (input = "") => {
 }
 import BScroll from "better-scroll";
 import i18n from "./scripts/localeManager.js";
+GrooveBoard.backendMethods.setUIScale(1, true)
 
 window.imageStore = imageStore
 
@@ -187,7 +188,6 @@ window.addEventListener("activityResume", () => {
 
 
 if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
-GrooveBoard.backendMethods.setUIScale(1, true)
 startUpSequence([
     (next) => {
         if (GrooveBoard.backendMethods.setupNeeded()) {

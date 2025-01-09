@@ -302,7 +302,6 @@ const boardMethods = {
     getProviders: () => window.liveTileProviders || [],
     refresh: () => {
       const initializeLiveTiles = boardMethods.liveTiles.get()
-      console.log("initializeLiveTiles", initializeLiveTiles)
       const homeTiles = document.querySelector("#main-home-slider div.tile-list-inner-container").querySelectorAll("div.groove-home-tile")
       homeTiles.forEach(i => {
         const packageName = i.getAttribute("packagename")
@@ -412,7 +411,6 @@ const backendMethods = {
       const databases = await indexedDB.databases();
       for (const db of databases) {
         await indexedDB.deleteDatabase(db.name);
-        console.log(`Deleted database: ${db.name}`);
       }
     } catch (error) {
       console.error('Error accessing databases: ', error);
@@ -702,10 +700,10 @@ const backendMethods = {
     if (!doNotSave) localStorage.setItem("accentColor", color)
     Groove.setAccentColor(color)
     if (Object.values(grooveColors).includes(color)) {
-      Groove.setAppIconColor(Object.entries(grooveColors).filter(e => e[1].toLowerCase() == color.toLowerCase())[0][0])
+      //Groove.setAppIconColor(Object.entries(grooveColors).filter(e => e[1].toLowerCase() == color.toLowerCase())[0][0])
     } else {
       console.error("Custom color detected!");
-      Groove.setAppIconColor("default")
+      //Groove.setAppIconColor("default")
     }
   },
   setTheme: (theme, doNotSave = false) => {
@@ -931,7 +929,6 @@ const backendMethods = {
       document.body.classList.remove("font-1")
       document.body.classList.remove("font-2")
       var resultFont = 0
-      console.log("font set ", font)
       switch (font) {
         case 0:
           resultFont = 0
@@ -1023,6 +1020,7 @@ const backendMethods = {
   }
 
 };
+backendMethods.animationDurationScale.set(1)
 function listHistory() {
   return
   console.log(
@@ -1114,8 +1112,8 @@ function getCanvasBlob(canvas, mimeType = 'image/png') {
 export default { boardMethods, backendMethods, alert };
 
 window.addEventListener("load", () => {
-  backendMethods.animationDurationScale.set(Groove.getAnimationDurationScale())
+  backendMethods.animationDurationScale.set(window["Groove"] ? Groove.getAnimationDurationScale() : 1)
   window.addEventListener("animationDurationScaleChange", function (e) {
-    backendMethods.animationDurationScale.set(Groove.getAnimationDurationScale())
+    backendMethods.animationDurationScale.set(window["Groove"] ? Groove.getAnimationDurationScale() : 1)
   });
 })

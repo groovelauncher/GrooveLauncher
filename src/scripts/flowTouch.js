@@ -49,7 +49,6 @@ function flowTouchRotate(el, pageX, pageY) {
     }
 }
 function updateFlowRangeInputBackground(el) {
-    console.log("updateFlowRangeInputBackground")
     const max = el.max || 100
     const min = el.min || 0
     const step = el.step || 1
@@ -61,7 +60,7 @@ function updateFlowRangeInputBackground(el) {
 window.addEventListener("resize", () => {
     document.querySelectorAll("input[type=range]").forEach(el => {
         el.supportsFlowRangeInput = window.getComputedStyle(el).getPropertyValue("--flow-metro-range-input") == "true"
-        if (el.supportsFlowRangeInput) { 
+        if (el.supportsFlowRangeInput) {
             updateFlowRangeInputBackground(el)
         }
     })
@@ -153,6 +152,7 @@ window.addEventListener("pointermove", (e) => {
 
 // Metro Toggle Switch Component
 const metroToggleSwitch = {
+    haptic: 2,
     animate: (el, from, to) => {
         clearInterval(el.mtsanim)
         clearTimeout(el.mtstime)
@@ -163,11 +163,16 @@ const metroToggleSwitch = {
             var transition = from + (to - from) * easing.easeOutExpo((Date.now() - animstart) / duration)
             // (to - from) + ((Date.now() - animstart) / duration) * to
             transition = transition > 1 ? 1 : transition < 0 ? 0 : transition
+            transition = transition < .5 ? Math.pow(transition, 1.5) : (1 - Math.pow(1 - transition, 1.5)) - ((1 - Math.pow(1 - .5, 1.5)) - Math.pow(.5, 1.5)) / 1
+
             el.style.setProperty("--transition", (transition))
+            el.style.setProperty("--transition-flick", transition < Math.pow(.5, 1.5) ? 0 : ((1 - Math.pow(1 - .5, 1.5)) - Math.pow(.5, 1.5)))
+
         }, 0)
         el.mtstime = setTimeout(() => {
             clearInterval(el.mtsanim)
             el.style.removeProperty("--transition")
+            el.style.removeProperty("--transition-flick")
             el.dispatchEvent(new CustomEvent("checked", { detail: { isChecked: el.hasAttribute("checked") } }))
         }, duration)
     },
@@ -187,7 +192,16 @@ const metroToggleSwitch = {
     pointerMove: (el, e) => {
         const drag = e.pageX - el.lastPointerPosition[0]
         var transition = (el.hasAttribute("checked") ? 1 : 0) + drag / (el.offsetWidth - 20)
+        //console.log("trans", transition)
         transition = transition > 1 ? 1 : transition < 0 ? 0 : transition
+        transition = transition < .5 ? Math.pow(transition, 1.5) : (1 - Math.pow(1 - transition, 1.5)) - ((1 - Math.pow(1 - .5, 1.5)) - Math.pow(.5, 1.5)) / 1
+        el.style.setProperty("--transition-flick", transition < Math.pow(.5, 1.5) ? 0 : ((1 - Math.pow(1 - .5, 1.5)) - Math.pow(.5, 1.5)))
+        if (el.lastFlick != transition < Math.pow(.5, 1.5)) {
+            console.log("sdhufghksd")
+            Groove.triggerHapticFeedback("CONFIRM")
+
+        }
+        el.lastFlick = transition < Math.pow(.5, 1.5)
         el.lastDragTransition = transition == 0 ? 0.001 : transition
         el.style.setProperty("--transition", (transition))
         //console.log(transition)

@@ -1,10 +1,4 @@
 import { applyOverscroll, appViewEvents, grooveColors, grooveThemes, setAccentColor } from "../../scripts/shared/internal-app";
-console.log("check", {
-    setAccentColor,
-    setTheme,
-    setFont,
-    setReduceMotion
-});
 import { GrooveScroll, GrooveSlide } from "../../scripts/overscrollFramework";
 import imageStore from "../../scripts/imageStore";
 import fontStore from "../../scripts/fontStore";
@@ -309,12 +303,7 @@ $("#home-tab > div > div.groove-list-view > div.groove-list-view-item").on("flow
 })
 
 window.Groove = window.Groove || window.parent.Groove
-console.log({
-    setAccentColor,
-    setTheme,
-    setFont,
-    setReduceMotion
-});
+
 import "./pages/00_home+theme"
 import "./pages/01_screen_rotation"
 import "./pages/02_language"

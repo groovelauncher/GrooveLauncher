@@ -33,6 +33,9 @@ You can download the latest prebuilt APK from the [Releases](https://github.com/
     </tr>
 </table>
 
+
+## Build
+
 If you prefer to build the app yourself:
 
 1. Clone the repository:
@@ -48,7 +51,40 @@ If you prefer to build the app yourself:
    ```
 
 3. Open the `./android` folder in Android Studio.
+
 4. Compile and run the app on your device/emulator.
+
+### Alternative
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/groovelauncher/GrooveLauncher.git
+   ```
+
+2. Navigate to the project directory and run the build script:
+
+   ```bash
+   npm run build:android
+   ```
+
+This will automatically install the app on your device if ADB debugging is enabled on the device.
+
+## Testing on Web Environment
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/groovelauncher/GrooveLauncher.git
+   ```
+
+2. Navigate to the project directory and run the build-watch script for the web environment:
+
+   ```bash
+   npm run debug:web
+   ```
+
+3. Open your web browser and navigate to `http://localhost:8080/www/` to test the application.
 
 ## Usage
 

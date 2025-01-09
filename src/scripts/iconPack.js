@@ -360,6 +360,8 @@ const iconPackConverter = [
             "com.gallery20",
             "com.gionee.gallery",
             "com.google.android.gallery3d",
+            "com.google.android.apps.photos",
+            "com.google.android.apps.photosgo",
             "com.htc.album",
             "com.jrdcom.android.gallery3d",
             "com.lenovo.gallery",

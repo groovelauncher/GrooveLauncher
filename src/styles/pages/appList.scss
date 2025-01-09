@@ -410,6 +410,13 @@ div.letter-selector {
     }
   }
 
+  &:not(.shown) {
+    &,*{
+      pointer-events: none !important;
+    }
+  }
+
+
   &.hidden {
     opacity: 1;
     pointer-events: none;

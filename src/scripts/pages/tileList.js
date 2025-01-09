@@ -251,24 +251,19 @@ $(window).on("pointerdown", function (e) {
         GrooveBoard.boardMethods.createTileMenu(e.target);
         generateShakeAnimations();
         e.target.homeTileMenuState = true;
-        e.target.dispatchEvent(new MouseEvent('mousedown', {
+        const args = {
           bubbles: true,
           cancelable: true,
-          clientX: e.target.getBoundingClientRect().left,
-          clientY: e.target.getBoundingClientRect().top
-        }));
-        e.target.dispatchEvent(new TouchEvent('touchstart', {
-          bubbles: true,
-          cancelable: true,
-          clientX: e.target.getBoundingClientRect().left,
-          clientY: e.target.getBoundingClientRect().top
-        }));
-        e.target.dispatchEvent(new PointerEvent('pointerdown', {
-          bubbles: true,
-          cancelable: true,
-          clientX: e.target.getBoundingClientRect().left,
-          clientY: e.target.getBoundingClientRect().top
-        }));
+          clientX: e.clientX,
+          clientY: e.clientY,
+          pageX: e.pageX,
+          pageY: e.pageY,
+          screenX: e.screenX,
+          screenY: e.screenY
+        }
+        e.target.dispatchEvent(new MouseEvent('mousedown', args));
+        e.target.dispatchEvent(new TouchEvent('touchstart', args));
+        e.target.dispatchEvent(new PointerEvent('pointerdown', args));
       });
       e.target.classList.add("home-menu-selected");
     }, 500);
@@ -374,67 +369,3 @@ $(window).on("finishedLoading", () => {
     });
   })
 })
-
-/*
-
-const mask = document.querySelector("#wallpaper-mask")
-const maskHolder = mask.querySelector("div.holder")
-function generateWallpaperMask() {
-
-  var scrollY = 0
-
-  if (window["scrollers"]) {
-    scrollY = scrollers.tile_page_scroller.y
-    scrollY = scrollY >= 125 ? 125 : scrollY <= scrollers.tile_page_scroller.maxScrollY - 125 ? scrollers.tile_page_scroller.maxScrollY - 125 : scrollY
-
-  }
-  const tiles = document.querySelectorAll("div.groove-home-tile > div.groove-home-inner-tile");
-  tiles.forEach(tile => {
-    const computedStyle = window.getComputedStyle(tile.parentElement);
-    const rect = {
-      left: parseFloat(computedStyle.left) || 0 + tileListInnerContainer.offsetLeft,
-      top: (parseFloat(computedStyle.top) || 0) + scrollY,
-      width: (parseFloat(computedStyle.width) - 12) || 0,
-      height: (parseFloat(computedStyle.height) - 10) || 0
-    };
-    //console.log(tile.parentElement.style.left, tile.parentElement.style.top)
-    let doppelganger = Array.from(maskHolder.children).find(d => d.master === tile);
-
-    if (!doppelganger) {
-      doppelganger = document.createElement('div');
-      doppelganger.classList.add("doppelganger")
-      doppelganger.master = tile;
-      maskHolder.appendChild(doppelganger);
-    }
-    doppelganger.style.left = rect.left + 'px';
-    doppelganger.style.top = rect.top + 'px';
-    doppelganger.style.width = rect.width + 'px';
-    doppelganger.style.height = rect.height + 'px';
-  });
-
-  // Remove doppelgangers whose masters no longer exist
-  Array.from(maskHolder.children).forEach(doppelganger => {
-    if (!Array.from(tiles).includes(doppelganger.master)) {
-      maskHolder.removeChild(doppelganger);
-    }
-  });
-  //setTimeout(() => { requestAnimationFrame(generateWallpaperMask) }, 1000)
-}
-
-var wallpaperMaskAutoUpdate = true
-function updateWallpaperMask() {
-  if (wallpaperMaskAutoUpdate) {
-    generateWallpaperMask()
-    requestAnimationFrame(updateWallpaperMask)
-  }
-}
-updateWallpaperMask()
-
-setTimeout(() => {
-  scrollers.tile_page_scroller.scroller.translater.hooks.on(
-    "beforeTranslate",
-    (point, ee) => {
-      generateWallpaperMask()
-    }
-  );
-}, 500);*/

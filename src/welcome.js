@@ -374,6 +374,11 @@ if (firstWelcome && localStorage["welcomeLocalesDownloaded"] != "true") {
     var localesFinished = false
     var localeProceed = true
     setTimeout(async () => {
+        if(!BuildConfig.signed()){
+            updateLoaderText("")
+            finishLocale()
+            return;
+        }
         updateLoaderText("Querying locales...")
         var userLocales = {}
         if (!localeProceed) return

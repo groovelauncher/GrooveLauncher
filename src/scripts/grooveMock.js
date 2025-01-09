@@ -199,9 +199,9 @@ class GrooveMock {
     setAccentColor(color) {
         console.log("Set accent color:", color)
     }
-    setAppIconColor(color) {
+    /*setAppIconColor(color) {
         console.log("Set app icon color:", color)
-    }
+    }*/
     getSystemLocale() {
         return "en-US"
     }
@@ -217,6 +217,16 @@ class GrooveMock {
             }
         }
         return "true"
+    }
+    getSystemAccentColor(arg){
+        if(arg == "supported"){
+            return true.toString()
+        }else if(arg == "provider"){
+            return "Groove Mock"
+        }else{
+            //Default violet
+            return "#AA00FF"
+        }
     }
 }// Create a reusable AudioContext
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();

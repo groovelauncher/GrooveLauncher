@@ -38,11 +38,9 @@ document.querySelector("#updatebutton").addEventListener("flowClick", (e) => {
     fetch('https://api.github.com/repos/groovelauncher/GrooveLauncher/releases?per_page=10')
         .then(response => response.json())
         .then(releases => {
-            console.log("releases", releases)
             const availableReleases = releases.filter(release => (release.name.includes("beta") == isBeta))
             if (availableReleases.length) {
                 const update = availableReleases[0]
-                console.log(update)
                 if (update.name == Groove.getAppVersion()) {
                     alreadyUpToDate()
                 } else {

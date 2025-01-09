@@ -468,7 +468,7 @@ class tileController {
 
         const iconElement = tile.querySelector('img.groove-home-tile-imageicon');
         iconElement.classList.add('hide-dsfgasdirection-0');
-        console.log("iconElement", this.tileType)
+        //console.log("iconElement", this.tileType)
         iconElement.classList.remove('hide-direction-0', 'hide-direction-1', 'show-direction-0', 'show-direction-1');
         // Handle notification tile icon visibility
         if (this.tileType == TileType.NOTIFICATION && iconElement) {
@@ -484,7 +484,7 @@ class tileController {
             }
         }
 
-        console.log("icon direction", direction)
+        //console.log("icon direction", direction)
         return true;
     }
     _goToPage_flip(page, direction) {

@@ -152,9 +152,10 @@
 
 .metro-toggle-switch {
     --transition: 0;
-
+    --transition-flick:0;
     &[checked] {
         --transition: 1;
+        --transition-flick:0;
     }
 
     background: var(--metro-background);
@@ -165,7 +166,7 @@
     box-shadow: inset 0px 0px 0px 2px var(--metro-background),
     inset 0px 0px 0px 5px var(--metro-foreground),
     inset 0px 0px 0px 9px var(--metro-background);
-    background: linear-gradient(90deg, var(--accent-color) calc(9px + var(--transition) * 75px), var(--metro-background) calc(9px + var(--transition) * 75px));
+    background: linear-gradient(90deg, var(--accent-color) calc(9px + (var(--transition) + var(--transition-flick)) * 75px), var(--metro-background) calc(9px + (var(--transition) + var(--transition-flick)) * 75px));
 
     &::after {
         display: block;
@@ -176,6 +177,13 @@
         box-shadow: 0px 0px 0px 4px var(--metro-background);
         position: absolute;
         left: calc(2px + var(--transition)* 69px);
+        transform: translateX(calc(2px + var(--transition-flick)* 69px));
+       
+    }
+    &.t_active {
+        &::after {
+            transition: transform .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+        }
     }
 }
 

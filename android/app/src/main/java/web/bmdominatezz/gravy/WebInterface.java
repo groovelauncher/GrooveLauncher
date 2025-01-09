@@ -708,7 +708,7 @@ public class WebInterface {
         mainActivity.isAppReady = true;
     }
 
-    @JavascriptInterface
+   /*@JavascriptInterface
     public void setAppIconColor(String color) {
         PackageManager packageManager = mainActivity.packageManager;
         Log.d(TAG, "setAppIconColor: '" + color + "'");
@@ -736,7 +736,7 @@ public class WebInterface {
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP // Avoid killing the app
         );
-    }
+    }*/
 
     @JavascriptInterface
     public String getSystemLocale() {

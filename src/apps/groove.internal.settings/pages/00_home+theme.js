@@ -175,7 +175,6 @@ const colorNotSupportedText = document.querySelector("p.color-not-supported")
 const applyColorButton = document.querySelector("button.apply-custom-color")
 colorPicker.on(['color:init', 'color:change'], function (color) {
     if (lastColorPicker != color.hexString) {
-        console.log("color", color.hexString);
         colorInputs.hex.value = color.hexString
         const hsv = colorPicker.color.hsv
         colorInputs.hue.value = hsv.h
@@ -198,7 +197,6 @@ colorPicker.on(['color:init', 'color:change'], function (color) {
 Object.values(colorRanges).forEach(e => e.addEventListener("input", (e) => {
     const el = e.target;
     if (el["oldValue"] != el.value) {
-        console.log("hop yeni range")
         el.oldValue = el.value
         colorPicker.color.set({
             h: colorRanges.hue.value,
@@ -217,7 +215,6 @@ Object.values(colorInputs).forEach(e => e.addEventListener("change", (e) => {
     el.value = Number(el.value)
     el.value = Math.floor(el.value)
     if (el["oldValue"] != el.value) {
-        console.log("hop yeni input")
         el.oldValue = el.value
         colorPicker.color.set({
             h: colorInputs.hue.value,
@@ -258,8 +255,6 @@ function isValidHexColor(hex) {
 function isColorSupported(colorHex) {
     const blackContrast = contrastRatio(colorHex, "#000000");
     const whiteContrast = contrastRatio(colorHex, "#FFFFFF");
-    console.log("blackContrast", blackContrast)
-    console.log("whiteContrast", whiteContrast)
     return blackContrast >= 1.5 && whiteContrast >= 1.5;
 }
 colorInputs.hex.addEventListener("change", (e) => {

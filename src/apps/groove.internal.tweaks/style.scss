@@ -599,7 +599,8 @@ a {
                     flex-grow: 1;
                     aspect-ratio: 1;
                     margin: 6px;
-                    p.system-accent-color{
+
+                    p.system-accent-color {
                         position: absolute;
                         left: 0px;
                         top: 0px;
@@ -1095,5 +1096,142 @@ div.color-picker-controls {
     &.t_active {
         background: var(--metro-foreground) !important;
         color: var(--metro-background) !important;
+    }
+}
+
+#splashscreen {
+    &:not(.shown) {
+        display: none;
+    }
+
+    background-image: url(./../../assets/defaulticonpack/groove-tweaks.svg);
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: var(--accent-color);
+    z-index: 9999;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 120px;
+
+    &.shown {
+        animation: app-intro-animation calc(.5s * var(--animation-duration-scale)) cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+    }
+}
+
+div.install-flyout {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background: var(--metro-background);
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+
+    div.install-flyout-inner {
+        position: relative;
+        width: calc(min(768px, 100%));
+        height: 100%;
+        padding: 16px;
+        box-sizing: border-box;
+
+        img.install-flyout-icon {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        p.install-flyout-title {
+            font-size: 32px;
+            text-transform: uppercase;
+            font-weight: 400;
+            margin-top: 0px;
+            width: calc(100% - 100px - 16px);
+            min-height: 100px;
+        }
+
+        p.install-flyout-author {
+            font-size: 22px;
+            color: var(--accent-color);
+        }
+
+        p.install-flyout-description {
+            opacity: 0.6;
+            font-size: 22px;
+        }
+
+        button.install-flyout-install {
+            @include metro-button;
+            margin: 0px;
+            --flow-rotate-z: 0deg;
+            position: absolute;
+            right: 16px;
+            bottom: 16px;
+        }
+    }
+}
+
+div.groove-list-view {
+    div.groove-list-view-item {
+        transition: transform var(--flow-touch-up-transition) ease-out, height calc(.2s * var(--animation-duration-scale)) ease-in !important;
+        height: 83px;
+        p{
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        &.active {
+            transition: transform var(--flow-touch-down-transition) ease-in-out, height calc(.2s * var(--animation-duration-scale)) ease-in !important;
+
+        }
+
+        div.expanded-panel {
+            animation: collapse-panel calc(.2s * var(--animation-duration-scale)) ease-in-out forwards;
+
+            @keyframes collapse-panel {
+                0% {
+                    opacity: 1;
+                }
+
+                100% {
+                    opacity: 0;
+                }
+            }
+        }
+
+        div.expanded-panel {
+            transition: transform calc(.1s * var(--animation-duration-scale)) cubic-bezier(0.075, 0.82, 0.165, 1);
+            position: relative;
+        }
+
+        &.expanded {
+            height: 160px;
+
+            div.expanded-panel {
+                animation: expand-panel calc(.5s * var(--animation-duration-scale)) calc(.2s * var(--animation-duration-scale)) cubic-bezier(.25, 2, .5, 1) forwards;
+                opacity: 0;
+                transform: perspective(var(--flow-perspective)) rotateX(-0deg);
+                transform-origin: 50% -25%;
+
+                @keyframes expand-panel {
+                    from {
+                        opacity: 1;
+                        transform: perspective(var(--flow-perspective)) rotateX(-90deg);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: perspective(var(--flow-perspective)) rotateX(-0deg);
+                    }
+                }
+            }
+        }
     }
 }

@@ -69,6 +69,9 @@ function onItemClick(el) {
     if (item.classList.contains("expanded")) {
         item.classList.remove("expanded")
         item.querySelector(".expanded-panel")?.remove()
+        setTimeout(() => {
+            Groove.triggerHapticFeedback("CONFIRM")
+        }, 250);
     } else {
         if (item.classList.contains("selected")) {
             document.querySelectorAll(".groove-list-view-item.expanded").forEach(expandedItem => {
@@ -181,5 +184,12 @@ function onItemClick(el) {
                 });
             })
         }
+        setTimeout(() => {
+            Groove.triggerHapticFeedback("CONFIRM")
+            setTimeout(() => {
+                Groove.triggerHapticFeedback("CLOCK_TICK")
+            }, 125);
+        }, 250);
     }
+
 }

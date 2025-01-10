@@ -98,6 +98,7 @@ const boardMethods = {
     setTimeout(() => {
       loader.remove();
       appTransition.onResume(false, true);
+      if (document.body.classList.contains("rtl")) scrollers.main_home_scroller.scrollTo(-window.innerWidth, 0, 0)
     }, 750);
   },
   createHomeTile: (size = [1, 1], options = {}, append = false) => {
@@ -274,8 +275,8 @@ const boardMethods = {
     el.appendChild(tileMenu);
     return el;
   },
-  createAppView: (packageName) => {
-    const appView = GrooveElements.wAppView(packageName);
+  createAppView: (packageName, args) => {
+    const appView = GrooveElements.wAppView(packageName, args);
     document.body.appendChild(appView);
     return appView;
   },
@@ -642,9 +643,13 @@ const backendMethods = {
     }, 250);
     backendMethods.homeConfiguration.save()
   },
-  launchInternalApp: (packageName) => {
+  launchInternalApp: (packageName, args) => {
     if (!window.launchedInternalApps) window.launchedInternalApps = new Set();
-    if (window.launchedInternalApps.has(packageName)) { console.log("App is already open!"); return; }
+    if (window.launchedInternalApps.has(packageName)) {
+      console.log("App is already open!"); 
+      //pass args here
+      return;
+    }
     else {
       $.ajax({
         url: './apps/' + packageName + '/index.html',
@@ -661,7 +666,7 @@ const backendMethods = {
             }
           );
 
-          const appView = boardMethods.createAppView(packageName)
+          const appView = boardMethods.createAppView(packageName, args)
           window.launchedInternalApps.add(packageName);
           clearTimeout(window.appTransitionLaunchError)
           //console.log("Launch internal app:", packageName);

@@ -17,4 +17,8 @@ public class BuildConfigInterface {
     public String CAK() {
         return BuildConfig.CAK;
     }
+    @JavascriptInterface
+    public boolean signed() {
+        return true;
+    }
 } 

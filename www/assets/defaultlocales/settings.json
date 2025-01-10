@@ -45,6 +45,11 @@
       "title": "Debugging",
       "dump_apps": "Dump Installed Apps JSON"
     },
+    "data": {
+      "title": "Data",
+      "backup": "Backup",
+      "restore": "Restore"
+    },
     "package_manager": {
       "title": "Package manager",
       "title_experimental": "Package manager (EXPERIMENTAL)",

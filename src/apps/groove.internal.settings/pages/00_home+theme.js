@@ -35,6 +35,15 @@ document.querySelector("div.color-picker").addEventListener("flowClick", (e) => 
             Groove.triggerHapticFeedback("CLOCK_TICK");
         }, i * 20 * window.parent.GrooveBoard.backendMethods.animationDurationScale.get());
     });
+    const systemColorTile = document.querySelector("#accent-color-picker > div.accent-color-catalogue > div > div:nth-child(6) > div:nth-child(2)")
+    if (Groove.getSystemAccentColor("supported") == "true") {
+        systemColorTile.style.visibility = "visible"
+        systemColorTile.style.background = Groove.getSystemAccentColor()
+        systemColorTile.innerHTML = '<p class="system-accent-color"></p>'
+        systemColorTile.querySelector("p.system-accent-color").innerText = Groove.getSystemAccentColor("provider")
+    } else {
+        systemColorTile.style.visibility = "hidden"
+    }
 })
 document.querySelectorAll("div.accent-color-catalogue-item").forEach(e => e.addEventListener("flowClick", (e) => {
     if (e.target.id == "custom-color-item") {

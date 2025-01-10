@@ -27,7 +27,7 @@ android {
         versionCode = 53
         versionName = "0.5.4-beta.5"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        
+
         // Add the API key
         buildConfigField(
             type = "String",
@@ -45,6 +45,10 @@ android {
             )
             signingConfig = signingConfigs.getByName("debug")
         }
+    }
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8

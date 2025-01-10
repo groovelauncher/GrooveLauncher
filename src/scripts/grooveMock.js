@@ -6,6 +6,7 @@ import BuildConfigMock from "./BuildConfigMock";
 // Add constants at the top
 const CONSTANTS = {
     INTERNAL_SETTINGS_APP: 'groove.internal.settings',
+    INTERNAL_TWEAKS_APP: 'groove.internal.tweaks',
     DEFAULT_SYSTEM_INSETS: { left: 0, top: 32, right: 0, bottom: 50 },
     MOCK_ICON_PATH: '/icons/default/',
     MOCK_CONTACT_AVATAR_PATH: '/contacts/',
@@ -39,6 +40,11 @@ class GrooveMock {
             this.#retrievedApps.push({
                 packageName: CONSTANTS.INTERNAL_SETTINGS_APP,
                 label: 'Groove Settings',
+                type: 0
+            });
+            this.#retrievedApps.push({
+                packageName: CONSTANTS.INTERNAL_TWEAKS_APP,
+                label: 'Groove Tweaks',
                 type: 0
             });
         } catch (error) {
@@ -75,7 +81,13 @@ class GrooveMock {
     }
     launchApp(packageName) {
         console.log("Start app:", packageName)
-        if (packageName.startsWith("groove.internal")) GrooveBoard.backendMethods.launchInternalApp(packageName);
+        if (packageName.startsWith("groove.internal")) {
+            if (packageName.includes("?")) {
+                GrooveBoard.backendMethods.launchInternalApp(packageName.split("?")[0], packageName.split("?")[1]);
+            } else {
+                GrooveBoard.backendMethods.launchInternalApp(packageName);
+            }
+        }
         return true
     }
     uninstallApp(packageName) {
@@ -209,21 +221,21 @@ class GrooveMock {
         return 1;
     }
     triggerHapticFeedback(haptic) {
-        if(haptic != "SUPPORTED" && haptic != "NO_HAPTICS"){
-            if(haptic == "CLOCK_TICK"){
+        if (haptic != "SUPPORTED" && haptic != "NO_HAPTICS") {
+            if (haptic == "CLOCK_TICK") {
                 playHapticTick(.25);
-            }else{
+            } else {
                 playHapticTick();
             }
         }
         return "true"
     }
-    getSystemAccentColor(arg){
-        if(arg == "supported"){
+    getSystemAccentColor(arg) {
+        if (arg == "supported") {
             return true.toString()
-        }else if(arg == "provider"){
+        } else if (arg == "provider") {
             return "Groove Mock"
-        }else{
+        } else {
             //Default violet
             return "#AA00FF"
         }
@@ -256,6 +268,16 @@ function playHapticTick(volume = 1) {
     oscillator.stop(audioCtx.currentTime + 0.025);
 }
 
-
+window.mockDeepLink = (url) => {
+    const event = new CustomEvent("deepLink", {
+        detail: {
+            url: url
+        }
+    })
+    window.dispatchEvent(event)
+}
+window.mockDeepLinkExample = () => {
+    window.mockDeepLink("groove:?installStyle=data:@file/css;base64,LyogdGl0bGU6IE15IHN1cGVyIGNyYXp5IEdyb292ZSBMYXVuY2hlciBzdHlsZSAqLwovKiBhdXRob3I6IFtCZXJrYXkgVHVtYWxdKGh0dHBzOi8vZ2l0aHViLmNvbS9iZXJrYXl0dW1hbCkgKi8KLyogaWNvbjogZGF0YTppbWFnZS9qcGVnO2Jhc2U2NCwvOWovNFFES1JYaHBaZ0FBVFUwQUtnQUFBQWdBQmdFU0FBTUFBQUFCQUFFQUFBRWFBQVVBQUFBQkFBQUFWZ0ViQUFVQUFBQUJBQUFBWGdFb0FBTUFBQUFCQUFJQUFBSVRBQU1BQUFBQkFBRUFBSWRwQUFRQUFBQUJBQUFBWmdBQUFBQUFBQUJJQUFBQUFRQUFBRWdBQUFBQkFBZVFBQUFIQUFBQUJEQXlNakdSQVFBSEFBQUFCQUVDQXdDZ0FBQUhBQUFBQkRBeE1EQ2dBUUFEQUFBQUFRQUJBQUNnQWdBRUFBQUFBUUFBQUJTZ0F3QUVBQUFBQVFBQUFCU2tCZ0FEQUFBQUFRQUFBQUFBQUFBQUFBRC8yd0NFQUFFQkFRRUJBUUlCQVFJREFnSUNBd1FEQXdNREJBVUVCQVFFQkFVR0JRVUZCUVVGQmdZR0JnWUdCZ1lIQndjSEJ3Y0lDQWdJQ0FrSkNRa0pDUWtKQ1FrQkFRRUJBZ0lDQkFJQ0JBa0dCUVlKQ1FrSkNRa0pDUWtKQ1FrSkNRa0pDUWtKQ1FrSkNRa0pDUWtKQ1FrSkNRa0pDUWtKQ1FrSkNRa0pDUWtKQ1FrSkNmL2RBQVFBQXYvQUFCRUlBQlFBRkFNQklnQUNFUUVERVFIL3hBR2lBQUFCQlFFQkFRRUJBUUFBQUFBQUFBQUFBUUlEQkFVR0J3Z0pDZ3NRQUFJQkF3TUNCQU1GQlFRRUFBQUJmUUVDQXdBRUVRVVNJVEZCQmhOUllRY2ljUlF5Z1pHaENDTkNzY0VWVXRId0pETmljb0lKQ2hZWEdCa2FKU1luS0NrcU5EVTJOemc1T2tORVJVWkhTRWxLVTFSVlZsZFlXVnBqWkdWbVoyaHBhbk4wZFhaM2VIbDZnNFNGaG9lSWlZcVNrNVNWbHBlWW1acWlvNlNscHFlb3FhcXlzN1MxdHJlNHVickN3OFRGeHNmSXljclMwOVRWMXRmWTJkcmg0dVBrNWVibjZPbnE4Zkx6OVBYMjkvajUrZ0VBQXdFQkFRRUJBUUVCQVFBQUFBQUFBQUVDQXdRRkJnY0lDUW9MRVFBQ0FRSUVCQU1FQndVRUJBQUJBbmNBQVFJREVRUUZJVEVHRWtGUkIyRnhFeUl5Z1FnVVFwR2hzY0VKSXpOUzhCVmljdEVLRmlRMDRTWHhGeGdaR2lZbktDa3FOVFkzT0RrNlEwUkZSa2RJU1VwVFZGVldWMWhaV21Oa1pXWm5hR2xxYzNSMWRuZDRlWHFDZzRTRmhvZUlpWXFTazVTVmxwZVltWnFpbzZTbHBxZW9xYXF5czdTMXRyZTR1YnJDdzhURnhzZkl5Y3JTMDlUVjF0ZlkyZHJpNCtUbDV1Zm82ZXJ5OC9UMTl2ZjQrZnIvMmdBTUF3RUFBaEVERVFBL0FQN0pmMmcvMnFWK0UvaWkzK0gvQUlkc1B0K3NTV011cFR5U01VdExXMWl5RmVRb0M3dEl5N1ZqUVo0TGRBTStPZkRYOXNENHlYcnZKOFVQQ1IwcEZHOCtYTXNxN1IxQ092Zkh6S0N2STRPRHhYbW43Yi9nL1ZOSytKRnY0MjAvVnRjMGFMVXhZMmR5TklXeWNYY1VVcmZ1NTJ2RWJ5NHp2OHRuaktzaXZuSXdDdnhKOFhQaFg0eitIOS9iNkl2aWpWdEp1dFMxVzAxQ1hSdnQ4dW9POXZEdEpFazBza25seE9FUlJGQXFJMGhLa3ZrMS9uLzRyZUpmR1ZITjhkaWNCVTlsUXdyMmE5Mnl0YStxNW5VdjdzWXFUMlNTMVorNzhHOEk1WGlxTkNqVmplVlZiNjZkOXIyNWJIOUlQaC9WN1BYTkhnMW13bEUxdmRJSkluWGtNakRJTmJPNWE4ZCtBT2phcm9Id2M4UGFWckEyM2Nkb2htVWpHMTMrWWpIYkdjVjdCODlmM053MWo2dUt5M0Q0ckVRNVp6aEZ0ZG00cHRmTFkvRmN4dzhhV0luU2c3cE5wZkkvLzlEKzdqeHQ0RzhMK09OUGZTZkZWb2w1YXlsVmFLUVpYQjQ0OURqMHJ6WHdwK3pGOEMvQm1zUmE3NGU4UFc4VjVFVjh1VnQwakpqcHQzbHNZN2VsZThYZmIvZlQrZE9IM2g5UlhqWS9oakxjVk9PSXhPSGhLY2RVM0ZOcHJacHRhVzZXT3VobVdJb3g5blNxT0tlalNkcnJ0NkZtM2lFS2JRU2M4ODFQVFUrN1RxOVpSVmprY1VmLzJRPT0gKi8KLyogZGVzY3JpcHRpb246IEp1c3QgYSBzdXBlciBjcmF6eSBzdHlsZSB0byB0ZXN0IEdyb292ZSBUd2Vha3MgKi8KKiB7CiAgICBmaWx0ZXI6IGludmVydCgxMDAlKSBibHVyKDVweCk7Cn0KCmJvZHkgewogICAgYmFja2dyb3VuZDogcmVkOwogICAgYW5pbWF0aW9uOiBjb29sLWFuaW1hdGlvbiA1cyBpbmZpbml0ZTsKCn0KCkBrZXlmcmFtZXMgY29vbC1hbmltYXRpb24gewogICAgZnJvbSB7CiAgICAgICAgdHJhbnNmb3JtOiByb3RhdGUoMGRlZyk7CiAgICB9CgogICAgdG8gewogICAgICAgIHRyYW5zZm9ybTogcm90YXRlKDM2MGRlZyk7CiAgICB9Cn0=")
+}
 export default GrooveMock;
 export { BuildConfigMock, GrooveMock }

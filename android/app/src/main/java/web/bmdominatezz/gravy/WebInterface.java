@@ -40,6 +40,8 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.color.MaterialColors;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -140,6 +142,11 @@ public class WebInterface {
         grooveSettings.put("label", "Groove Settings");
         grooveSettings.put("type", 0);
         retrievedApps.put(grooveSettings);
+        JSONObject grooveTweaks = new JSONObject();
+        grooveTweaks.put("packageName", "groove.internal.tweaks");
+        grooveTweaks.put("label", "Groove Tweaks");
+        grooveTweaks.put("type", 0);
+        retrievedApps.put(grooveTweaks);
         return retrievedApps.toString();
     }
 
@@ -257,13 +264,27 @@ public class WebInterface {
         }
 
         if (packageName.startsWith("groove.internal")) {
-            mainActivity.webView.post(new Runnable() {
-                @Override
-                public void run() {
-                    mainActivity.webView.evaluateJavascript(
-                            "window.GrooveBoard.backendMethods.launchInternalApp(\"" + packageName + "\")", null);
-                }
-            });
+            if (packageName.contains("?")) {
+                mainActivity.webView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        String[] parts = packageName.split("\\?", 2);
+
+                        mainActivity.webView.evaluateJavascript(
+                                "window.GrooveBoard.backendMethods.launchInternalApp(\"" + parts[0] + "\",\"" + parts[1] + "\")",
+                                null);
+                    }
+                });
+            } else {
+                mainActivity.webView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mainActivity.webView.evaluateJavascript(
+                                "window.GrooveBoard.backendMethods.launchInternalApp(\"" + packageName + "\")", null);
+                    }
+                });
+            }
+
             return true;
         } else {
             Intent intent = null;
@@ -632,7 +653,6 @@ public class WebInterface {
         }
     }
 
-
     @JavascriptInterface
     public String getDefaultApps() throws JSONException {
         JSONObject defaultApps = new JSONObject();
@@ -708,35 +728,38 @@ public class WebInterface {
         mainActivity.isAppReady = true;
     }
 
-   /*@JavascriptInterface
-    public void setAppIconColor(String color) {
-        PackageManager packageManager = mainActivity.packageManager;
-        Log.d(TAG, "setAppIconColor: '" + color + "'");
-        // List of aliases
-        String[] aliases = {
-                "icon_default",
-                "icon_lime", "icon_green", "icon_emerald", "icon_teal", "icon_cyan",
-                "icon_cobalt", "icon_indigo", "icon_violet", "icon_pink", "icon_magenta",
-                "icon_crimson", "icon_red", "icon_orange", "icon_amber", "icon_yellow",
-                "icon_brown", "icon_olive", "icon_steel", "icon_mauve", "icon_taupe"
-        };
-        String selectedColor = Arrays.asList(aliases).contains("icon_" + color) ? "icon_" + color : "icon_default";
-        // Disable all aliases except the one for the selected color
-        for (String alias : aliases) {
-            String fullAliasName = mainActivity.getPackageName() + "." + alias;
-            packageManager.setComponentEnabledSetting(
-                    new ComponentName(mainActivity, fullAliasName),
-                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP // Avoid killing the app
-            );
-        }
-        String aliasName = mainActivity.getPackageName() + "." + selectedColor;
-        packageManager.setComponentEnabledSetting(
-                new ComponentName(mainActivity, aliasName),
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP // Avoid killing the app
-        );
-    }*/
+    /*
+     * @JavascriptInterface
+     * public void setAppIconColor(String color) {
+     * PackageManager packageManager = mainActivity.packageManager;
+     * Log.d(TAG, "setAppIconColor: '" + color + "'");
+     * // List of aliases
+     * String[] aliases = {
+     * "icon_default",
+     * "icon_lime", "icon_green", "icon_emerald", "icon_teal", "icon_cyan",
+     * "icon_cobalt", "icon_indigo", "icon_violet", "icon_pink", "icon_magenta",
+     * "icon_crimson", "icon_red", "icon_orange", "icon_amber", "icon_yellow",
+     * "icon_brown", "icon_olive", "icon_steel", "icon_mauve", "icon_taupe"
+     * };
+     * String selectedColor = Arrays.asList(aliases).contains("icon_" + color) ?
+     * "icon_" + color : "icon_default";
+     * // Disable all aliases except the one for the selected color
+     * for (String alias : aliases) {
+     * String fullAliasName = mainActivity.getPackageName() + "." + alias;
+     * packageManager.setComponentEnabledSetting(
+     * new ComponentName(mainActivity, fullAliasName),
+     * PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+     * PackageManager.DONT_KILL_APP // Avoid killing the app
+     * );
+     * }
+     * String aliasName = mainActivity.getPackageName() + "." + selectedColor;
+     * packageManager.setComponentEnabledSetting(
+     * new ComponentName(mainActivity, aliasName),
+     * PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+     * PackageManager.DONT_KILL_APP // Avoid killing the app
+     * );
+     * }
+     */
 
     @JavascriptInterface
     public String getSystemLocale() {
@@ -775,7 +798,8 @@ public class WebInterface {
 
                     case "CONFIRM":
                         num = HapticFeedbackConstants.CONFIRM;
-                        // A haptic effect to signal the confirmation or successful completion of a user interaction.
+                        // A haptic effect to signal the confirmation or successful completion of a user
+                        // interaction.
                         break;
 
                     case "CONTEXT_CLICK":
@@ -790,7 +814,8 @@ public class WebInterface {
 
                     case "FLAG_IGNORE_GLOBAL_SETTING":
                         num = HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
-                        // Deprecated in API level 33. Only privileged apps can ignore user settings for touch feedback.
+                        // Deprecated in API level 33. Only privileged apps can ignore user settings for
+                        // touch feedback.
                         break;
 
                     case "FLAG_IGNORE_VIEW_SETTING":
@@ -810,12 +835,14 @@ public class WebInterface {
 
                     case "GESTURE_THRESHOLD_ACTIVATE":
                         num = HapticFeedbackConstants.GESTURE_THRESHOLD_ACTIVATE;
-                        // The user is executing a swipe/drag gesture where the action becomes eligible at a certain threshold.
+                        // The user is executing a swipe/drag gesture where the action becomes eligible
+                        // at a certain threshold.
                         break;
 
                     case "GESTURE_THRESHOLD_DEACTIVATE":
                         num = HapticFeedbackConstants.GESTURE_THRESHOLD_DEACTIVATE;
-                        // The user is executing a swipe/drag gesture that can be canceled by moving back past the threshold.
+                        // The user is executing a swipe/drag gesture that can be canceled by moving
+                        // back past the threshold.
                         break;
 
                     case "KEYBOARD_PRESS":
@@ -850,12 +877,14 @@ public class WebInterface {
 
                     case "SEGMENT_FREQUENT_TICK":
                         num = HapticFeedbackConstants.SEGMENT_FREQUENT_TICK;
-                        // The user is switching between a series of many potential choices, like minutes on a clock face.
+                        // The user is switching between a series of many potential choices, like
+                        // minutes on a clock face.
                         break;
 
                     case "SEGMENT_TICK":
                         num = HapticFeedbackConstants.SEGMENT_TICK;
-                        // The user is switching between a series of potential choices, like items in a list.
+                        // The user is switching between a series of potential choices, like items in a
+                        // list.
                         break;
 
                     case "TEXT_HANDLE_MOVE":
@@ -892,5 +921,18 @@ public class WebInterface {
             }
         });
         return true;
+    }
+
+    @JavascriptInterface
+    public String getSystemAccentColor(String arg) {
+        if (arg == "supported") {
+            return String.valueOf(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S);
+        } else if (arg == "provider") {
+            return "Monet";
+        } else {
+            return String.format("#%06X",
+                    (0xFFFFFF & MaterialColors.getColor(mainActivity, com.google.android.material.R.attr.colorPrimary,
+                            ContextCompat.getColor(mainActivity, android.R.color.darker_gray))));
+        }
     }
 }

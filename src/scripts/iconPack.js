@@ -462,6 +462,11 @@ const iconPackConverter = [
         ],
         "icon": "settings"
     },
+    //GROOVE TWEAKS
+    {
+        "apps": ["groove.internal.tweaks"],
+        "icon": "groove-tweaks"
+    },
     //GAMES
     {
         "apps": [
@@ -649,7 +654,7 @@ const iconPackConverter = [
             "com.coloros.video",
             "com.huawei.himovie",
             "com.miui.videoplayer",
-            "com.samsung.android.video",    
+            "com.samsung.android.video",
             "com.coloros.video",
             "com.vivo.videoplayer",
             "com.sonyericsson.video",
@@ -683,11 +688,11 @@ const iconPackConverter = [
             "com.vivo.securedaemonservice",
             "com.oneplus.security",
         ],
-        "icon":"storage-sense"
+        "icon": "storage-sense"
     },
     //NOTES
     {
-        "apps":[
+        "apps": [
             "com.samsung.android.app.notes",
             "com.samsung.android.snote",
             "com.samsung.android.app.memo",
@@ -701,7 +706,7 @@ const iconPackConverter = [
             "com.asus.quickmemo",
             "com.lenovo.ideanotepad"
         ],
-        "icon":"notes"
+        "icon": "notes"
     }
 
     /* {

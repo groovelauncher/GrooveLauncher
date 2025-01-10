@@ -18,7 +18,8 @@ public class WebEvents {
         activityResume,
         appInstall,
         appUninstall,
-        animationDurationScaleChange
+        animationDurationScaleChange,
+        deepLink
     }
 
     WebEvents(Context c, WebView w) {

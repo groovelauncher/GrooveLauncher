@@ -27,6 +27,9 @@ import liveTileManager from "./scripts/liveTileManager.js";
 import { grooveThemes } from "./scripts/GrooveProperties.js";
 import applyOverscroll from "./scripts/overscrollFramework.js";
 import { } from "./scripts/updateManager.js"
+import StyleManager from "./scripts/styleManager.js";
+const styleManagerInstance = new StyleManager()
+window.styleManagerInstance = styleManagerInstance
 window.normalizeDiacritics = (input = "") => {
     return normalize(input)
 }
@@ -44,7 +47,8 @@ window.GrooveBoard = GrooveBoard
 const scrollers = {
     main_home_scroller: new GrooveSlide('#main-home-slider', {
         scrollX: true,
-        scrollY: false
+        scrollY: false,
+        startX: -window.innerWidth
     }),
     tile_page_scroller: new GrooveScroll('#main-home-slider > div > div:nth-child(1) > div.inner-page', {
         scrollX: false,
@@ -63,7 +67,6 @@ const scrollers = {
         mouseWheel: true,
     }),
 }
-
 window.scrollers = scrollers
 
 window.console.image = function (url, size = 100) {
@@ -103,14 +106,14 @@ const appTransitionScale = () => window.innerHeight / 850 / 2 + .5
 $(":root").css({ "--window-width": window.innerWidth + "px", "--window-height": window.innerHeight + "px", "--window-hypotenuse": (Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2))) + "px", "--app-transition-scale": appTransitionScale })
 
 scrollers.main_home_scroller.on("slideWillChange", function (e) {
-    if (e.pageX == 0) {
+    if (e.pageX == document.body.classList.contains("rtl") ? 1 : 0) {
         if (GrooveBoard.backendMethods.navigation.lastPush.change == "appMenuOpened") {
             GrooveBoard.backendMethods.navigation.back()
         }
         $("#search-icon").removeClass("shown");
     } else {
         GrooveBoard.backendMethods.navigation.push("appMenuOpened", () => { }, () => {
-            scrollers.main_home_scroller.scrollTo(0, 0, 750)
+            scrollers.main_home_scroller.scrollTo(document.body.classList.contains("rtl") ? -window.innerWidth : 0, 0, 750)
         })
         $("#search-icon").addClass("shown");
     }
@@ -119,7 +122,7 @@ scrollers.main_home_scroller.on("slideWillChange", function (e) {
 // Add scroll listener for more granular control
 scrollers.main_home_scroller.scroller.translater.hooks.on("beforeTranslate", function (p) {
     const position = scrollers.main_home_scroller.x;
-    if (position < -10) {
+    if (position < document.body.classList.contains("rtl") ? (-window.innerWidth + 10) : -10) {
         $("#search-icon").addClass("shown");
     } else {
         $("#search-icon").removeClass("shown");
@@ -321,3 +324,26 @@ window.liveTileManager = liveTileManager
 
 await i18n.init()
 i18n.translateDOM()
+
+window.addEventListener("deepLink", (e) => {
+    console.log(e)
+    const url = new URL(e.detail.url)
+    console.log("url", url)
+    setTimeout(() => {
+        if (url.protocol == "groove:") {
+            console.log("hoba")
+            if (url.pathname == "settings") {
+                Groove.launchApp("groove.internal.settings")
+                console.log("Groove Settings launch")
+                return;
+            }
+            if (url.searchParams.size) {
+                if (url.searchParams.get("installStyle")) {
+                    Groove.launchApp(`groove.internal.tweaks?installStyle=${url.searchParams.get("installStyle")}`)
+                    return;
+                }
+                console.log("Groove Tweaks launch")
+            }
+        }
+    }, 1000);
+})

@@ -16,12 +16,14 @@ import android.webkit.ValueCallback;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.splashscreen.SplashScreen;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -279,5 +281,26 @@ public class MainActivity extends AppCompatActivity {
 
         // Return true to indicate that you've created a custom thumbnail
         return true;
+    }
+
+    @Override
+    protected void onNewIntent(@NonNull Intent intent) {
+        super.onNewIntent(intent);
+
+        Uri data = intent.getData();
+        if (data != null) {
+            String url = data.toString();
+            try {
+                handleGrooveUrl(url);
+            } catch (JSONException ignored) {
+                Toast.makeText(this, "Error parsing URL", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void handleGrooveUrl(String url) throws JSONException {
+        JSONObject argument = new JSONObject();
+        argument.put("url", url);
+        webEvents.dispatchEvent(WebEvents.events.deepLink, argument);
     }
 }

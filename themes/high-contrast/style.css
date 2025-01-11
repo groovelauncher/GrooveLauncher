@@ -1,0 +1,42 @@
+/* title: High Contrast */
+/* author: [Berkay Tumal](https://github.com/berkaytumal) */
+/* icon: https://raw.githubusercontent.com/groovelauncher/GrooveLauncher/refs/heads/main/themes/high-contrast/icon.webp */
+/* description: High contrast theme for enhanced visibility and accessibility */
+
+#app {
+    --metro-transparent-2: black !important;
+    --accent-color: var(--metro-foreground);
+}
+#app div.app-list {
+    --accent-color: var(--metro-foreground);
+}
+#app div.app-list div.groove-app-tile div.groove-app-tile-icon {
+    background: black;
+    position: relative;
+}
+#app div.app-list div.groove-app-tile div.groove-app-tile-icon::after {
+    content: "";
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0px 0px 0px 3px var(--metro-foreground) !important;
+}
+#app #main-home-slider div.tile-list-page {
+    mix-blend-mode: normal !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+#app #main-home-slider div.slide-page-home.wallpaper-behind {
+    background-image: none !important;
+    background-color: var(--metro-background) !important;
+}
+#app #main-home-slider div.groove-home-tile div.groove-home-inner-tile {
+    box-shadow: inset 0px 0px 0px 3px var(--metro-foreground) !important;
+    background-color: black !important;
+}
+#app #main-home-slider div.groove-home-tile div.groove-home-inner-tile p.groove-home-tile-title {
+    color: white !important;
+    background: black !important;
+}

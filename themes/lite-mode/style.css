@@ -1,0 +1,108 @@
+/* title: Lite Mode */
+/* author: [Berkay Tumal](https://github.com/berkaytumal) */
+/* icon: https://raw.githubusercontent.com/groovelauncher/GrooveLauncher/refs/heads/main/themes/lite-mode/icon.webp */
+/* description: A lightweight theme optimized for older devices with reduced animations and processing requirements */
+
+:root {
+    --flow-perspective: 9999999999px;
+}
+* {
+    transform-style: flat !important;
+    perspective: 9999999999px;
+    --flow-rotate-scale: 0px !important;
+    --flow-touch-distance: 0px;
+    --shake-x: 0px !important;
+    --shake-y: 0px !important;
+}
+#app div.groove-home-tile.t_active, #app div.groove-app-tile.t_active, #app div.letter-selector-letter.t_active {
+    transform: scale(0.95);
+}
+#app div.tile-list-page {
+    max-width: none;
+    mix-blend-mode: normal !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+#app div.slide-page-home.wallpaper-behind {
+    background-size: cover !important;
+}
+#app div.slide-page-home.wallpaper-behind div.groove-home-tile {
+    background: transparent !important;
+    --metro-transparent-2: var(--accent-color);
+}
+#app div.slide-page-home.wallpaper-behind div.groove-home-tile div.live-tile-matrix-container {
+    background: var(--accent-color);
+}
+#app div.app-page-icon-banner {
+    background: transparent !important;
+}
+#app #main-home-slider div.slide-page-home.wallpaper-behind {
+    background-size: cover !important;
+    transition: opacity calc(.5s * var(--animation-duration-scale));
+}
+#app #main-home-slider.app-transition-on-pause div.slide-page-home.wallpaper-behind {
+    transition: opacity calc(.25s * var(--animation-duration-scale)) calc(.5s * var(--animation-duration-scale));
+    opacity: 0;
+}
+@keyframes live-tile-matrix-tile-flip {
+    0% {
+        animation-timing-function: ease-in;
+   }
+    9.99% {
+        animation-timing-function: ease-in;
+        transform: scaleY(0);
+   }
+    10% {
+        animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+        transform: scaleY(0);
+   }
+    100% {
+        animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+   }
+}
+@keyframes tileListAppTransitionAnim0 {
+    0% {
+        transform: translateX(0);
+   }
+    100% {
+        transform: translateX(-200px);
+        opacity: 0;
+   }
+}
+@keyframes tileListAppTransitionAnim1 {
+    0% {
+        transform: translateX(200px);
+        opacity: 0;
+   }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+   }
+}
+@keyframes tileListAppTransitionAnim2 {
+    0% {
+        transform: translateX(-200px);
+        opacity: 0;
+   }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+   }
+}
+@keyframes appListAppTransitionAnim0 {
+    0% {
+        transform: translateX(0);
+   }
+    100% {
+        transform: translateX(-200px);
+        opacity: 0;
+   }
+}
+@keyframes innerTileListAppTransitionAnim0 {
+    0% {
+        transform: none;
+   }
+    100% {
+        transform: none;
+   }
+}

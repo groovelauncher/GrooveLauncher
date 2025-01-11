@@ -1,5 +1,11 @@
-<img src="metadata/en-US/images/icon-transparent.png" width=100 style="margin-right:10px;">
-<h1 style="display: flex;align-items: center;">Groove Launcher</h1>
+<div align="center">
+  <img src="metadata/en-US/images/icon-transparent.png" width="120">
+  <h1>Groove Launcher</h1>
+  <p>A groovy personalized home screen experience</p>
+</div>
+
+[NEW! Get Themes For Groove Tweaks](THEMES.MD)
+---
 
 **Groove Launcher** is a metro-styled launcher designed for a customizable and sleek user experience. Users can personalize their launcher by adjusting tile sizes, changing tile positions, customizing the color theme, and setting their favorite wallpapers.
 

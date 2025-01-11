@@ -94,6 +94,42 @@ This will automatically install the app on your device if ADB debugging is enabl
 4. Swipe left to open the app list and find **Groove Settings**.
 5. In **Groove Settings**, you can set a wallpaper or choose an accent color that fits your style!
 
+## Writing Styles for Groove Tweaks
+
+### Metadata Requirements
+Your CSS file must include the following metadata at the top:
+```css
+/* title: Your Style Name */
+/* author: [Your Name](https://github.com/yourusername) */
+/* icon: https://link-to-your-icon.png */
+/* description: Brief description of your style */
+```
+
+### Example CSS Template
+```css
+/* title: Neon Groove Theme */
+/* author: [Example User](https://github.com/example) */
+/* icon: https://example.com/neon-icon.png */
+/* description: Weird ahh theme for Groove Launcher */
+
+#app {
+  background: #0a0a0a;
+}
+```
+
+### Hosting Your Style
+1. Host your CSS file on any of these platforms:
+   - GitHub Gist
+   - Any CDN service
+   - Your own server
+
+### Creating Quick Install Links
+Use this tool to generate installation links:
+[Groove Tweaks Link Generator](https://codepen.io/wellitsucks/full/ogvqZXZ)
+```
+groove:?installStyle=URL
+```
+This link opens up an install dialog in Groove Tweaks app.
 ## Contributing
 
 Contributions are most welcome! Feel free to submit issues and pull requests to help improve **Groove Launcher**.

@@ -15,6 +15,8 @@ import fontStore from "./fontStore";
 import LocaleStore from "./localeManager";
 import { localization } from "./localeManager";
 import liveTileManager from './liveTileManager';
+import StyleManager from './styleManager';
+const styleManagerInstance = new StyleManager();
 window.grooveTileColumns = grooveTileColumns;
 window.grooveColors = grooveColors;
 window.grooveThemes = grooveThemes;
@@ -1022,6 +1024,12 @@ const backendMethods = {
     get: () => {
       return window.animationDurationScale || window.parent.animationDurationScale || 1
     }
+  },
+  refreshStyles: () => {
+    document.querySelectorAll("style.custom-style").forEach(e => e.remove())
+    Object.keys(styleManagerInstance.getMetadata()).forEach(id=>{
+      styleManagerInstance.applyStyle(id)
+    })
   }
 
 };

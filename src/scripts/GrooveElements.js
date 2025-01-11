@@ -2,15 +2,17 @@ import GrooveBoard from "./GrooveBoard";
 import * as colorContrastDetector from "./colorContrastDetector"
 window.colorContrastDetector = colorContrastDetector
 const GrooveElements = {
-  wHomeTile: wHomeTile,
-  wAppTile: wAppTile,
-  wLetterTile: wLetterTile,
-  wAppMenu: wAppMenu,
-  wTileMenu: wTileMenu,
-  wAppView: wAppView,
-  wAlertView: wAlertView,
-  wListView, wListView,
-  wListViewItem: wListViewItem
+  wHomeTile,
+  wAppTile,
+  wLetterTile,
+  wAppMenu,
+  wTileMenu,
+  wAppView,
+  wAlertView,
+  wListView,
+  wListViewItem,
+  wAppBar,
+  wAppBarItem
 };
 function wHomeTile(
   // imageIcon = false,
@@ -299,5 +301,91 @@ function wListViewItem(title, description) {
     listViewItem.classList.add("single-line")
   }
   return listViewItem;
+}
+function wAppBar(elements = []) {
+  console.log("elements", elements)
+  const appBar = document.createElement("div");
+  appBar.classList.add("groove-element");
+  appBar.classList.add("groove-app-bar");
+  appBar.classList.add("hidden");
+  appBar.state = 0
+  appBar.innerHTML = `
+    <div class="groove-app-bar-toggle">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 5">
+        <ellipse cx="2.5" cy="2.5" rx="2.5" ry="2.5"></ellipse>
+        <ellipse cx="12.5" cy="2.5" rx="2.5" ry="2.5"></ellipse>
+        <ellipse cx="22.5" cy="2.5" rx="2.5" ry="2.5"></ellipse>
+      </svg>
+    </div>
+    <div class="groove-app-bar-top"></div>
+    <div class="groove-app-bar-bottom"></div>`
+  appBar.append = (item) => {
+    appBar.querySelector(item.type == "text" ? ".groove-app-bar-bottom" : ".groove-app-bar-top").append(item)
+  }
+  appBar.querySelector(".groove-app-bar-toggle").addEventListener("flowClick", () => {
+    appBar.setState(appBar.state == 1 ? 2 : 1)
+  })
+  try {
+    elements.forEach(e => {
+      console.log("e", e)
+      var item
+      if (e["size"]) {
+        console.log("karar", 0)
+        item = wAppBarItem(e.title, e.icon, e["size"], e["action"])
+      } else if (e["action"]) {
+        console.log("karar", 1)
+        item = wAppBarItem(e.title, e.icon, e["action"])
+      } else {
+        console.log("karar", 2)
+        item = wAppBarItem(e.title, e.icon)
+      }
+      appBar.append(item)
+    })
+  } catch (error) {
+    console.error("Corrupted app bar data")
+    throw error
+  }
+  appBar.setState = (state) => {
+    if (appBar.state == 0 && state != 0) {
+      appBar.classList.add("jump-up")
+      setTimeout(() => {
+        appBar.classList.remove("jump-up")
+      }, 500);
+    }
+    appBar.state = state == 0 ? 0 : state == 1 ? 1 : 2
+    appBar.classList.remove("shown", "hidden", "expanded")
+    appBar.classList.add(state == 0 ? "hidden" : state == 1 ? "shown" : "expanded")
+  }
+  return appBar
+}
+function wAppBarItem(title, icon, sizeaction, action) {
+  console.log("wAppBarItem", title, icon, sizeaction, action)
+  const appBarItem = document.createElement("div");
+  appBarItem.classList.add("groove-element");
+  appBarItem.classList.add("groove-app-bar-item");
+  const type = icon ? (icon.length <= 3 ? "glyph-icon" : "image-icon") : "text"
+  appBarItem.type = type
+  var nAction;
+  var nSize = "23px"
+  if (sizeaction) {
+    if (typeof sizeaction == "function") {
+      nAction = sizeaction
+    } else {
+      nSize = sizeaction
+      if (action) if (typeof action == "function") nAction = action
+    }
+  }
+  console.log("NKARAR", nSize, nAction)
+  appBarItem.classList.add(`groove-app-bar-item-${type}`)
+  appBarItem.innerHTML = `${type == "glyph-icon" ? `<div class="groove-app-bar-icon-frame"><p class="groove-app-bar-item-icon" style="font-size:${nSize};">${icon}</p></div>` : type == "image-icon" ? `<div class="groove-app-bar-icon-frame"><img class="groove-app-bar-item-icon" src="${icon}" style="width:${nSize};height:${nSize};"></div>` : ""}
+    <p class="groove-app-bar-item-title"></p>`
+  appBarItem.querySelector("p.groove-app-bar-item-title").innerText = title
+  appBarItem.title = title
+  appBarItem.icon = icon
+  appBarItem.action = nAction
+  appBarItem.addEventListener("flowClick", () => {
+    if (nAction) nAction()
+  })
+  return appBarItem;
 }
 export default GrooveElements;

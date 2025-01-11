@@ -309,6 +309,7 @@ startUpSequence([
     function () {
         GrooveBoard.boardMethods.finishLoading()
         setTimeout(() => {
+            GrooveBoard.backendMethods.refreshStyles()
             if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true); else GrooveBoard.backendMethods.setUIScale(.8, true)
         }, 500);
     }

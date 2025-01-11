@@ -84,6 +84,7 @@ class StyleManager {
             const style = await this.getStyle(id);
             if (style) {
                 const styleElement = document.createElement('style');
+                styleElement.classList.add("custom-style")
                 styleElement.textContent = style.content;
                 document.head.appendChild(styleElement);
                 return true;

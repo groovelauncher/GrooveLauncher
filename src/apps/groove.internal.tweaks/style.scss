@@ -42,14 +42,14 @@
 
             .settings-page-2 {
                 transform-style: preserve-3d;
-                transition: opacity .25s cubic-bezier(0.075, 0.82, 0.165, 1);
+                transition: opacity .25s var(--flow-ease-out);
                 height: 100%;
                 float: left;
                 width: calc(100% - 22px * 0);
                 opacity: 0;
                 //overflow: hidden;
                 --page-swipe-translate: 0px;
-                animation: page-swipe-translate .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+                animation: page-swipe-translate .5s var(--flow-ease-out);
                 perspective: var(--flow-perspective);
 
                 @keyframes page-swipe-translate {
@@ -66,7 +66,7 @@
 
 
                 p.groove-list-view-item-description {
-                    animation: groove-list-view-item-description-page-skew .75s cubic-bezier(0.075, 0.82, 0.165, 1);
+                    animation: groove-list-view-item-description-page-skew .75s var(--flow-ease-out);
 
                     @keyframes groove-list-view-item-description-page-skew {
                         from {
@@ -100,52 +100,20 @@ body {
 
     &.shown {
         .innerApp {
-            animation: app-intro-animation calc(.5s * var(--animation-duration-scale)) cubic-bezier(0.075, 0.82, 0.165, 1) forwards, app-intro-skew .5s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+            animation: app-intro-animation calc(.5s * var(--animation-duration-scale)) var(--flow-ease-out) forwards, app-intro-skew .5s var(--flow-ease-out) forwards;
         }
 
         div.groove-list-view {
             &.skew {
                 div.groove-list-view-item {
                     opacity: 0;
-                    animation: app-intro-animation calc(.5s * var(--animation-duration-scale)) calc(var(--index) * .05s * var(--animation-duration-scale)) cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+                    animation: app-intro-animation calc(.5s * var(--animation-duration-scale)) calc(var(--index) * .05s * var(--animation-duration-scale)) var(--flow-ease-out) forwards;
                 }
             }
         }
     }
 
-    @keyframes app-intro-animation {
-        0% {
-            transform: rotateY(75deg) translateX(100px);
-            transform-origin: 0px 50%;
-            opacity: 0;
 
-        }
-
-        100% {
-            transform: rotateY(0deg) translateX(0px);
-            ;
-            transform-origin: 0px 50%;
-
-            opacity: 1;
-        }
-    }
-
-    @keyframes app-intro-animation-2 {
-        0% {
-            transform: rotateY(-75deg) translateX(-100px);
-            transform-origin: 0px 50%;
-            opacity: 0;
-
-        }
-
-        100% {
-            transform: rotateY(0deg) translateX(0px);
-            ;
-            transform-origin: 0px 50%;
-
-            opacity: 1;
-        }
-    }
 
     &.soft-exit {
         animation: app-outro-animation calc(.15s * var(--animation-duration-scale)) cubic-bezier(0.83, 0.00, 0.92, 0.18) forwards;
@@ -155,37 +123,7 @@ body {
         animation: app-outro-animation-2 calc(.15s * var(--animation-duration-scale)) cubic-bezier(0.83, 0.00, 0.92, 0.18) forwards;
     }
 
-    @keyframes app-outro-animation {
-        to {
-            transform: rotateY(150deg) translateX(200px);
-            transform-origin: 0px 50%;
-            opacity: 0;
 
-        }
-
-        from {
-            transform: rotateY(0deg);
-            transform-origin: 0px 50%;
-
-            opacity: 1;
-        }
-    }
-
-    @keyframes app-outro-animation-2 {
-        to {
-            transform: translateX(-25vw) rotateY(-30deg);
-            transform-origin: 0px 50%;
-            opacity: 0;
-
-        }
-
-        from {
-            transform: rotateY(0deg);
-            transform-origin: 0px 50%;
-
-            opacity: 1;
-        }
-    }
 }
 
 h1.app-title {
@@ -230,7 +168,7 @@ div.app-tabs {
 
     p {
         white-space: nowrap;
-        transition: transform var(--duration) cubic-bezier(0.075, 0.82, 0.165, 1);
+        transition: transform var(--duration) var(--flow-ease-out);
         margin: 0px;
         margin-right: 25px;
         opacity: .5;
@@ -281,7 +219,7 @@ div.app-tabs {
         .settings-page {
             transform-style: preserve-3d !important;
             perspective: var(--flow-perspective);
-            transition: opacity .25s cubic-bezier(0.075, 0.82, 0.165, 1);
+            transition: opacity .25s var(--flow-ease-out);
             height: 100%;
             float: left;
             width: calc(100vw - 22px * 2);
@@ -303,7 +241,7 @@ div.app-tabs {
 
             &.active-page {
                 --page-swipe-translate: 0px;
-                animation: page-swipe-translate .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+                animation: page-swipe-translate .5s var(--flow-ease-out);
 
                 @keyframes page-swipe-translate {
                     from {
@@ -319,7 +257,7 @@ div.app-tabs {
 
 
                 p.groove-list-view-item-description {
-                    animation: groove-list-view-item-description-page-skew .75s cubic-bezier(0.075, 0.82, 0.165, 1);
+                    animation: groove-list-view-item-description-page-skew .75s var(--flow-ease-out);
 
                     @keyframes groove-list-view-item-description-page-skew {
                         from {
@@ -517,8 +455,8 @@ a {
             }
         }
 
-        transition: background-color calc(.5s * var(--animation-duration-scale)) cubic-bezier(0.075, 0.82, 0.165, 1),
-        color calc(.5s * var(--animation-duration-scale)) cubic-bezier(0.075, 0.82, 0.165, 1);
+        transition: background-color calc(.5s * var(--animation-duration-scale)) var(--flow-ease-out),
+        color calc(.5s * var(--animation-duration-scale)) var(--flow-ease-out);
     }
 
     display: flex;
@@ -825,12 +763,12 @@ body:not(.soft-exit):not(.soft-exit-home) {
 
     .shown-page {
         &.innerApp {
-            animation: app-intro-animation-2 calc(.5s * var(--animation-duration-scale)) calc(.25s * var(--animation-duration-scale)) cubic-bezier(0.075, 0.82, 0.165, 1) forwards !important;
+            animation: app-intro-animation-2 calc(.5s * var(--animation-duration-scale)) calc(.25s * var(--animation-duration-scale)) var(--flow-ease-out) forwards !important;
 
         }
 
         &.innerAppPage {
-            animation: app-intro-animation calc(.5s * var(--animation-duration-scale)) calc(.25s * var(--animation-duration-scale)) cubic-bezier(0.075, 0.82, 0.165, 1) forwards !important;
+            animation: app-intro-animation calc(.5s * var(--animation-duration-scale)) calc(.25s * var(--animation-duration-scale)) var(--flow-ease-out) forwards !important;
 
         }
 
@@ -955,7 +893,7 @@ button.metro-button.spinner {
         }
 
         div.expanded-panel {
-            transition: transform calc(.1s * var(--animation-duration-scale)) cubic-bezier(0.075, 0.82, 0.165, 1);
+            transition: transform calc(.1s * var(--animation-duration-scale)) var(--flow-ease-out);
             position: relative;
         }
 
@@ -1114,10 +1052,10 @@ div.color-picker-controls {
     z-index: 9999;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 120px;
+    background-size: 150px;
 
     &.shown {
-        animation: app-intro-animation calc(.5s * var(--animation-duration-scale)) cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+        animation: app-intro-animation calc(.5s * var(--animation-duration-scale)) var(--flow-ease-out) forwards;
     }
 }
 
@@ -1131,6 +1069,20 @@ div.install-flyout {
     z-index: 10;
     display: flex;
     justify-content: center;
+    animation: flyout-enter .5s var(--flow-ease-out);
+    &.hidden{
+        animation: flyout-leave .1s ease-in forwards !important;
+        @keyframes flyout-leave {
+            to {
+                transform: translateY(100%);
+            }
+        }
+    }
+    @keyframes flyout-enter {
+        from {
+            transform: translateY(100%);
+        }
+    }
 
     div.install-flyout-inner {
         position: relative;
@@ -1182,11 +1134,13 @@ div.groove-list-view {
     div.groove-list-view-item {
         transition: transform var(--flow-touch-up-transition) ease-out, height calc(.2s * var(--animation-duration-scale)) ease-in !important;
         height: 83px;
-        p{
+
+        p {
             white-space: nowrap;
             text-overflow: ellipsis;
             overflow: hidden;
         }
+
         &.active {
             transition: transform var(--flow-touch-down-transition) ease-in-out, height calc(.2s * var(--animation-duration-scale)) ease-in !important;
 
@@ -1207,7 +1161,7 @@ div.groove-list-view {
         }
 
         div.expanded-panel {
-            transition: transform calc(.1s * var(--animation-duration-scale)) cubic-bezier(0.075, 0.82, 0.165, 1);
+            transition: transform calc(.1s * var(--animation-duration-scale)) var(--flow-ease-out);
             position: relative;
         }
 

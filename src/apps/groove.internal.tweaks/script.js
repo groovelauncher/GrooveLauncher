@@ -178,73 +178,7 @@ function activeTabScroll() {
 }
 window.activeTabScroll = activeTabScroll
 window.scrollers = {
-    /*home: new GrooveScroll("#home-tab", {
-        bounceTime: 300,
-        swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1,
-        scrollbar: true
-    }),
-    accentColorCatalogue: new GrooveScroll("div.accent-color-catalogue", {
-        bounceTime: 300,
-        swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1,
-        scrollbar: false
-    }),
-    customColorSelector: new GrooveScroll("div.custom-color-selector", {
-        bounceTime: 300,
-        swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1,
-        scrollbar: false,
-        eventPassthrough: "horizontal"
-    }),
-    apps: new GrooveScroll("#apps-tab", {
-        bounceTime: 300,
-        swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1,
-        scrollbar: true
-    }),
-    theme: new GrooveScroll("#theme-tab", {
-        bounceTime: 300,
-        swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1,
-        scrollbar: true
-    }),
-    rotationLock: new GrooveScroll("#rotation-lock-tab", {
-        bounceTime: 300,
-        swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1,
-        scrollbar: true
-    }),
-    language: new GrooveScroll("#language-tab", {
-        bounceTime: 300,
-        swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1,
-        scrollbar: true
-    }),
-    easeOfAccess: new GrooveScroll("#ease-of-access-tab", {
-        bounceTime: 300,
-        swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1,
-        scrollbar: true
-    }),
-    advanced: new GrooveScroll("#advanced-tab", {
-        bounceTime: 300,
-        swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1,
-        scrollbar: true
-    }),
-    about: new GrooveScroll("#about-tab", {
-        bounceTime: 300,
-        swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1,
-        scrollbar: true
-    }),
-    appDetail: new GrooveScroll("#app-detail-tab", {
-        bounceTime: 300,
-        swipeBounceTime: 200,
-        outOfBoundaryDampingFactor: 1,
-        scrollbar: true
-    }),*/
+
 }
 setTimeout(() => {
     Object.values(scrollers).forEach(e => e.refresh())
@@ -267,6 +201,7 @@ function showPageAnim() {
     setTimeout(() => {
         document.querySelector("div.innerApp").style.removeProperty("visibility")
         document.querySelector("#splashscreen").remove()
+        appBar.setState(1)
     }, 1000);
 }
 
@@ -319,35 +254,36 @@ import styleManager from "../../scripts/styleManager";
 const styleManagerInstance = new styleManager();
 window.styleManagerInstance = styleManagerInstance
 if (new URL(location.href).searchParams.get("launchArgs") != null) {
-    const launchArgs = new URL("groove:?" + new URL(location.href).searchParams.get("launchArgs").replace(/^"|"$/g, ''))
+    const launchArgs = new URL("groove:?" + new URL(location.href).searchParams.get("launchArgs").replaceAll("\"", ""))
     console.log(launchArgs)
-    if (launchArgs.searchParams.get("installStyle")) {
-        console.log("installing style")
-        fetch(launchArgs.searchParams.get("installStyle"))
-            .then(response => response.text())
-            .then(cssText => {
+    setTimeout(() => {
+        if (launchArgs.searchParams.get("installStyle")) {
+            console.log("installing style", launchArgs.searchParams.get("installStyle"))
+            fetch(decodeURIComponent(launchArgs.searchParams.get("installStyle")))
+                .then(response => response.text())
+                .then(cssText => {
 
-                console.log("css", cssText)
+                    console.log("css", cssText)
 
 
-                // Regular expressions to extract metadata
-                const titleMatch = cssText.match(/\/\* title: (.*?) \*\//);
-                const authorMatch = cssText.match(/\/\* author: (.*?) \*\//);
-                const iconMatch = cssText.match(/\/\* icon: (.*?) \*\//);
-                const descriptionMatch = cssText.match(/\/\* description: (.*?) \*\//);
+                    // Regular expressions to extract metadata
+                    const titleMatch = cssText.match(/\/\* title: (.*?) \*\//);
+                    const authorMatch = cssText.match(/\/\* author: (.*?) \*\//);
+                    const iconMatch = cssText.match(/\/\* icon: (.*?) \*\//);
+                    const descriptionMatch = cssText.match(/\/\* description: (.*?) \*\//);
 
-                let metadata = {
-                    title: titleMatch ? titleMatch[1] : 'No title',
-                    author: authorMatch ? authorMatch[1] : 'No author',
-                    icon: iconMatch ? iconMatch[1] : 'No icon',
-                    description: descriptionMatch ? descriptionMatch[1] : 'No description',
-                };
-                const flyout = document.createElement("div")
-                flyout.classList.add("install-flyout")
-                const author = metadata.author.match(/\[(.*?)\]\((.*?)\)/);
-                const authorHTML = author ? author[1] : metadata.author;
+                    let metadata = {
+                        title: titleMatch ? titleMatch[1] : 'No title',
+                        author: authorMatch ? authorMatch[1] : 'No author',
+                        icon: iconMatch ? iconMatch[1] : 'No icon',
+                        description: descriptionMatch ? descriptionMatch[1] : 'No description',
+                    };
+                    const flyout = document.createElement("div")
+                    flyout.classList.add("install-flyout")
+                    const author = metadata.author.match(/\[(.*?)\]\((.*?)\)/);
+                    const authorHTML = author ? author[1] : metadata.author;
 
-                flyout.innerHTML = `
+                    flyout.innerHTML = `
                 <div class="install-flyout-inner">
                 <img class="install-flyout-icon" src="${metadata.icon}">
                 <p class="install-flyout-title">${metadata.title}</p>
@@ -356,36 +292,45 @@ if (new URL(location.href).searchParams.get("launchArgs") != null) {
                 <button class="install-flyout-install">Install</button>
                 </div>
                 `
-                if (author) {
-                    flyout.querySelector("p.install-flyout-author").addEventListener("click", () => {
-                        parent.GrooveBoard.alert("External Link Warning", "This link opens up an external website. Proceed with caution.", [{
-                            title: "Proceed", style: "default", action: () => {
-                                Groove.openURL(author[2])
-                            }
-                        }, { title: "Cancel", style: "default", action: () => { } }])
-                    })
-                }
-                window.parent.GrooveBoard.backendMethods.navigation.push("appMenuOpened", () => { }, () => {
-                    flyout.remove()
-                })
-                flyout.querySelector("button.install-flyout-install").addEventListener("click", async (e) => {
-                    e.target.innerText = "Installing..."
-                    try {
-                        styleManagerInstance.installStyle(cssText)
-                        flyout.remove()
-                        parent.GrooveBoard.alert("Style Installed", "The style has been installed successfully.", [{ title: "OK", style: "default", action: () => { refreshList() } }])
-                        refreshList()
-                    } catch (error) {
-                        parent.GrooveBoard.alert("Error", "An error occurred while installing the style. Please try again later.", [{ title: "OK", style: "default", action: () => { } }])
-
+                    if (author) {
+                        flyout.querySelector("p.install-flyout-author").addEventListener("click", () => {
+                            parent.GrooveBoard.alert("External Link Warning", "This link opens up an external website. Proceed with caution.", [{
+                                title: "Proceed", style: "default", action: () => {
+                                    Groove.openURL(author[2])
+                                }
+                            }, { title: "Cancel", style: "default", action: () => { } }])
+                        })
                     }
+                    window.parent.GrooveBoard.backendMethods.navigation.push("appMenuOpened", () => { }, () => {
+                        flyout.classList.add("hidden")
+                        setTimeout(() => {
+                            flyout.remove()
+                        }, 500);
+                    })
+                    flyout.querySelector("button.install-flyout-install").addEventListener("click", async (e) => {
+                        e.target.innerText = "Installing..."
+                        try {
+                            styleManagerInstance.installStyle(cssText)
+                            flyout.remove()
+                            parent.GrooveBoard.alert("Style Installed", "The style has been installed successfully.", [{
+                                title: "OK", style: "default", action: () => {
+                                    refreshList(); window.parent.GrooveBoard.backendMethods.refreshStyles()
+                                }
+                            }])
+                            refreshList()
+                            window.parent.GrooveBoard.backendMethods.refreshStyles()
+                        } catch (error) {
+                            parent.GrooveBoard.alert("Error", "An error occurred while installing the style. Please try again later.", [{ title: "OK", style: "default", action: () => { } }])
 
+                        }
+
+                    })
+                    document.body.appendChild(flyout)
+                    console.log("metadata", metadata)
                 })
-                document.body.appendChild(flyout)
-                console.log("metadata", metadata)
-            })
-            .catch(error => console.error('Error loading CSS:', error));
-    }
+                .catch(error => console.error('Error loading CSS:', error));
+        }
+    }, 1000);
 
     //alert("aldım bak")
 
@@ -393,9 +338,9 @@ if (new URL(location.href).searchParams.get("launchArgs") != null) {
 function refreshList(soft = false) {
     const metadata = styleManagerInstance.getMetadata()
     const listView = document.querySelector("#home-tab > div.groove-list-view")
-    if(!soft)listView.innerHTML = ""
+    if (!soft) listView.innerHTML = ""
     if (Object.keys(metadata).length && !soft) {
-        Object.entries(metadata).forEach(([id,data]) => {
+        Object.entries(metadata).forEach(([id, data]) => {
             const author = (data["author"] || "No author").match(/\[(.*?)\]\((.*?)\)/);
             const authorHTML = author ? author[1] : metadata.author;
             const currentItem = GrooveElements.wListViewItem(
@@ -422,7 +367,7 @@ function refreshList(soft = false) {
         ]
         listView.querySelector("p").innerText = responses[Math.floor(Math.random() * responses.length)]
     }
-    window.parent.GrooveBoard.backendMethods.updateStyles()
+
 }
 refreshList()
 function onItemClick(el) {
@@ -451,6 +396,7 @@ function onItemClick(el) {
             styleManagerInstance.removeStyle(item.style_id)
             item.remove()
             refreshList(true)
+            window.parent.GrooveBoard.backendMethods.refreshStyles()
         })
 
         setTimeout(() => {
@@ -462,3 +408,106 @@ function onItemClick(el) {
     }
 
 }
+const appBar = GrooveElements.wAppBar([
+    {
+        title: "Add", icon: "󰐕", size: "38px", action: () => {
+            var alertView;
+            alertView = window.parent.GrooveBoard.alert(
+                "Enter the style url",
+                "<input type='url' placeholder='style url' class='metro-text-input enter-style-url' style='width:100%;'>",
+                [{
+                    title: "add", style: "default", inline: true, action: () => {
+                        const url = alertView.querySelector("input.enter-style-url").value
+                        if (url.endsWith(".css")) {
+                            fetch(url)
+                                .then(response => response.text())
+                                .then(cssText => {
+
+                                    console.log("css", cssText)
+
+
+                                    // Regular expressions to extract metadata
+                                    const titleMatch = cssText.match(/\/\* title: (.*?) \*\//);
+                                    const authorMatch = cssText.match(/\/\* author: (.*?) \*\//);
+                                    const iconMatch = cssText.match(/\/\* icon: (.*?) \*\//);
+                                    const descriptionMatch = cssText.match(/\/\* description: (.*?) \*\//);
+
+                                    let metadata = {
+                                        title: titleMatch ? titleMatch[1] : 'No title',
+                                        author: authorMatch ? authorMatch[1] : 'No author',
+                                        icon: iconMatch ? iconMatch[1] : 'No icon',
+                                        description: descriptionMatch ? descriptionMatch[1] : 'No description',
+                                    };
+                                    const flyout = document.createElement("div")
+                                    flyout.classList.add("install-flyout")
+                                    const author = metadata.author.match(/\[(.*?)\]\((.*?)\)/);
+                                    const authorHTML = author ? author[1] : metadata.author;
+
+                                    flyout.innerHTML = `
+                                <div class="install-flyout-inner">
+                                <img class="install-flyout-icon" src="${metadata.icon}">
+                                <p class="install-flyout-title">${metadata.title}</p>
+                                <p class="install-flyout-author">${authorHTML}</p>
+                                <p class="install-flyout-description">${metadata.description}</p>
+                                <button class="install-flyout-install">Install</button>
+                                </div>
+                                `
+                                    if (author) {
+                                        flyout.querySelector("p.install-flyout-author").addEventListener("click", () => {
+                                            parent.GrooveBoard.alert("External Link Warning", "This link opens up an external website. Proceed with caution.", [{
+                                                title: "Proceed", style: "default", action: () => {
+                                                    Groove.openURL(author[2])
+                                                }
+                                            }, { title: "Cancel", style: "default", action: () => { } }])
+                                        })
+                                    }
+                                    window.parent.GrooveBoard.backendMethods.navigation.push("appMenuOpened", () => { }, () => {
+                                        flyout.classList.add("hidden")
+                                        setTimeout(() => {
+                                            flyout.remove()
+                                        }, 500);
+                                    })
+                                    flyout.querySelector("button.install-flyout-install").addEventListener("click", async (e) => {
+                                        e.target.innerText = "Installing..."
+                                        try {
+                                            styleManagerInstance.installStyle(cssText)
+                                            flyout.remove()
+                                            parent.GrooveBoard.alert("Style Installed", "The style has been installed successfully.", [{
+                                                title: "OK", style: "default", action: () => {
+                                                    refreshList(); window.parent.GrooveBoard.backendMethods.refreshStyles()
+                                                }
+                                            }])
+                                            refreshList()
+                                            window.parent.GrooveBoard.backendMethods.refreshStyles()
+                                        } catch (error) {
+                                            parent.GrooveBoard.alert("Error", "An error occurred while installing the style. Please try again later.", [{ title: "OK", style: "default", action: () => { } }])
+
+                                        }
+
+                                    })
+                                    document.body.appendChild(flyout)
+                                    console.log("metadata", metadata)
+                                })
+                                .catch(error => {
+                                    console.error('Error loading CSS:', error)
+                                    parent.GrooveBoard.alert("Error", "An error occurred while loading the CSS file. Please check the URL and try again.", [{ title: "OK", style: "default", action: () => { } }])
+                                });
+                        } else {
+                            parent.GrooveBoard.alert("Error", "The URL you entered is not a valid CSS file.", [{ title: "OK", style: "default", action: () => { } }])
+                        }
+
+                    }
+                },
+                {
+                    title: "cancel", style: "default", inline: true, action: () => { }
+                }]
+            );
+            setTimeout(() => {
+                alertView.querySelector("input.enter-style-url").focus()
+            }, 250);
+            console.log("alertView", alertView)
+        }
+    }
+])
+document.body.append(appBar)
+window.appBar = appBar

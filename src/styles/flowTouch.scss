@@ -4,6 +4,7 @@
     --flow-touch-down-transition: calc(.025s * var(--animation-duration-scale));
     --flow-touch-up-transition: calc(.25s * var(--animation-duration-scale));
     --flow-perspective: 1000px; //calc(min(100vw, 100vh));
+    --flow-ease-out: cubic-bezier(.25, 1, .25, 1);
 }
 
 
@@ -152,10 +153,11 @@
 
 .metro-toggle-switch {
     --transition: 0;
-    --transition-flick:0;
+    --transition-flick: 0;
+
     &[checked] {
         --transition: 1;
-        --transition-flick:0;
+        --transition-flick: 0;
     }
 
     background: var(--metro-background);
@@ -178,8 +180,9 @@
         position: absolute;
         left: calc(2px + var(--transition)* 69px);
         transform: translateX(calc(2px + var(--transition-flick)* 69px));
-       
+
     }
+
     &.t_active {
         &::after {
             transition: transform .5s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -284,5 +287,220 @@
         width: calc(var(--value-2) * 100%);
         height: 100%;
         background: var(--value-2-color);
+    }
+}
+
+@keyframes app-intro-animation {
+    0% {
+        transform: rotateY(75deg) translateX(100px);
+        transform-origin: 0px 50%;
+        opacity: 1;
+
+    }
+
+    100% {
+        transform: rotateY(0deg) translateX(0px);
+        ;
+        transform-origin: 0px 50%;
+
+        opacity: 1;
+    }
+}
+
+@keyframes app-intro-animation-2 {
+    0% {
+        transform: rotateY(-75deg) translateX(-100px);
+        transform-origin: 0px 50%;
+        opacity: 1;
+
+    }
+
+    100% {
+        transform: rotateY(0deg) translateX(0px);
+        ;
+        transform-origin: 0px 50%;
+
+        opacity: 1;
+    }
+}
+
+@keyframes app-outro-animation {
+    100% {
+        transform: rotateY(150deg) translateX(200px);
+        transform-origin: 0px 50%;
+        opacity: 0;
+
+    }
+
+    99.99% {
+        opacity: 1;
+    }
+
+    0% {
+        transform: rotateY(0deg);
+        transform-origin: 0px 50%;
+
+        opacity: 1;
+    }
+}
+
+@keyframes app-outro-animation-2 {
+    100% {
+        transform: translateX(-25vw) rotateY(-30deg);
+        transform-origin: 0px 50%;
+        opacity: 0;
+
+    }
+
+    99.99% {
+        opacity: 1;
+    }
+
+    0% {
+        transform: rotateY(0deg);
+        transform-origin: 0px 50%;
+
+        opacity: 1;
+    }
+}
+
+
+div.groove-element {
+    &.groove-app-bar {
+        &.expanded {
+            div.groove-app-bar-top {
+                div.groove-app-bar-item {
+                    height: 102px;
+
+                    p.groove-app-bar-item-title {
+                        transition: opacity 0s;
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+
+        &.jump-up {
+            div.groove-app-bar-top {
+                animation: groove-app-bar-jump-up .4s .05s cubic-bezier(.2, 1.75, .6, 1) forwards;
+                opacity: 0;
+            }
+
+            @keyframes groove-app-bar-jump-up {
+                from {
+                    transform: translateY(72px);
+                    opacity: 1;
+                }
+
+                to {
+                    transform: translateY(0px);
+                    opacity: 1;
+                }
+            }
+        }
+
+        div.groove-app-bar-top,
+        div.groove-app-bar-bottom {
+            display: flex;
+            transform-style: preserve-3d;
+        }
+
+        div.groove-app-bar-top {
+            flex-direction: row;
+            justify-content: center;
+        }
+
+        div.groove-app-bar-toggle {
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            height: 100%;
+            width: 75px;
+            z-index: 10;
+
+            svg {
+                pointer-events: none;
+                fill: var(--metro-foreground);
+                width: 25px;
+                position: absolute;
+                top: 12px;
+                right: 25px;
+            }
+        }
+
+        perspective: var(--flow-perspective);
+        perspective-origin: 50% calc(100% - 50vh);
+        background-color: var(--metro-app-bar);
+        position: fixed;
+        bottom: 0px;
+        padding-bottom: var(--window-inset-bottom, 0px);
+        box-sizing: border-box;
+        left: 0px;
+        width: 100%;
+        transition: .2s var(--flow-ease-out);
+
+        &.hidden {
+            transform: translateY(100%);
+        }
+
+        div.groove-app-bar-top {
+            div.groove-app-bar-item {
+                transform-style: preserve-3d;
+                @include flow-touch;
+                transition: height .2s var(--flow-ease-out), transform var(--flow-touch-up-transition) ease-out;
+                width: calc(48px + 37px);
+                height: 72px;
+
+                p.groove-app-bar-item-title {
+                    transition: opacity 0s .2s;
+                    opacity: 0;
+                    margin: 0px;
+                    position: absolute;
+                    top: 66px;
+                    left: 0px;
+                    width: 100%;
+                    text-align: center;
+                    font-size: 13px;
+                }
+
+                * {
+                    pointer-events: none;
+                }
+
+                &.e_active {
+                    div.groove-app-bar-icon-frame {
+                        background-color: var(--accent-color);
+                        box-shadow: inset 0px 0px 0px 3px var(--accent-color);
+                    }
+                }
+
+                div.groove-app-bar-icon-frame {
+                    position: absolute;
+                    left: calc(37px / 2);
+                    top: 12px;
+                    transform-style: preserve-3d;
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
+                    box-sizing: border-box;
+                    box-shadow: inset 0px 0px 0px 3px var(--metro-foreground);
+                    background-color: var(--metro-app-bar);
+                    p.groove-app-bar-item-icon{
+                        position: absolute;
+                        left: 0px;
+                        top: 0px;
+                        width: 100%;
+                        height: 100%;
+                        font-size: 23px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin: 0px;
+                        padding: 0px;
+                    }
+                }
+            }
+        }
+
     }
 }

@@ -1,0 +1,1 @@
+Enjoy a refreshed Groove Launcher experience! This update includes a new splash screen, haptic feedback, improved locale updating, system animation syncing, and a handy new Groove Tweaks app for customizing your launcher.  Plus, update notifications are now displayed on your home screen.

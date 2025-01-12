@@ -130,7 +130,6 @@ document.querySelector("#page-welcome button.right-btn").addEventListener("flowC
         goToPage(5)
         history.push(5)
     }
-
 })
 document.querySelector("#page-wizard button.left-btn").addEventListener("flowClick", (e) => {
     goToPage(history.slice(-2)[0])

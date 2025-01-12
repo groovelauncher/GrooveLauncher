@@ -1,0 +1,50 @@
+#app {
+    --metro-transparent-2: black !important;
+    --accent-color: var(--metro-foreground);
+
+    div.app-list {
+        --accent-color: var(--metro-foreground);
+
+        div.groove-app-tile {
+            div.groove-app-tile-icon {
+                background: black;
+                position: relative;
+                &::after {
+                    content: "";
+                    position: absolute;
+                    left: 0px;
+                    top: 0px;
+                    width: 100%;
+                    height: 100%;
+                    box-shadow: inset 0px 0px 0px 3px var(--metro-foreground) !important;
+                }
+
+                img {}
+            }
+        }
+    }
+
+    #main-home-slider {
+        div.tile-list-page {
+            mix-blend-mode: normal !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        div.slide-page-home.wallpaper-behind {
+            background-image: none !important;
+            background-color: var(--metro-background) !important;
+        }
+
+        div.groove-home-tile {
+            div.groove-home-inner-tile {
+                box-shadow: inset 0px 0px 0px 3px var(--metro-foreground) !important;
+                background-color: black !important;
+                p.groove-home-tile-title {
+                    color: white !important;
+                    background: black !important;
+                }
+            }
+        }
+    }
+}

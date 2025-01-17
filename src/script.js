@@ -194,7 +194,7 @@ if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentC
 startUpSequence([
     (next) => {
         if (GrooveBoard.backendMethods.setupNeeded()) {
-            location.href = new URL("./welcome.html",location).href
+            location.href = new URL("./welcome.html", location).href
         } else {
             next()
         }
@@ -286,7 +286,7 @@ startUpSequence([
         next()
     },
     async (next) => {
-        const baseURL = !window.GrooveMockInstance ? new URL('/assets/', location.origin).href : new URL('/www/', location.origin).href
+        const baseURL = new URL("./", location).href
         GrooveBoard.boardMethods.liveTiles.init = {
             alarms: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/alarms.js", baseURL).href),
             people: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/people.js", baseURL).href),

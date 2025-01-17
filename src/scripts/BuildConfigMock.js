@@ -1,6 +1,7 @@
 var buildConfig = {};
 if (window["GrooveMockInstance"] || window.parent["GrooveMockInstance"]) {
     try {
+        if (!(location.hostname == "localhost" || location.hostname == "127.0.0.1")) throw new Error()
         const response = await fetch(window.location.origin + '/android/gradle.local.properties');
         const text = await response.text();
         // Convert properties to JSON by splitting lines and parsing key=value pairs

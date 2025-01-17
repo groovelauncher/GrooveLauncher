@@ -194,7 +194,7 @@ if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentC
 startUpSequence([
     (next) => {
         if (GrooveBoard.backendMethods.setupNeeded()) {
-            location.href = !GrooveMockInstance ? '/assets/welcome.html' : '/www/welcome.html'
+            location.href = new URL("./welcome.html",location).href
         } else {
             next()
         }

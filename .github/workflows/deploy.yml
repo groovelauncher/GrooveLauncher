@@ -24,21 +24,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Set up directories and copy files
-      - name: Build the project, setup directories and copy files
-        run: |
-          mkdir -p pagespublic/www
-          npm run build:production
-          cp -r www/* pagespublic/www
-
-      # Create redirect index.html
-      - name: Create redirect index.html
-        run: |
-          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=https://groovelauncher.github.io/www"><title>Redirecting...</title></head><body><p>If you are not redirected automatically, follow this <a href="https://groovelauncher.github.io/www">link</a>.</p></body></html>' > ./pagespublic/index.html
+      # Build the project
+      - name: Build the project
+        run: npm run build:production
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          publish_dir: ./pagespublic
+          publish_dir: ./www

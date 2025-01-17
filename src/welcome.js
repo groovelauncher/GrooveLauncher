@@ -265,7 +265,7 @@ document.querySelector("#page-readme button.right-btn").addEventListener("flowCl
             goToPage(7)
 
             setTimeout(() => {
-                location.href = !GrooveMockInstance ? '/assets/index.html' : '/www'
+                location.href = new URL("./",location).href
             }, 500);
         }
 

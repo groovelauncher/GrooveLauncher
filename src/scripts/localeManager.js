@@ -1,4 +1,4 @@
-import * as ITL from 'ISOToLanguage';
+import * as ITL from "isotolanguage";
 import JSON5 from 'json5';
 window.ITL = ITL;
 class Locale {

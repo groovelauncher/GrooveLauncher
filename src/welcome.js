@@ -15,6 +15,7 @@ window.GrooveRole = "main"
 if (GrooveMockInstance) {
     //window.Groove = new GrooveMock("./mock/apps.json")
     window.Groove = new GrooveMock("./mock/apps.json")
+    await Groove.initializeApps()
     window.BuildConfig = new BuildConfigMock()
     document.body.classList.add("groove-mock")
 }
@@ -265,7 +266,7 @@ document.querySelector("#page-readme button.right-btn").addEventListener("flowCl
             goToPage(7)
 
             setTimeout(() => {
-                location.href = new URL("./",location).href
+                location.href = new URL("./", location).href
             }, 500);
         }
 
@@ -373,7 +374,7 @@ if (firstWelcome && localStorage["welcomeLocalesDownloaded"] != "true") {
     var localesFinished = false
     var localeProceed = true
     setTimeout(async () => {
-        if(!BuildConfig.signed()){
+        if (!BuildConfig.signed()) {
             updateLoaderText("")
             finishLocale()
             return;

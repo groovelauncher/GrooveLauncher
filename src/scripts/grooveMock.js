@@ -21,35 +21,39 @@ class GrooveMock {
         this.#retrievedApps = [];
 
         // Use async/await pattern instead of callback
-        this.#initializeApps();
+        this.initializeApps();
     }
 
-    async #initializeApps() {
-        try {
-            const response = await fetch(this.mockURL);
-            const data = await response.json();
+    initializeApps() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await fetch(this.mockURL);
+                const data = await response.json();
 
-            this.#retrievedApps = data.apps
-                .filter(app => app.packageName !== 'web.bmdominatezz.gravy')
-                .map(app => ({
-                    packageName: app.packageName,
-                    label: app.label,
-                    type: app.type
-                }));
+                this.#retrievedApps = data.apps
+                    .filter(app => app.packageName !== 'web.bmdominatezz.gravy')
+                    .map(app => ({
+                        packageName: app.packageName,
+                        label: app.label,
+                        type: app.type
+                    }));
 
-            this.#retrievedApps.push({
-                packageName: CONSTANTS.INTERNAL_SETTINGS_APP,
-                label: 'Groove Settings',
-                type: 0
-            });
-            this.#retrievedApps.push({
-                packageName: CONSTANTS.INTERNAL_TWEAKS_APP,
-                label: 'Groove Tweaks',
-                type: 0
-            });
-        } catch (error) {
-            console.error('Failed to initialize apps:', error);
-        }
+                this.#retrievedApps.push({
+                    packageName: CONSTANTS.INTERNAL_SETTINGS_APP,
+                    label: 'Groove Settings',
+                    type: 0
+                });
+                this.#retrievedApps.push({
+                    packageName: CONSTANTS.INTERNAL_TWEAKS_APP,
+                    label: 'Groove Tweaks',
+                    type: 0
+                });
+                resolve(true)
+            } catch (error) {
+                console.error('Failed to initialize apps:', error);
+                reject(error);
+            }
+        })
     }
 
     getSystemInsets() {

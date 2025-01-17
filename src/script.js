@@ -5,6 +5,7 @@ window.GrooveRole = "main"
 if (GrooveMockInstance) {
     //window.Groove = new GrooveMock("./mock/apps.json")
     window.Groove = new GrooveMock("./mock/apps.json")
+    await Groove.initializeApps()
     window.BuildConfig = new BuildConfigMock()
     document.body.classList.add("groove-mock")
 }

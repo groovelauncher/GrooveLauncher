@@ -1,0 +1,36 @@
+name: Deploy to GitHub Pages
+
+on:
+  workflow_dispatch: # Allows manual trigger
+  release:
+    types: [published] # Runs on new release
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Replace with the Node.js version you need
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build the project
+      - name: Build the project
+        run: npm run build:production
+
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./www

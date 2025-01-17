@@ -1,9 +1,0 @@
-Bug Fixes
-
-Fixed scroll issues when no wallpaper is applied.
-Corrected wallpaper alignment problems.
-Resolved issues with some icons not displaying correctly.
-
-Removed
-
-Removed Groove Launcher from the app menu.

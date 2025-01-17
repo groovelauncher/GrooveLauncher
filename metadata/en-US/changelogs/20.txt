@@ -1,8 +1,0 @@
-New Features
-
-Wallpapers: Added support for customizing wallpapers in the launcher.
-UI Scaling: Introduced UI scaling options for better customization of app layout.
-
-Bug Fixes
-
-Fixed various bugs to improve stability and performance.

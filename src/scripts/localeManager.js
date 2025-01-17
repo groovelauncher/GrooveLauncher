@@ -202,7 +202,7 @@ class LocaleManager {
       if (force || Object.keys(window._i18n.translations).length === 0) {
         //
         // Try loading default locales
-        if (window != window.parent) {
+        if (window != window.parent && window.parent["_i18n"]) {
           window._i18n.translations = window.parent._i18n.translations
           window._i18n.defaultTranslations = window.parent._i18ndefaultTranslations
 
@@ -316,7 +316,7 @@ class LocaleManager {
       }
       return value
     })()
-    if (returnee == "undefined!" && (window._i18n["defaultTranslations"] || window.parent._i18n["defaultTranslations"])) {
+    if (returnee == "undefined!" && (window._i18n["defaultTranslations"] || (window.parent["_i18n"] ? window.parent._i18n["defaultTranslations"] : false))) {
       let value2 = window._i18n.defaultTranslations || window.parent._i18n.defaultTranslations;
 
       for (const k of keys) {

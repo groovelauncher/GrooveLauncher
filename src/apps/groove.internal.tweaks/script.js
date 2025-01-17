@@ -1,11 +1,23 @@
+const windowInsets = () => ({ top: 0, left: 0, right: 0, bottom: 0 })
 import { applyOverscroll, appViewEvents, grooveColors, grooveThemes, setAccentColor } from "../../scripts/shared/internal-app";
-import { GrooveScroll, GrooveSlide } from "../../scripts/overscrollFramework";
 import imageStore from "../../scripts/imageStore";
+import { GrooveScroll, GrooveSlide } from "../../scripts/overscrollFramework";
 import fontStore from "../../scripts/fontStore";
 import jQuery from "jquery";
 import i18n from "../../scripts/localeManager";
 import GrooveElements from "../../scripts/GrooveElements";
-
+const emptyResponses = [
+    "Wow, it sure is quite lonely here!",
+    "Feels a bit quiet in this space.",
+    "Looks like there’s no one around.",
+    "Kind of quiet here, huh?",
+    "Feels a little empty right now.",
+    "Not much happening here, is there?",
+    "Looks like you’re on your own for now.",
+    "Seems a bit deserted in this spot.",
+    "Feels a bit lonesome here.",
+    "It's pretty quiet around here."
+]
 window.i18n = i18n
 await i18n.init()
 await i18n.translateDOM()
@@ -51,6 +63,7 @@ bs.on('beforeScrollStart', (e) => {
     scrollStartX = (-1 - bs.x / scrollWidth())
 })
 function handlePageAnim(index = 0, next = true, scroll = 0) {
+    return
     document.querySelectorAll("div.innerApp > div.app-tabs > p").forEach(e => e.classList.remove("active-tab"))
     document.querySelectorAll("div.innerApp > div.app-tabs > p")[index].classList.add("active-tab")
     document.querySelectorAll("div.settings-pages-container > div.settings-page").forEach(e => e.classList.remove("active-page"))
@@ -178,7 +191,12 @@ function activeTabScroll() {
 }
 window.activeTabScroll = activeTabScroll
 window.scrollers = {
-
+    home: new GrooveScroll("#home-tab", {
+        bounceTime: 300,
+        swipeBounceTime: 200,
+        outOfBoundaryDampingFactor: 1,
+        scrollbar: true
+    })
 }
 setTimeout(() => {
     Object.values(scrollers).forEach(e => e.refresh())
@@ -191,6 +209,7 @@ window.appViewEvents = appViewEvents
 function showPageAnim() {
     document.body.classList.add("shown")
     clearTimeout(window.activeTabScrollTimeout)
+    document.querySelectorAll("div.groove-list-view.skew").forEach(listView => listView.classList.remove("skew"))
     setTimeout(() => {
         document.querySelectorAll("div.groove-list-view.skew").forEach(listView => listView.classList.remove("skew"))
     }, 2000 * animationDurationScale);
@@ -200,6 +219,7 @@ function showPageAnim() {
     document.querySelector("#splashscreen").classList.add("shown")
     setTimeout(() => {
         document.querySelector("div.innerApp").style.removeProperty("visibility")
+        document.querySelector("div.innerApp").classList.add("shown")
         document.querySelector("#splashscreen").remove()
         appBar.setState(1)
     }, 1000);
@@ -314,7 +334,8 @@ if (new URL(location.href).searchParams.get("launchArgs") != null) {
                             flyout.remove()
                             parent.GrooveBoard.alert("Style Installed", "The style has been installed successfully.", [{
                                 title: "OK", style: "default", action: () => {
-                                    refreshList(); window.parent.GrooveBoard.backendMethods.refreshStyles()
+                                    refreshList();
+                                    window.parent.GrooveBoard.backendMethods.refreshStyles();
                                 }
                             }])
                             refreshList()
@@ -335,7 +356,44 @@ if (new URL(location.href).searchParams.get("launchArgs") != null) {
     //alert("aldım bak")
 
 }
+
+function appMenuClean() {
+    parent.GrooveBoard.backendMethods.navigation.invalidate("tweaksContextMenuOn")
+
+    clearTimeout(window.appMenuCreationFirstTimeout)
+    clearTimeout(window.appMenuCreationSecondTimeout)
+    $("div.innerApp").removeClass("app-menu-back-intro")
+    $("div.groove-list-view-item").css("visibility", "")
+    $("div.app-tile-clone").remove()
+}
+function appImmediateClose() {
+    $("div.groove-list-view-item").each((index, element) => {
+        if (element["appMenuState"] == false) {
+            if (element["appMenu"]) element["appMenu"].remove()
+            delete element["appMenuState"]
+            delete element["appMenu"]
+            delete element["appRect"]
+            appMenuClean()
+
+        }
+    })
+}
+scrollers.home.scroller.hooks.on('scrollStart', appImmediateClose)
+
+function contextMenuClose() {
+    parent.GrooveBoard.backendMethods.navigation.invalidate("tweaksContextMenuOn")
+    clearTimeout(window.contextMenuCreationFirstTimeout)
+    clearTimeout(window.contextMenuCreationSecondTimeout)
+    $("div.groove-app-menu").remove()
+    $("div.innerApp").removeClass("app-menu-back app-menu-back-intro")
+    setTimeout(() => {
+        appMenuClean()
+        //stickyLetter(-scrollers.app_page_scroller.y)
+    }, 500);
+}
+window.contextMenuClose = contextMenuClose
 function refreshList(soft = false) {
+    console.log("refresh start")
     const metadata = styleManagerInstance.getMetadata()
     const listView = document.querySelector("#home-tab > div.groove-list-view")
     if (!soft) listView.innerHTML = ""
@@ -348,26 +406,164 @@ function refreshList(soft = false) {
                 authorHTML
             )
             currentItem.style_id = id
-            currentItem.addEventListener("flowClick", onItemClick)
+            //currentItem.addEventListener("flowClick", onItemClick)
+            addListItemEventHandlers(currentItem)
             listView.append(currentItem)
+            console.log("append")
         })
     } else {
         listView.innerHTML = "<p style='font-size: 30px; font-weight: 200; opacity: .6;'></p>"
-        const responses = [
-            "Wow, it sure is quite lonely here!",
-            "Feels a bit quiet in this space.",
-            "Looks like there’s no one around.",
-            "Kind of quiet here, huh?",
-            "Feels a little empty right now.",
-            "Not much happening here, is there?",
-            "Looks like you’re on your own for now.",
-            "Seems a bit deserted in this spot.",
-            "Feels a bit lonesome here.",
-            "It's pretty quiet around here."
-        ]
-        listView.querySelector("p").innerText = responses[Math.floor(Math.random() * responses.length)]
+        listView.querySelector("p").innerText = emptyResponses[Math.floor(Math.random() * emptyResponses.length)]
+    }
+    console.log("refresh stop")
+}
+window.refreshList = refreshList
+refreshList()
+function createContextMenu(ell) {
+    var entries = {}
+    if (Object.keys(styleManagerInstance.getMetadata()).length >= 2) entries["move to top"] = () => { }
+    entries["remove"] = () => {
+        contextMenuClose()
+        document.querySelectorAll("div.app-tile-clone").forEach(e => e.remove())
+        styleManagerInstance.removeStyle(ell.style_id)
+        ell.remove()
+        refreshList(true)
+        window.parent.GrooveBoard.backendMethods.refreshStyles()
     }
 
+    /*entries[window.i18n.t("common.app_menu.pin_to_home")] = () => {
+        const findTile = $(
+            `div.inner-page.app-list-page > div.app-list > div.app-list-container > div.groove-element.groove-app-tile[packagename="${packageName}"]`
+        )[0];
+        const iconpack = findTile.classList.contains("iconpack0")
+            ? 0
+            : findTile.classList.contains("iconpack1")
+                ? 1
+                : 2;
+        const el = GrooveBoard.boardMethods.createHomeTile(
+            [2, 2],
+            {
+                packageName: findTile.getAttribute("packagename"),
+                title: findTile.getAttribute("title"),
+                icon: findTile.getAttribute("icon"),
+                iconbg: findTile.getAttribute("icon-bg"),
+                imageIcon: findTile.getAttribute("imageicon") == "true",
+                //  supportedSizes: ["s", "m", "w", "l"]
+                supportedSizes: ["s", "m", "w"],
+            },
+            true
+        );
+
+        el.classList.add("iconpack" + iconpack);
+        scrollers.tile_page_scroller.refresh();
+        setTimeout(() => {
+            scrollers.main_home_scroller.scrollTo(0, 0, 750);
+            setTimeout(() => {
+                scrollers.tile_page_scroller.scrollTo(
+                    0,
+                    -el.offsetTop - el.offsetHeight / 2 + window.innerHeight / 2,
+                    500
+                );
+            }, 300);
+        }, 300);
+
+        backendMethods.homeConfiguration.save()
+    }
+    entries[window.i18n.t("common.app_menu.uninstall")] = () => {
+        if (GrooveBoard.backendMethods.packageManagerProvider.get() == 0) {
+            Groove.uninstallApp(packageName, 0);
+        } else {
+            parent.GrooveBoard.alert(
+                window.i18n.t("common.alerts.uninstall.title"),
+                window.i18n.t("common.alerts.uninstall.message"),
+                [{
+                    title: window.i18n.t("common.actions.yes"), style: "default", inline: true, action: () => {
+                        Groove.uninstallApp(packageName, GrooveBoard.backendMethods.packageManagerProvider.get());
+                    }
+                }, { title: window.i18n.t("common.actions.no"), style: "default", inline: true, action: () => { } }]
+            );
+        }
+    }*/
+    const el = GrooveElements.wContextMenu(ell, entries);
+    document.querySelector("body").appendChild(el);
+    /*if (document.querySelectorAll(`div.groove-home-tile[packagename="${packageName}"]`).length > 0) {
+        el.querySelector("div:nth-child(1)").classList.add("disabled")
+    }
+    if (allappsarchive.filter(e => e.packageName == packageName)[0].type == 0) {
+        el.querySelector("div:nth-child(2)").remove()
+        el.style.setProperty("--full-height", "89px")
+    }*/
+    return el;
+}
+$("div.innerApp").on("flowClick", function (e) {
+    if (e.target.classList.contains("app-menu-back") || e.target.classList.contains("app-menu-back-intro")) {
+        contextMenuClose()
+    }
+})
+$(window).on("pointerup", function (e) {
+    $("div.groove-list-view-item").each((index, element) => {
+        if (element["appMenuState"] == false) {
+            if (element["appMenu"]) element["appMenu"].remove()
+            delete element["appMenuState"]
+            delete element["appMenu"]
+            delete element["appRect"]
+            appMenuClean()
+        } else if (element["appMenuState"] == true) {
+        }
+    })
+})
+function addListItemEventHandlers(el) {
+    el.addEventListener("pointerdown", () => {
+        const e = {
+            target: el
+        }
+        el.appMenu = false
+        el.appMenuState = false
+        el.appRect = e.target.getBoundingClientRect()
+
+        clearTimeout(window.appMenuCreationFirstTimeout)
+        clearTimeout(window.appMenuCreationSecondTimeout)
+        $("div.groove-app-menu").remove()
+
+        window.appMenuCreationFirstTimeout = setTimeout(() => {
+            $("div.innerApp").addClass("app-menu-back-intro")
+            const appMenu = createContextMenu(el)
+            const optionalTop = (e.target.offsetTop + scrollers.home.y + 64 + 83 + 5)
+            appMenu.style.top = ((optionalTop + 154 >= window.innerHeight - windowInsets().bottom) ? optionalTop - 64 - 0 : optionalTop) + "px"
+            appMenu.style.setProperty("--pointerX", e.pageX /*- $("div.app-list-page").position().left*/ + "px")
+            appMenu.classList.add("intro")
+            const appClone = e.target.cloneNode(true)
+            appClone.setAttribute("style", appClone.getAttribute("style") + "transition-duration: 1s !important;")
+            $(appClone).addClass("app-tile-clone").css({
+                left: el.appRect.left /*- $("div.app-list-page").position().left*/,
+                top: el.appRect.top - 5
+            })
+            $("body").append(appClone)
+            setTimeout(() => {
+                appClone.classList.remove("active")
+            }, 0);
+            el.style.visibility = "hidden"
+
+            if (optionalTop + 154 >= window.innerHeight - windowInsets().bottom) appMenu.classList.add("intro-bottom")
+
+            el.appMenu = appMenu
+            parent.GrooveBoard.backendMethods.navigation.push("tweaksContextMenuOn", () => { }, () => {
+                contextMenuClose()
+            })
+            setTimeout(() => {
+                Groove.triggerHapticFeedback("CLOCK_TICK")
+            }, 300);
+            window.appMenuCreationSecondTimeout = setTimeout(() => {
+                $("div.innerApp").addClass("app-menu-back").removeClass("app-menu-back-intro")
+                e.target.appMenuState = true
+                scrollers.home.cancelScroll()
+                setTimeout(() => {
+                    Groove.triggerHapticFeedback("CONFIRM")
+                }, 50);
+            }, 375);
+
+        }, 500);
+    })
 }
 refreshList()
 function onItemClick(el) {
@@ -406,107 +602,108 @@ function onItemClick(el) {
             }, 125);
         }, 250);
     }
+}
+function addManually() {
+    var alertView;
+    alertView = window.parent.GrooveBoard.alert(
+        "Enter the style url",
+        "<input type='url' placeholder='style url' class='metro-text-input enter-style-url' style='width:100%;'>",
+        [{
+            title: "add", style: "default", inline: true, action: () => {
+                const url = alertView.querySelector("input.enter-style-url").value
+                if (url.endsWith(".css")) {
+                    fetch(url)
+                        .then(response => response.text())
+                        .then(cssText => {
+
+                            console.log("css", cssText)
+
+
+                            // Regular expressions to extract metadata
+                            const titleMatch = cssText.match(/\/\* title: (.*?) \*\//);
+                            const authorMatch = cssText.match(/\/\* author: (.*?) \*\//);
+                            const iconMatch = cssText.match(/\/\* icon: (.*?) \*\//);
+                            const descriptionMatch = cssText.match(/\/\* description: (.*?) \*\//);
+
+                            let metadata = {
+                                title: titleMatch ? titleMatch[1] : 'No title',
+                                author: authorMatch ? authorMatch[1] : 'No author',
+                                icon: iconMatch ? iconMatch[1] : 'No icon',
+                                description: descriptionMatch ? descriptionMatch[1] : 'No description',
+                            };
+                            const flyout = document.createElement("div")
+                            flyout.classList.add("install-flyout")
+                            const author = metadata.author.match(/\[(.*?)\]\((.*?)\)/);
+                            const authorHTML = author ? author[1] : metadata.author;
+
+                            flyout.innerHTML = `
+                            <div class="install-flyout-inner">
+                            <img class="install-flyout-icon" src="${metadata.icon}">
+                            <p class="install-flyout-title">${metadata.title}</p>
+                            <p class="install-flyout-author">${authorHTML}</p>
+                            <p class="install-flyout-description">${metadata.description}</p>
+                            <button class="install-flyout-install">Install</button>
+                            </div>
+                            `
+                            if (author) {
+                                flyout.querySelector("p.install-flyout-author").addEventListener("click", () => {
+                                    parent.GrooveBoard.alert("External Link Warning", "This link opens up an external website. Proceed with caution.", [{
+                                        title: "Proceed", style: "default", action: () => {
+                                            Groove.openURL(author[2])
+                                        }
+                                    }, { title: "Cancel", style: "default", action: () => { } }])
+                                })
+                            }
+                            window.parent.GrooveBoard.backendMethods.navigation.push("appMenuOpened", () => { }, () => {
+                                flyout.classList.add("hidden")
+                                setTimeout(() => {
+                                    flyout.remove()
+                                }, 500);
+                            })
+                            flyout.querySelector("button.install-flyout-install").addEventListener("click", async (e) => {
+                                e.target.innerText = "Installing..."
+                                try {
+                                    styleManagerInstance.installStyle(cssText)
+                                    flyout.remove()
+                                    parent.GrooveBoard.alert("Style Installed", "The style has been installed successfully.", [{
+                                        title: "OK", style: "default", action: () => {
+                                            refreshList(); window.parent.GrooveBoard.backendMethods.refreshStyles()
+                                        }
+                                    }])
+                                    refreshList()
+                                    window.parent.GrooveBoard.backendMethods.refreshStyles()
+                                } catch (error) {
+                                    parent.GrooveBoard.alert("Error", "An error occurred while installing the style. Please try again later.", [{ title: "OK", style: "default", action: () => { } }])
+
+                                }
+
+                            })
+                            document.body.appendChild(flyout)
+                            console.log("metadata", metadata)
+                        })
+                        .catch(error => {
+                            console.error('Error loading CSS:', error)
+                            parent.GrooveBoard.alert("Error", "An error occurred while loading the CSS file. Please check the URL and try again.", [{ title: "OK", style: "default", action: () => { } }])
+                        });
+                } else {
+                    parent.GrooveBoard.alert("Error", "The URL you entered is not a valid CSS file.", [{ title: "OK", style: "default", action: () => { } }])
+                }
+
+            }
+        },
+        {
+            title: "cancel", style: "default", inline: true, action: () => { }
+        }]
+    );
+    setTimeout(() => {
+        alertView.querySelector("input.enter-style-url").focus()
+    }, 250);
+    console.log("alertView", alertView)
 
 }
 const appBar = GrooveElements.wAppBar([
     {
-        title: "Add", icon: "󰐕", size: "38px", action: () => {
-            var alertView;
-            alertView = window.parent.GrooveBoard.alert(
-                "Enter the style url",
-                "<input type='url' placeholder='style url' class='metro-text-input enter-style-url' style='width:100%;'>",
-                [{
-                    title: "add", style: "default", inline: true, action: () => {
-                        const url = alertView.querySelector("input.enter-style-url").value
-                        if (url.endsWith(".css")) {
-                            fetch(url)
-                                .then(response => response.text())
-                                .then(cssText => {
-
-                                    console.log("css", cssText)
-
-
-                                    // Regular expressions to extract metadata
-                                    const titleMatch = cssText.match(/\/\* title: (.*?) \*\//);
-                                    const authorMatch = cssText.match(/\/\* author: (.*?) \*\//);
-                                    const iconMatch = cssText.match(/\/\* icon: (.*?) \*\//);
-                                    const descriptionMatch = cssText.match(/\/\* description: (.*?) \*\//);
-
-                                    let metadata = {
-                                        title: titleMatch ? titleMatch[1] : 'No title',
-                                        author: authorMatch ? authorMatch[1] : 'No author',
-                                        icon: iconMatch ? iconMatch[1] : 'No icon',
-                                        description: descriptionMatch ? descriptionMatch[1] : 'No description',
-                                    };
-                                    const flyout = document.createElement("div")
-                                    flyout.classList.add("install-flyout")
-                                    const author = metadata.author.match(/\[(.*?)\]\((.*?)\)/);
-                                    const authorHTML = author ? author[1] : metadata.author;
-
-                                    flyout.innerHTML = `
-                                <div class="install-flyout-inner">
-                                <img class="install-flyout-icon" src="${metadata.icon}">
-                                <p class="install-flyout-title">${metadata.title}</p>
-                                <p class="install-flyout-author">${authorHTML}</p>
-                                <p class="install-flyout-description">${metadata.description}</p>
-                                <button class="install-flyout-install">Install</button>
-                                </div>
-                                `
-                                    if (author) {
-                                        flyout.querySelector("p.install-flyout-author").addEventListener("click", () => {
-                                            parent.GrooveBoard.alert("External Link Warning", "This link opens up an external website. Proceed with caution.", [{
-                                                title: "Proceed", style: "default", action: () => {
-                                                    Groove.openURL(author[2])
-                                                }
-                                            }, { title: "Cancel", style: "default", action: () => { } }])
-                                        })
-                                    }
-                                    window.parent.GrooveBoard.backendMethods.navigation.push("appMenuOpened", () => { }, () => {
-                                        flyout.classList.add("hidden")
-                                        setTimeout(() => {
-                                            flyout.remove()
-                                        }, 500);
-                                    })
-                                    flyout.querySelector("button.install-flyout-install").addEventListener("click", async (e) => {
-                                        e.target.innerText = "Installing..."
-                                        try {
-                                            styleManagerInstance.installStyle(cssText)
-                                            flyout.remove()
-                                            parent.GrooveBoard.alert("Style Installed", "The style has been installed successfully.", [{
-                                                title: "OK", style: "default", action: () => {
-                                                    refreshList(); window.parent.GrooveBoard.backendMethods.refreshStyles()
-                                                }
-                                            }])
-                                            refreshList()
-                                            window.parent.GrooveBoard.backendMethods.refreshStyles()
-                                        } catch (error) {
-                                            parent.GrooveBoard.alert("Error", "An error occurred while installing the style. Please try again later.", [{ title: "OK", style: "default", action: () => { } }])
-
-                                        }
-
-                                    })
-                                    document.body.appendChild(flyout)
-                                    console.log("metadata", metadata)
-                                })
-                                .catch(error => {
-                                    console.error('Error loading CSS:', error)
-                                    parent.GrooveBoard.alert("Error", "An error occurred while loading the CSS file. Please check the URL and try again.", [{ title: "OK", style: "default", action: () => { } }])
-                                });
-                        } else {
-                            parent.GrooveBoard.alert("Error", "The URL you entered is not a valid CSS file.", [{ title: "OK", style: "default", action: () => { } }])
-                        }
-
-                    }
-                },
-                {
-                    title: "cancel", style: "default", inline: true, action: () => { }
-                }]
-            );
-            setTimeout(() => {
-                alertView.querySelector("input.enter-style-url").focus()
-            }, 250);
-            console.log("alertView", alertView)
-        }
+        title: "Add", icon: "󰐕", size: "38px", action: addManually
     }
 ])
 document.body.append(appBar)

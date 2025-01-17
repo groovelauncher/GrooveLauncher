@@ -12,6 +12,11 @@
     --tile-list-animation-easing: cubic-bezier(.5, 0, 0, 1);
     --tile-list-flip-animation-duration: 1s;
     --tile-list-flip-animation-easing: cubic-bezier(.2, 1.25, .5, 1);
+    --tile-margin: 6px;
+    --tile-list-normal-margin-x: 19px;
+    --tile-list-normal-margin-y: 19px;
+    --tile-list-compact-margin-x: 6px;
+    --tile-list-compact-margin-y: var(--tile-list-normal-margin-y);
 }
 
 body {
@@ -47,6 +52,7 @@ div.tile-list-page {
         .app-page-icon-banner {
             transition: .25s .25s ease-in !important;
             opacity: 0;
+
             &,
             & * {
                 pointer-events: none;
@@ -185,7 +191,7 @@ div.tile-list-page {
         }
 
         .app-page-icon-banner {
-           visibility: hidden;
+            visibility: hidden;
         }
     }
 
@@ -241,12 +247,16 @@ div.tile-list-inner-container {
     }
 
     position: relative;
-    left: 19px;
-    top: calc(19px + var(--window-inset-top));
-    width: calc(100% - 19px * 2);
+    left: var(--tile-list-normal-margin-x);
+    top: calc(var(--tile-list-normal-margin-y) + var(--window-inset-top));
+    width: calc(100% - var(--tile-list-normal-margin-x) * 2);
 
-    &.gs-6 {
-        left: 6px;
+    &.gs-6,
+    &.gs-8,
+    &.gs-10 {
+        left: var(--tile-list-compact-margin-x);
+        top: calc(var(--tile-list-compact-margin-y) + var(--window-inset-top));
+
         width: calc(100% - 6px * 2);
 
         p.groove-home-tile-title {
@@ -926,11 +936,10 @@ div.groove-home-tile {
         zoom: var(--tile-zoom);
         color: white;
         position: absolute;
-        left: 6px;
-        top: 5px;
-        //overflow: hidden;
-        right: 6px;
-        bottom: 6px;
+        left: var(--tile-margin, 6px);
+        top: var(--tile-margin, 6px);
+        right: var(--tile-margin, 6px);
+        bottom: var(--tile-margin, 6px);
         background: var(--accent-color);
         background-size: 100% 100% !important;
 

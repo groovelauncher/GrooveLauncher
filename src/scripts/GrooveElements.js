@@ -6,6 +6,7 @@ const GrooveElements = {
   wAppTile,
   wLetterTile,
   wAppMenu,
+  wContextMenu,
   wTileMenu,
   wAppView,
   wAlertView,
@@ -148,24 +149,42 @@ function wLetterTile(letter) {
   el.removeAttribute("packageName");
   return el;
 }
+function _contextMenu(entries = {}) {
+  function contextMenuClose() {
+
+  }
+  const contextMenu = document.createElement("div");
+  contextMenu.classList.add("groove-element");
+  contextMenu.classList.add("groove-context-menu");
+  Object.entries(entries).forEach((entry) => {
+    const contextMenuEntry = document.createElement("div");
+    contextMenuEntry.classList.add("groove-element");
+    contextMenuEntry.classList.add("groove-context-menu-entry");
+    contextMenuEntry.addEventListener("flowClick", function (e) {
+      contextMenuClose();
+      if (entry[1] && typeof entry[1] == "function") entry[1]();
+    });
+    contextMenuEntry.innerText = entry[0];
+    contextMenu.appendChild(contextMenuEntry);
+  });
+  return contextMenu;
+}
 function wAppMenu(packageName, entries = {}) {
-  const appMenu = document.createElement("div");
+  const appMenu = _contextMenu(entries);
   appMenu.classList.add("groove-element");
   appMenu.classList.add("groove-app-menu");
   appMenu.classList.add("grid-stack-item");
-
+  appMenu.querySelectorAll("div.groove-context-menu-entry").forEach((entry) => { entry.classList.add("groove-app-menu-entry"); entry.addEventListener("flowClick", function () { appMenuClose(); }); });
   appMenu.setAttribute("packageName", packageName);
-  Object.entries(entries).forEach((entry) => {
-    const appMenuEntry = document.createElement("div");
-    appMenuEntry.classList.add("groove-element");
-    appMenuEntry.classList.add("groove-app-menu-entry");
-    appMenuEntry.addEventListener("flowClick", function (e) {
-      appMenuClose();
-      if (entry[1] && typeof entry[1] == "function") entry[1]();
-    });
-    appMenuEntry.innerText = entry[0];
-    appMenu.appendChild(appMenuEntry);
-  });
+
+  return appMenu;
+}
+
+function wContextMenu(el, entries = {}) {
+  const appMenu = _contextMenu(entries);
+  appMenu.classList.add("groove-element");
+  appMenu.classList.add("groove-app-menu");
+  appMenu.classList.add("grid-stack-item");
   return appMenu;
 }
 function wTileMenu(el) {
@@ -359,7 +378,6 @@ function wAppBar(elements = []) {
   return appBar
 }
 function wAppBarItem(title, icon, sizeaction, action) {
-  console.log("wAppBarItem", title, icon, sizeaction, action)
   const appBarItem = document.createElement("div");
   appBarItem.classList.add("groove-element");
   appBarItem.classList.add("groove-app-bar-item");
@@ -375,7 +393,6 @@ function wAppBarItem(title, icon, sizeaction, action) {
       if (action) if (typeof action == "function") nAction = action
     }
   }
-  console.log("NKARAR", nSize, nAction)
   appBarItem.classList.add(`groove-app-bar-item-${type}`)
   appBarItem.innerHTML = `${type == "glyph-icon" ? `<div class="groove-app-bar-icon-frame"><p class="groove-app-bar-item-icon" style="font-size:${nSize};">${icon}</p></div>` : type == "image-icon" ? `<div class="groove-app-bar-icon-frame"><img class="groove-app-bar-item-icon" src="${icon}" style="width:${nSize};height:${nSize};"></div>` : ""}
     <p class="groove-app-bar-item-title"></p>`

@@ -381,6 +381,7 @@ div.groove-element {
         }
 
         &.jump-up {
+            transition: .2s var(--flow-ease-out);
             div.groove-app-bar-top {
                 animation: groove-app-bar-jump-up .4s .05s cubic-bezier(.2, 1.75, .6, 1) forwards;
                 opacity: 0;
@@ -437,7 +438,7 @@ div.groove-element {
         box-sizing: border-box;
         left: 0px;
         width: 100%;
-        transition: .2s var(--flow-ease-out);
+        transition: .5s var(--flow-ease-out);
 
         &.hidden {
             transform: translateY(100%);
@@ -485,7 +486,8 @@ div.groove-element {
                     box-sizing: border-box;
                     box-shadow: inset 0px 0px 0px 3px var(--metro-foreground);
                     background-color: var(--metro-app-bar);
-                    p.groove-app-bar-item-icon{
+
+                    p.groove-app-bar-item-icon {
                         position: absolute;
                         left: 0px;
                         top: 0px;
@@ -502,5 +504,39 @@ div.groove-element {
             }
         }
 
+    }
+}
+
+.flow-native-scroll {
+    &.flow-slide {
+        scroll-snap-type: x mandatory;
+
+        &>*:first-child {
+            width: max-content;
+        }
+
+        overflow: auto hidden;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        &,
+        & * {
+            touch-action: pan-x;
+        }
+
+        &>*:first-child>* {
+            overflow: hidden;
+            scroll-snap-align: center;
+            scroll-snap-stop: always;
+        }
+    }
+
+    &.flow-scroll {
+        overflow: hidden auto;
+        &::-webkit-scrollbar {
+            display: none;
+        }
     }
 }

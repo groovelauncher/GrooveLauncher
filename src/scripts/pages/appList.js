@@ -158,7 +158,7 @@ $(window).on("finishedLoading", () => {
     $("div.letter-selector-letter").on("flowClick", function (e) {
         if (e.target.classList.contains("disabled")) return
         letterSelectorSwitch.off()
-        scrollers.app_page_scroller.scrollTo(0, Math.max(scrollers.app_page_scroller.maxScrollY, window.windowInsets().top - document.querySelector(`div.groove-app-tile.groove-letter-tile[icon='${e.target.innerText}']`).offsetTop,), 0, "linear")
+        scrollers.app_page_scroller.scrollTo(0, Math.max(scrollers.app_page_scroller.maxScrollY, window.windowInsets().top - document.querySelector(`div.groove-app-tile.groove-letter-tile[icon='${e.target.innerText.toLowerCase()}']`).offsetTop,), 0, "linear")
         e.stopPropagation()
         e.stopImmediatePropagation()
         e.preventDefault()

@@ -648,7 +648,7 @@ const backendMethods = {
   launchInternalApp: (packageName, args) => {
     if (!window.launchedInternalApps) window.launchedInternalApps = new Set();
     if (window.launchedInternalApps.has(packageName)) {
-      console.log("App is already open!"); 
+      console.log("App is already open!");
       //pass args here
       return;
     }
@@ -1026,8 +1026,8 @@ const backendMethods = {
     }
   },
   refreshStyles: () => {
-    document.querySelectorAll("style.custom-style").forEach(e => e.remove())
-    Object.keys(styleManagerInstance.getMetadata()).forEach(id=>{
+    document.querySelectorAll("link.custom-style").forEach(e => e.remove())
+    Object.keys(styleManagerInstance.getMetadata()).forEach(id => {
       styleManagerInstance.applyStyle(id)
     })
   }

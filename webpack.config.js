@@ -10,6 +10,8 @@ module.exports = env => {
     mode: env.production ? "production" : "development",
     entry: {
       script: path.resolve(__dirname, './src/script.js'),
+      mock: path.resolve(__dirname, './src/mock.js'),
+      themeEditor: path.resolve(__dirname, './src/themeEditor.js'),
       welcome: path.resolve(__dirname, './src/welcome.js'), // add this
       liveTileHelper: path.resolve(__dirname, './src/scripts/liveTileHelper.js'), // add this
     },

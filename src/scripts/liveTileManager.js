@@ -10,15 +10,17 @@ const ALLOWED_ATTR = [
     'data-*', 'aria-*', 'controls', 'autoplay', 'loop'
 ];
 function isOnMainThread() {
+    console.log(!!document.querySelector("div.tile-list-inner-container"), window["GrooveRole"] === "main")
     return !!document.querySelector("div.tile-list-inner-container") && window["GrooveRole"] === "main";
 }
 if (isOnMainThread()) {
     window.liveTiles = window.liveTiles || {};
     window.liveTileProviders = window.liveTileProviders || []
+    console.log("ab")
 } else {
     window.parent.liveTiles = window.parent.liveTiles || {};
     window.parent.liveTileProviders = window.parent.liveTileProviders || []
-
+    console.log("sg")
 }
 
 function main_registerLiveTileWorker(packageName, uid) {

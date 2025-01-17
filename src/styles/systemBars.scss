@@ -40,7 +40,7 @@ body {
 
         button {
             flex-grow: 1;
-            background-size: auto 75% !important;
+            background-size: 40px !important;
             background-position: center !important;
             background-repeat: no-repeat !important;
             border: none;
@@ -48,7 +48,7 @@ body {
 
             &:nth-child(2) {
                 filter: contrast(0) brightness(2);
-                background-size: auto 60% !important;
+                background-size: auto 30px !important;
             }
 
             &:active {

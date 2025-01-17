@@ -104,8 +104,8 @@ body {
         }
 
         div.groove-list-view {
-            transform-style: flat;
-            perspective: var(--flow-perspective);
+            transform-style: preserve-3d;
+            //perspective: var(--flow-perspective);
 
             &.skew {
                 div.groove-list-view-item {

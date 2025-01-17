@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groove Launcher - Theme Editors</title>
+    <link rel="icon" type="image/x-icon" href="./../assets/logo-w@.5.svg">
+</head>
+
+<body>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/scss.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/base16-dark.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+<script src="https://unpkg.com/vanilla-context-menu@1.4.1/dist/vanilla-context-menu.js"></script>
+<link rel="stylesheet" href="style.css">
+<div class="container">
+    <div class="preview">
+        <div class="toolbar">
+            <button class="toolbar-btn" id="selectorBtn">
+                <i class="fas fa-eyedropper"></i>
+            </button>
+            <button class="toolbar-btn" id="runBtn">
+                <i class="fas fa-play"></i>
+            </button>
+            <button class="toolbar-btn" id="previewBtn">
+                <i class="fas fa-eye"></i>
+            </button>
+            <button class="toolbar-btn" id="downloadBtn">
+                <i class="fas fa-download"></i>
+                <div id="downloadBtn">
+                    <i class="fas fa-sort-down"></i>
+                </div>
+            </button>
+
+        </div>
+        <div id="previewArea">
+            <div id="device">
+                <iframe src="../groove-launcher-mock.html" frameborder="0" width="480" height="850"></iframe>
+                <div id="selector-frame">
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="editor">
+        <textarea id="cssEditor"></textarea>
+    </div>
+</div>
+<script src="../dist/themeEditor.js"></script>
+
+</html>

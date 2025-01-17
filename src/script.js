@@ -1,6 +1,5 @@
 const GrooveMockInstance = !window.Groove
 window.GrooveMockInstance = GrooveMockInstance
-console.log(window.GrooveMockInstance)
 import { GrooveMock, BuildConfigMock } from "./scripts/grooveMock.js";
 window.GrooveRole = "main"
 if (GrooveMockInstance) {
@@ -106,6 +105,7 @@ const appTransitionScale = () => window.innerHeight / 850 / 2 + .5
 $(":root").css({ "--window-width": window.innerWidth + "px", "--window-height": window.innerHeight + "px", "--window-hypotenuse": (Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2))) + "px", "--app-transition-scale": appTransitionScale })
 
 scrollers.main_home_scroller.on("slideWillChange", function (e) {
+    console.log("slideWillChange", e)
     if (e.pageX == document.body.classList.contains("rtl") ? 1 : 0) {
         if (GrooveBoard.backendMethods.navigation.lastPush.change == "appMenuOpened") {
             GrooveBoard.backendMethods.navigation.back()
@@ -335,7 +335,6 @@ window.addEventListener("deepLink", (e) => {
             console.log("hoba")
             if (url.pathname == "settings") {
                 Groove.launchApp("groove.internal.settings")
-                console.log("Groove Settings launch")
                 return;
             }
             if (url.searchParams.size) {
@@ -343,7 +342,6 @@ window.addEventListener("deepLink", (e) => {
                     Groove.launchApp(`groove.internal.tweaks?installStyle=${url.searchParams.get("installStyle")}`)
                     return;
                 }
-                console.log("Groove Tweaks launch")
             }
         }
     }, 1000);

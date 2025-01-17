@@ -1,0 +1,160 @@
+{
+    "apps": [
+        {
+            "uid": 1,
+            "packageName": "web.bmdominatezz.gravy",
+            "label": "Groove Launcher",
+            "type": 1
+        },
+        {
+            "uid": 2,
+            "packageName": "instagram.example",
+            "label": "Instagram",
+            "type": 1
+        },
+        {
+            "uid": 10122,
+            "packageName": "com.google.android.calendar",
+            "label": "Calendar",
+            "type": 0
+        },
+        {
+            "uid": 10109,
+            "packageName": "com.android.camera2",
+            "label": "Camera",
+            "type": 0
+        },
+        {
+            "uid": 10119,
+            "packageName": "com.android.chrome",
+            "label": "Chrome",
+            "type": 0
+        },
+        {
+            "uid": 10125,
+            "packageName": "com.google.android.deskclock",
+            "label": "Clock",
+            "type": 0
+        },
+        {
+            "uid": 10113,
+            "packageName": "com.google.android.contacts",
+            "label": "Contacts",
+            "type": 0
+        },
+        {
+            "uid": 10115,
+            "packageName": "com.google.android.apps.docs",
+            "label": "Drive",
+            "type": 1
+        },
+        {
+            "uid": 10074,
+            "packageName": "com.google.android.documentsui",
+            "label": "Files",
+            "type": 0
+        },
+        {
+            "uid": 10123,
+            "packageName": "com.google.android.gm",
+            "label": "Gmail",
+            "type": 1
+        },
+        {
+            "uid": 10107,
+            "packageName": "com.google.android.googlequicksearchbox",
+            "label": "Google",
+            "type": 1
+        },
+        {
+            "uid": 10100,
+            "packageName": "com.android.vending",
+            "label": "Google Play Store",
+            "type": 0
+        },
+        {
+            "uid": 10129,
+            "packageName": "com.google.android.apps.maps",
+            "label": "Maps",
+            "type": 1
+        },
+        {
+            "uid": 10097,
+            "packageName": "com.google.android.apps.messaging",
+            "label": "Messages",
+            "type": 0
+        },
+        {
+            "uid": 10106,
+            "packageName": "com.google.android.dialer",
+            "label": "Phone",
+            "type": 0
+        },
+        {
+            "uid": 10114,
+            "packageName": "com.google.android.apps.photos",
+            "label": "Photos",
+            "type": 0
+        },
+        {
+            "uid": 1001,
+            "packageName": "com.android.stk",
+            "label": "SIM Toolkit",
+            "type": 0
+        },
+        {
+            "uid": 1000,
+            "packageName": "com.android.settings",
+            "label": "Settings",
+            "type": 0
+        },
+        {
+            "uid": 10091,
+            "packageName": "com.android.traceur",
+            "label": "System Tracing",
+            "type": 0
+        },
+        {
+            "uid": 10127,
+            "packageName": "com.google.android.youtube",
+            "label": "YouTube",
+            "type": 1
+        },
+        {
+            "uid": 10112,
+            "packageName": "com.google.android.apps.youtube.music",
+            "label": "YouTube Music",
+            "type": 1
+        },
+        {
+            "uid": 10,
+            "packageName": "test.clock",
+            "label": "A TEST CLOCK",
+            "type": 2
+        },
+        {
+            "uid": 11,
+            "packageName": "test.weather",
+            "label": "A TEST WEATHER",
+            "type": 2
+        },
+        {
+            "uid": 12,
+            "packageName": "test.people",
+            "label": "A TEST PEOPLE",
+            "type": 2
+        },
+        {
+            "uid": 13,
+            "packageName": "test.photos",
+            "label": "A TEST PHOTOS",
+            "type": 2
+        },
+        {
+            "uid": 13,
+            "packageName": "test.example",
+            "label": "A TEST EXAMPLE",
+            "type": 2
+        }
+    ]
+}

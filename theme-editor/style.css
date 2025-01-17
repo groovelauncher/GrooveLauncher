@@ -1,0 +1,182 @@
+@import "./../dist/styles.css";
+
+:root {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color-scheme: dark;
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+body.resizing #device iframe {
+    filter: blur(20px) opacity(.5);
+    pointer-events: none !important;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.preview {
+    position: relative;
+    width: 100px;
+    min-width: 100px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+
+    &.selector-mode {
+        #selector-frame {
+            display: block !important;
+        }
+
+        #device>iframe {
+            pointer-events: none !important;
+        }
+    }
+}
+
+.editor {
+    width: 50%;
+    min-width: 400px;
+    max-width: calc(100% - 100px);
+
+    &,
+    * {
+        font-family: monospace;
+    }
+}
+
+.toolbar {
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+#elementSelector {
+    margin-right: 10px;
+}
+
+.toolbar-btn {
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.2);
+    cursor: pointer !important;
+    color: white;
+    width: max-content;
+    min-width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    p {
+        margin-left: 5px;
+    }
+
+    * {
+        pointer-events: none !important;
+    }
+
+    i {
+        font-size: 16px;
+    }
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    div {
+        width: 20px;
+        height: 20px;
+        pointer-events: all !important;
+        margin-right: -5px;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        &:active {
+            background: white;
+            color: black;
+        }
+    }
+
+    &:active {
+        background: white;
+        color: black;
+    }
+}
+
+div.code-editor {
+    height: 100%;
+}
+
+#device {
+    transition: 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+    position: absolute;
+    width: calc(430px / (376 / 480));
+    height: calc(797px / (376 / 480));
+    left: calc(50% - 215px / (376 / 480));
+    top: calc(50% - 398.5px / (376 / 480));
+    pointer-events: none;
+
+    &::after {
+        content: "";
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        background-image: url(device.svg);
+        background-size: 100% 100%;
+    }
+
+    iframe,
+    #selector-frame {
+        position: absolute;
+        left: calc(27px / (376 / 480));
+        top: calc(25px / (376 / 480));
+        width: calc(376px / (376 / 480));
+        height: calc(745.8px / (376 / 480));
+        z-index: -1;
+        pointer-events: all !important;
+        border-radius: 50px;
+    }
+
+    #selector-frame {
+        display: none;
+        background-color: transparent;
+        overflow: hidden;
+
+        div {
+            transition: .25s cubic-bezier(0.075, 0.82, 0.165, 1);
+            border-radius: 50px;
+            position: absolute;
+            left: 0px;
+            top: 0%;
+            height: 100%;
+            width: 100%;
+            box-shadow: inset 0px 0px 0px 2px var(--metro-color-violet), 0px 10px 50px 0px var(--metro-color-violet), 0px 0px 0px 100vw rgba(0, 0, 0, 0.5);
+        }
+    }
+}
+
+div.CodeMirror-gutter {
+    cursor: col-resize !important;
+}
+
+div.context-menu {
+
+    position: fixed;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 4px;
+    z-index: 10000000;
+}

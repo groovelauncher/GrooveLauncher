@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 62 62" xmlns="http://www.w3.org/2000/svg">
+  <path d="M 14 12.041 L 48 12.041 C 49.105 12.041 50 12.936 50 14.041 L 50 48.058 C 50 49.163 49.105 50.058 48 50.058 L 14 50.058 C 12.895 50.058 12 49.163 12 48.058 L 12 14.041 C 12 12.936 12.895 12.041 14 12.041 Z M 15 47.058 L 47 47.058 L 47 21.049 L 15 21.049 Z" style="fill: rgb(255, 255, 255);"/>
+  <rect x="17" y="41.058" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="41" y="23.049" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="17" y="35.067" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="17" y="29.033" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="23" y="23.049" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="35" y="23.049" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="29" y="23.049" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="41" y="29.033" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="23" y="29.033" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="35" y="29.033" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="29" y="29.033" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="41" y="35.067" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="23" y="35.067" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="35" y="35.067" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="29" y="35.067" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="23" y="41.058" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="35" y="41.058" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+  <rect x="29" y="41.058" width="4" height="4" style="fill: rgb(255, 255, 255);"/>
+</svg>

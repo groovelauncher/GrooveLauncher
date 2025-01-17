@@ -145,3 +145,5 @@ build-internal-apps.sh
 finalize.js
 .dist
 version.json
+
+pagespublic

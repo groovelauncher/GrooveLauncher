@@ -1,5 +1,6 @@
 import { css as beautifyCss } from 'js-beautify';
 import * as sass from "sass";
+import { debounce } from 'lodash';
 window.sass = sass
 window.beautifyCss = beautifyCss
 const editor = CodeMirror.fromTextArea(document.getElementById('cssEditor'), {
@@ -39,9 +40,7 @@ function rescale() {
     const scaleWidth = previewWidth / deviceWidth;
     const scaleHeight = previewHeight / deviceHeight;
     scale = Math.min(.75, Math.min(scaleWidth, scaleHeight));
-
     device.style.transform = `scale(${scale})`;
-    console.log(scale)
 }
 
 window.addEventListener('resize', rescale);
@@ -57,7 +56,6 @@ document.querySelector("div.CodeMirror-gutter").addEventListener("pointerdown", 
 var editorSize = 50
 window.addEventListener("pointermove", (e) => {
     if (resizing) {
-        console.log(e.pageX - resizing)
         const sc = (e.pageX - resizing) / window.innerWidth * 100
         editorSize = (lastSize - sc) || 0
         editorSize = (editorSize || 0)
@@ -126,9 +124,7 @@ window.addEventListener('keydown', (e) => {
         (e.ctrlKey && e.shiftKey && e.code === 'KeyI')) {
         e.preventDefault();
         // editor.setValue(editor.getValue().trim());
-        const cursor = editor.getCursor();
-        editor.setValue(beautifyCss(editor.getValue(), { indent_size: 4, space_in_empty_paren: true }));
-        editor.setCursor(cursor);
+        beautify()
         //editor.setValue(formatted);
         showToast('Style formatted');
     }
@@ -173,7 +169,6 @@ function compile() {
     };
     const showWarning = lastcsstext != cssText
     lastcsstext = cssText
-    console.log("metadata", titleMatch, metadata)
     if (titleMatch == null) {
         const cursor = editor.getCursor()
         cursor.line += 2
@@ -223,7 +218,6 @@ async function preview() {
     currentBlobUrl = iframeWindow.URL.createObjectURL(blob);
 
     showToast('CSS blob URL created: ' + currentBlobUrl);
-    console.log(currentBlobUrl);
     iframeWindow.Groove.launchApp(`groove.internal.tweaks?installStyle=${currentBlobUrl}`)
 }
 async function run(css) {
@@ -411,10 +405,9 @@ function elementFromPoint(x, y) {
     return false;
 }
 var lastEl
-document.querySelector("#selector-frame").addEventListener("pointermove", (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+document.querySelector("#selector-frame").addEventListener("pointermove", debounce((e) => {
+    const rect = document.querySelector("#selector-frame").getBoundingClientRect();
     const [x, y] = [e.clientX - rect.left, e.clientY - rect.top];
-    console.log('Relative position:', { x, y });
     const el = elementFromPoint(x / scale, y / scale)
     if (el) {
         const iframeWindow = document.querySelector("iframe").contentWindow;
@@ -430,10 +423,9 @@ document.querySelector("#selector-frame").addEventListener("pointermove", (e) =>
             selectorBox.classList.add("alt")
         } else {
             selectorBox.classList.remove("alt")
-
         }
     }
-})
+}, 16)); // 16ms debounce for smooth 60fps
 
 const blacklistedClasses = [
     'ng-star-inserted',
@@ -486,7 +478,7 @@ function getElementSelector(element, group = false) {
 
     // Check static selectors first
     for (const selector of static_selectors) {
-        if (element.matches(selector)) {
+        if (element.matches(selector.replaceAll(" &", ""))) {
             return selector;
         }
     }
@@ -525,7 +517,11 @@ function getElementSelector(element, group = false) {
 }
 function beautify() {
     const cursor = editor.getCursor();
-    editor.setValue(beautifyCss(editor.getValue(), { indent_size: 4, space_in_empty_paren: true }));
+    editor.setValue(beautifyCss(editor.getValue(), {
+        indent_size: 4,
+        space_in_empty_paren: true,
+        brace_style: "end-expand"
+    }));
     editor.setCursor(cursor);
 }
 document.querySelector("#selector-frame").addEventListener("click", (e) => {
@@ -536,7 +532,6 @@ document.querySelector("#selector-frame").addEventListener("click", (e) => {
     let currentContent = editor.getValue();
     const selectorParts = selector.split(/\s*>\s*|\s+/);
 
-    // Function to find existing selector in content
     function findSelectorPosition(content, selector) {
         const regex = new RegExp(`${selector}\\s*{[^}]*}`, 'g');
         const matches = [...content.matchAll(regex)];
@@ -546,14 +541,13 @@ document.querySelector("#selector-frame").addEventListener("click", (e) => {
     let currentPosition = 0;
     let nestedContent = '';
     let remainingParts = [...selectorParts];
+    let finalLine = 0;
 
-    // Process each selector part
     while (remainingParts.length > 0) {
         const currentSelector = remainingParts[0];
         const position = findSelectorPosition(currentContent, currentSelector);
 
         if (position !== -1) {
-            // Selector exists, find its closing brace
             let bracketCount = 1;
             let i = currentContent.indexOf('{', position) + 1;
 
@@ -563,14 +557,14 @@ document.querySelector("#selector-frame").addEventListener("click", (e) => {
                 i++;
             }
 
-            currentPosition = i - 1; // Position before closing brace
+            currentPosition = i - 1;
+            finalLine = currentContent.substr(0, currentPosition).split('\n').length;
             remainingParts.shift();
         } else {
             break;
         }
     }
 
-    // Build remaining nested structure
     if (remainingParts.length > 0) {
         let indentation = '    '.repeat(selectorParts.length - remainingParts.length);
 
@@ -579,24 +573,28 @@ document.querySelector("#selector-frame").addEventListener("click", (e) => {
             indentation += '    ';
         });
 
-        // Add closing braces
         remainingParts.forEach(() => {
             indentation = indentation.slice(4);
             nestedContent += `${indentation}}\n`;
         });
 
-        // Insert the new content at the appropriate position
         if (currentPosition > 0) {
             currentContent = currentContent.slice(0, currentPosition) +
                 '\n' + nestedContent +
                 currentContent.slice(currentPosition);
+            finalLine += 1;
         } else {
             currentContent += '\n' + nestedContent;
+            finalLine = currentContent.split('\n').length - remainingParts.length;
         }
     }
 
     editor.setValue(currentContent);
     beautify();
+
+    // Set cursor position and focus
+    editor.setCursor(finalLine - 1, 4);
+    editor.focus();
 
     showToast('Selector copied and nested structure added');
     document.querySelector("#selectorBtn").style.removeProperty("background-color");

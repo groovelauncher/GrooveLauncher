@@ -12,3 +12,11 @@ body.selector-mode {
         pointer-events: all !important;
     }
 }
+
+body.mock-pointer {
+
+    &,
+    * {
+        cursor: none !important;
+    }
+}

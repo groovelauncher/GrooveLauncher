@@ -10,14 +10,21 @@
 **Groove Launcher** is a metro-styled launcher that brings a sleek, customizable, and personal touch to your home screen.  
 
 ## Table of Contents
+- [**NEW! Get Themes For Groove Tweaks**](#new-get-themes-for-groove-tweaks)
+- [Table of Contents](#table-of-contents)
 - [Features](#features)
 - [Screenshots](#screenshots)
 - [Getting Started](#getting-started)
 - [Download](#download)
 - [Build Instructions](#build-instructions)
 - [Groove Tweaks](#groove-tweaks)
-   - [Installing Styles](#installing-styles)
-   - [Writing Styles for Groove Tweaks](#writing-styles-for-groove-tweaks)
+  - [Installing Styles](#installing-styles)
+  - [Writing Styles](#writing-styles)
+    - [Quick Testing](#quick-testing)
+    - [Metadata Requirements](#metadata-requirements)
+    - [Example CSS Template](#example-css-template)
+    - [Hosting Your Style](#hosting-your-style)
+    - [Creating Quick Install Links](#creating-quick-install-links)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
@@ -105,7 +112,7 @@ There are two ways to install themes in Groove Launcher:
     - Launch a `groove:?installStyle` URL
     - Click Install in the prompt
 
-### Writing Styles for Groove Tweaks
+### Writing Styles
 
 #### Quick Testing
 For rapid development and testing, visit:

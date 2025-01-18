@@ -2,6 +2,9 @@ name: Deploy to GitHub Pages
 
 on:
   workflow_dispatch: # Allows manual trigger
+  push:
+    branches:
+      - main
   release:
     types: [published] # Runs on new release
 

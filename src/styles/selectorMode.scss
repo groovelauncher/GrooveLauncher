@@ -1,0 +1,14 @@
+body.selector-mode {
+    div.system-bar {
+        pointer-events: none !important;
+    }
+
+    div.groove-home-inner-tile,
+    .groove-home-tile-imageicon,
+    .groove-home-tile-title,
+    .groove-app-tile-icon,
+    .groove-app-tile-title,
+    .groove-app-tile-imageicon {
+        pointer-events: all !important;
+    }
+}

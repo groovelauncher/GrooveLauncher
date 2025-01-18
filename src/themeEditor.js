@@ -145,6 +145,10 @@ document.querySelector("#selectorBtn").addEventListener("click", (e) => {
     else e.target.style.removeProperty("background-color")
     document.querySelector("div.preview").classList[selectorOn ? "remove" : "add"]("selector-mode")
     selectorOn = !selectorOn
+
+    const iframeWindow = document.querySelector("iframe").contentWindow;
+    iframeWindow.document.body.classList[!selectorOn ? "remove" : "add"]("selector-mode")
+
 })
 let currentBlobUrl = null;
 async function uninstallThemes() {
@@ -334,18 +338,18 @@ function downloadSrc() {
     const titleMatch = cssText.match(/\/\* title: (.*?) \*\//);
     const title = titleMatch ? titleMatch[1] : 'unnamed_style';
     const safeTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    
+
     const blob = new Blob([editor.getValue()], { type: 'text/scss' });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.download = `${safeTitle}.scss`;
-    
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
     showToast('Source code downloaded');
 }
@@ -354,25 +358,25 @@ function downladDist() {
     const titleMatch = cssText.match(/\/\* title: (.*?) \*\//);
     const title = titleMatch ? titleMatch[1] : 'unnamed_style';
     const safeTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    
+
     let compiledCss;
     try {
         compiledCss = compile(cssText);
     } catch (error) {
         return;
     }
-    
+
     const blob = new Blob([compiledCss], { type: 'text/css' });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.download = `${safeTitle}.css`;
-    
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
     showToast('Compiled CSS downloaded');
 }
@@ -394,6 +398,8 @@ document.querySelector("#selector-frame").addEventListener("pointerleave", () =>
     selectorBox.style.removeProperty("width")
     selectorBox.style.removeProperty("height")
     selectorBox.style.removeProperty("border-radius")
+    selectorBox.style.removeProperty("--selector-text")
+
 })
 function elementFromPoint(x, y) {
     try {
@@ -414,11 +420,18 @@ document.querySelector("#selector-frame").addEventListener("pointermove", (e) =>
         const iframeWindow = document.querySelector("iframe").contentWindow;
         const box = el.getBoundingClientRect()
         lastEl = el
+        selectorBox.style.setProperty("--selector-text", "\"" + getElementSelector(lastEl) + "\"")
         selectorBox.style.setProperty("left", box.left + "px")
         selectorBox.style.setProperty("top", box.top + "px")
         selectorBox.style.setProperty("width", box.width + "px")
         selectorBox.style.setProperty("height", box.height + "px")
         selectorBox.style.setProperty("border-radius", iframeWindow.getComputedStyle(el).getPropertyValue("border-radius"))
+        if (y > rect.height / 2) {
+            selectorBox.classList.add("alt")
+        } else {
+            selectorBox.classList.remove("alt")
+
+        }
     }
 })
 
@@ -442,8 +455,41 @@ function shouldIncludeClass(className) {
 }
 
 // Modify getElementSelector to filter out blacklisted classes
+const static_selectors = [
+    "#app",
+    "#app div.tile-list-page div.groove-home-tile",
+    "#app div.tile-list-page div.groove-home-tile div.groove-tile-menu-unpin-button",
+    "#app div.tile-list-page div.groove-home-tile div.groove-tile-menu-resize-button",
+    "#app div.tile-list-page div.groove-home-tile div.groove-home-inner-tile",
+    "#app div.tile-list-page div.groove-home-tile div.groove-home-inner-tile img.groove-home-tile-imageicon",
+    "#app div.tile-list-page div.groove-home-tile div.groove-home-inner-tile p.groove-home-tile-title",
+    "#app div.tile-list-page #app-page-icon",
+    "#app div.app-list-page #search-icon",
+    "#app div.app-list-page input.app-list-search",
+    "#app div.app-list-page div.groove-letter-tile",
+    "#app div.app-list-page div.groove-letter-tile p.groove-app-tile-icon",
+    "#app div.app-list-page div.groove-app-tile",
+    "#app div.app-list-page div.groove-app-tile div.groove-app-tile-icon",
+    "#app div.app-list-page div.groove-app-tile p.groove-app-tile-title",
+    "div.groove-context-menu",
+    "div.groove-context-menu > div groove-context-menu-entry",
+    "#app div.app-list-page div.letter-selector",
+    "#app div.app-list-page div.letter-selector div.letter-selector-row",
+    "#app div.app-list-page div.letter-selector div.letter-selector-row div.letter-selector-letter",
+    "#app div.app-list-page div.letter-selector div.letter-selector-row div.letter-selector-letter &.disabled"
+]
+function staticSelectorToSelector(selector) {
+    return selector
+}
 function getElementSelector(element, group = false) {
     if (!element) return '';
+
+    // Check static selectors first
+    for (const selector of static_selectors) {
+        if (element.matches(selector)) {
+            return selector;
+        }
+    }
 
     let path = [];
     let current = element;
@@ -477,79 +523,85 @@ function getElementSelector(element, group = false) {
     if (finalSelector.startsWith("html > ")) finalSelector = finalSelector.substring(7);
     return finalSelector;
 }
+function beautify() {
+    const cursor = editor.getCursor();
+    editor.setValue(beautifyCss(editor.getValue(), { indent_size: 4, space_in_empty_paren: true }));
+    editor.setCursor(cursor);
+}
 document.querySelector("#selector-frame").addEventListener("click", (e) => {
     if (!selectorOn || !lastEl) return;
-    const alt = e.altKey;
-    getElementSelector(lastEl, alt);
-    navigator.clipboard.writeText(getElementSelector(lastEl, alt));
-    const cursorPos = editor.getCursor();
+    const selector = getElementSelector(lastEl);
+    navigator.clipboard.writeText(selector);
 
-    const currentContent = editor.getValue();
-    const selector = getElementSelector(lastEl, alt);
-    const selectorParts = selector.split(' > ');
-    
-    // Check if root selector exists
-    const rootSelector = selectorParts[0];
-    const rootRegex = new RegExp(`${rootSelector}\\s*{`);
-    
-    if (currentContent.match(rootRegex)) {
-        // Find position of existing root selector's closing brace
-        const rootMatch = currentContent.match(rootRegex);
-        const startPos = rootMatch.index;
-        const closingBracePos = findMatchingBrace(currentContent, startPos);
-        
-        // Build nested structure starting from second part
-        let nestedStructure = '\n';
-        let indentation = '    ';
-        selectorParts.slice(1).forEach(part => {
-            nestedStructure += indentation + part + ' {\n';
-            indentation += '    ';
-        });
-        
-        nestedStructure += indentation + '\n';
-        
-        // Close nested brackets
-        for (let i = selectorParts.length - 2; i >= 0; i--) {
-            indentation = '    '.repeat(i + 1);
-            nestedStructure += indentation + '}\n';
-        }
-        
-        // Insert at position before closing brace
-        editor.replaceRange(nestedStructure, editor.posFromIndex(closingBracePos));
-    } else {
-        // Create new full nested structure
-        let nestedStructure = '\n\n';
-        let indentation = '';
-        selectorParts.forEach(part => {
-            nestedStructure += indentation + part + ' {\n';
-            indentation += '    ';
-        });
-        
-        nestedStructure += indentation + '\n';
-        
-        for (let i = selectorParts.length - 1; i >= 0; i--) {
-            indentation = '    '.repeat(i);
-            nestedStructure += indentation + '}\n';
-        }
-        
-        editor.replaceRange(nestedStructure, CodeMirror.Pos(editor.lastLine()));
+    let currentContent = editor.getValue();
+    const selectorParts = selector.split(/\s*>\s*|\s+/);
+
+    // Function to find existing selector in content
+    function findSelectorPosition(content, selector) {
+        const regex = new RegExp(`${selector}\\s*{[^}]*}`, 'g');
+        const matches = [...content.matchAll(regex)];
+        return matches.length > 0 ? matches[matches.length - 1].index : -1;
     }
 
-    showToast('Selector copied to clipboard');
+    let currentPosition = 0;
+    let nestedContent = '';
+    let remainingParts = [...selectorParts];
+
+    // Process each selector part
+    while (remainingParts.length > 0) {
+        const currentSelector = remainingParts[0];
+        const position = findSelectorPosition(currentContent, currentSelector);
+
+        if (position !== -1) {
+            // Selector exists, find its closing brace
+            let bracketCount = 1;
+            let i = currentContent.indexOf('{', position) + 1;
+
+            while (bracketCount > 0 && i < currentContent.length) {
+                if (currentContent[i] === '{') bracketCount++;
+                if (currentContent[i] === '}') bracketCount--;
+                i++;
+            }
+
+            currentPosition = i - 1; // Position before closing brace
+            remainingParts.shift();
+        } else {
+            break;
+        }
+    }
+
+    // Build remaining nested structure
+    if (remainingParts.length > 0) {
+        let indentation = '    '.repeat(selectorParts.length - remainingParts.length);
+
+        remainingParts.forEach((part, index) => {
+            nestedContent += `${indentation}${part} {\n`;
+            indentation += '    ';
+        });
+
+        // Add closing braces
+        remainingParts.forEach(() => {
+            indentation = indentation.slice(4);
+            nestedContent += `${indentation}}\n`;
+        });
+
+        // Insert the new content at the appropriate position
+        if (currentPosition > 0) {
+            currentContent = currentContent.slice(0, currentPosition) +
+                '\n' + nestedContent +
+                currentContent.slice(currentPosition);
+        } else {
+            currentContent += '\n' + nestedContent;
+        }
+    }
+
+    editor.setValue(currentContent);
+    beautify();
+
+    showToast('Selector copied and nested structure added');
     document.querySelector("#selectorBtn").style.removeProperty("background-color");
     document.querySelector("div.preview").classList.remove("selector-mode");
     selectorOn = false;
+    const iframeWindow = document.querySelector("iframe").contentWindow;
+    iframeWindow.document.body.classList.remove("selector-mode");
 });
-
-function findMatchingBrace(text, openBracePos) {
-    let count = 1;
-    let pos = text.indexOf('{', openBracePos) + 1;
-    
-    while (count > 0 && pos < text.length) {
-        if (text[pos] === '{') count++;
-        if (text[pos] === '}') count--;
-        pos++;
-    }
-    
-    return pos - 1;
-}

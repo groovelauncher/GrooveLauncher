@@ -27,6 +27,7 @@ html {
 
   &.activity-paused {
     visibility: hidden;
+
     * {
       visibility: hidden !important;
     }
@@ -247,3 +248,5 @@ div.flow-scrollable {
     background: white !important;
   }
 }
+
+@import "./styles/selectorMode.scss";

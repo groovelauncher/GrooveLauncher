@@ -163,6 +163,26 @@ div.code-editor {
             height: 100%;
             width: 100%;
             box-shadow: inset 0px 0px 0px 2px var(--metro-color-violet), 0px 10px 50px 0px var(--metro-color-violet), 0px 0px 0px 100vw rgba(0, 0, 0, 0.5);
+
+            &.alt {
+                &::after {
+                    top: 75px !important;
+                }
+            }
+
+            &::after {
+                content: var(--selector-text);
+                position: fixed;
+                left: 50px;
+                bottom: 75px;
+                width: calc(100% - 100px);
+                height: max-content;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(20px);
+                box-shadow: inset 0px 0px 0px 1px rgba(255, 255, 255, 0.1);
+                font-family: monospace;
+                font-size: 15px;
+            }
         }
     }
 }

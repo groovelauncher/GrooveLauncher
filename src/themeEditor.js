@@ -321,17 +321,60 @@ function showContextMenu(e, menuItems = []) {
     };
 
 }
-window.addEventListener("pointerdown", () => {
-    document.querySelectorAll("div.context-menu").forEach(e => e.remove());
+window.addEventListener("pointerdown", (e) => {
+    if (!e.target.closest('.context-menu')) {
+        document.querySelectorAll("div.context-menu").forEach(e => e.remove());
+    }
 });
 window.addEventListener("blur", () => {
     document.querySelectorAll("div.context-menu").forEach(e => e.remove());
 });
 function downloadSrc() {
-
+    const cssText = editor.getValue();
+    const titleMatch = cssText.match(/\/\* title: (.*?) \*\//);
+    const title = titleMatch ? titleMatch[1] : 'unnamed_style';
+    const safeTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    
+    const blob = new Blob([editor.getValue()], { type: 'text/scss' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${safeTitle}.scss`;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    URL.revokeObjectURL(url);
+    showToast('Source code downloaded');
 }
 function downladDist() {
-
+    const cssText = editor.getValue();
+    const titleMatch = cssText.match(/\/\* title: (.*?) \*\//);
+    const title = titleMatch ? titleMatch[1] : 'unnamed_style';
+    const safeTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    
+    let compiledCss;
+    try {
+        compiledCss = compile(cssText);
+    } catch (error) {
+        return;
+    }
+    
+    const blob = new Blob([compiledCss], { type: 'text/css' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${safeTitle}.css`;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    URL.revokeObjectURL(url);
+    showToast('Compiled CSS downloaded');
 }
 document.querySelector("#downloadBtn").addEventListener("click", (e) => {
     if (e.target != document.querySelector("#downloadBtn")) return;

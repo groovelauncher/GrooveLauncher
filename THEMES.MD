@@ -1,8 +1,7 @@
 <div align="center">
-<img src="metadata/en-US/images/icon-transparent.png" width="120">
-
-# Groove Tweaks - Theme Gallery
-A collection of community-created themes for Groove Launcher.
+  <img src="www/assets/navbar/b2.png" width="120">
+  <h1>Groove Tweaks - Theme Gallery</h1>
+  <p>A collection of community-created themes for Groove Launcher.</p>
 </div>
 
 ## Available Themes

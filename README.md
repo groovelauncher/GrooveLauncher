@@ -4,14 +4,12 @@
   <p>A groovy personalized home screen experience</p>
 </div>
 
-**[NEW! Get Themes For Groove Tweaks](THEMES.MD)**
+**[NEW! Get Themes For Groove Tweaks](THEMES.MD)** <!-- omit in toc -->
 ---
 
 **Groove Launcher** is a metro-styled launcher that brings a sleek, customizable, and personal touch to your home screen.  
 
-## Table of Contents
-- [**NEW! Get Themes For Groove Tweaks**](#new-get-themes-for-groove-tweaks)
-- [Table of Contents](#table-of-contents)
+## Table of Contents <!-- omit in toc -->
 - [Features](#features)
 - [Screenshots](#screenshots)
 - [Getting Started](#getting-started)

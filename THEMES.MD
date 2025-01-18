@@ -18,10 +18,10 @@
 
 ## Installation
 
-1. Make sure you have Groove Launcher 0.5.4.beta.5 or newer installed.
+1. Make sure you have Groove Launcher 0.5.5.beta.5 or newer installed.
 2. Click the "Install Theme" button on your mobile device.
 3. When Groove Tweaks launches, tap "Install" in the theme popup.
 
 ## 🎨 Submit Your Theme
 
-Want to create your own theme? Check the [Theme Creation Guide](./README.md#writing-styles-for-groove-tweaks) and submit a pull request to this file if you'd like!
+Want to create your own theme? Check the [Theme Creation Guide](./README.md#writing-styles) and submit a pull request to this file if you'd like!

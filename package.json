@@ -41,7 +41,8 @@
     "live-server": "^1.2.2",
     "lodash": "^4.17.21",
     "normalize-diacritics-es": "^1.0.8",
-    "npm": "^10.9.2"
+    "npm": "^10.9.2",
+    "sass": "^1.83.4"
   },
   "devDependencies": {
     "chokidar-cli": "^3.0.0",

@@ -1,6 +1,9 @@
+const version = "0.5.5";
+const whatsnew = `- Added assets manager`
 import { css as beautifyCss } from 'js-beautify';
 import * as sass from "sass";
 import { debounce } from 'lodash';
+
 window.sass = sass
 window.beautifyCss = beautifyCss
 const editor = CodeMirror.fromTextArea(document.getElementById('cssEditor'), {
@@ -118,13 +121,13 @@ function showToast(message, duration = 3000, color = "rgba(0, 0, 0, 0.8)") {
         setTimeout(() => toastContainer.removeChild(toast), 300);
     }, duration);
 }
-window.addEventListener('keydown', (e) => {
+window.addEventListener('keydown', async (e) => {
     if (!editor.state.focused) return
     if ((e.shiftKey && e.altKey && e.code === 'KeyF') ||
         (e.ctrlKey && e.shiftKey && e.code === 'KeyI')) {
         e.preventDefault();
         // editor.setValue(editor.getValue().trim());
-        beautify()
+        await beautify();
         //editor.setValue(formatted);
         showToast('Style formatted');
     }
@@ -295,7 +298,7 @@ function showContextMenu(e, menuItems = []) {
         menuItem.innerText = item.text;
         menuItem.style.cssText = `
             padding: 8px 12px;
-            cursor: pointer;
+            cursor: pointer !important;
             white-space: nowrap;
         `;
         menuItem.addEventListener("click", () => {
@@ -319,6 +322,67 @@ function showContextMenu(e, menuItems = []) {
     };
 
 }
+function showPopup(title, message) {
+    const popup = document.createElement("div");
+    popup.className = "popup";
+
+    // Add styles
+    popup.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #2d2d2d;
+        border-radius: 8px;
+        padding: 20px;
+        min-width: 300px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 1000;
+    `;
+
+    popup.innerHTML = `
+        <div class="popup-header" style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        ">
+            <h3 style="margin: 0; color: #fff;">${title}</h3>
+            <button class="close-popup" style="
+                background: none;
+                border: none;
+                color: #fff;
+                font-size: 20px;
+                cursor: pointer !important;
+                padding: 0 5px;
+            ">×</button>
+        </div>
+        <div class="popup-body" style="color: #ccc;">
+            ${message}
+        </div>
+    `;
+
+    popup.querySelector(".close-popup").addEventListener("click", () => {
+        popup.remove();
+    });
+
+    document.body.appendChild(popup);
+}
+// Add background shade style to popups
+const style = document.createElement('style');
+style.textContent = `
+    .popup::before {
+        content: '';
+        position: fixed;
+        top: -99999px;
+        left: -99999px;
+        right: -99999px;
+        bottom: -99999px;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+    }
+`;
+document.head.appendChild(style);
 window.addEventListener("pointerdown", (e) => {
     if (!e.target.closest('.context-menu')) {
         document.querySelectorAll("div.context-menu").forEach(e => e.remove());
@@ -515,8 +579,9 @@ function getElementSelector(element, group = false) {
     if (finalSelector.startsWith("html > ")) finalSelector = finalSelector.substring(7);
     return finalSelector;
 }
-function beautify() {
+async function beautify() {
     const cursor = editor.getCursor();
+    await ensureRootInEditor(editor)
     editor.setValue(beautifyCss(editor.getValue(), {
         indent_size: 4,
         space_in_empty_paren: true,
@@ -524,7 +589,7 @@ function beautify() {
     }));
     editor.setCursor(cursor);
 }
-document.querySelector("#selector-frame").addEventListener("click", (e) => {
+document.querySelector("#selector-frame").addEventListener("click", async (e) => {
     if (!selectorOn || !lastEl) return;
     const selector = getElementSelector(lastEl);
     navigator.clipboard.writeText(selector);
@@ -590,7 +655,7 @@ document.querySelector("#selector-frame").addEventListener("click", (e) => {
     }
 
     editor.setValue(currentContent);
-    beautify();
+    await beautify();
 
     // Set cursor position and focus
     editor.setCursor(finalLine - 1, 4);
@@ -603,3 +668,435 @@ document.querySelector("#selector-frame").addEventListener("click", (e) => {
     const iframeWindow = document.querySelector("iframe").contentWindow;
     iframeWindow.document.body.classList.remove("selector-mode");
 });
+if (localStorage["te_editor_version"] != version) {
+    showPopup("New version! v" + version, whatsnew == "" ? "No info" : whatsnew)
+
+}
+localStorage.setItem("te_editor_version", version)
+
+function ensureRootInEditor(editor) {
+    // Get the CSS content from the editor
+    let cssContent = editor.getValue();
+
+    // Match the :root selector and its contents
+    const rootRegex = /:root\s*{[^}]*}/;
+
+    // Match the metadata block at the top of the file
+    const metadataRegex = /^(\/\*[^*]*\*\/\s*)+/;
+
+    // Find the metadata block, if any
+    const metadataMatch = cssContent.match(metadataRegex);
+    const metadataBlock = metadataMatch ? metadataMatch[0] : '';
+
+    // Remove the metadata block temporarily
+    if (metadataBlock) {
+        cssContent = cssContent.replace(metadataRegex, '').trim();
+    }
+
+    // Find the :root{} block
+    const rootMatch = cssContent.match(rootRegex);
+
+    if (rootMatch) {
+        // Remove the existing :root{} block
+        cssContent = cssContent.replace(rootRegex, '').trim();
+
+        // Add the :root{} block after the metadata
+        cssContent = `${metadataBlock}:root ${rootMatch[0].slice(5)}\n\n${cssContent}`;
+    } else {
+        // Add :root{} block after the metadata if it doesn't exist
+        cssContent = `${metadataBlock}:root {\n  /* Assets will be added here! */\n}\n\n${cssContent}`;
+    }
+
+    // Update the editor with the modified CSS content
+    editor.setValue(cssContent);
+}
+
+document.querySelector("#assetsBtn").addEventListener("click", (e) => {
+    if (document.querySelector("#assets-menu")) {
+        document.querySelector("#assets-menu").remove()
+    } else {
+        showAssetsMenu()
+    }
+});
+
+function getFontAssets() {
+    // Get the CSS content from the editor
+    const css = editor.getValue();
+
+    // Regex to match everything inside :root{}
+    const rootRegex = /:root\s*{([^}]*)}/g;
+    const rootMatch = rootRegex.exec(css);
+
+    if (rootMatch) {
+        const rootContent = rootMatch[1];
+
+        // Regex to match CSS variables (custom properties) with data:image URLs
+
+        const dataImageRegex = /--.*:\s*url\((['"]?)data:(?:@file\/x-font|font).*\);/g;
+        const matches = [...rootContent.matchAll(dataImageRegex)];
+        // Create an object to store the results
+        const imageAssets = {};
+
+        if (matches.length > 0) {
+            matches.forEach(match => {
+                const property = match[0].split(':')[0].trim();
+                const value = match[0].split(':').slice(1).join(':');
+
+                // Save the variable name and its data URL value in JSON object
+                imageAssets[property] = value;
+            });
+        }
+
+        return imageAssets;
+    }
+
+    return {};
+}
+function removeFontFaces() {
+    document.body.querySelectorAll('link.custom-font-face').forEach(style => style.remove())
+}
+function createFontFace(name, url) {
+    const style = document.createElement('style');
+    style.className = 'custom-font-face';
+    style.textContent = `@font-face { font-family: "${name}"; src: url("${url}"); }`
+    document.body.appendChild(style);
+}
+async function createFontsAssets() {
+    removeFontFaces()
+    var returnee = []
+    const fonts = getFontAssets()
+    Object.entries(fonts).forEach(([name, font]) => {
+        const asset = document.createElement('div');
+        asset.className = 'assets-menu-item';
+        asset.innerHTML = `<div class="assets-menu-item-preview"></div><div class="asset-menu-item-title"></div>`
+        asset.querySelector('.asset-menu-item-title').textContent = String(name).substring(2).replaceAll("-", " ");
+        try {
+            const dataUri = extractDataUriFromUrl(font)[0];
+            const blobUrl = dataUriToBlobUrl(dataUri);
+            const fontName = "custom-font-" + name
+            createFontFace(fontName, blobUrl)
+            asset.querySelector('.assets-menu-item-preview').textContent = "Aa";
+            asset.querySelector('.assets-menu-item-preview').style.fontFamily = "\"" + fontName + "\""
+        } catch (error) {
+            setTimeout(() => {
+                asset.remove()
+            }, 200);
+        }
+        function onClick() {
+            navigator.clipboard.writeText(`var(${name})`);
+            showToast(`${name.substring(2)} image variable is copied to clipboard`);
+        }
+        asset.addEventListener("click", onClick)
+        returnee.push(asset)
+    })
+    if(returnee.length == 0) {
+        const noResults = document.createElement("p")
+        noResults.className = "no-results"
+        noResults.textContent = "No fonts found"
+        returnee.push(noResults)
+    }
+    return returnee
+}
+function extractDataUriFromUrl(css) {
+    const dataUriRegex = /url\((['"]?)([^'"]*data:[^'"]+)(['"]?)\)/g;
+
+    let matches;
+    const dataUris = [];
+
+    while ((matches = dataUriRegex.exec(css)) !== null) {
+        // The second capturing group contains the data URI
+        const dataUri = matches[2];
+        dataUris.push(dataUri);
+    }
+
+    return dataUris;
+}
+function dataUriToBlobUrl(dataUri) {
+    // Split the data URI into its components (e.g., 'data:image/png;base64,...')
+    const [header, data] = dataUri.split(',');
+
+    // Extract the MIME type from the header
+    const mime = header.match(/:(.*?);/)[1];
+
+    // Decode the Base64 data
+    const byteString = atob(data);
+
+    // Convert the Base64 string into a Uint8Array
+    const byteNumbers = new Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++) {
+        byteNumbers[i] = byteString.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+
+    // Create a Blob from the Uint8Array
+    const blob = new Blob([byteArray], { type: mime });
+
+    // Create a URL for the Blob
+    const blobUrl = URL.createObjectURL(blob);
+    setTimeout(() => {
+        //revoke
+        URL.revokeObjectURL(blobUrl)
+    }, 10000);
+    return blobUrl;
+}
+
+function getImageAssets() {
+    // Get the CSS content from the editor
+    const css = editor.getValue();
+
+    // Regex to match everything inside :root{}
+    const rootRegex = /:root\s*{([^}]*)}/g;
+    const rootMatch = rootRegex.exec(css);
+
+    if (rootMatch) {
+        const rootContent = rootMatch[1];
+
+        // Regex to match CSS variables (custom properties) with data:image URLs
+        const dataImageRegex = /--.*:\s*url\((['"]?)data:image.*\);/g;
+        const matches = [...rootContent.matchAll(dataImageRegex)];
+        // Create an object to store the results
+        const imageAssets = {};
+
+        if (matches.length > 0) {
+            matches.forEach(match => {
+                const property = match[0].split(':')[0].trim();
+                const value = match[0].split(':').slice(1).join(':');
+
+                // Save the variable name and its data URL value in JSON object
+                imageAssets[property] = value;
+            });
+        }
+
+        return imageAssets;
+    }
+
+    return {};
+}
+window.getImageAssets = getImageAssets;
+async function createImagesAssets() {
+    var returnee = []
+    const images = getImageAssets()
+    Object.entries(images).forEach(([name, image]) => {
+        const asset = document.createElement('div');
+        asset.className = 'assets-menu-item';
+        asset.innerHTML = `<div class="assets-menu-item-preview"></div><div class="asset-menu-item-title"></div>`
+        asset.querySelector('.asset-menu-item-title').textContent = String(name).substring(2).replaceAll("-", " ");
+        try {
+            const dataUri = extractDataUriFromUrl(image)[0];
+            const blobUrl = dataUriToBlobUrl(dataUri);
+            asset.querySelector('.assets-menu-item-preview').style.backgroundImage = `url(${blobUrl})`;
+        } catch (error) {
+            setTimeout(() => {
+                asset.remove()
+            }, 200);
+        }
+        function onClick() {
+            navigator.clipboard.writeText(`var(${name})`);
+            showToast(`${name.substring(2)} image variable is copied to clipboard`);
+        }
+        asset.addEventListener("click", onClick)
+        returnee.push(asset)
+    })
+    if(returnee.length == 0) {
+        const noResults = document.createElement("p")
+        noResults.className = "no-results"
+        noResults.textContent = "No images found"
+        returnee.push(noResults)
+    }
+    return returnee
+}
+function getColorAssets() {
+    const colors = {
+        "lime": "#A4C400",
+        "green": "#60A917",
+        "emerald": "#008A00",
+        "teal": "#00ABA9",
+        "cyan": "#1BA1E2",
+        "cobalt": "#3E65FF",
+        "indigo": "#6A00FF",
+        "violet": "#AA00FF",
+        "pink": "#F472D0",
+        "magenta": "#D80073",
+        "crimson": "#A20025",
+        "red": "#E51400",
+        "orange": "#FA6800",
+        "amber": "#F0A30A",
+        "yellow": "#E3C800",
+        "brown": "#825A2C",
+        "olive": "#6d8764",
+        "steel": "#647687",
+        "mauve": "#76608A",
+        "taupe": "#87794E",
+        "accent color": "var(--accent-color)"
+    };
+    return colors;
+}
+async function createColorsAssets() {
+    var returnee = []
+    const colors = getColorAssets()
+    Object.entries(colors).forEach(([name, color]) => {
+        const asset = document.createElement('div');
+        asset.className = 'assets-menu-item';
+        asset.innerHTML = `<div class="assets-menu-item-preview"></div><div class="asset-menu-item-title"></div>`
+        asset.querySelector('.asset-menu-item-title').textContent = String(name).charAt(0).toUpperCase() + String(name).slice(1);
+        asset.querySelector('.assets-menu-item-preview').style.backgroundColor = color;
+        function onClick() {
+            navigator.clipboard.writeText(color);
+            showToast(`${String(name).charAt(0).toUpperCase() + String(name).slice(1)} color value is copied to clipboard`);
+        }
+        asset.addEventListener("click", onClick)
+        returnee.push(asset)
+    })
+    return returnee
+}
+var lastOpenedMenu = 0
+function showAssetsMenu() {
+    const menu = document.createElement('div');
+    menu.id = "assets-menu";
+
+    const topBar = document.createElement('div');
+    topBar.className = 'assets-menu-topbar';
+
+    const items = [
+        { title: 'Fonts', icon: 'fa-font' },
+        { title: 'Images', icon: 'fa-image' },
+        { title: 'Colors', icon: 'fa-palette' }
+    ];
+
+    items.forEach((item, index) => {
+        const button = document.createElement('button');
+        button.innerHTML = `<i class="fas ${item.icon}"></i> ${item.title}`;
+        button.className = 'assets-menu-button';
+        button.addEventListener('click', () => {
+            lastOpenedMenu = index
+            loadAssetItems()
+        })
+        topBar.appendChild(button);
+    });
+
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = `<i class="fas fa-times"></i>`;
+    closeBtn.className = 'assets-menu-close';
+    closeBtn.addEventListener('click', () => menu.remove());
+    topBar.appendChild(closeBtn);
+
+    const assetsView = document.createElement('div');
+    assetsView.className = 'assets-menu-view';
+
+    async function loadAssetItems() {
+        assetsView.scrollTop = 0;
+        assetsView.innerHTML = '';
+        var assets = []
+        switch (lastOpenedMenu) {
+            case 0:
+                assets = await createFontsAssets()
+                break;
+            case 1:
+                assets = await createImagesAssets()
+                break;
+            case 2:
+                assets = await createColorsAssets()
+                break;
+        }
+        assets.forEach((asset, index) => {
+            assetsView.appendChild(asset);
+        })
+    }
+    window.loadAssetItems = loadAssetItems.bind(this);
+    loadAssetItems()
+
+    menu.appendChild(topBar);
+    menu.appendChild(assetsView);
+    document.querySelector("div.preview").appendChild(menu);
+    assetsDragAndDrop()
+}
+
+function isValidCSSVariableName(name) {
+    // Regex to check for valid characters (letters, numbers, hyphens, underscores)
+    if (name == null || name == "" || name == undefined) return false
+    const validNameRegex = /^[a-zA-Z0-9_-]+$/;
+    return validNameRegex.test(name);
+}
+window.isValidCSSVariableName = isValidCSSVariableName
+const allowedTypes = [
+    "image/jpeg", "image/png", "image/gif", "image/svg+xml", "image/webp",
+    "font/woff", "font/woff2", "font/ttf", "font/otf"
+];
+
+function assetsDragAndDrop() {
+
+    const dropZone = document.getElementById("assets-menu");
+
+    dropZone.addEventListener("dragover", (event) => {
+        clearTimeout(window.dropZoneTimeout)
+        event.preventDefault(); // Allow drop
+        dropZone.classList.add("dragging")
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+        clearTimeout(window.dropZoneTimeout)
+        window.dropZoneTimeout = setTimeout(() => {
+            dropZone.style.borderColor = "#aaa"; // Reset border color
+            dropZone.classList.remove("dragging")
+        }, 100);
+
+    });
+
+    dropZone.addEventListener("drop", (event) => {
+        clearTimeout(window.dropZoneTimeout)
+        event.preventDefault(); // Prevent default action
+        dropZone.classList.remove("dragging")
+        dropZone.classList.add("drag-success")
+        setTimeout(() => {
+            dropZone.classList.remove("drag-success")
+        }, 1000);
+        window.dragTimesTried = 0
+        const file = event.dataTransfer.files[0]; // Get the dropped file
+        if (file && allowedTypes.includes(file.type)) {
+            selectName()
+            function selectName() {
+                window.dragTimesTried += 1;
+                const input = prompt((window.dragTimesTried <= 1) ? `Enter a name for the ${file.type.split("/")[0]}:` : `Invalid name, please enter a valid name for the ${file.type.split("/")[0]}:`);
+                if (input == null) {
+                    //user cancelled asset
+                    showToast("Asset creation cancelled", 5000, "var(--metro-color-yellow)")
+                } else if (isValidCSSVariableName(input)) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const dataUri = e.target.result;
+                        //get css add --name: url(datauri) at the end of the root and editor.setValue
+                        beautify()
+                        ensureRootInEditor(editor)
+                        beautify()
+                        const css = window.editor.getValue();
+                        const rootRegex = /:root\s*{([^}]*)}/g;
+                        const rootMatch = rootRegex.exec(css);
+                        if (rootMatch) {
+                            const rootContent = rootMatch[1];
+                            const newRootContent = `${rootContent}--${input}: url('${dataUri}');`;
+                            const newCss = css.replace(rootRegex, `:root {${newRootContent}}`);
+                            editor.setValue(newCss);
+                            showToast("Asset created", 5000, "var(--metro-color-green)")
+                            try {
+                                window.loadAssetItems()
+                            } catch (error) {
+
+                            }
+                        } else {
+                            //asset couldnt be created unknown error
+                            showToast("Asset creation failed", 5000, "var(--metro-color-red)")
+
+                        }
+
+                    };
+                    reader.readAsDataURL(file); // Read file as Data URI
+                    delete window.dragTimesTried
+                } else {
+                    selectName()
+                }
+            }
+        } else {
+            showToast("Only font and image assets are allowed", 5000, "var(--metro-color-red)")
+        }
+    });
+}

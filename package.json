@@ -41,13 +41,11 @@
     "live-server": "^1.2.2",
     "lodash": "^4.17.21",
     "normalize-diacritics-es": "^1.0.8",
-    "npm": "^10.9.2",
-    "postcss-sass": "^0.5.0"
+    "npm": "^10.9.2"
   },
   "devDependencies": {
     "chokidar-cli": "^3.0.0",
     "concurrently": "^9.0.1",
-    "sass": "^1.83.4",
     "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4"
   }

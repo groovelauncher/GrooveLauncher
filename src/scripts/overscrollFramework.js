@@ -1,5 +1,6 @@
 const nativeScroll = () => (localStorage.nativeScroll == "true" || true) && false
 import BScroll from "better-scroll";
+import { merge } from "lodash";
 import jQuery from "jquery";
 function applyOverscroll(bs) {
   (bs.options.outOfBoundaryDampingFactor = 1), bs.refresh();
@@ -194,7 +195,7 @@ function GrooveSlide(selector, options = {}) {
       scrollTo: (x, y, time, easing) => {
         el.scrollTo({ left: x, top: y, behavior: "smooth" })
       },
-      goToPage: (x, y, time, easing) => { 
+      goToPage: (x, y, time, easing) => {
         scroller.scrollTo(x * el.offsetWidth, 0, time, easing)
       },
       getCurrentPage: () => {
@@ -204,13 +205,16 @@ function GrooveSlide(selector, options = {}) {
       refresh: () => { }
     }
   } else {
-    scroller = new BScroll(selector, Object.assign({
+    const finalOptions = merge({}, {
       click: true,
       tap: true,
       bounce: false,
       disableMouse: false,
       disableTouch: false,
       HWCompositing: false,
+      scrollX: true,
+      scrollY: false,
+      momentum: false,
       slide: {
         threshold: 100,
         loop: false,
@@ -219,8 +223,11 @@ function GrooveSlide(selector, options = {}) {
         easing: "cubic-bezier(0.075, 0.82, 0.165, 1)",
         speed: 750,
       }
-    }, options))
-
+    }, options)
+    function create() {
+      scroller = new BScroll(selector, finalOptions)
+    }
+    create()
     scroller.cancelScroll = () => { cancelScroll(scroller) }
   }
   return scroller

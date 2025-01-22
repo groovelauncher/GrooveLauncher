@@ -6,6 +6,7 @@ import BuildConfigMock from "./BuildConfigMock";
 // Add constants at the top
 const CONSTANTS = {
     INTERNAL_SETTINGS_APP: 'groove.internal.settings',
+    INTERNAL_STORE_APP: 'groove.internal.store',
     INTERNAL_TWEAKS_APP: 'groove.internal.tweaks',
     DEFAULT_SYSTEM_INSETS: { left: 0, top: 32, right: 0, bottom: 50 },
     MOCK_ICON_PATH: '/icons/default/',
@@ -41,6 +42,11 @@ class GrooveMock {
                 this.#retrievedApps.push({
                     packageName: CONSTANTS.INTERNAL_SETTINGS_APP,
                     label: 'Groove Settings',
+                    type: 0
+                });
+                this.#retrievedApps.push({
+                    packageName: CONSTANTS.INTERNAL_STORE_APP,
+                    label: 'Groove Web Store',
                     type: 0
                 });
                 this.#retrievedApps.push({
@@ -129,7 +135,7 @@ class GrooveMock {
         window.open(url, "_blank")
     }
     getAppVersion() {
-        return "0.5.4-beta.5"
+        return "0.5.5-beta.5"
     }
     getWebViewVersion() {
         const versionName = "chrome"

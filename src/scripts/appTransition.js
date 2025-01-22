@@ -159,7 +159,7 @@ const appTransition = {
         mainHomeSlider.style.removeProperty('visibility');
         mainHomeSlider.classList.remove('visibility-hidden');
         clearTimeout(window.appTransitionLaunchError);
-        if (document.body.classList.contains("rtl")) scrollers.main_home_scroller.scrollTo(-window.innerWidth, 0, 0); else scrollers.main_home_scroller.scrollTo(0, 0);
+        if (document.body.classList.contains("rtl")) scrollers.main_home_scroller.scrollTo(-window.innerWidth, 0); else scrollers.main_home_scroller.scrollTo(0, 0);
         mainHomeSlider.classList.remove(CONFIG.CLASSES.TRANSITION.PAUSE);
         mainHomeSlider.classList.add(CONFIG.CLASSES.TRANSITION.RESUME);
 

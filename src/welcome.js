@@ -150,6 +150,7 @@ document.querySelector("#page-wizard button.right-btn").addEventListener("flowCl
 
         loader.classList.add("finished");
         document.querySelector("#update-loading p").innerText = "All done!"
+        document.querySelector("#update-loader").remove()
         document.querySelector("#update-loading div.setup-footer").style.removeProperty("display")
         $("#update-loading").addClass("active").addClass("button-anim")
         setup.update_wizard = false

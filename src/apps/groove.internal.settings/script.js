@@ -23,21 +23,9 @@ document.querySelectorAll("div.groove-list-view").forEach(listView => {
     })
 })
 const bs = new GrooveSlide("#settings-pages", {
-    scrollX: true,
-    scrollY: false,
-    click: true,
-    tap: true,
-    bounce: false,
-    disableMouse: false,
-    disableTouch: false,
-    momentum: false,
-    HWCompositing: false,
     slide: {
-        threshold: 100,
         loop: true,
-        interval: false,
-        autoplay: false,
-        easing: "cubic-bezier(0.075, 0.82, 0.165, 1)"
+        speed: 400
     },
 })
 
@@ -55,6 +43,17 @@ function handlePageAnim(index = 0, next = true, scroll = 0) {
     document.querySelectorAll("div.settings-pages-container > div.settings-page")[index + 1].style.setProperty("--page-swipe-translate", (next ? scroll : -scroll) + "px")
     document.querySelectorAll("div.settings-pages-container > div.settings-page")[index + 1].style.setProperty("--page-swipe-direction", (next ? 1 : -1))
     document.querySelectorAll("div.settings-pages-container > div.settings-page")[index + 1].classList.add("active-page")
+    const maxIndex = document.querySelectorAll("div.settings-pages-container > div.settings-page").length - 1
+    console.log("handle page anim", index, maxIndex)
+    if (index == 0) {
+        document.querySelectorAll("div.settings-pages-container > div.settings-page")[maxIndex].classList.add("active-page")
+        document.querySelectorAll("div.settings-pages-container > div.settings-page")[maxIndex].style.setProperty("--page-swipe-translate", (next ? scroll : -scroll) + "px")
+        document.querySelectorAll("div.settings-pages-container > div.settings-page")[maxIndex].style.setProperty("--page-swipe-direction", (next ? 1 : -1))
+    } else if (index == maxIndex - 2) {
+        document.querySelectorAll("div.settings-pages-container > div.settings-page")[0].classList.add("active-page")
+        document.querySelectorAll("div.settings-pages-container > div.settings-page")[0].style.setProperty("--page-swipe-translate", (next ? scroll : -scroll) + "px")
+        document.querySelectorAll("div.settings-pages-container > div.settings-page")[0].style.setProperty("--page-swipe-direction", (next ? 1 : -1))
+    }
 }
 const scrollWidth = () => { return Math.min(window.innerWidth, 768) }
 window.scrollWidth = scrollWidth
@@ -78,11 +77,7 @@ bs.on('touchEnd', (e) => {
 bs.on('scrollEnd', (e) => {
     //console.log("scroll", e.x)
 })
-allPages.forEach(e => e.classList.add("original"))
-document.querySelectorAll("div.settings-page:not(.original)").forEach(e => {
-    e.innerHTML = "";
-    e.removeAttribute("id")
-})
+
 
 window.bs = bs
 
@@ -144,18 +139,7 @@ function activeTabScroll() {
             var transform = 0
             scrollEl.slice(0, Math.floor(scroll)).forEach(e => transform += e)
             transform += scrollEl[Math.floor(scroll)] * (scroll % 1)
-            /* allTabs.forEach(e => e.classList.remove("active-tab"))
-             allPages.forEach(e => e.classList.remove("active-page"))
-             try {
-                 allTabs[Math.floor(scroll + .5)].classList.add("active-tab")
-                 allPages[Math.floor(scroll + .5)].classList.add("active-page")
-             } catch (error) {
-                 try {
-                     allTabs[Math.floor(scroll + .5 - allTabs.length)].classList.add("active-tab")
-                     //allPages[Math.floor(scroll + .5 - allTabs.length)].classList.add("active-page")
-                 } catch (error) {
-                 }
-             }*/
+
             const tabswidth = maxscroll
             allTabs.forEach((e, index) => {
                 var extra = 0
@@ -165,10 +149,16 @@ function activeTabScroll() {
                 if (`"${innerText}"` != e.style.getPropertyValue("--ats-title")) e.style.setProperty("--ats-title", `"${innerText}"`)
                 const innerTextLeft = tabswidth - e.offsetWidth
                 if (`${innerTextLeft}px` != e.style.getPropertyValue("--ats-title-left")) e.style.setProperty("--ats-title-left", `${innerTextLeft}px`)
-
-                //   if (x <= 0) allPages[index].style.transform = scroll >= (index + 1) ? `translateX(${bs.content.offsetWidth - bs.wrapper.offsetWidth * 2}px)` : ""
             })
-            //  if (x > 0) { allPages.slice(-1)[0].style.transform = `translateX(${-100 * allPages.length}%)` }
+            const [firstPage, lastPage] = [allPages[0], allPages[allPages.length - 1]]
+            if (scrollStartX) if (scrollStartX == 0 || scrollStartX == allPages.length - 1) if (scrollStartX == 0) {
+
+            } else {
+
+            }
+
+
+            //console.log("scroll", scroll, allTabs.length)
             lastX = x
         }
     }

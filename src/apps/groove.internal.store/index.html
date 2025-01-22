@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tweaks</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body style="perspective: var(--flow-perspective)">
+  <div id="splashscreen"></div>
+  <div class="innerApp" style="visibility: hidden;">
+    <h1 class="app-title">Tweaks</h1>
+    <div class="app-tabs">
+
+    </div>
+    <div id="settings-pages">
+      <div class="settings-pages-container">
+        <div class="settings-page active-page first-page" id="home-tab">
+          <div class="groove-list-view skew">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="innerAppPage" id="appDetailPage">
+    <h1 class="app-title">Settings</h1>
+    <div class="app-tabs">
+      <p class="active-tab" style="text-transform: none !important;">app name</p>
+    </div>
+    <div class="settings-pages">
+      <div class="settings-pages-container">
+        <div class="settings-page-2" id="app-detail-tab">
+          <div>
+            <div class="group" style="pointer-events: auto;">
+              <p class="group-title">Info</p>
+              <p class="group-description" style="color: var(--metro-foreground);margin-bottom: 15px;"></p>
+              <button class="metro-button" id="uninstallappbutton" style="margin: 0px;">Uninstall
+                App</button>
+            </div>
+            <div class="app-preference-form">
+              <div class="group" id="app-preference-show">
+                <p class="group-title">Show in apps list</p>
+                <div class="tile-selector" style="margin-bottom: 0px;">
+                  <p data-i18n-init="common.actions.on">On</p>
+                  <div>
+                    <div id="app-list-show-toggle-switch" class="metro-toggle-switch" checked></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="group" id="app-preference-name">
+                <p class="group-title">Name</p>
+                <input type="text" class="metro-text-input">
+              </div>
+              <div class="group" style="display: none;" id="app-preference-icon">
+                <p class="group-title">Icon</p>
+                <div class="metro-dropdown-menu" selected="1">
+                  <div class="metro-dropdown-option">Default</div>
+                  <div class="metro-dropdown-option">Monochrome
+                  </div>
+                </div>
+              </div>
+              <div class="group" style="display: none;" id="app-preference-background">
+                <p class="group-title">Background</p>
+                <div class="metro-dropdown-menu" selected="1">
+                  <div class="metro-dropdown-option">Default
+                  </div>
+                  <div class="metro-dropdown-option">
+                    Transparent</div>
+                </div>
+              </div>
+              <div class="group" style="display: none;" id="app-preference-text-color">
+                <p class="group-title">Text color</p>
+                <div class="metro-dropdown-menu" selected="1">
+                  <div class="metro-dropdown-option">Auto</div>
+                  <div class="metro-dropdown-option">Dark</div>
+                  <div class="metro-dropdown-option">Light</div>
+                </div>
+              </div>
+              <div class="group" style="display: none;" id="app-preference-live-tile">
+                <p class="group-title">Live tile</p>
+                <div class="metro-dropdown-menu" selected="1">
+                  <div class="metro-dropdown-option">Light</div>
+                  <div class="metro-dropdown-option">Dark</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>

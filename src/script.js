@@ -114,13 +114,14 @@ scrollers.main_home_scroller.on("slideWillChange", function (e) {
         $("#search-icon").removeClass("shown");
     } else {
         GrooveBoard.backendMethods.navigation.push("appMenuOpened", () => { }, () => {
-            scrollers.main_home_scroller.scrollTo(document.body.classList.contains("rtl") ? -window.innerWidth : 0, 0, 750)
+            scrollers.main_home_scroller.scrollTo(document.body.classList.contains("rtl") ? -window.innerWidth : 0)
         })
         $("#search-icon").addClass("shown");
     }
 })
 
 // Add scroll listener for more granular control
+/*TURN ON
 scrollers.main_home_scroller.scroller.translater.hooks.on("beforeTranslate", function (p) {
     const position = scrollers.main_home_scroller.x;
     if (position < document.body.classList.contains("rtl") ? (-window.innerWidth + 10) : -10) {
@@ -128,7 +129,7 @@ scrollers.main_home_scroller.scroller.translater.hooks.on("beforeTranslate", fun
     } else {
         $("#search-icon").removeClass("shown");
     }
-});
+});*/
 
 function getRandomMultiplier() {
     // Returns -1, 0, or 1

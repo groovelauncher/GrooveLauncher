@@ -202,7 +202,8 @@ const iconPackConverter = [
             "com.oneplus.store",
             "com.sec.android.app.samsungapps",
             "com.xiaomi.market",
-            "com.huawei.appmarket"
+            "com.huawei.appmarket",
+            "groove.internal.store"
         ],
         "icon": "store"
     },

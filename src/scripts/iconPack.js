@@ -75,6 +75,7 @@ const iconPackConverter = [
             "com.lge.camera",
             "com.lge.camera8i8h",
             "com.lge.cammra",
+            "org.lineageos.aperture",
             "com.mados.madcamera",
             "com.mediatek.camera",
             "com.meizu.media.camera",
@@ -298,6 +299,7 @@ const iconPackConverter = [
             "com.gbc.filemanager",
             "com.gilda.filemanager",
             "com.gionee.filemanager",
+            "com.google.android.apps.nbu.files",
             "com.google.android.documentsui",
             "com.hct.fileexplorer",
             "com.hitv.explorer",
@@ -708,8 +710,120 @@ const iconPackConverter = [
             "com.lenovo.ideanotepad"
         ],
         "icon": "notes"
-    }
+    },
+    //SIM MENU
+    {
+        "apps": [
+            "com.android.stk",
+            "com.samsung.android.app.stk",
+            "com.android.stk2",
+            "com.nubia.uimsim",
+            "com.mediatek.systemui.ext",
+            "com.qualcomm.qti.simsettings",
+            "com.qualcomm.qti.uim",
+            "com.mediatek.simprocessor",
+            "com.android.phone.settings.SimSettings",
+            "com.android.settings.sim"
+        ],
+        "icon": "sim-menu"
+    },
+    //THIRD PARTY SECTION
 
+    //APPLE MUSIC
+    {
+        "apps": [
+            "com.apple.android.music"
+        ],
+        "icon": "thirdparty/apple-music",
+        "accent": "#FA233B"
+    },
+    //CHATGPT
+    {
+        "apps": [
+            "com.openai.chatgpt"
+        ],
+        "icon": "thirdparty/chatgpt"
+    },
+    //DICT.CC
+    {
+        "apps": [
+            "cc.dict.dictcc"
+        ],
+        "icon": "thirdparty/dict-cc",
+        "accent": "#FF8C00"
+    },
+    //ISTANBULKART
+    {
+        "apps": [
+            "com.belbim.istanbulkart"
+        ],
+        "icon": "thirdparty/istanbulkart",
+        "accent": "#3CB4E7"
+    },
+    //ISTANBUL SENIN
+    {
+        "apps": [
+            "com.tr.gov.ibb.istanbulsenin"
+        ],
+        "icon": "thirdparty/istanbul-senin",
+        "accent": "#C80B5F"
+    }
+    //LICHESS
+    ,
+    {
+        "apps": [
+            "org.lichess.mobileapp"
+        ],
+        "icon": "thirdparty/lichess"
+    },
+    //STREMIO
+    {
+        "apps": [
+            "com.stremio.one"
+        ],
+        "icon": "thirdparty/stremio",
+        "accent": "#7B5BF5"
+    },
+    //SKYPE
+    {
+        "apps": [
+            "com.skype.raider"
+        ],
+        "icon": "thirdparty/skype",
+        "accent": "#00AFF0"
+    },
+    //TELEGRAM
+    {
+        "apps": [
+            "org.telegram.messenger"
+        ],
+        "icon": "thirdparty/telegram",
+        "accent": "#2CA4E0"
+    },
+    //TELEGRAM X
+    {
+        "apps": [
+            "org.thunderdog.challegram"
+        ],
+        "icon": "thirdparty/telegram",
+        "accent": "#2E3D4F"
+    },
+    //TURKCELL TV
+    {
+        "apps": [
+            "com.turkcell.ott"
+        ],
+        "icon": "thirdparty/turkcell-tv",
+        "accent": "#1B1F28"
+    },
+    //ZIRAAT MOBILE
+    {
+        "apps": [
+            "com.ziraat.ziraatmobil"
+        ],
+        "icon": "thirdparty/ziraat-mobile",
+        "accent": "#EC1D23"
+    },
     /* {
          "apps": [
              "com.android.stk"

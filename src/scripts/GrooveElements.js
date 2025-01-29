@@ -91,22 +91,6 @@ function getImage(url) {
     img.src = url
   })
 }
-function getTextColor(imagePath) {
-  return new Promise((resolve) => {
-    getImage(imagePath).then((img) => {
-      const color = colorThief.getColor(img);
-      //console.log("color", color);
-      const [r, g, b] = color.map((val) => val / 255).map((val) => {
-        return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
-      });
-      const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-
-      // Return luminance value
-      //console.log("luminance", luminance)
-      resolve(luminance > 0.5 ? '#000000' : '#FFFFFF');
-    })
-  });
-}
 function wAppTile(
   //imageIcon = false,
   icon = "",

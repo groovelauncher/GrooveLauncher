@@ -267,7 +267,7 @@ document.querySelector("#page-readme button.right-btn").addEventListener("flowCl
             goToPage(7)
 
             setTimeout(() => {
-                location.href = new URL("./", location).href
+                location.href = new URL("./index.html", location).href
             }, 500);
         }
 

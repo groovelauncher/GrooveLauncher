@@ -97,7 +97,13 @@ body {
 }
 
 
-
+body:not(.groove-mock) {
+    .system-bar {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+}
 .groove-element {
     &.groove-element-alert-layer {
         position: fixed;

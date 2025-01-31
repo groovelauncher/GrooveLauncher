@@ -288,6 +288,13 @@ p.text {
     }
 }
 
+p.groups-title {
+    color: var(--metro-foreground);
+    font-size: 35px;
+    font-weight: 300;
+    margin: 6px 0px;
+}
+
 .group {
     position: relative;
     display: flex;
@@ -1035,5 +1042,12 @@ div.color-picker-controls {
     &.t_active {
         background: var(--metro-foreground) !important;
         color: var(--metro-background) !important;
+    }
+}
+
+#clearfont {
+    &.hidden {
+        display: none;
+        visibility: hidden;
     }
 }

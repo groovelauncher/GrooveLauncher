@@ -35,7 +35,7 @@ function handleFileInput(event) {
                 }, 100);
             });
         };
-        
+
         reader.onerror = function () {
             parent.GrooveBoard.alert(
                 window.i18n.t("settings.alerts.font_read_error.title"),
@@ -96,15 +96,20 @@ setTimeout(() => {
         window.setFont(font)
         fontStore.hasFont().then((value) => {
             if (value || localStorage["customFontName"]) {
-                document.getElementById("clearfont").style.visibility = "visible"
+                document.getElementById("clearfont").classList.remove("hidden")
                 document.querySelector("#font-chooser > div:nth-child(3) > span.name").innerText = localStorage["customFontName"] || "custom font"
 
             } else {
-                document.getElementById("clearfont").style.visibility = "hidden"
+                document.getElementById("clearfont").classList.add("hidden")
             }
         });
     } else {
-        document.getElementById("clearfont").style.visibility = "hidden"
+        document.getElementById("clearfont").classList.add("hidden")
+
+    }
+    if (localStorage.getItem("hapticFeedback") != "false") {
+        document.querySelector("div.haptic-toggle-switch > p").innerText = i18n.t("common.actions.on")
+        document.querySelector("div.haptic-toggle-switch > div > .metro-toggle-switch").setAttribute("checked", "")
     }
 }, 500);    //reduce-motion-toggle-switch
 if (!!localStorage.getItem("font")) {
@@ -114,7 +119,7 @@ if (!!localStorage.getItem("font")) {
 document.getElementById("clearfont").addEventListener("flowClick", () => {
     fontStore.clearFont()
     document.querySelector("#font-chooser > div:nth-child(3) > span.name").innerText = i18n.t("settings.ease_of_access.font.choose")
-    document.getElementById("clearfont").style.visibility = "hidden"
+    document.getElementById("clearfont").classList.add("hidden")
     window.setFont(0)
     document.getElementById("font-chooser").selectOption(0)
     parent.GrooveBoard.backendMethods.font.set(0)

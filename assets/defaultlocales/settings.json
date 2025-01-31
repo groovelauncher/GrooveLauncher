@@ -37,6 +37,14 @@
       "title": "Font",
       "choose": "Choose...",
       "remove": "Remove Font"
+    },
+    "haptic_feedback": {
+      "title": "Haptic Feedback",
+      "description": "Enable vibration feedback when interacting with tiles and controls."
+    },
+    "groups": {
+      "vision": "Vision",
+      "tactile": "Tactile"
     }
   },
   "advanced": {

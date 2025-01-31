@@ -29,6 +29,23 @@
         "title": "Choose your color",
         "description": "Pick a color that matches your mood."
     },
+    "permissions":{
+        "title": "Permissions",
+        "groups":{
+            "contacts":{
+                "title": "Contacts",
+                "description": "Access to contacts is needed to display your contacts live tile."
+            },
+            "photos":{
+                "title": "Photos",
+                "description": "Access to photos is needed to display your photos live tile."
+            },
+            "notifications":{
+                "title": "Notifications",
+                "description": "Access to notifications is needed to display your notifications live tile."
+            }
+        }
+    },
     "whatsnew": {
         "title": "What's New?"
     },

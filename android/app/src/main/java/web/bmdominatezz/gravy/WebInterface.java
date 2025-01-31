@@ -777,11 +777,20 @@ public class WebInterface {
         );
     }
 
+    Boolean hapticEnabled = true;
+
     @JavascriptInterface
     public boolean triggerHapticFeedback(String feedbackConstant) {
-        if (feedbackConstant == "SUPPORTED") {
+        if (Objects.equals(feedbackConstant, "SUPPORTED")) {
+            return true;
+        } else if (Objects.equals(feedbackConstant, "DISABLED")) {
+            hapticEnabled = false;
+            return true;
+        } else if (Objects.equals(feedbackConstant, "ENABLED")) {
+            hapticEnabled = true;
             return true;
         }
+        if (!hapticEnabled) return false;
         mainActivity.runOnUiThread(() -> {
             View view = mainActivity.getWindow().getDecorView();
             try {

@@ -230,12 +230,19 @@ class GrooveMock {
     getAnimationDurationScale() {
         return 1;
     }
+    _hapticEnabled = true;
     triggerHapticFeedback(haptic) {
-        if (haptic != "SUPPORTED" && haptic != "NO_HAPTICS") {
+        if (haptic == "ENABLED") {
+            this._hapticEnabled = true;
+            return "true"
+        } else if (haptic == "DISABLED") {
+            this._hapticEnabled = false;
+            return "true"
+        } else if (haptic != "SUPPORTED" && haptic != "NO_HAPTICS") {
             if (haptic == "CLOCK_TICK") {
-                playHapticTick(.25);
+                if (this._hapticEnabled) playHapticTick(.25);
             } else {
-                playHapticTick();
+                if (this._hapticEnabled) playHapticTick();
             }
         }
         return "true"

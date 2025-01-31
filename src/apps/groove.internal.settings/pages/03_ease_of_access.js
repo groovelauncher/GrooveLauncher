@@ -6,6 +6,15 @@ document.querySelector("div.reduce-motion-toggle-switch > div > .metro-toggle-sw
     e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
     appViewEvents.setReduceMotion(e.target.hasAttribute("checked"))
 })
+document.querySelector("div.haptic-toggle-switch > div > .metro-toggle-switch").addEventListener("checked", (e) => {
+    e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
+    localStorage.setItem("hapticFeedback", e.target.hasAttribute("checked"))
+    if (e.target.hasAttribute("checked")) {
+        Groove.triggerHapticFeedback("ENABLED")
+    } else {
+        lGroove.triggerHapticFeedback("DISABLED")
+    }
+})
 
 
 function handleFileInput(event) {

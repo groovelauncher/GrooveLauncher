@@ -9,6 +9,7 @@ import { i18n, greetings } from './scripts/localeManager';
 await i18n.init();
 window.i18n = i18n;
 window.greetings = greetings
+const allPermissions = ["CONTACTS", "PHOTOS", "NOTIFICATIONS"]
 
 import { GrooveMock, BuildConfigMock } from "./scripts/grooveMock.js";
 window.GrooveRole = "main"
@@ -106,12 +107,15 @@ var setup = {
     accessibility: true,
     pick_accent: true,
     whats_new: true,
+    permissions: true
 }
 const updatedApp = !!localStorage["lastVersion"]
 setup.welcome_back = updatedApp
 setup.update_wizard = updatedApp && localStorage["lastVersion"] != Groove.getAppVersion()
 setup.pick_accent = !!!localStorage["accentColor"]
 setup.accessibility = !!!localStorage["theme"] && !!!localStorage["UIScale"]
+setup.permissions = !allPermissions.some(e => !Groove.checkPermission(e))
+
 if (updatedApp) {
     document.querySelector("#page-welcome > div.setup-body > h1").innerText = "Welcome back"
     document.querySelector("#page-welcome > div.setup-body > p:nth-child(3)").innerText = "Let’s check a few details to enhance your updated experience."
@@ -127,9 +131,12 @@ document.querySelector("#page-welcome button.right-btn").addEventListener("flowC
     } else if (setup.pick_accent) {
         goToPage(4)
         history.push(4)
-    } else if (setup.whats_new) {
+    } else if (setup.permissions) {
         goToPage(5)
         history.push(5)
+    } else if (setup.whats_new) {
+        goToPage(6)
+        history.push(6)
     }
 })
 document.querySelector("#page-wizard button.left-btn").addEventListener("flowClick", (e) => {
@@ -170,9 +177,12 @@ document.querySelector("#update-loading button.right-btn").addEventListener("flo
     } else if (setup.pick_accent) {
         goToPage(4)
         history.push(4)
-    } else if (setup.whats_new) {
+    } else if (setup.permissions) {
         goToPage(5)
         history.push(5)
+    } else if (setup.whats_new) {
+        goToPage(6)
+        history.push(6)
     }
 })
 document.querySelector("#page-access button.left-btn").addEventListener("flowClick", (e) => {
@@ -185,9 +195,12 @@ document.querySelector("#page-access button.right-btn").addEventListener("flowCl
     if (setup.pick_accent) {
         goToPage(4)
         history.push(4)
-    } else if (setup.whats_new) {
+    } else if (setup.permissions) {
         goToPage(5)
         history.push(5)
+    } else if (setup.whats_new) {
+        goToPage(6)
+        history.push(6)
     }
 })
 document.querySelector("#accent-color-picker button.left-btn").addEventListener("flowClick", (e) => {
@@ -196,9 +209,23 @@ document.querySelector("#accent-color-picker button.left-btn").addEventListener(
 
 })
 document.querySelector("#accent-color-picker button.right-btn").addEventListener("flowClick", (e) => {
-    if (setup.whats_new) {
+    if (setup.permissions) {
         goToPage(5)
         history.push(5)
+    } else if (setup.whats_new) {
+        goToPage(6)
+        history.push(6)
+    }
+})
+document.querySelector("#page-permissions button.left-btn").addEventListener("flowClick", (e) => {
+    goToPage(history.slice(-2)[0])
+    history.pop()
+
+})
+document.querySelector("#page-permissions button.right-btn").addEventListener("flowClick", (e) => {
+    if (setup.whats_new) {
+        goToPage(6)
+        history.push(6)
     }
 })
 document.querySelector("#page-readme button.left-btn").addEventListener("flowClick", (e) => {
@@ -255,7 +282,7 @@ document.querySelector("#page-readme button.right-btn").addEventListener("flowCl
         } catch (error) {
         }
     }
-    goToPage(6);
+    goToPage(7);
     setTimeout(() => {
         if (GrooveBoard.backendMethods.setupNeeded()) {
             GrooveBoard.alert("Setup Error", "Something went wrong while setting up. Please try again.", [{
@@ -325,6 +352,7 @@ function startFlipping() {
 }
 
 import { isChristmas, snowStorm } from "./scripts/fun/snow.js";
+import { set } from "lodash";
 
 
 function updateScript() {
@@ -444,5 +472,24 @@ if (firstWelcome && localStorage["welcomeLocalesDownloaded"] != "true") {
     }, 500);
 
 }
+document.querySelectorAll("div.permission-group").forEach((e, index) => {
+    function interval() {
+        const granted = Groove.checkPermission(allPermissions[index]) == "true"
+        if (granted) {
+            e.querySelector("button").style.display = "none"
+            e.querySelector("span.permission-icon").innerText = "󰄬"
+            e.querySelector("span.permission-icon").classList.add("checked")
+        } else {
+            e.querySelector("button").style.display = "block"
+            e.querySelector("span.permission-icon").innerText = ""
+            e.querySelector("span.permission-icon").classList.remove("checked")
+        }
+    }
+    e.querySelector("button").addEventListener("flowClick", () => {
+        Groove.requestPermission(allPermissions[index])
+    })
+    setInterval(interval, 1000)
+    interval()
+})
 GrooveBoard.backendMethods.setUIScale(1, true)
 Groove.appReady()

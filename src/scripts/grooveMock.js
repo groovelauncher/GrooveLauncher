@@ -257,6 +257,44 @@ class GrooveMock {
             return "#AA00FF"
         }
     }
+    permissionMock ={
+        "CONTACTS": "false",
+        "PHOTOS": "false",
+        "NOTIFICATIONS": "false"
+    }
+    checkPermission(permission) {
+        switch (permission) {
+            case "CONTACTS":
+                return this.permissionMock["CONTACTS"]
+                break;
+            //photos
+            case "PHOTOS":
+                return this.permissionMock["PHOTOS"]
+                break;
+            case "NOTIFICATIONS":
+                return this.permissionMock["NOTIFICATIONS"]
+                break;
+            default:
+                return "false"
+                break;
+        }
+    }
+    requestPermission(permission) {
+        switch (permission) {
+            case "CONTACTS":
+                this.permissionMock["CONTACTS"] = "true"
+                break;
+            //photos
+            case "PHOTOS":
+                this.permissionMock["PHOTOS"] = "true"
+                break;
+            case "NOTIFICATIONS":
+                this.permissionMock["NOTIFICATIONS"] = "true"
+                break;
+            default:
+                break;
+        }
+    }
 }// Create a reusable AudioContext
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 

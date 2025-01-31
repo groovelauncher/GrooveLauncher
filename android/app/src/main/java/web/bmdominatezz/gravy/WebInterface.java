@@ -6,6 +6,7 @@ import static web.bmdominatezz.gravy.DefaultApps.*;
 import static web.bmdominatezz.gravy.GrooveExperience.*;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
@@ -38,6 +39,7 @@ import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.color.MaterialColors;
@@ -56,8 +58,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.jar.JarException;
 
+import kotlin.contracts.Returns;
 import rikka.shizuku.Shizuku;
 import rikka.shizuku.ShizukuBinderWrapper;
 
@@ -944,5 +948,52 @@ public class WebInterface {
                     (0xFFFFFF & MaterialColors.getColor(mainActivity, com.google.android.material.R.attr.colorPrimary,
                             ContextCompat.getColor(mainActivity, android.R.color.darker_gray))));
         }
+    }
+
+    @JavascriptInterface
+    public String checkPermission(String permission) {
+        if (Objects.equals(permission, "CONTACTS")) {
+            return String.valueOf(mainActivity.checkSelfPermission(android.Manifest.permission.READ_CONTACTS)
+                    == PackageManager.PERMISSION_GRANTED);
+        } else if (Objects.equals(permission, "PHOTOS")) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                boolean hasImages = mainActivity.checkSelfPermission(android.Manifest.permission.READ_MEDIA_IMAGES)
+                        == PackageManager.PERMISSION_GRANTED;
+                boolean hasVideos = mainActivity.checkSelfPermission(android.Manifest.permission.READ_MEDIA_VIDEO)
+                        == PackageManager.PERMISSION_GRANTED;
+                return String.valueOf(hasImages && hasVideos);
+            } else {
+                return String.valueOf(mainActivity.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED);
+            }
+        } else if (Objects.equals(permission, "NOTIFICATIONS")) {
+            Set<String> enabledListeners = NotificationManagerCompat.getEnabledListenerPackages(mainActivity);
+            return String.valueOf(enabledListeners.contains(mainActivity.getPackageName()));
+        } else {
+            return "false";
+        }
+    }
+
+    @JavascriptInterface
+    public void requestPermission(String permission) {
+        mainActivity.runOnUiThread(() -> {
+            if ("CONTACTS".equals(permission)) {
+                Log.d("groovelauncher", "checkPermission: " + permission);
+                mainActivity.requestPermissions(new String[]{android.Manifest.permission.READ_CONTACTS}, 1);
+            } else if ("PHOTOS".equals(permission)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    mainActivity.requestPermissions(new String[]{
+                            android.Manifest.permission.READ_MEDIA_IMAGES,
+                            android.Manifest.permission.READ_MEDIA_VIDEO
+                    }, 2);
+                } else {
+                    mainActivity.requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 2);
+                }
+            } else if ("NOTIFICATIONS".equals(permission)) {
+                Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS);
+                intent.setData(Uri.parse("package:" + mainActivity.getPackageName()));
+                mainActivity.startActivity(intent);
+            }
+        });
     }
 }

@@ -674,3 +674,20 @@ body.fade-out #background {
         }
     }
 }
+div.permission-group{
+    p.permission-title{
+        span.permission-icon{
+            &.checked{
+                color: var(--accent-color);
+            }
+        }
+    }
+    p.permission-description{
+        opacity: .5;
+    }
+    button.metro-button.link{
+        margin: 0px 0px 0px auto;
+        padding: 0px;
+        opacity: 1 !important;
+    }
+}

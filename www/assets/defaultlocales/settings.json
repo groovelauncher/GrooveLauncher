@@ -15,7 +15,8 @@
     "friendly_tiles": "You can change the size and number of tiles available on your home screen.",
     "themes": {
       "light": "Light",
-      "dark": "Dark"
+      "dark": "Dark",
+      "auto": "Auto"
     }
   },
   "screen_rotation": {

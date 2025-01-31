@@ -27,6 +27,7 @@ const grooveTileColumns = {
 }
 const grooveThemes = {
     dark: 0,
-    light: 1
+    light: 1,
+    auto: 2
 }
-export { grooveColors, grooveTileColumns,grooveThemes }
+export { grooveColors, grooveTileColumns, grooveThemes }

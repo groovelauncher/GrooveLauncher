@@ -1,3 +1,4 @@
+import { grooveThemes } from "../../../scripts/GrooveProperties";
 import imageStore from "../../../scripts/imageStore";
 import i18n from "../../../scripts/localeManager";
 import iro from '@jaames/iro';

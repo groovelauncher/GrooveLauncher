@@ -35,7 +35,7 @@ body.animate-intro #welcome-page {
 
 #welcome-page {
     body:not(.animate-intro) & {
-       visibility: hidden;
+        visibility: hidden;
     }
 
     position: fixed;
@@ -674,20 +674,37 @@ body.fade-out #background {
         }
     }
 }
-div.permission-group{
-    p.permission-title{
-        span.permission-icon{
-            &.checked{
+
+div.permission-group {
+    p.permission-title {
+        span.permission-icon {
+            &.checked {
                 color: var(--accent-color);
             }
         }
     }
-    p.permission-description{
+
+    p.permission-description {
         opacity: .5;
+        margin-bottom: 10px;
     }
-    button.metro-button.link{
+
+    button.metro-button.link {
         margin: 0px 0px 0px auto;
         padding: 0px;
         opacity: 1 !important;
+    }
+}
+
+ul {
+    li {
+        color: rgb(127, 127, 127);
+        margin-bottom: 30px !important;
+
+        strong {
+            color: var(--metro-foreground);
+            font-weight: 300;
+            display: block;
+        }
     }
 }

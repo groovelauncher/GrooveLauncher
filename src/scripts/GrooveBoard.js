@@ -715,13 +715,18 @@ const backendMethods = {
   },
   setTheme: (theme, doNotSave = false) => {
     if (Object.values(grooveThemes).includes(theme)) {
-      var applyTheme = theme;
-      if (theme == 2) applyTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 0 : 1
+      var applyTheme
+      if (theme == 2) applyTheme = Number(localStorage.getItem("autoTheme")); else applyTheme = theme
       document.body.classList[applyTheme ? "add" : "remove"]("light-mode");
       Groove.setNavigationBarAppearance(applyTheme ? "dark" : "light");
       Groove.setStatusBarAppearance(applyTheme ? "dark" : "light");
-      document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setTheme(e, applyTheme))
-      if (!doNotSave) localStorage.setItem("theme", theme)
+      document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setTheme(e, theme))
+      if (!doNotSave) {
+        localStorage.setItem("theme", theme)
+        setTimeout(() => {
+          localStorage.setItem("theme", theme)
+        }, 100);
+      }
     } else {
       console.error("Invalid theme!");
     }
@@ -1132,9 +1137,9 @@ window.addEventListener("load", () => {
     backendMethods.animationDurationScale.set(window["Groove"] ? Groove.getAnimationDurationScale() : 1)
   });
 })
-
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+window.addEventListener("systemThemeChange", function (e) {
+  localStorage["autoTheme"] = e.detail.theme == "dark" ? "0" : "1"
   if (localStorage["theme"] == "2") {
     backendMethods.setTheme(2, true);
   }
-});
+})

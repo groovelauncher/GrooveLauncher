@@ -11,7 +11,7 @@ document.querySelector("#device-placeholder > svg:nth-child(3)").classList.remov
 
 
 document.getElementById("theme-chooser").addEventListener('selected', (e) => {
-    appViewEvents.setTheme(e.detail.index == 0 ? grooveThemes.light : grooveThemes.dark)
+    appViewEvents.setTheme(e.detail.index == 0 ? grooveThemes.light : e.detail.index == 1 ? grooveThemes.dark : grooveThemes.auto)
 });
 const accentColorPicker = document.getElementById("accent-color-picker")
 document.querySelector("div.color-picker").addEventListener("flowClick", (e) => {
@@ -139,8 +139,8 @@ setTimeout(() => {
 
     }
     if (urlParams.has("theme")) {
-        document.querySelector("#theme-chooser").setAttribute("selected", urlParams.get("theme") == "light" ? 0 : 1)
-        document.querySelector("#theme-chooser").selectOption(urlParams.get("theme") == "light" ? 0 : 1)
+        document.querySelector("#theme-chooser").setAttribute("selected", urlParams.get("theme") == "light" ? 0 : localStorage["theme"] == "2" ? 2 : 1)
+        document.querySelector("#theme-chooser").selectOption(urlParams.get("theme") == "light" ? 0 : localStorage["theme"] == "2" ? 2 : 1)
     }
 
     if (urlParams.has("tileColumns")) {

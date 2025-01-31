@@ -23,8 +23,8 @@ const setAccentColor = (color) => {
 // Handles theme switching between light and dark modes
 const setTheme = (theme) => {
   if (Object.values(grooveThemes).includes(theme)) {
-    var applyTheme = theme;
-    if (theme == 2) applyTheme = window.parent.matchMedia('(prefers-color-scheme: dark)').matches ? 0 : 1
+    var applyTheme = 0;
+    if (theme == 2) applyTheme = Number(localStorage["autoTheme"]); else applyTheme = theme;
     document.body.classList[applyTheme ? "add" : "remove"]("light-mode");
     document.body.classList.add("showBackground")
   } else {

@@ -282,3 +282,13 @@ window.mockDeepLink = (url) => window.dispatchEvent(new CustomEvent("deepLink", 
 window.mockDeepLinkExample = () => window.mockDeepLink("groove:?installStyle=" + encodeURI("https://gist.githubusercontent.com/berkaytumal/5e6b101fcd70450078f993d74f6cb610/raw/85cb730c2e9d95609cad1c1c165a2796cb4258c0/style.css"))
 export default GrooveMock;
 export { BuildConfigMock, GrooveMock }
+
+function onThemeChange() {
+    const theme_d = window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light"
+    window.dispatchEvent(new CustomEvent("systemThemeChange", { detail: { theme: theme_d } }))
+}
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', onThemeChange);
+onThemeChange()
+setTimeout(() => {
+    onThemeChange()
+}, 1000);

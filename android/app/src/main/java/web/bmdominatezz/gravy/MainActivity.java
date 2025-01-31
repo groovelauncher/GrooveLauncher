@@ -2,8 +2,10 @@ package web.bmdominatezz.gravy;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentCallbacks;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -175,6 +177,33 @@ public class MainActivity extends AppCompatActivity {
         };
         gravyServer.init(this);
         gravyServer.start();
+
+// Add a listener for configuration changes to detect system theme changes
+        getResources().getConfiguration().uiMode &= Configuration.UI_MODE_NIGHT_MASK;
+
+        String theme = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES ? "dark" : "light";
+        Log.d("ThemeChange", "System theme changed: " + theme);
+        try {
+            webEvents.dispatchEvent(WebEvents.events.systemThemeChange, new JSONObject().put("theme", theme));
+        } catch (JSONException e) {
+        }
+
+        getApplicationContext().registerComponentCallbacks(new ComponentCallbacks() {
+            @Override
+            public void onConfigurationChanged(@NonNull Configuration newConfig) {
+                String theme = (newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES ? "dark" : "light";
+                Log.d("ThemeChange", "System theme changed: " + theme);
+                try {
+                    webEvents.dispatchEvent(WebEvents.events.systemThemeChange, new JSONObject().put("theme", theme));
+                } catch (JSONException e) {
+                }
+            }
+
+            @Override
+            public void onLowMemory() {
+                // Handle low memory situations if necessary
+            }
+        });
     }
 
     Handler activityDispatchEventTimeout;

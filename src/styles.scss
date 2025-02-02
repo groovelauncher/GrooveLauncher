@@ -10,6 +10,7 @@
 @import "./styles/systemBars.scss";
 @import "./styles/textDirection.scss";
 @import "./styles/fun/snow.scss";
+@import "./styles/accessibility.scss";
 
 body,
 html {
@@ -33,19 +34,6 @@ html {
     }
   }
 
-}
-
-body {
-  &.reduced-motion {
-
-    *,
-    & {
-      //perspective: none !important;
-      --flow-perspective: 9999999px !important;
-      --shake-x: 0px !important;
-      --shake-y: 0px !important;
-    }
-  }
 }
 
 img {

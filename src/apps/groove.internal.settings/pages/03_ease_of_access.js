@@ -6,6 +6,10 @@ document.querySelector("div.reduce-motion-toggle-switch > div > .metro-toggle-sw
     e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
     appViewEvents.setReduceMotion(e.target.hasAttribute("checked"))
 })
+document.querySelector("div.high-contrast-toggle-switch > div > .metro-toggle-switch").addEventListener("checked", (e) => {
+    e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
+    appViewEvents.setHighContrast(e.target.hasAttribute("checked"))
+})
 document.querySelector("div.haptic-toggle-switch > div > .metro-toggle-switch").addEventListener("checked", (e) => {
     e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
     localStorage.setItem("hapticFeedback", e.target.hasAttribute("checked"))
@@ -55,10 +59,10 @@ function handleFileInput(event) {
 }
 document.getElementById("font-chooser").querySelector("input").addEventListener('change', handleFileInput);
 // Attach the event listener to the file input
-document.getElementById("display-scaling-chooser").addEventListener("selected", (e) => {
+/*ocument.getElementById("display-scaling-chooser").addEventListener("selected", (e) => {
     const options = [.8, .9, 1, 1.1, 1.25]
     appViewEvents.setUIScale(options[e.detail.index])
-})
+})*/
 document.getElementById("font-chooser").addEventListener("selected", (e) => {
     const index = e.detail.index
     const lastOne = index == document.getElementById("font-chooser").children.length - 1
@@ -85,6 +89,11 @@ setTimeout(() => {
         document.querySelector("div.reduce-motion-toggle-switch > p").innerText = i18n.t("common.actions.on")
         document.querySelector("div.reduce-motion-toggle-switch > div > .metro-toggle-switch").setAttribute("checked", "")
         document.body.classList.add("reduced-motion")
+    }
+    if (localStorage["highContrast"] == "true") {
+        document.querySelector("div.high-contrast-toggle-switch > p").innerText = i18n.t("common.actions.on")
+        document.querySelector("div.high-contrast-toggle-switch > div > .metro-toggle-switch").setAttribute("checked", "")
+        document.body.classList.add("high-contrast")
     }
     if (!!localStorage.getItem("UIScale")) {
         const uiscale = Number(localStorage.getItem("UIScale"))

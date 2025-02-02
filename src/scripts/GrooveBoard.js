@@ -748,6 +748,11 @@ const backendMethods = {
     if (bool) document.body.classList.add("reduced-motion"); else document.body.classList.remove("reduced-motion")
     if (!doNotSave) localStorage.setItem("reducedMotion", bool)
   },
+  setHighContrast: (bool, doNotSave = false) => {
+    bool = !!bool
+    if (bool) document.body.classList.add("high-contrast"); else document.body.classList.remove("high-contrast")
+    if (!doNotSave) localStorage.setItem("highContrast", bool)
+  },
   setUIScale: (scale, doNotSave = false) => {
     scale = scale < .25 ? .25 : scale > 4 ? 4 : scale
     Groove.setUIScale(scale)
@@ -1102,6 +1107,8 @@ window.addEventListener('message', (event) => {
       backendMethods.homeConfiguration.save()
     } else if (event.data.action == "setReduceMotion") {
       backendMethods.setReduceMotion(event.data.argument);
+    } else if (event.data.action == "setHighContrast") {
+      backendMethods.setHighContrast(event.data.argument);
     } else if (event.data.action == "setUIScale") {
       backendMethods.setUIScale(event.data.argument);
     } else if (event.data.action == "reloadApp") {

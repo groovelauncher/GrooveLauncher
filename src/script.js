@@ -229,9 +229,11 @@ startUpSequence([
         if (!!localStorage.getItem("tileColumns")) GrooveBoard.backendMethods.setTileColumns(Number(localStorage.getItem("tileColumns")), true)
         if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
         if (!!localStorage.getItem("reducedMotion")) GrooveBoard.backendMethods.setReduceMotion(localStorage.getItem("reducedMotion") == "true", true)
+        if (!!localStorage.getItem("highContrast")) GrooveBoard.backendMethods.setHighContrast(localStorage.getItem("highContrast") == "true", true)
+
         if (!!localStorage.getItem("font")) GrooveBoard.backendMethods.font.set(localStorage.getItem("font"), true)
         if (!!localStorage.getItem("rotationLock")) Groove.setDisplayOrientationLock(localStorage.getItem("rotationLock"))
-        if(localStorage.getItem("hapticFeedback") == "false") Groove.triggerHapticFeedback("DISABLED")
+        if (localStorage.getItem("hapticFeedback") == "false") Groove.triggerHapticFeedback("DISABLED")
         //if (!!localStorage.getItem("packageManagerProvider")) GrooveBoard.backendMethods.packageManagerProvider.set(Number(localStorage.getItem("packageManagerProvider")), true)
         next()
     },

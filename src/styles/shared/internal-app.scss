@@ -1,6 +1,7 @@
 @import "./../colors.scss";
 @import "fonts.scss";
 @import "./../flowTouch.scss";
+@import "./../accessibility.scss";
 
 body,
 html {
@@ -21,15 +22,6 @@ html {
 body {
   &.showBackground {
     background-color: var(--metro-background) !important;
-  }
-
-  &.reduced-motion {
-
-    *,
-    & {
-      perspective: 9999999px !important;
-      --flow-perspective: 9999999px !important;
-    }
   }
 }
 

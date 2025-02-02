@@ -127,14 +127,14 @@ body {
 
     &.shown {
         .innerApp {
-            animation: app-intro-animation calc(.5s * var(--animation-duration-scale)) var(--flow-ease-out) forwards, app-intro-skew .5s var(--flow-ease-out) forwards;
+            animation: var(--app-intro-animation) calc(.5s * var(--animation-duration-scale)) var(--flow-ease-out) forwards, app-intro-skew .5s var(--flow-ease-out) forwards;
         }
 
         div.groove-list-view {
             &.skew {
                 div.groove-list-view-item {
                     opacity: 0;
-                    animation: app-intro-animation calc(.5s * var(--animation-duration-scale)) calc(var(--index) * .05s * var(--animation-duration-scale)) var(--flow-ease-out) forwards;
+                    animation: var(--app-intro-animation) calc(.5s * var(--animation-duration-scale)) calc(var(--index) * .05s * var(--animation-duration-scale)) var(--flow-ease-out) forwards;
                 }
             }
         }
@@ -143,11 +143,11 @@ body {
 
 
     &.soft-exit {
-        animation: app-outro-animation calc(.15s * var(--animation-duration-scale)) cubic-bezier(0.83, 0.00, 0.92, 0.18) forwards;
+        animation: var(--app-outro-animation) calc(.15s * var(--animation-duration-scale)) cubic-bezier(0.83, 0.00, 0.92, 0.18) forwards;
     }
 
     &.soft-exit-home {
-        animation: app-outro-animation-2 calc(.15s * var(--animation-duration-scale)) cubic-bezier(0.83, 0.00, 0.92, 0.18) forwards;
+        animation: var(--app-outro-animation-2) calc(.15s * var(--animation-duration-scale)) cubic-bezier(0.83, 0.00, 0.92, 0.18) forwards;
     }
 
 
@@ -504,12 +504,12 @@ div.credit-item {
 body:not(.soft-exit):not(.soft-exit-home) {
     .hidden-page {
         &.innerApp {
-            animation: app-outro-animation-2 calc(0.15s * var(--animation-duration-scale)) cubic-bezier(0.83, 0, 0.92, 0.18) forwards !important;
+            animation: var(--app-outro-animation-2) calc(0.15s * var(--animation-duration-scale)) cubic-bezier(0.83, 0, 0.92, 0.18) forwards !important;
 
         }
 
         &.innerAppPage {
-            animation: app-outro-animation calc(0.15s * var(--animation-duration-scale)) cubic-bezier(0.83, 0, 0.92, 0.18) forwards !important;
+            animation: var(--app-outro-animation) calc(0.15s * var(--animation-duration-scale)) cubic-bezier(0.83, 0, 0.92, 0.18) forwards !important;
 
         }
 
@@ -522,12 +522,12 @@ body:not(.soft-exit):not(.soft-exit-home) {
 
     .shown-page {
         &.innerApp {
-            animation: app-intro-animation-2 calc(.5s * var(--animation-duration-scale)) calc(.25s * var(--animation-duration-scale)) var(--flow-ease-out) forwards !important;
+            animation: var(--app-intro-animation-2) calc(.5s * var(--animation-duration-scale)) calc(.25s * var(--animation-duration-scale)) var(--flow-ease-out) forwards !important;
 
         }
 
         &.innerAppPage {
-            animation: app-intro-animation calc(.5s * var(--animation-duration-scale)) calc(.25s * var(--animation-duration-scale)) var(--flow-ease-out) forwards !important;
+            animation: var(--app-intro-animation) calc(.5s * var(--animation-duration-scale)) calc(.25s * var(--animation-duration-scale)) var(--flow-ease-out) forwards !important;
 
         }
 
@@ -705,7 +705,7 @@ div.color-picker-controls {
     background-size: 150px;
 
     &.shown {
-        animation: app-intro-animation calc(.5s * var(--animation-duration-scale)) var(--flow-ease-out) forwards;
+        animation: var(--app-intro-animation) calc(.5s * var(--animation-duration-scale)) var(--flow-ease-out) forwards;
     }
 }
 

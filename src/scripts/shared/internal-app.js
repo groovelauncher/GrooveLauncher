@@ -65,6 +65,10 @@ function setReduceMotion(bool) {
   bool = !!bool
   if (bool) document.body.classList.add("reduced-motion"); else document.body.classList.remove("reduced-motion")
 }
+function setHighContrast(bool) {
+  bool = !!bool
+  if (bool) document.body.classList.add("high-contrast"); else document.body.classList.remove("high-contrast")
+}
 
 function setAnimationDurationScale(scale) {
   window.animationDurationScale = scale
@@ -98,7 +102,10 @@ window.addEventListener("message", (event) => {
     }
   }
 });
-
+requestAnimationFrame(() => {
+  if (!!localStorage.getItem("reducedMotion")) setReduceMotion(localStorage.getItem("reducedMotion") == "true", true)
+  if (!!localStorage.getItem("highContrast")) setHighContrast(localStorage.getItem("highContrast") == "true", true)
+})
 // Initialize app with stored preferences or defaults
 const urlParams = new URLSearchParams(window.location.search);
 setAccentColor(localStorage["accentColor"] || grooveColors.violet);
@@ -125,6 +132,11 @@ const appViewEvents = {
   setReduceMotion: (bool) => {
     setReduceMotion(bool)
     const message = { action: "setReduceMotion", argument: bool };
+    window.parent.postMessage(message, '*');
+  },
+  setHighContrast: (bool) => {
+    setHighContrast(bool)
+    const message = { action: "setHighContrast", argument: bool };
     window.parent.postMessage(message, '*');
   },
   reloadApp: () => {

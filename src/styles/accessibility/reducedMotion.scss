@@ -1,0 +1,192 @@
+body.reduced-motion {
+
+    * {
+        transform-style: flat !important;
+        perspective: 9999999999px;
+        --flow-perspective: 9999999999px !important;
+        --flow-rotate-scale: 0px !important;
+        --flow-touch-distance: 0px;
+        --shake-x: 0px !important;
+        --shake-y: 0px !important;
+    }
+
+    & {
+
+        div.groove-home-tile,
+        div.groove-app-tile,
+        div.letter-selector-letter {
+            &.t_active {
+                transform: scale(.95);
+            }
+        }
+
+        div.tile-list-page {
+            max-width: none;
+            mix-blend-mode: normal !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        div.slide-page-home.wallpaper-behind {
+            div.groove-home-tile {
+                background: transparent !important;
+                --metro-transparent-2: var(--accent-color);
+
+                div.live-tile-matrix-container {
+                    background: var(--accent-color);
+                }
+            }
+
+            background-size: cover !important;
+        }
+
+        div.app-page-icon-banner {
+            background: transparent !important;
+        }
+
+        #main-home-slider {
+            div.slide-page-home.wallpaper-behind {
+                background-size: cover !important;
+                transition: opacity calc(.5s * var(--animation-duration-scale));
+            }
+
+            &.app-transition-on-pause {
+                div.slide-page-home.wallpaper-behind {
+                    transition: opacity calc(.25s * var(--animation-duration-scale)) calc(.5s * var(--animation-duration-scale));
+                    opacity: 0;
+                }
+            }
+        }
+    }
+
+    #main-home-slider.app-transition.app-transition-tile-list.app-transition-on-pause div.tile-list-inner-container>div.groove-home-tile,
+    #main-home-slider.app-transition.app-transition-tile-list.app-transition-on-pause div.app-page-icon-banner {
+        animation-name: rd-tileListAppTransitionAnim0 !important;
+    }
+
+    #main-home-slider.app-transition.app-transition-tile-list.app-transition-on-pause div.tile-list-inner-container>div.groove-home-tile.app-transition-selected,
+    #main-home-slider.app-transition.app-transition-tile-list.app-transition-on-pause div.app-page-icon-banner.app-transition-selected {
+        animation-name: rd-tileListAppTransitionAnim0 !important;
+    }
+
+    #main-home-slider.app-transition.app-transition-tile-list.app-transition-on-resume:not(.app-transition-back) div.tile-list-inner-container>div.groove-home-tile,
+    #main-home-slider.app-transition.app-transition-tile-list.app-transition-on-resume:not(.app-transition-back) div.app-page-icon-banner {
+        animation-name: rd-tileListAppTransitionAnim1 !important;
+    }
+
+    #main-home-slider.app-transition.app-transition-tile-list.app-transition-on-resume:not(.app-transition-back) div.tile-list-inner-container>div.groove-home-tile>div.groove-home-inner-tile,
+    #main-home-slider.app-transition.app-transition-tile-list.app-transition-on-resume:not(.app-transition-back) div.app-page-icon-banner>div.groove-home-inner-tile {
+        animation-name: rd-innerTileListAppTransitionAnim0 !important;
+    }
+
+    #main-home-slider.app-transition.app-transition-tile-list.app-transition-on-resume.app-transition-back div.tile-list-inner-container>div.groove-home-tile,
+    #main-home-slider.app-transition.app-transition-tile-list.app-transition-on-resume.app-transition-back div.app-page-icon-banner {
+        animation-name: rd-tileListAppTransitionAnim2 !important;
+    }
+
+    #main-home-slider.app-transition.app-transition-app-list.app-transition-on-pause div.app-list-container>div.groove-app-tile,
+    #main-home-slider.app-transition.app-transition-app-list.app-transition-on-pause #sticky-letter,
+    #main-home-slider.app-transition.app-transition-app-list.app-transition-on-pause #search-icon {
+        animation-name: rd-appListAppTransitionAnim0 !important;
+    }
+
+    #main-home-slider.app-transition.app-transition-app-list.app-transition-on-pause div.app-list-container>div.groove-app-tile.app-transition-selected,
+    #main-home-slider.app-transition.app-transition-app-list.app-transition-on-pause #sticky-letter.app-transition-selected,
+    #main-home-slider.app-transition.app-transition-app-list.app-transition-on-pause #search-icon.app-transition-selected {
+        animation-name: rd-appListAppTransitionAnim0 !important;
+    }
+
+    --app-intro-animation: rd-tileListAppTransitionAnim1;
+    --app-intro-animation-2: rd-tileListAppTransitionAnim2;
+    --app-outro-animation: rrr00;
+    --app-outro-animation-2: rd-tileListAppTransitionAnim0;
+
+    @keyframes rrr00 {
+        100% {
+            transform: translateX(200px);
+            opacity: 0;
+        }
+
+        0% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes rd-live-tile-matrix-tile-flip {
+        0% {
+            animation-timing-function: ease-in;
+        }
+
+        9.99% {
+            animation-timing-function: ease-in;
+            transform: scaleY(0);
+        }
+
+        10% {
+            animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+            transform: scaleY(0);
+        }
+
+        100% {
+            animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+        }
+    }
+
+    @keyframes rd-tileListAppTransitionAnim0 {
+        0% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateX(-200px);
+            opacity: 0;
+        }
+    }
+
+    @keyframes rd-tileListAppTransitionAnim1 {
+        0% {
+            transform: translateX(200px);
+            opacity: 0;
+        }
+
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes rd-tileListAppTransitionAnim2 {
+        0% {
+            transform: translateX(-200px);
+            opacity: 0;
+        }
+
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes rd-appListAppTransitionAnim0 {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-200px);
+            opacity: 0;
+        }
+    }
+
+    @keyframes rd-innerTileListAppTransitionAnim0 {
+        0% {
+            transform: none;
+        }
+
+        100% {
+            transform: none;
+        }
+    }
+}

@@ -289,7 +289,12 @@
         background: var(--value-2-color);
     }
 }
-
+:root{
+    --app-intro-animation: app-intro-animation;
+    --app-intro-animation-2: app-intro-animation-2;
+    --app-outro-animation: app-outro-animation;
+    --app-outro-animation-2: app-outro-animation-2;
+}
 @keyframes app-intro-animation {
     0% {
         transform: rotateY(75deg) translateX(100px);

@@ -16,7 +16,7 @@ document.querySelector("div.haptic-toggle-switch > div > .metro-toggle-switch").
     if (e.target.hasAttribute("checked")) {
         Groove.triggerHapticFeedback("ENABLED")
     } else {
-        lGroove.triggerHapticFeedback("DISABLED")
+        Groove.triggerHapticFeedback("DISABLED")
     }
 })
 

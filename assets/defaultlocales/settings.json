@@ -31,7 +31,14 @@
   "ease_of_access": {
     "title": "Ease of Access",
     "description": "text size, high contrast, and more",
-    "reduce_motion": "Reduce motion",
+    "reduce_motion": {
+      "title": "Reduce motion",
+      "description": "Reduce motion effects, such as parallax and animations, to help prevent motion sickness."
+    },
+    "high_contrast": {
+      "title": "High contrast",
+      "description": "Changes the colors for some features, and hides some of their background images."
+    },
     "scaling": "Scaling",
     "font": {
       "title": "Font",

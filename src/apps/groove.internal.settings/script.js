@@ -185,7 +185,7 @@ window.scrollers = {
         scrollbar: false,
         eventPassthrough: "horizontal"
     }),
-    apps: new GrooveScroll("#apps-tab", {
+    apps: new GrooveScroll("#apps-tab:nth-child(3)", {
         bounceTime: 300,
         swipeBounceTime: 200,
         outOfBoundaryDampingFactor: 1,

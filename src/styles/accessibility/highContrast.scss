@@ -1,7 +1,11 @@
+:root {
+    --original-accent-color: var(--accent-color);
+}
+
+
 body.high-contrast {
     &#app {
         --metro-transparent-2: black !important;
-        --accent-color: var(--metro-foreground);
 
         div.app-list {
             --accent-color: var(--metro-foreground);
@@ -50,5 +54,86 @@ body.high-contrast {
                 }
             }
         }
+    }
+
+
+    #theme-tab {
+        * {
+            --accent-color: var(--original-accent-color) !important;
+        }
+    }
+
+    * {
+        --accent-color: var(--metro-foreground) !important;
+    }
+
+    p.group-description {
+        color: var(--metro-foreground) !important;
+    }
+
+    .groove-element.groove-app-tile {
+        .groove-app-tile-imageicon {
+            scale: calc(46 / 52);
+        }
+    }
+
+    p.groove-list-view-item-description,
+    p.text {
+        opacity: 1 !important;
+    }
+
+    div.innerApp {
+        &>div.app-tabs {
+            p.active-tab {
+                background-color: var(--metro-foreground) !important;
+                color: var(--metro-background) !important;
+            }
+        }
+    }
+
+    div.app-tabs p {
+        opacity: 1 !important;
+    }
+
+    div.stats-text {
+        opacity: 1 !important;
+    }
+
+    #about-app-version,
+    #about-webview-version {
+        opacity: 1 !important;
+    }
+
+    div.credit-item>p>span {
+        opacity: 1 !important;
+    }
+
+    #theme-tab {
+        * {
+            --accent-color: var(--original-accent-color) !important;
+        }
+    }
+
+    body * {
+        --accent-color: var(--metro-foreground) !important;
+    }
+
+    div.letter-selector-row {
+        div.letter-selector-letter {
+            &.disabled {
+                --metro-foreground: #737373;
+                background-color: var(--metro-background) !important;
+
+            }
+
+            background-color: var(--metro-background) !important;
+            box-shadow: inset 0px 0px 0px 3px var(--metro-foreground),
+            0px 0px 0px 1px var(--metro-background) !important;
+            color: var(--metro-foreground) !important;
+        }
+    }
+
+    &.light-mode div.letter-selector-row div.letter-selector-letter.disabled {
+        --metro-foreground: #bfbfbf !important;
     }
 }

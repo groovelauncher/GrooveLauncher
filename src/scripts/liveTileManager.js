@@ -236,38 +236,10 @@ const getLiveTileProviders = function (packageName) {
 function generateUniqueId() {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
-
-function hexToRgb(hex) {
-    // Remove the hash at the start if it's there
-    hex = hex.replace(/^#/, '');
-
-    // Parse r, g, b values
-    let bigint = parseInt(hex, 16);
-    let r = (bigint >> 16) & 255;
-    let g = (bigint >> 8) & 255;
-    let b = bigint & 255;
-
-    return { r, g, b };
-}
-
-function rgbToHex(r, g, b) {
-    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
-}
-
-function adjustColor(hex, amount) {
-    let { r, g, b } = hexToRgb(hex);
-
-    // Adjust the color
-    r = Math.min(255, Math.max(0, r + amount));
-    g = Math.min(255, Math.max(0, g + amount));
-    b = Math.min(255, Math.max(0, b + amount));
-
-    return rgbToHex(r, g, b);
-}
 function generateRandomAccent() {
-    const accentColor = GrooveBoard.backendMethods.serveConfig().accentcolor;
-    return adjustColor(accentColor, Math.floor(Math.random() * 100) - 50);
-
+    /*const accentColor = GrooveBoard.backendMethods.serveConfig().accentcolor;
+    return adjustColor(accentColor, Math.floor(Math.random() * 100) - 50);*/
+    return "var(--accent-color-shade-" + Math.floor(Math.random() * 4) + ")";
 }
 class tileController {
     constructor(packageName, worker) {
@@ -371,11 +343,29 @@ class tileController {
                             randomTile["flipping"] = true
                             randomTile.classList.add("flip")
                             setTimeout(() => {
+                                size["usedMatrixTiles"] = size["usedMatrixTiles"] || []
+                                const unusedTiles = Array.from(dataTiles).filter(tile => !size["usedMatrixTiles"].includes(tile));
 
-                                const randomDataTile = dataTiles[Math.floor(Math.random() * dataTiles.length)]
-                                randomTile.innerHTML = randomDataTile.innerHTML;
+                                if (Math.random() < .05 || unusedTiles.length == 0) {
+                                    //delete
+                                    randomTile.innerHTML = "";
+                                    if (randomTile["usingTile"]) {
+                                        setTimeout(() => {
+                                            size["usedMatrixTiles"] = size["usedMatrixTiles"].filter(tile => tile !== randomTile["usingTile"]);
+                                            delete randomTile["usingTile"]
+                                        }, 1800);
+                                    }
+                                } else {
+                                    const randomDataTile = unusedTiles.length > 0 ?
+                                        unusedTiles[Math.floor(Math.random() * unusedTiles.length)] :
+                                        dataTiles[Math.floor(Math.random() * dataTiles.length)];
+                                    console.log("HOP EKLEDİM", randomTile)
+                                    size["usedMatrixTiles"].push(randomDataTile)
+                                    randomTile["usingTile"] = randomDataTile;
+                                    randomTile.innerHTML = randomDataTile.innerHTML;
+                                    randomTile.style.backgroundColor = generateRandomAccent();
+                                }
 
-                                randomTile.style.backgroundColor = generateRandomAccent();
 
 
                             }, 200);

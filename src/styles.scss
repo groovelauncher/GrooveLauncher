@@ -151,6 +151,9 @@ div.flow-scrollable {
 }
 
 #loader {
+  color: white;
+  font-size: 40px;
+
   &.finished {
     animation: loader-finished .5s cubic-bezier(1, 0, 0.5, 1) forwards;
 

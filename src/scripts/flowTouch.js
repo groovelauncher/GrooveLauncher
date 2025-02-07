@@ -254,6 +254,8 @@ const metroDropdownMenu = {
         }
         el.style.removeProperty("height")
         el.querySelectorAll("div.metro-dropdown-option").forEach(el => { el.style.removeProperty("color") })
+        el.querySelector("div.metro-dropdown-option").style.marginTop = (el.lastSelected || 0) * -48 + "px"
+
         setTimeout(() => {
             try { el.closest("div.flow-scrollable").GrooveScroll.refresh() } catch (error) { }
         }, 300 * GrooveBoard.backendMethods.animationDurationScale.get());
@@ -270,6 +272,7 @@ const metroDropdownMenu = {
         } else {
             el.querySelector("div.metro-dropdown-option").style.setProperty("transition", "0s")
         }
+        el.lastSelected = index
         el.querySelector("div.metro-dropdown-option").style.marginTop = index * -48 + "px"
         setTimeout(() => {
             el.querySelector("div.metro-dropdown-option").style.removeProperty("transition")

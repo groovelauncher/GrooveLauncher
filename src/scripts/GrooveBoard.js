@@ -25,16 +25,32 @@ const tileListInnerContainer = document.querySelector(
 );
 import jQuery from "jquery";
 var $ = jQuery
-function hexToRgb(hex) {
-  // Remove the hash at the start if it's there
+function hexToRgbObject(hex) {
   hex = hex.replace(/^#/, '');
-
-  // Parse the hex string
   let r = parseInt(hex.slice(0, 2), 16);
   let g = parseInt(hex.slice(2, 4), 16);
   let b = parseInt(hex.slice(4, 6), 16);
+  return { r, g, b }
+}
 
-  // Return the RGB string
+
+function rgbObjectToHex(r, g, b) {
+  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+}
+
+function adjustColor(hex, amount) {
+  let { r, g, b } = hexToRgbObject(hex);
+
+  // Adjust the color
+  r = Math.min(255, Math.max(0, r + amount));
+  g = Math.min(255, Math.max(0, g + amount));
+  b = Math.min(255, Math.max(0, b + amount));
+
+  return rgbObjectToHex(r, g, b);
+}
+
+function hexToRgb(hex) {
+  const { r, g, b } = hexToRgbObject(hex);
   return `rgb(${r}, ${g}, ${b})`;
 }
 import GrooveElements from "./GrooveElements";
@@ -701,8 +717,28 @@ const backendMethods = {
       backendMethods.destroyInternalApp(packageName, homeBack)
     }
   },
+  setAccentColorShades: () => {
+    var accentColor = getComputedStyle(document.body).getPropertyValue("--accent-color");
+    const hasWallpaper = document.querySelector("#main-home-slider > div > div.slide-page.slide-page-home").classList.contains("wallpaper-behind")
+    if (hasWallpaper) accentColor = "#7f7f7f"
+    const highContrast = localStorage["highContrast"] == "true"
+    const lightMode = localStorage["theme"] == "1"
+    if (highContrast) accentColor = "#000000";
+    accentColor = String(accentColor).startsWith("#") ? accentColor : "#AA00FF";
+    var rgb;
+    try { rgb = hexToRgbObject(accentColor) } catch (error) { rgb = { r: 170, g: 0, b: 255 } }
+    console.log("shades", rgb.r, rgb.g, rgb.b)
+    for (let i = 0; i < 4; i++) {
+      console.log("fsd", i)
+      document.body.style.setProperty(
+        `--accent-color-shade-${i}`,
+        adjustColor(accentColor, i * 60 * ((hasWallpaper && !highContrast) ? -.5 : 1))
+      );
+    }
+  },
   setAccentColor: (color, doNotSave = false) => {
     document.body.style.setProperty("--accent-color", color);
+    backendMethods.setAccentColorShades();
     document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setAccentColor(e, color))
     if (!doNotSave) localStorage.setItem("accentColor", color)
     Groove.setAccentColor(color)
@@ -730,6 +766,7 @@ const backendMethods = {
     } else {
       console.error("Invalid theme!");
     }
+    backendMethods.setAccentColorShades();
   },
   setTileColumns: (int, doNotSave = false) => {
     if (Object.values(grooveTileColumns).includes(int)) {
@@ -747,11 +784,13 @@ const backendMethods = {
     bool = !!bool
     if (bool) document.body.classList.add("reduced-motion"); else document.body.classList.remove("reduced-motion")
     if (!doNotSave) localStorage.setItem("reducedMotion", bool)
+    backendMethods.setAccentColorShades();
   },
   setHighContrast: (bool, doNotSave = false) => {
     bool = !!bool
     if (bool) document.body.classList.add("high-contrast"); else document.body.classList.remove("high-contrast")
     if (!doNotSave) localStorage.setItem("highContrast", bool)
+    backendMethods.setAccentColorShades();
   },
   setUIScale: (scale, doNotSave = false) => {
     scale = scale < .25 ? .25 : scale > 4 ? 4 : scale
@@ -885,6 +924,7 @@ const backendMethods = {
       if (!doNotSave) {
         await imageStore.saveImage("wallpaper", blob);
       }
+      backendMethods.setAccentColorShades();
       return rurl;
     },
     loadBlob: async (blob) => {
@@ -899,6 +939,7 @@ const backendMethods = {
       setTimeout(() => {
         window.canPressHomeButton = true
       }, 200);
+      backendMethods.setAccentColorShades();
       return rurl;
     },
     recalculateOffsets: (scrollpos) => {

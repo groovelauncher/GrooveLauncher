@@ -169,6 +169,12 @@ const appTransition = {
         if (firstIntro) mainHomeSlider.style.removeProperty('visibility');
 
         setTimeout(removeAnimClasses, (CONFIG.ANIMATION.BASE_TIMEOUT) * GrooveBoard.backendMethods.animationDurationScale.get());
+    },
+    reset: () => {
+        removeAnimClasses();
+        mainHomeSlider.style.removeProperty('visibility');
+        mainHomeSlider.classList.remove('visibility-hidden');
+        clearTimeout(window.appTransitionLaunchError);
     }
 };
 

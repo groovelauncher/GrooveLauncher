@@ -244,6 +244,10 @@ body:not(.alternative-wallpaper) {
   div.slide-page.slide-page-home.wallpaper-behind {
     background-image: var(--wallpaper-url);
   }
+
+  div.app-list {
+    clip-path: none !important;
+  }
 }
 
 body.alternative-wallpaper {
@@ -307,10 +311,11 @@ body.alternative-wallpaper {
   div.app-list.hide-back {
     clip-path: inset(calc(0px + var(--window-inset-top) + 64px) 0 0 0);
   }
+
   div.app-list:not(.hide-back) {
     clip-path: none !important;
   }
-  
+
 
   #sticky-letter {
     overflow: hidden;
@@ -341,6 +346,10 @@ body.alternative-wallpaper {
       opacity: .75;
     }*/
   }
+}
+
+*[groove-navigation-focus] {
+  box-shadow: 0px 0px 0px 2px red !important;
 }
 
 @import "./styles/selectorMode.scss";

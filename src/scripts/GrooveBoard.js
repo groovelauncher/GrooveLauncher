@@ -728,9 +728,7 @@ const backendMethods = {
     accentColor = String(accentColor).startsWith("#") ? accentColor : "#AA00FF";
     var rgb;
     try { rgb = hexToRgbObject(accentColor) } catch (error) { rgb = { r: 170, g: 0, b: 255 } }
-    console.log("shades", rgb.r, rgb.g, rgb.b)
     for (let i = 0; i < 4; i++) {
-      console.log("fsd", i)
       document.body.style.setProperty(
         `--accent-color-shade-${i}`,
         adjustColor(accentColor, i * 60 * ((hasWallpaper && !highContrast) ? -.5 : 1))

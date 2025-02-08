@@ -334,6 +334,7 @@ class tileController {
                             setTimeout(() => {
                                 size["usedMatrixTiles"] = size["usedMatrixTiles"] || []
                                 const unusedTiles = Array.from(dataTiles).filter(tile => !size["usedMatrixTiles"].includes(tile));
+                                randomTile.style.backgroundColor = generateRandomAccent();
 
                                 if (Math.random() < .05 || unusedTiles.length == 0) {
                                     //delete
@@ -351,7 +352,6 @@ class tileController {
                                     size["usedMatrixTiles"].push(randomDataTile)
                                     randomTile["usingTile"] = randomDataTile;
                                     randomTile.innerHTML = randomDataTile.innerHTML;
-                                    randomTile.style.backgroundColor = generateRandomAccent();
                                 }
 
 

@@ -371,7 +371,7 @@ function stickyLetter(scroll) {
     if (stickyEl) {
         stickyLetterTile.css({ visibility: "visible", top: `calc(${overthrowingEl ? overthrowingEl.offsetTop - scroll - wInsets.top - 64 : 0}px + var(--window-inset-top))`, "--transform": overthrowingEl ? overthrowingEl.offsetTop - scroll - wInsets.top - 64 + "px" : "0px" })
         stickyLetterTile.children("p.groove-app-tile-icon").text(stickyEl.getAttribute("icon"))
-        document.querySelector("div.app-list").classList.add("hide-back")
+        if (scroll >= 21) document.querySelector("div.app-list").classList.add("hide-back"); else document.querySelector("div.app-list").classList.remove("hide-back");
         document.querySelector("div.app-list").style.clipPath = `inset(calc(0px + var(--window-inset-top) + 64px + ${overthrowingEl ? overthrowingEl.offsetTop - scroll - wInsets.top - 64 : 0}px) 0 0 0)`
     } else {
         stickyLetterTile.css({ visibility: "hidden" })

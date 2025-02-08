@@ -59,10 +59,10 @@ function handleFileInput(event) {
 }
 document.getElementById("font-chooser").querySelector("input").addEventListener('change', handleFileInput);
 // Attach the event listener to the file input
-/*ocument.getElementById("display-scaling-chooser").addEventListener("selected", (e) => {
+document.getElementById("display-scaling-chooser").addEventListener("selected", (e) => {
     const options = [.8, .9, 1, 1.1, 1.25]
     appViewEvents.setUIScale(options[e.detail.index])
-})*/
+})
 document.getElementById("font-chooser").addEventListener("selected", (e) => {
     const index = e.detail.index
     const lastOne = index == document.getElementById("font-chooser").children.length - 1

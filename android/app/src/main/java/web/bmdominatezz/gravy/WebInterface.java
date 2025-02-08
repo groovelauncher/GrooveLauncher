@@ -5,6 +5,11 @@ import static androidx.core.content.ContextCompat.getSystemService;
 import static web.bmdominatezz.gravy.DefaultApps.*;
 import static web.bmdominatezz.gravy.GrooveExperience.*;
 
+import android.accessibilityservice.AccessibilityServiceInfo;
+import android.content.pm.ServiceInfo;
+import android.view.accessibility.AccessibilityManager;
+
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.ClipData;
@@ -59,11 +64,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 import java.util.jar.JarException;
 
 import kotlin.contracts.Returns;
 import rikka.shizuku.Shizuku;
 import rikka.shizuku.ShizukuBinderWrapper;
+import web.bmdominatezz.gravy.LockScreenService;
 
 public class WebInterface {
     private static final String PREFS_NAME = "GrooveLauncherPrefs";
@@ -948,22 +955,35 @@ public class WebInterface {
     @JavascriptInterface
     public String checkPermission(String permission) {
         if (Objects.equals(permission, "CONTACTS")) {
-            return String.valueOf(mainActivity.checkSelfPermission(android.Manifest.permission.READ_CONTACTS)
-                    == PackageManager.PERMISSION_GRANTED);
+            return String.valueOf(mainActivity.checkSelfPermission(
+                    android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED);
         } else if (Objects.equals(permission, "PHOTOS")) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                boolean hasImages = mainActivity.checkSelfPermission(android.Manifest.permission.READ_MEDIA_IMAGES)
-                        == PackageManager.PERMISSION_GRANTED;
-                boolean hasVideos = mainActivity.checkSelfPermission(android.Manifest.permission.READ_MEDIA_VIDEO)
-                        == PackageManager.PERMISSION_GRANTED;
+                boolean hasImages = mainActivity.checkSelfPermission(
+                        android.Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED;
+                boolean hasVideos = mainActivity.checkSelfPermission(
+                        android.Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED;
                 return String.valueOf(hasImages && hasVideos);
             } else {
-                return String.valueOf(mainActivity.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED);
+                return String.valueOf(mainActivity.checkSelfPermission(
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
             }
         } else if (Objects.equals(permission, "NOTIFICATIONS")) {
             Set<String> enabledListeners = NotificationManagerCompat.getEnabledListenerPackages(mainActivity);
             return String.valueOf(enabledListeners.contains(mainActivity.getPackageName()));
+        } else if (Objects.equals(permission, "ACCESSIBILITY")) {
+
+            AccessibilityManager am = (AccessibilityManager) mainActivity.getSystemService(Context.ACCESSIBILITY_SERVICE);
+            List<AccessibilityServiceInfo> enabledServices = am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC);
+            for (AccessibilityServiceInfo enabledService : enabledServices) {
+                ServiceInfo serviceInfo = enabledService.getResolveInfo().serviceInfo;
+                if (serviceInfo.packageName.equals(mainActivity.getPackageName()) && serviceInfo.name.equals(LockScreenService.class.getName())) {
+                    Log.d(TAG, "checkPermission: ");
+
+                    return "true";
+                }
+            }
+            return "false";
         } else {
             return "false";
         }
@@ -974,21 +994,45 @@ public class WebInterface {
         mainActivity.runOnUiThread(() -> {
             if ("CONTACTS".equals(permission)) {
                 Log.d("groovelauncher", "checkPermission: " + permission);
-                mainActivity.requestPermissions(new String[]{android.Manifest.permission.READ_CONTACTS}, 1);
+                mainActivity.requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 1);
             } else if ("PHOTOS".equals(permission)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     mainActivity.requestPermissions(new String[]{
-                            android.Manifest.permission.READ_MEDIA_IMAGES,
-                            android.Manifest.permission.READ_MEDIA_VIDEO
+                            Manifest.permission.READ_MEDIA_IMAGES,
+                            Manifest.permission.READ_MEDIA_VIDEO
                     }, 2);
                 } else {
-                    mainActivity.requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 2);
+                    mainActivity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            2);
                 }
             } else if ("NOTIFICATIONS".equals(permission)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    ComponentName componentName = new ComponentName(mainActivity.getPackageName(), NotificationListener.class.getName());
+                    Intent notificationAccessSettings = new Intent(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS));
+                    notificationAccessSettings.putExtra(Settings.EXTRA_NOTIFICATION_LISTENER_COMPONENT_NAME, componentName.flattenToString());
+                    mainActivity.startActivity(notificationAccessSettings);
+                } else {
                 Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS);
-                intent.setData(Uri.parse("package:" + mainActivity.getPackageName()));
+                    mainActivity.startActivity(intent);
+                }
+            } else if ("ACCESSIBILITY".equals(permission)) {
+                Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                 mainActivity.startActivity(intent);
             }
         });
+    }
+
+    @JavascriptInterface
+    public String requestScreenLock() {
+        try {
+            mainActivity.runOnUiThread(() -> {
+                if (LockScreenService.instance != null) {
+                    LockScreenService.instance.lockDevice();
+                }
+            });
+            return "true";
+        } catch (Exception e) {
+            return "false";
+        }
     }
 }

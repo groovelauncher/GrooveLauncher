@@ -81,6 +81,9 @@ document.querySelector("#dumpbtn").addEventListener("flowClick", async () => {
 })
 if (parent.GrooveBoard) document.getElementById("pm-chooser").selectOption(parent.GrooveBoard.backendMethods.packageManagerProvider.get())
 
+document.querySelector("div.double-tap-sleep-toggle-switch > div > .metro-toggle-switch").addEventListener("checked", (e) => {
+    e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
+    localStorage.setItem("doubleTapSleep", e.target.hasAttribute("checked"))
 })
 document.querySelector("div.alternative-wallpaper-toggle-switch > div > .metro-toggle-switch").addEventListener("checked", (e) => {
     e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
@@ -88,6 +91,10 @@ document.querySelector("div.alternative-wallpaper-toggle-switch > div > .metro-t
     window.parent.GrooveBoard.backendMethods.wallpaper.alternative()
 })
 
+if (localStorage["doubleTapSleep"] == "true") {
+    document.querySelector("div.double-tap-sleep-toggle-switch > p").innerText = i18n.t("common.actions.on")
+    document.querySelector("div.double-tap-sleep-toggle-switch > div > .metro-toggle-switch").setAttribute("checked", "")
+}
 if (localStorage["alternativeWallpaper"] == "true") {
     document.querySelector("div.alternative-wallpaper-toggle-switch > p").innerText = i18n.t("common.actions.on")
     document.querySelector("div.alternative-wallpaper-toggle-switch > div > .metro-toggle-switch").setAttribute("checked", "")

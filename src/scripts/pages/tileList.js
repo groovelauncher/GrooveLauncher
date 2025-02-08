@@ -216,7 +216,7 @@ $(window).on("click", function (e) {
       appTransition.onPause();
       const packageName = e.target.getAttribute("packageName")
       setTimeout(() => {
-        Groove.launchApp(packageName);
+        if (!window.doubleTapOverride) Groove.launchApp(packageName);
       }, (packageName.startsWith("groove.internal") && false ? 500 : 1000) * window.animationDurationScale);
     }
   } else if (

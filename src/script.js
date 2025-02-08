@@ -339,12 +339,12 @@ window.addEventListener("deepLink", (e) => {
         if (url.protocol == "groove:") {
             console.log("hoba")
             if (url.pathname == "settings") {
-                Groove.launchApp("groove.internal.settings")
+                if (!window.doubleTapOverride) Groove.launchApp("groove.internal.settings")
                 return;
             }
             if (url.searchParams.size) {
                 if (url.searchParams.get("installStyle")) {
-                    Groove.launchApp(`groove.internal.tweaks?installStyle=${url.searchParams.get("installStyle")}`)
+                    if (!window.doubleTapOverride) Groove.launchApp(`groove.internal.tweaks?installStyle=${url.searchParams.get("installStyle")}`)
                     return;
                 }
             }
@@ -352,6 +352,36 @@ window.addEventListener("deepLink", (e) => {
     }, 1000);
 })
 
+let lastTap = 0;
+const doubleTapDelay = 300;
+
+window.addEventListener("pointerdown", (e) => {
+    if (localStorage.doubleTapSleep != "true") return
+    if (Date.now() - lastTap < doubleTapDelay) {
+        window.doubleTapOverride = true
+        clearTimeout(window.doubleTapOverrideTimeout)
+        window.doubleTapOverrideTimeout = setTimeout(() => {
+            delete window.doubleTapOverride
+            delete window.doubleTapOverrideTimeout
+        })
+        if (Groove.checkPermission("ACCESSIBILITY")) {
+            Groove.requestScreenLock()
+            console.log("double tap sleep")
+        } else {
+            Groove.requestPermission("ACCESSIBILITY")
+            Groove.showToast("You need to enable the accessibility service to use this feature.")
+            console.log("requesting permission")
+        }
+
+    }
+    lastTap = Date.now();
+})
+
+/*scrollers.main_home_scroller.scroller.animater.hooks.on(
+    "time",
+    (duration) => {
+        console.log("duration", duration, scrollers.main_home_scroller.x)
+    }
 );*/
 const slideContent = document.querySelector("#main-home-slider > div.slide-content");
 

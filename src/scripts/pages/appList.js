@@ -19,7 +19,7 @@ function searchResultClick(e) {
     appTransition.onPause()
     const packageName = e.target.getAttribute("packagename")
     setTimeout(() => {
-        Groove.launchApp(packageName)
+        if (!window.doubleTapOverride) Groove.launchApp(packageName)
         setTimeout(() => {
             searchModeSwitch.off()
         }, 100 * animationDurationScale);
@@ -209,7 +209,7 @@ $(window).on("click", function (e) {
             e.target.classList.add("app-transition-selected")
             appTransition.onPause()
             setTimeout(() => {
-                if (!isSearchModeOn) Groove.launchApp(e.target.getAttribute("packageName"))
+                if (!isSearchModeOn) if (!window.doubleTapOverride) Groove.launchApp(e.target.getAttribute("packageName"))
             }, 1000 * animationDurationScale);
         }
     }

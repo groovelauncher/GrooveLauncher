@@ -9,7 +9,7 @@ import { i18n, greetings } from './scripts/localeManager';
 await i18n.init();
 window.i18n = i18n;
 window.greetings = greetings
-const allPermissions = ["CONTACTS", "PHOTOS", "NOTIFICATIONS"]
+const allPermissions = ["CONTACTS", "PHOTOS", "NOTIFICATIONS", "ACCESSIBILITY"]
 
 import { GrooveMock, BuildConfigMock } from "./scripts/grooveMock.js";
 window.GrooveRole = "main"
@@ -473,6 +473,7 @@ if (firstWelcome && localStorage["welcomeLocalesDownloaded"] != "true") {
 
 }
 document.querySelectorAll("div.permission-group").forEach((e, index) => {
+    console.log(index)
     function interval() {
         const granted = Groove.checkPermission(allPermissions[index]) == "true"
         if (granted) {
@@ -487,6 +488,7 @@ document.querySelectorAll("div.permission-group").forEach((e, index) => {
     }
     e.querySelector("button").addEventListener("flowClick", () => {
         Groove.requestPermission(allPermissions[index])
+        console.log(index,allPermissions[index])
     })
     setInterval(interval, 1000)
     interval()

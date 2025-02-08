@@ -30,8 +30,16 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/keystore.jks
+
       - name: Build Android APK
-        run: npm run build:android:nightly
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
+          KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
+        run: |
+          npm run build:android:nightly
 
       # Delete previous nightly releases using GitHub CLI
       - name: Delete Previous Nightly Releases
@@ -39,7 +47,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           echo "Listing and deleting previous nightly releases"
-          # The command below lists releases whose tags contain "nightly" (case-insensitive).
           for tag in $(gh release list --exclude-drafts --limit 100 | awk 'tolower($0) ~ /nightly/ {print $1}'); do
             echo "Deleting release: $tag"
             gh release delete "$tag" -y
@@ -56,7 +63,6 @@ jobs:
           ORIGINAL_APK="android/app/build/outputs/apk/nightly/release/app-nightly-release.apk"
           RENAMED_APK="GrooveLauncher_${RELEASE_TAG}.apk"
           
-          # Copy and rename the APK
           cp "$ORIGINAL_APK" "$RENAMED_APK"
           
           echo "Creating release with tag $RELEASE_TAG"

@@ -80,3 +80,15 @@ document.querySelector("#dumpbtn").addEventListener("flowClick", async () => {
     }
 })
 if (parent.GrooveBoard) document.getElementById("pm-chooser").selectOption(parent.GrooveBoard.backendMethods.packageManagerProvider.get())
+
+})
+document.querySelector("div.alternative-wallpaper-toggle-switch > div > .metro-toggle-switch").addEventListener("checked", (e) => {
+    e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
+    localStorage.setItem("alternativeWallpaper", e.target.hasAttribute("checked"))
+    window.parent.GrooveBoard.backendMethods.wallpaper.alternative()
+})
+
+if (localStorage["alternativeWallpaper"] == "true") {
+    document.querySelector("div.alternative-wallpaper-toggle-switch > p").innerText = i18n.t("common.actions.on")
+    document.querySelector("div.alternative-wallpaper-toggle-switch > div > .metro-toggle-switch").setAttribute("checked", "")
+}

@@ -56,6 +56,15 @@ android {
             // Regular build uses the default application ID
             applicationId = "web.bmdominatezz.gravy"
         }
+        create("debugFlavor"){
+            dimension = "default"
+            // Debug build uses the default application ID
+            applicationId = "web.bmdominatezz.gravy.debug"
+            // Override app name for debug builds
+            resValue("string", "app_name", "Groove Debug")
+            // Use the defaultConfig’s versionName + commit hash + -debug
+            versionName = "$commitHash-debug"
+        }
         create("nightly") {
             dimension = "default"
             // Change package name for nightly builds
@@ -66,7 +75,6 @@ android {
             versionName = "$commitHash-nightly"
         }
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false

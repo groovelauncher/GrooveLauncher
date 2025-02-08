@@ -1,0 +1,59 @@
+name: Nightly APK Build
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * *"  # runs daily at midnight UTC (adjust as needed)
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "11"
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Android APK
+        run: npm run build:android
+
+      # Delete previous nightly releases using GitHub CLI
+      - name: Delete Previous Nightly Releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        run: |
+          echo "Listing and deleting previous nightly releases"
+          # The command below lists releases whose tags contain "nightly".
+          for tag in $(gh release list --exclude-drafts --limit 100 | awk '/nightly/ {print $1}'); do
+            echo "Deleting release: $tag"
+            gh release delete "$tag" -y
+          done
+
+      # Create a new nightly release and upload the generated APK
+      - name: Create Nightly Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        run: |
+          RELEASE_TAG="nightly-$(date +'%Y%m%d')"
+          RELEASE_NAME="Nightly Build $(date +'%Y-%m-%d')"
+          APK_PATH="android/app/build/outputs/apk/release/app-release.apk"
+          echo "Creating release with tag $RELEASE_TAG"
+          gh release create "$RELEASE_TAG" "$APK_PATH" \
+            --title "$RELEASE_NAME" \
+            --notes "Nightly build for $(date)"

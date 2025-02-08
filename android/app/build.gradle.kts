@@ -1,8 +1,19 @@
 import java.util.Properties
 import java.io.FileInputStream
+import java.io.ByteArrayOutputStream
 
 plugins {
     alias(libs.plugins.android.application)
+}
+
+// Helper function to get the short commit hash
+fun getGitCommitHash(): String {
+    val stdout = ByteArrayOutputStream()
+    exec {
+        commandLine("git", "rev-parse", "--short", "HEAD")
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
 }
 
 val localProperties = Properties().apply {
@@ -35,6 +46,26 @@ android {
             value = "\"${localProperties.getProperty("CAK", "")}\""
         )
     }
+    
+    val commitHash = getGitCommitHash()
+
+    flavorDimensions("default")
+    productFlavors {
+        create("regular") {
+            dimension = "default"
+            // Regular build uses the default application ID
+            applicationId = "web.bmdominatezz.gravy"
+        }
+        create("nightly") {
+            dimension = "default"
+            // Change package name for nightly builds
+            applicationId = "web.bmdominatezz.gravy.nightly"
+            // Override app name for nightly builds
+            resValue("string", "app_name", "Groove Nightly")
+            // Use the defaultConfig’s versionName + commit hash + -nightly
+            versionName = "$commitHash-nightly"
+        }
+    }
 
     buildTypes {
         release {
@@ -57,7 +88,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

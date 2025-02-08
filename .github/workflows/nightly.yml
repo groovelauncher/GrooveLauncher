@@ -25,13 +25,13 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: "temurin"
-          java-version: "11"
+          java-version: "17"
 
       - name: Install Dependencies
         run: npm install
 
       - name: Build Android APK
-        run: npm run build:android
+        run: npm run build:android:nightly
 
       # Delete previous nightly releases using GitHub CLI
       - name: Delete Previous Nightly Releases
@@ -52,7 +52,7 @@ jobs:
         run: |
           RELEASE_TAG="nightly-$(date +'%Y%m%d')"
           RELEASE_NAME="Nightly Build $(date +'%Y-%m-%d')"
-          APK_PATH="android/app/build/outputs/apk/release/app-release.apk"
+          APK_PATH="android/app/build/outputs/apk/nightly/release/app-nightly-release.apk"
           echo "Creating release with tag $RELEASE_TAG"
           gh release create "$RELEASE_TAG" "$APK_PATH" \
             --title "$RELEASE_NAME" \

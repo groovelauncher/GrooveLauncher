@@ -789,7 +789,7 @@ async function createFontsAssets() {
         asset.addEventListener("click", onClick)
         returnee.push(asset)
     })
-    if(returnee.length == 0) {
+    if (returnee.length == 0) {
         const noResults = document.createElement("p")
         noResults.className = "no-results"
         noResults.textContent = "No fonts found"
@@ -841,6 +841,7 @@ function dataUriToBlobUrl(dataUri) {
 }
 
 function getImageAssets() {
+    var returnee = {};
     // Get the CSS content from the editor
     const css = editor.getValue();
 
@@ -867,15 +868,32 @@ function getImageAssets() {
             });
         }
 
-        return imageAssets;
+        returnee = imageAssets;
     }
-
-    return {};
+    return returnee;
 }
 window.getImageAssets = getImageAssets;
 async function createImagesAssets() {
     var returnee = []
-    const images = getImageAssets()
+    const images = getImageAssets();
+
+    //wallpaper asset
+    (() => {
+        const asset = document.createElement('div');
+        asset.className = 'assets-menu-item';
+        asset.innerHTML = `<div class="assets-menu-item-preview"></div><div class="asset-menu-item-title"></div>`
+        asset.querySelector('.asset-menu-item-title').textContent = "Wallpaper";
+
+        asset.querySelector('.assets-menu-item-preview').innerHTML = `<i class="fas fa-image"></i>`;
+
+        function onClick() {
+            navigator.clipboard.writeText(`var(--wallpaper-url)`);
+            showToast(`Wallpaper image variable is copied to clipboard`);
+        }
+        asset.addEventListener("click", onClick)
+        returnee.push(asset)
+    })();
+
     Object.entries(images).forEach(([name, image]) => {
         const asset = document.createElement('div');
         asset.className = 'assets-menu-item';
@@ -897,7 +915,7 @@ async function createImagesAssets() {
         asset.addEventListener("click", onClick)
         returnee.push(asset)
     })
-    if(returnee.length == 0) {
+    if (returnee.length == 0) {
         const noResults = document.createElement("p")
         noResults.className = "no-results"
         noResults.textContent = "No images found"

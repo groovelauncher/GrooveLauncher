@@ -719,10 +719,10 @@ const backendMethods = {
   },
   setAccentColorShades: () => {
     var accentColor = getComputedStyle(document.body).getPropertyValue("--accent-color");
-    const hasWallpaper = document.querySelector("#main-home-slider > div > div.slide-page.slide-page-home").classList.contains("wallpaper-behind")
+    const hasWallpaper = document.querySelector("#main-home-slider > div > div.slide-page.slide-page-home").classList.contains("wallpaper-behind") && localStorage.alternativeWallpaper != "true"
     if (hasWallpaper) accentColor = "#7f7f7f"
     const highContrast = localStorage["highContrast"] == "true"
-    const lightMode = localStorage["theme"] == "1"
+    const lightMode = document.body.classList.contains("light-mode")
     if (highContrast) accentColor = "#000000";
     accentColor = String(accentColor).startsWith("#") ? accentColor : "#AA00FF";
     var rgb;
@@ -933,9 +933,8 @@ const backendMethods = {
       window.lastClippedWallpaper = rurl;
       backendMethods.wallpaper.recalculateOffsets();
 
-      $("div.slide-page.slide-page-home")
-        .css("background-image", `url(${rurl})`)
-        .addClass("wallpaper-behind");
+      $("div.slide-page.slide-page-home").addClass("wallpaper-behind");
+      $("body").css("--wallpaper-url", `url(${rurl})`)
       setTimeout(() => {
         window.canPressHomeButton = true
       }, 200);
@@ -976,10 +975,18 @@ const backendMethods = {
       if (window.lastClippedWallpaper)
         URL.revokeObjectURL(window.lastClippedWallpaper);
       $("div.slide-page.slide-page-home")
-        .css("background", "")
         .removeClass("wallpaper-behind");
+      $("body").css("--wallpaper-url", "")
+
       if (await imageStore.hasImage("wallpaper")) imageStore.removeImage("wallpaper")
     },
+    alternative: () => {
+      if (localStorage.getItem("alternativeWallpaper") == "true") {
+        document.body.classList.add("alternative-wallpaper")
+      } else {
+        document.body.classList.remove("alternative-wallpaper")
+      }
+    }
   },
   font: {
     get: () => { Number(localStorage["font"] || 0) },

@@ -34,7 +34,7 @@ class GrooveMock {
                 const data = await response.json();
 
                 this.#retrievedApps = data.apps
-                    .filter(app => app.packageName !== 'web.bmdominatezz.gravy')
+                    .filter(app => app.packageName !== 'web.bmdominatezz.gravy' && app.packageName !== 'web.bmdominatezz.gravy.nightly')
                     .map(app => ({
                         packageName: app.packageName,
                         label: app.label,

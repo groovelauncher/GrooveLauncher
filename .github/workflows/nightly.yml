@@ -39,8 +39,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           echo "Listing and deleting previous nightly releases"
-          # The command below lists releases whose tags contain "nightly".
-          for tag in $(gh release list --exclude-drafts --limit 100 | awk '/nightly/ {print $1}'); do
+          # The command below lists releases whose tags contain "nightly" (case-insensitive).
+          for tag in $(gh release list --exclude-drafts --limit 100 | awk 'tolower($0) ~ /nightly/ {print $1}'); do
             echo "Deleting release: $tag"
             gh release delete "$tag" -y
           done

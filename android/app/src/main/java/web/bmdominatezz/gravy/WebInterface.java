@@ -122,7 +122,7 @@ public class WebInterface {
 
         // Now process each app
         for (ResolveInfo resolveInfo : mainActivity.webView.retrievedApps) {
-            if (!resolveInfo.activityInfo.packageName.equals("web.bmdominatezz.gravy")) {
+            if (!resolveInfo.activityInfo.packageName.equals("web.bmdominatezz.gravy") && !resolveInfo.activityInfo.packageName.equals("web.bmdominatezz.gravy.nightly")) {
                 JSONObject appInfo = new JSONObject();
                 String packageName = resolveInfo.activityInfo.packageName;
                 String packageNameWithIntent;

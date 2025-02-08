@@ -72,7 +72,8 @@
       "system": "System",
       "root": "Root",
       "shizuku": "Shizuku"
-    }
+    },
+    "alternative_wallpaper": "Alternative wallpaper placing"
   },
   "alerts": {
     "reset": {

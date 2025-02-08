@@ -824,6 +824,70 @@ const iconPackConverter = [
         "icon": "thirdparty/ziraat-mobile",
         "accent": "#EC1D23"
     },
+    //WARP
+    {
+        "apps": [
+            "com.cloudflare.onedotonedotonedotone"
+        ],
+        "icon": "thirdparty/warp",
+        "accent": "#F3801F"
+    },
+    //CAPCUT
+    {
+        "apps": [
+            "com.lemon.lvoverseas"
+        ],
+        "icon": "thirdparty/capcut",
+        "accent": "#FFFFFF"
+    },
+    //MHRS
+    {
+        "apps": [
+            "tr.gov.saglik.MHRSMOBIL"
+        ],
+        "icon": "thirdparty/mhrs",
+        "accent": "#FFFFFF"
+    },
+    //E-NABIZ
+    {
+        "apps": [
+            "tr.gov.saglik.enabiz"
+        ],
+        "icon": "thirdparty/e-nabiz",
+        "accent": "#0047D0"
+    },
+    //HIRAGANA QUEST
+    {
+        "apps": [
+            "com.futuretrostudios.hiraganaquest2"
+        ],
+        "icon": "thirdparty/hiragana-quest",
+        "accent": "#CE262B"
+    },
+    //NYT GAMES
+    {
+        "apps": [
+            "com.nytimes.crossword"
+        ],
+        "icon": "thirdparty/nyt-games",
+        "accent": "#1E1E1E"
+    },
+    //TURENG
+    {
+        "apps": [
+            "com.tureng.sozluk"
+        ],
+        "icon": "thirdparty/tureng",
+        "accent": "#C81C27"
+    },
+    //TDK
+    {
+        "apps": [
+            "com.mobilsozluk"
+        ],
+        "icon": "thirdparty/tdk",
+        "accent": "#FFFFFF"
+    },
     /* {
          "apps": [
              "com.android.stk"

@@ -312,6 +312,7 @@ startUpSequence([
     }
 ],
     function () {
+        GrooveBoard.backendMethods.setAccentColorShades()
         GrooveBoard.boardMethods.finishLoading()
         setTimeout(() => {
             GrooveBoard.backendMethods.refreshStyles()

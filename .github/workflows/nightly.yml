@@ -50,8 +50,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
-          RELEASE_TAG="nightly-$(date +'%Y%m%d')"
-          RELEASE_NAME="Nightly Build $(date +'%Y-%m-%d')"
+          COMMIT_ID=$(git rev-parse --short HEAD)
+          RELEASE_TAG="${COMMIT_ID}-nightly"
+          RELEASE_NAME="${COMMIT_ID}-nightly"
           APK_PATH="android/app/build/outputs/apk/nightly/release/app-nightly-release.apk"
           echo "Creating release with tag $RELEASE_TAG"
           gh release create "$RELEASE_TAG" "$APK_PATH" \

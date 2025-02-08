@@ -297,8 +297,8 @@ body.alternative-wallpaper {
     }
   }
 
-  #app-page-icon,
-  #search-icon,
+  #app-page-icon:not(.t_active),
+  #search-icon:not(.t_active),
   div.app-page-icon-banner,
   .groove-element.groove-letter-tile .groove-app-tile-icon {
     background: transparent !important;

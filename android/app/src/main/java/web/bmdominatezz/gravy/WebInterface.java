@@ -87,11 +87,6 @@ public class WebInterface {
     }
 
     @JavascriptInterface
-    public void showToastHelloWorld() {
-        Toast.makeText(mainActivity, "Hello world! Oh and hello Groove!", Toast.LENGTH_SHORT).show();
-    }
-
-    @JavascriptInterface
     public String getSystemInsets() throws JSONException {
         JSONObject systemInsets = new JSONObject();
         systemInsets.put("left", (mainActivity.webView.lastInsets == null) ? 0

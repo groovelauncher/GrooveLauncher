@@ -240,4 +240,107 @@ div.flow-scrollable {
   }
 }
 
+body:not(.alternative-wallpaper) {
+  div.slide-page.slide-page-home.wallpaper-behind {
+    background-image: var(--wallpaper-url);
+  }
+}
+
+body.alternative-wallpaper {
+  div.tile-list-page {
+    max-width: none;
+    mix-blend-mode: normal !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  #main-home-slider {
+    background-image: var(--wallpaper-url);
+    background-size: cover !important;
+    background-position: center !important;
+  }
+
+  div.slide-page-home.wallpaper-behind {
+    background-size: cover !important;
+  }
+
+  div.slide-page-home.wallpaper-behind div.groove-home-tile {
+    background: transparent !important;
+    --metro-transparent-2: var(--accent-color);
+  }
+
+  #main-home-slider div.slide-page-home.wallpaper-behind {
+    background-size: cover !important;
+  }
+
+  div.app-list,
+  div.status-bar-mock {
+    background: transparent !important;
+  }
+
+  #main-home-slider div.slide-content {
+    will-change: transform !important;
+    transition: var(--slide-content) 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+
+    &::before {
+      transition: inherit;
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      height: 100%;
+      //content: "";
+      background: var(--metro-background);
+      opacity: calc(var(--shade-opacity) * .75);
+      will-change: opacity !important;
+    }
+  }
+
+  #app-page-icon,
+  #search-icon,
+  div.app-page-icon-banner,
+  .groove-element.groove-letter-tile .groove-app-tile-icon {
+    background: transparent !important;
+  }
+
+  div.app-list.hide-back {
+    clip-path: inset(calc(0px + var(--window-inset-top) + 64px) 0 0 0);
+  }
+  div.app-list:not(.hide-back) {
+    clip-path: none !important;
+  }
+  
+
+  #sticky-letter {
+    overflow: hidden;
+    background: transparent !important;
+    box-shadow: none !important;
+    /*&::before {
+      background-image: var(--wallpaper-url) !important;
+      position: absolute;
+      left: -81px;
+      top: calc(0px - var(--window-inset-top));
+      width: 100vw;
+      height: 100vh;
+      content: "";
+      z-index: -1;
+      background-size: cover !important;
+      background-position: center !important;
+    }
+
+    &::after {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      height: 100%;
+      content: "";
+      z-index: -1;
+      background: var(--metro-background);
+      opacity: .75;
+    }*/
+  }
+}
+
 @import "./styles/selectorMode.scss";

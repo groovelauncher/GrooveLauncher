@@ -230,6 +230,7 @@ startUpSequence([
         if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
         if (!!localStorage.getItem("reducedMotion")) GrooveBoard.backendMethods.setReduceMotion(localStorage.getItem("reducedMotion") == "true", true)
         if (!!localStorage.getItem("highContrast")) GrooveBoard.backendMethods.setHighContrast(localStorage.getItem("highContrast") == "true", true)
+        if (!!localStorage.getItem("alternativeWallpaper")) GrooveBoard.backendMethods.wallpaper.alternative()
 
         if (!!localStorage.getItem("font")) GrooveBoard.backendMethods.font.set(localStorage.getItem("font"), true)
         if (!!localStorage.getItem("rotationLock")) Groove.setDisplayOrientationLock(localStorage.getItem("rotationLock"))
@@ -350,3 +351,32 @@ window.addEventListener("deepLink", (e) => {
         }
     }, 1000);
 })
+
+);*/
+const slideContent = document.querySelector("#main-home-slider > div.slide-content");
+
+function updateShadeOpacity(x) {
+    const newOpacity = (-x / window.innerWidth);
+    window.requestAnimationFrame(() => {
+        slideContent.style.setProperty("--shade-opacity", newOpacity);
+    });
+}
+let lastUpdateTime = 0;
+let shadeOpacityLast = null;
+
+function shadeOpacity(timestamp) {
+    // Limit updates to roughly 60fps (~16ms between frames)
+    if (timestamp - lastUpdateTime > 16) {
+        const x = slideContent.getBoundingClientRect().left;
+        if (!document.body.classList.contains("activity-paused") && x !== shadeOpacityLast) {
+            const newOpacity = (-x / window.innerWidth);
+            const isLightMode = document.body.classList.contains("light-mode")
+            const c = isLightMode ? 255 : 0
+            slideContent.style.setProperty("background-color", `rgba(${c}, ${c}, ${c}, ${newOpacity * .75})`);
+        }
+        shadeOpacityLast = x;
+        lastUpdateTime = timestamp;
+    }
+    requestAnimationFrame(shadeOpacity);
+}
+requestAnimationFrame(shadeOpacity);

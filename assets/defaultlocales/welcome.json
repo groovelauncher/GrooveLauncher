@@ -43,6 +43,10 @@
             "notifications":{
                 "title": "Notifications",
                 "description": "Access to notifications is needed to display your notifications live tile."
+            },
+            "accessibility":{
+                "title": "Accessibility",
+                "description": "Enable accessibility to lock device."
             }
         }
     },

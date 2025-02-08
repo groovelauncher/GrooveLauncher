@@ -24,7 +24,9 @@ class GrooveMock {
         // Use async/await pattern instead of callback
         this.initializeApps();
     }
-
+    showToast(message) {
+        console.log("Show toast:", message)
+    }
     initializeApps() {
         return new Promise(async (resolve, reject) => {
             try {

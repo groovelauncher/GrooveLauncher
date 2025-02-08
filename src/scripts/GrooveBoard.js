@@ -718,6 +718,7 @@ const backendMethods = {
     }
   },
   setAccentColorShades: () => {
+    if (!document.querySelector("#main-home-slider > div > div.slide-page.slide-page-home")) return
     var accentColor = getComputedStyle(document.body).getPropertyValue("--accent-color");
     const hasWallpaper = document.querySelector("#main-home-slider > div > div.slide-page.slide-page-home").classList.contains("wallpaper-behind") && localStorage.alternativeWallpaper != "true"
     if (hasWallpaper) accentColor = "#7f7f7f"

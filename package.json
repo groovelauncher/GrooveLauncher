@@ -17,7 +17,7 @@
     "build:production": "rm -rf android/app/src/main/assets/* && npx webpack --env production && npx sass --no-source-map --style=compressed src/styles.scss www/dist/styles.css && node ./scripts/build-internal-apps.js --production && npm run build:android-assets && echo Compilation completed.",
     "build:debug": "rm -rf android/app/src/main/assets/* && npx webpack && npx sass --no-source-map src/styles.scss www/dist/styles.css && node ./scripts/build-internal-apps.js && npm run build:android-assets && echo Compilation completed.",
     "build:android": "cd android && ./gradlew assembleRelease && cd ..",
-    "build:android:nightly": "cd android && ./gradlew assembleNightlyRelease -Pandroid.injected.signing.store.file=app/keystore.jks -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD -Pandroid.injected.signing.key.alias=your-key-alias -Pandroid.injected.signing.key.password=$KEY_PASSWORD && cd ..",
+    "build:android:nightly": "cd android && ./gradlew assembleNightlyRelease -Pandroid.injected.signing.store.file=app/keystore.jks -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD -Pandroid.injected.signing.key.alias=key0 -Pandroid.injected.signing.key.password=$KEY_PASSWORD && cd ..",
     "debug:android": "npm run build:debug && cd android && ./gradlew assembleDebug && cd .. && adb install android/app/build/outputs/apk/debug/app-debug.apk && adb shell am start -n web.bmdominatezz.gravy/web.bmdominatezz.gravy.MainActivity",
     "debug:web": "npx concurrently \"npm run build-watch:web\" \"npx live-server --port=8080 --watch=www\""
   },

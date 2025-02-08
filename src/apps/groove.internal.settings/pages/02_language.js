@@ -62,7 +62,9 @@ document.querySelector("#home-tab > div:nth-child(1) > div > div:nth-child(3)").
         })
     scrollers.language.refresh()
 })
+var lastSelected = false
 function onItemClick(el) {
+    lastSelected = false
     const item = el.target
     const stats = item.stats
     const locale = item.locale
@@ -73,6 +75,7 @@ function onItemClick(el) {
             Groove.triggerHapticFeedback("CONFIRM")
         }, 250);
     } else {
+        lastSelected = el.target === el.target.parentElement.lastElementChild
         if (item.classList.contains("selected")) {
             document.querySelectorAll(".groove-list-view-item.expanded").forEach(expandedItem => {
                 expandedItem.classList.remove("expanded")
@@ -191,5 +194,24 @@ function onItemClick(el) {
             }, 125);
         }, 250);
     }
-
+    scrollerRefreshActive = true
+    if (!scrollerRefreshRunning) scrollerRefresh()
+    setTimeout(() => {
+        scrollerRefreshActive = false
+        requestAnimationFrame(() => {
+            scrollerRefreshRunning = false
+        })
+    }, 500);
+}
+var scrollerRefreshActive = false
+var scrollerRefreshRunning = false
+function scrollerRefresh() {
+    if (!scrollerRefreshActive) return;
+    scrollerRefreshRunning = true
+    scrollers.language.refresh()
+    if (lastSelected) {
+        scrollers.language.scrollTo(0, scrollers.language.maxScrollY, 0)
+    }
+    console.log("Scroller refreshed")
+    requestAnimationFrame(scrollerRefresh)
 }

@@ -53,8 +53,14 @@ jobs:
           COMMIT_ID=$(git rev-parse --short HEAD)
           RELEASE_TAG="${COMMIT_ID}-nightly"
           RELEASE_NAME="${COMMIT_ID}-nightly"
-          APK_PATH="android/app/build/outputs/apk/nightly/release/app-nightly-release.apk"
+          ORIGINAL_APK="android/app/build/outputs/apk/nightly/release/app-nightly-release.apk"
+          RENAMED_APK="GrooveLauncher_${RELEASE_TAG}.apk"
+          
+          # Copy and rename the APK
+          cp "$ORIGINAL_APK" "$RENAMED_APK"
+          
           echo "Creating release with tag $RELEASE_TAG"
-          gh release create "$RELEASE_TAG" "$APK_PATH" \
+          gh release create "$RELEASE_TAG" "$RENAMED_APK" \
             --title "$RELEASE_NAME" \
-            --notes "Nightly build for $(date)"
+            --notes "Nightly build for $(date)" \
+            --prerelease

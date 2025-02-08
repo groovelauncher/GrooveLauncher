@@ -14,5 +14,6 @@ document.querySelector("#rotation-toggle-switch").addEventListener("checked", (e
 })
 if (!!localStorage.getItem("rotationLock")) {
     document.querySelector("#rotation-toggle-switch").setAttribute("checked", "")
+    document.querySelector("#rotation-toggle-switch").parentElement.parentElement.querySelector("p").innerText = i18n.t("common.actions.on")
     settingsListTag.setAttribute("data-i18n", "common.actions.locked")
 }

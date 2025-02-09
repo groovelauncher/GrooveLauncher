@@ -17,13 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Create local.properties file
-      - name: Create local.properties
-        env:
-          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
-        run: |
-          echo "$LOCAL_PROPERTIES" > android/gradle.local.properties
-
       # Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3

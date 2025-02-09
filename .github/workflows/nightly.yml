@@ -32,6 +32,13 @@ jobs:
           echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/keystore.jks
           mkdir android/app/app
           echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/app/keystore.jks
+      
+          # Create local.properties file
+      - name: Create local.properties
+        env:
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+        run: |
+          echo "$LOCAL_PROPERTIES" > android/gradle.local.properties
 
       - name: Build Android APK
         env:

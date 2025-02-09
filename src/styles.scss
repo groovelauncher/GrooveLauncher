@@ -260,8 +260,12 @@ body.alternative-wallpaper {
 
   #main-home-slider {
     background-image: var(--wallpaper-url);
-    background-size: cover !important;
-    background-position: center !important;
+
+    background-size: calc(100vw + 100px) auto !important;
+    @media screen and (min-height: calc(100vw + 100px)) {
+      background-size: auto 100% !important;
+    }
+    background-position: calc(50% - 50px) 50%;
   }
 
   div.slide-page-home.wallpaper-behind {

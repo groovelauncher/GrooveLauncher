@@ -2,7 +2,11 @@
   <img src="www/assets/navbar/b2.png" width="120">
   <h1>Groove Launcher</h1>
   <p>A groovy personalized home screen experience</p>
+  <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/groovelauncher/GrooveLauncher/total?style=for-the-badge&label=Total%20Downloads">
+
 </div>
+
+
 
 **[NEW! Get Themes For Groove Tweaks](THEMES.MD)** <!-- omit in toc -->
 ---

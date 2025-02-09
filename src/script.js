@@ -317,10 +317,6 @@ startUpSequence([
         setTimeout(() => {
             GrooveBoard.backendMethods.refreshStyles()
             if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true); else GrooveBoard.backendMethods.setUIScale(.8, true)
-                setTimeout(() => {
-                    startNavigationSystem();
-
-                }, 1000);
         }, 500);
     }
 )
@@ -389,6 +385,7 @@ window.addEventListener("pointerdown", (e) => {
     }
 );*/
 const slideContent = document.querySelector("#main-home-slider > div.slide-content");
+const mainHomeSlider = document.querySelector("#main-home-slider");
 
 function updateShadeOpacity(x) {
     const newOpacity = (-x / window.innerWidth);
@@ -408,6 +405,8 @@ function shadeOpacity(timestamp) {
             const isLightMode = document.body.classList.contains("light-mode")
             const c = isLightMode ? 255 : 0
             slideContent.style.setProperty("background-color", `rgba(${c}, ${c}, ${c}, ${newOpacity * .75})`);
+            mainHomeSlider.style.setProperty("background-position", `calc(50% + ${(x / window.innerWidth) * 100 - 50}px) 50%`)
+
         }
         shadeOpacityLast = x;
         lastUpdateTime = timestamp;

@@ -120,13 +120,13 @@ const homeTileEditSwitch = {
         const distance = (Date.now() - homeTileEditShakeStart) / (2000 + hashStringToNumber(packageName, 1000))
         const hash = hashStringToNumber(e.el.getAttribute("packagename"), 500)
         e.el.style.setProperty("--shake-x",
-          perlin.get(distance, hash) * 1.5
-          * 10
-          + "px")
+          Math.round(perlin.get(distance, hash) * 1.5
+            * 10
+          ) + "px")
         e.el.style.setProperty("--shake-y",
-          perlin.get(distance, hash + 1000) * 1.5
-          * 10
-          + "px")
+          Math.round(perlin.get(distance, hash + 1000) * 1.5
+            * 10
+          ) + "px")
       })
 
     }, 0);

@@ -77,7 +77,7 @@
         <activity
             android:name=".MainActivity"
             android:clearTaskOnLaunch="true"
-            android:configChanges="orientation|uiMode|screenSize"
+            android:configChanges="orientation|screenSize|uiMode"
             android:enabled="true"
             android:excludeFromRecents="true"
             android:exported="true"

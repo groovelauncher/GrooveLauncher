@@ -34,6 +34,11 @@ import fi.iki.elonen.NanoHTTPD;
 import web.bmdominatezz.gravyservices.GravyServer;
 
 public class MainActivity extends AppCompatActivity {
+    private static MainActivity instance;
+
+    public static MainActivity getInstance() {
+        return instance;
+    }
 
     public WebEvents webEvents;
     public GravyServer gravyServer;
@@ -54,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     public String mCameraPhotoPath;
     private MyLocalServer myServer;
     public boolean isAppReady = false;
-
+    public NotificationDelegate notificationDelegate;
     public class MyLocalServer extends NanoHTTPD {
 
         public MyLocalServer(int port) throws IOException {
@@ -128,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        notificationDelegate = new NotificationDelegate(this);
+        instance = this;  // Set the instance
         String accentColor = getSharedPreferences("GrooveLauncherPrefs", MODE_PRIVATE).getString("accent_color", "#AA00FF");
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         splashScreen.setOnExitAnimationListener(splashScreenView -> {

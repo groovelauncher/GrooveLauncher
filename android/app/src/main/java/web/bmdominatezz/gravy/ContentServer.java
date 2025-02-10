@@ -1,5 +1,10 @@
 package web.bmdominatezz.gravy;
 
+import static web.bmdominatezz.gravy.SystemEvents.mainActivity;
+import static web.bmdominatezz.gravy.UriEncode.decodeURIComponent;
+import static web.bmdominatezz.gravy.UriEncode.encodeURIComponent;
+
+import android.app.Notification;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -9,21 +14,31 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.media.MediaMetadata;
+import android.media.MediaMetadataRetriever;
+import android.media.session.MediaController;
+import android.media.session.MediaSession;
+import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewClientCompat;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ContentServer extends WebViewClientCompat {
@@ -240,6 +255,34 @@ public class ContentServer extends WebViewClientCompat {
                         }
                     }
                     break;
+                case "album-art":
+                    StatusBarNotification sbn = mainActivity.notificationDelegate.getNotificationById(iconFileName.substring(0, iconFileName.length() - 5));
+                    if (sbn != null) {
+                        MediaSession.Token token = sbn.getNotification().extras.getParcelable(Notification.EXTRA_MEDIA_SESSION);
+
+                        if (token != null) {
+                            MediaController mediaController = new MediaController(mainActivity, token);
+                            MediaMetadata metadata = mediaController.getMetadata();
+                            PlaybackState playbackState = mediaController.getPlaybackState();
+
+                            if (metadata != null) {
+                                Bitmap albumArt = metadata.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART);
+                                if (albumArt != null) {
+                                    InputStream inputStream = Utils.loadBitmapAsStream(albumArt);
+                                    return new WebResourceResponse("image/webp", "UTF-8", inputStream);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case "notification-image":
+                    StatusBarNotification sbn2 = mainActivity.notificationDelegate.getNotificationById(iconFileName.substring(0, iconFileName.length() - 5));
+                    Bitmap bitmap = sbn2.getNotification().extras.getParcelable(Notification.EXTRA_PICTURE);
+                    if (bitmap != null) {
+                        InputStream inputStream = Utils.loadBitmapAsStream(bitmap);
+                        return new WebResourceResponse("image/webp", "UTF-8", inputStream);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -252,7 +295,7 @@ public class ContentServer extends WebViewClientCompat {
         ContentResolver contentResolver = context.getContentResolver();
         Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         String selection = ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?";
-        String[] selectionArgs = { phoneNumber };
+        String[] selectionArgs = {phoneNumber};
         String[] projection = {
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME

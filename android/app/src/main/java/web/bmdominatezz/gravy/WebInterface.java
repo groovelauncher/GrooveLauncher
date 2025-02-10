@@ -6,7 +6,15 @@ import static web.bmdominatezz.gravy.DefaultApps.*;
 import static web.bmdominatezz.gravy.GrooveExperience.*;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.app.Notification;
 import android.content.pm.ServiceInfo;
+import android.graphics.Bitmap;
+import android.media.MediaMetadata;
+import android.media.session.MediaController;
+import android.media.session.MediaSession;
+import android.media.session.PlaybackState;
+import android.service.notification.StatusBarNotification;
+import android.util.Base64;
 import android.view.accessibility.AccessibilityManager;
 
 import android.Manifest;
@@ -54,6 +62,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
@@ -1012,7 +1021,7 @@ public class WebInterface {
                     notificationAccessSettings.putExtra(Settings.EXTRA_NOTIFICATION_LISTENER_COMPONENT_NAME, componentName.flattenToString());
                     mainActivity.startActivity(notificationAccessSettings);
                 } else {
-                Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS);
+                    Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS);
                     mainActivity.startActivity(intent);
                 }
             } else if ("ACCESSIBILITY".equals(permission)) {
@@ -1034,5 +1043,15 @@ public class WebInterface {
         } catch (Exception e) {
             return "false";
         }
+    }
+
+    @JavascriptInterface
+    public String getAllNotifications() {
+        return mainActivity.notificationDelegate.getAllNotificationsJSON().toString();
+    }
+
+    @JavascriptInterface
+    public String getNotificationExtra(StatusBarNotification sbn, String key) {
+        return sbn.getNotification().extras.getString(key);
     }
 }

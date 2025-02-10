@@ -307,7 +307,74 @@ class GrooveMock {
     requestScreenLock() {
         return "true"
     }
-}// Create a reusable AudioContext
+    getAllNotifications() {
+        return JSON.stringify(notifications);
+    }
+    getNotificationExtra(id, key) {
+        return ""//sbn.getNotification().extras.getString(key);
+    }
+}
+function sendNotificationToSystem(notification) {
+    const existingIndex = notifications.findIndex(n => n.id === notification.id);
+    if (existingIndex !== -1) {
+        notifications[existingIndex] = notification;
+    } else {
+        notifications.push(notification);
+    }
+    window.dispatchEvent(new CustomEvent("notificationPosted", { detail: JSON.stringify(notification) }))
+}
+function removeNotificationToSystem(notification) {
+    notifications = notifications.filter(e => e.id != notification.id)
+    window.dispatchEvent(new CustomEvent("notificationRemoved", { detail: JSON.stringify(notification) }))
+}
+var notifications = []
+window.notificationsenderinterval = setInterval(() => {
+    console.log("hjsdkaf")
+    if (notifications.length > 4) {
+        clearInterval(window.notificationsenderinterval)
+    } else {
+        var randomNames = ["John", "Mary", "James", "Patricia", "Jennifer", "Michael", "Linda", "David", "Elizabeth", "Robert"]
+        var randomMessages = ["Hello", "Hi", "How are you?", "What's up?", "Good morning", "Good evening", "Good night", "Good afternoon", "Howdy", "Hey"]
+        const randomSelect = Math.floor(Math.random() * 10)
+        window["notificationhistory" + randomNames[randomSelect]] = window["notificationhistory" + randomNames[randomSelect]] || []
+        const newMessage = randomMessages[Math.floor(Math.random() * 10)]
+        window["notificationhistory" + randomNames[randomSelect]].push(newMessage)
+        const notification = {
+            id: Number("999999999" + randomSelect),
+            title: randomNames[randomSelect],
+            description: newMessage,
+            longDescription: window["notificationhistory" + randomNames[randomSelect]].join("\n"),
+            postTime: new Date().getTime(),
+            packageName: "com.google.android.apps.messaging"
+        }
+        console.log("notification", notification)
+        sendNotificationToSystem(notification)
+
+    }
+}, 1000);
+setTimeout(() => {
+    const notification = {
+        id: Number("9999909990"),
+        title: "Random Artist - Random Song",
+        description: "",
+        longDescription: "",
+        postTime: new Date().getTime(),
+        packageName: "com.spotify.music",
+        song: {
+            albumCover: "https://picsum.photos/200",
+            albumName: "Random Album",
+            artist: "Random Artist",
+            currentPlayback: 5000,
+            songDuration: 10000,
+            songName: "Random Song"
+        }
+    }
+    console.log("notification", notification)
+    sendNotificationToSystem(notification)
+}, 3000);
+
+
+// Create a reusable AudioContext
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 // Function to play haptic-like tick sound
@@ -346,6 +413,3 @@ function onThemeChange() {
 }
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', onThemeChange);
 onThemeChange()
-setTimeout(() => {
-    onThemeChange()
-}, 1000);

@@ -20,7 +20,9 @@ public class WebEvents {
         appUninstall,
         animationDurationScaleChange,
         deepLink,
-        systemThemeChange
+        systemThemeChange,
+        notificationPosted,
+        notificationRemoved
     }
 
     WebEvents(Context c, WebView w) {

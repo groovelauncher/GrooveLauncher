@@ -362,6 +362,17 @@ const boardMethods = {
 
         }
       })
+      Object.entries(window.liveTiles).forEach(liveTileBundle => {
+        const packageName = liveTileBundle[0]
+        const liveTile = liveTileBundle[1]
+        if (liveTile.uid == GrooveBoard.boardMethods.liveTiles.init.photos) {
+          liveTile.worker.postMessage({
+            action: "notifications-data",
+            data: { timestamp: Date.now(), notifications: JSON.parse(Groove.getAllNotifications()) }
+          })
+
+        }
+      })
     }
     //getAppProvider:
   },
@@ -1050,6 +1061,19 @@ const backendMethods = {
     else return false;
   },
   localization: localization,
+  defaultLiveTiles: {
+    refresh: () => {
+      window.defaultLiveTiles = {}
+      Object.values(GrooveBoard.boardMethods.liveTiles.init).reverse().forEach(liveTileID => {
+        const match = boardMethods.liveTiles.getProviders().find(item => item.id === liveTileID);
+        if (match) {
+          match.metadata.provide.forEach(packageName => {
+            window.defaultLiveTiles[packageName] = liveTileID
+          })
+        }
+      })
+    }
+  },
   getAppPreferences: (packageName) => {
     //const rawAppDetails = backendMethods.getAppDetails(packageName, true)
     var defaultPref = {
@@ -1060,7 +1084,8 @@ const backendMethods = {
       },
       textColor: "auto",
       accent: "auto",
-      shown: true
+      shown: true,
+      liveTile: "auto"
     }
 
     if (localStorage["perAppPreferences"]) {

@@ -295,9 +295,11 @@ startUpSequence([
             alarms: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/alarms.js", baseURL).href),
             people: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/people.js", baseURL).href),
             photos: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/photos.js", baseURL).href),
+            notifications: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/notifications.js", baseURL).href),
             //weather: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/weather.js", baseURL).href),
             example: await liveTileManager.registerLiveTileProvider(new URL("./assets/defaultlivetiles/helloworld.js", baseURL).href)
         }
+        GrooveBoard.backendMethods.defaultLiveTiles.refresh();
         window.contactsCache = JSON.parse(Groove.getContacts()).map(e => {
             e.avatarURL = Groove.getContactAvatarURL(e.id)
             return e

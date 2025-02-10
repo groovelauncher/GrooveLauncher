@@ -3,6 +3,7 @@
  * @provide type people
  * @author string berkaytumal
  * @description string This script displays the current local time in a live tile format.
+ * @permission CONTACTS
  * @minVersion number 50
  * @targetVersion number 50
  */

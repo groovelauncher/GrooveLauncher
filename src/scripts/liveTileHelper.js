@@ -13,7 +13,7 @@ function requestGoToPage(page) {
     });
 }
 function requestGoToNextPage() {
-   // console.log("Worker: Sending requestGoToNextPage message");
+    // console.log("Worker: Sending requestGoToNextPage message");
     postMessage({
         action: "requestGoToNextPage",
     });
@@ -41,6 +41,9 @@ onmessage = async function (event) {
             break;
         case 'photos-data':
             eventListener.dispatch("photosdata", message.data);
+            break;
+        case 'notifications-data':
+            eventListener.dispatch("notificationsdata", message.data);
             break;
         default:
             console.log("Worker: Unknown action received:", message.action);

@@ -65,19 +65,57 @@ function refreshAppList(params) {
             if (appdetail.packageName.startsWith("groove.internal")) {
                 document.querySelector("#app-preference-show").style.display = "none"
                 document.querySelector("#app-preference-name").style.display = "none"
-            }else{
+            } else {
                 document.querySelector("#app-preference-show").style.removeProperty("display")
                 document.querySelector("#app-preference-name").style.removeProperty("display")
             }
+
+            /*<div class="group" id="app-preference-live-tile">
+                <p class="group-title" data-i18n="settings.apps.live_tile">Live tile</p>
+                <div class="metro-dropdown-menu" selected="0">
+                  <div class="metro-dropdown-option">
+
+                  </div>
+                </div>
+              </div>
+*/
+            const liveTileGroup = document.querySelector("#app-preference-live-tile")
+            liveTileGroup.querySelector("div.metro-dropdown-menu").innerHTML = ""
+            if (window.parent.liveTileProviders) {
+                console.log("buldum")
+                parent.liveTileProviders.forEach((provider, i) => {
+                    console.log("provide", provider)
+                    if (provider.metadata.provide.includes(appdetail.packageName)) {
+                        const option = document.createElement("div")
+                        option.classList.add("metro-dropdown-option")
+                        const existingOptions = liveTileGroup.querySelectorAll("div.metro-dropdown-option");
+                        let assignedName = provider.metadata.name;
+                        let counter = 2;
+                        while ([...existingOptions].some(opt => opt.innerText === assignedName)) {
+                            assignedName = provider.metadata.name + ` (${counter})`;
+                            counter++;
+                        }
+                        option.innerText = assignedName;
+                        option.setAttribute("data-id", provider.id)
+                        console.log("ekledim", option)
+                        liveTileGroup.querySelector("div.metro-dropdown-menu").append(option)
+                    }
+                })
+            }
+            if (liveTileGroup.querySelector("div.metro-dropdown-menu").innerHTML == "") {
+                liveTileGroup.style.display = "none"
+            } else {
+                liveTileGroup.style.removeProperty("display")
+            }
             pageNavigation.goToPage(6)
-
-
         } catch (error) {
+            
             parent.GrooveBoard.alert(
                 "Unable to Get App Details!",
                 "Couldn’t retrieve details for this app.",
                 [{ title: "Ok", style: "default", inline: true, action: () => { } }]
             );
+       throw error;
         }
 
     })

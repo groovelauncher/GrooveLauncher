@@ -163,10 +163,16 @@ async function getLiveTileMetadata(workerScript) {
             if (key == "provide" && parts.length == 3) {
                 switch (type) {
                     case 'type':
-                        const typeToPackageNames = (Object.entries(window.iconPackDB).filter(e => e[1].icon == value)).map(e => e[0])
-                        typeToPackageNames.forEach(e => {
-                            addProvide(e)
-                        })
+                        if (value == "all") {
+                            allappsarchive.forEach(e => {
+                                addProvide(e)
+                            })
+                        } else {
+                            const typeToPackageNames = (Object.entries(window.iconPackDB).filter(e => e[1].icon == value)).map(e => e[0])
+                            typeToPackageNames.forEach(e => {
+                                addProvide(e)
+                            })
+                        }
                         break;
                     case 'packageName':
                         addProvide(value)

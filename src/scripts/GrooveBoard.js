@@ -261,6 +261,9 @@ const boardMethods = {
 
       backendMethods.homeConfiguration.save()
     }
+    entries[window.i18n.t("common.app_menu.app_info")] = () => {
+      Groove.launchAppInfo(packageName)
+    }
     entries[window.i18n.t("common.app_menu.uninstall")] = () => {
       if (GrooveBoard.backendMethods.packageManagerProvider.get() == 0) {
         Groove.uninstallApp(packageName, 0);
@@ -282,8 +285,8 @@ const boardMethods = {
       el.querySelector("div:nth-child(1)").classList.add("disabled")
     }
     if (allappsarchive.filter(e => e.packageName == packageName)[0].type == 0) {
-      el.querySelector("div:nth-child(2)").remove()
-      el.style.setProperty("--full-height", "89px")
+      el.querySelector("div:nth-child(3)").remove()
+      el.style.setProperty("--full-height", "154px")
     }
     return el;
   },

@@ -237,7 +237,7 @@ $(window).on("pointerdown", function (e) {
             $("div.app-list-page").addClass("app-menu-back-intro")
             const appMenu = GrooveBoard.boardMethods.createAppMenu(e.target.getAttribute("packagename"))
             const optionalTop = (e.target.offsetTop + scrollers.app_page_scroller.y + 64)
-            appMenu.style.top = ((optionalTop + 154 >= window.innerHeight - windowInsets().bottom) ? optionalTop - 64 : optionalTop) + "px"
+            appMenu.style.top = ((optionalTop + 219 >= window.innerHeight - windowInsets().bottom) ? optionalTop - 64 : optionalTop) + "px"
             appMenu.style.setProperty("--pointerX", e.pageX - $("div.app-list-page").position().left + "px")
             appMenu.classList.add("intro")
             const appClone = e.target.cloneNode(true)
@@ -252,7 +252,7 @@ $(window).on("pointerdown", function (e) {
             }, 0);
             e.target.style.visibility = "hidden"
 
-            if (optionalTop + 154 >= window.innerHeight - windowInsets().bottom) appMenu.classList.add("intro-bottom")
+            if (optionalTop + 219 >= window.innerHeight - windowInsets().bottom) appMenu.classList.add("intro-bottom")
 
             e.target.appMenu = appMenu
             GrooveBoard.backendMethods.navigation.push("appMenuOn", () => { }, () => {

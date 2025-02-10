@@ -114,6 +114,7 @@ setup.welcome_back = updatedApp
 setup.update_wizard = updatedApp && localStorage["lastVersion"] != Groove.getAppVersion()
 setup.pick_accent = !!!localStorage["accentColor"]
 setup.accessibility = !!!localStorage["theme"] && !!!localStorage["UIScale"]
+setup.whats_new = !Groove.getAppVersion().includes("nightly")
 setup.permissions = !allPermissions.some(e => !Groove.checkPermission(e))
 
 if (updatedApp) {

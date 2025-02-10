@@ -262,9 +262,11 @@ body.alternative-wallpaper {
     background-image: var(--wallpaper-url);
 
     background-size: calc(100vw + 100px) auto !important;
+
     @media screen and (min-height: calc(100vw + 100px)) {
       background-size: auto 100% !important;
     }
+
     background-position: calc(50% - 50px) 50%;
   }
 
@@ -348,6 +350,40 @@ body.alternative-wallpaper {
       z-index: -1;
       background: var(--metro-background);
       opacity: .75;
+    }*/
+  }
+
+  div.groove-tile-menu-button {
+    --metro-background: black;
+    --metro-foreground: white;
+    color: var(--metro-foreground);
+
+    p {
+      filter: none !important;
+    }
+  }
+
+  div.update-banner,
+  #app-page-icon {
+    --metro-background: black;
+    --metro-foreground: white;
+    color: var(--metro-foreground);
+
+    p {
+      filter: none !important;
+    }
+
+    //filter: drop-shadow(0px 0px 5px var(--metro-background));
+    /* &::before {
+      content: "";
+      position: absolute;
+      left: calc(var(--tile-list-normal-margin-x) + 5px);
+      top: 10px;
+      width: calc(100% + 90px - var(--tile-list-normal-margin-x) * 2 - 10px);
+      height: calc(100% - 10px);
+      background: var(--metro-background);
+      opacity: .75;
+      z-index: -2;
     }*/
   }
 }

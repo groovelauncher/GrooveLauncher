@@ -3,6 +3,7 @@
  * @provide type photos
  * @author string berkaytumal
  * @description string This script displays photos from gallery.
+ * @permission PHOTOS
  * @minVersion number 50
  * @supportedSizes s,m,w
  * @targetVersion number 50

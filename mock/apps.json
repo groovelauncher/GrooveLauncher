@@ -109,6 +109,12 @@
             "type": 0
         },
         {
+            "uid": 10000,
+            "packageName":"com.spotify.music",
+            "label": "Spotify",
+            "type": 1
+        },
+        {
             "uid": 10091,
             "packageName": "com.android.traceur",
             "label": "System Tracing",

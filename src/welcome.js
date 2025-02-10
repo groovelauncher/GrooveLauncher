@@ -489,7 +489,7 @@ document.querySelectorAll("div.permission-group").forEach((e, index) => {
     }
     e.querySelector("button").addEventListener("flowClick", () => {
         Groove.requestPermission(allPermissions[index])
-        console.log(index,allPermissions[index])
+        console.log(index, allPermissions[index])
     })
     setInterval(interval, 1000)
     interval()

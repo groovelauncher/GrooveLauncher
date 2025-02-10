@@ -231,7 +231,6 @@ startUpSequence([
         if (!!localStorage.getItem("reducedMotion")) GrooveBoard.backendMethods.setReduceMotion(localStorage.getItem("reducedMotion") == "true", true)
         if (!!localStorage.getItem("highContrast")) GrooveBoard.backendMethods.setHighContrast(localStorage.getItem("highContrast") == "true", true)
         if (!!localStorage.getItem("alternativeWallpaper")) GrooveBoard.backendMethods.wallpaper.alternative()
-
         if (!!localStorage.getItem("font")) GrooveBoard.backendMethods.font.set(localStorage.getItem("font"), true)
         if (!!localStorage.getItem("rotationLock")) Groove.setDisplayOrientationLock(localStorage.getItem("rotationLock"))
         if (localStorage.getItem("hapticFeedback") == "false") Groove.triggerHapticFeedback("DISABLED")

@@ -24,8 +24,10 @@ const setAccentColor = (color) => {
 const setTheme = (theme) => {
   if (Object.values(grooveThemes).includes(theme)) {
     var applyTheme = 0;
-    if (theme == 2) applyTheme = Number(localStorage["autoTheme"]); else applyTheme = theme;
+    if (theme == 2) applyTheme = Number(window.parent.matchMedia("(prefers-color-scheme: light)").matches ? 1 : 0); else applyTheme = theme;
+    console.log("İNPUT", theme, "appliing", applyTheme)
     document.body.classList[applyTheme ? "add" : "remove"]("light-mode");
+    console.log("APPLYING THEME", applyTheme)
     document.body.classList.add("showBackground")
   } else {
     console.error("Invalid theme!");
@@ -86,6 +88,7 @@ window.addEventListener("message", (event) => {
   if (event.data["action"]) {
     if (event.data.action == "setTheme") {
       setTheme(event.data.argument);
+      console.log("Theme set to", event.data.argument)
     } if (event.data.action == "setFont") {
       setFont(event.data.argument);
     } else if (event.data.action == "setAccentColor") {
@@ -109,8 +112,7 @@ requestAnimationFrame(() => {
 // Initialize app with stored preferences or defaults
 const urlParams = new URLSearchParams(window.location.search);
 setAccentColor(localStorage["accentColor"] || grooveColors.violet);
-setTheme(Number(localStorage["theme"]) || grooveThemes.dark);
-
+setTheme(localStorage["theme"] === undefined ? grooveThemes.dark : Number(localStorage["theme"]));
 // Event handlers for communicating with parent window
 const appViewEvents = {
   setAccentColor: (color) => {

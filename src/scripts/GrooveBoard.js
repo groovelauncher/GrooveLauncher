@@ -740,7 +740,7 @@ const backendMethods = {
     backendMethods.setAccentColorShades();
     document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setAccentColor(e, color))
     if (!doNotSave) localStorage.setItem("accentColor", color)
-    Groove.setAccentColor(color)
+    if (window.Groove) Groove.setAccentColor(color)
     if (Object.values(grooveColors).includes(color)) {
       //Groove.setAppIconColor(Object.entries(grooveColors).filter(e => e[1].toLowerCase() == color.toLowerCase())[0][0])
     } else {
@@ -749,12 +749,13 @@ const backendMethods = {
     }
   },
   setTheme: (theme, doNotSave = false) => {
+    console.log("CALLED GROOVEBOARD SETTHEME", theme, doNotSave)
     if (Object.values(grooveThemes).includes(theme)) {
       var applyTheme
       if (theme == 2) applyTheme = Number(localStorage.getItem("autoTheme")); else applyTheme = theme
       document.body.classList[applyTheme ? "add" : "remove"]("light-mode");
-      Groove.setNavigationBarAppearance(applyTheme ? "dark" : "light");
-      Groove.setStatusBarAppearance(applyTheme ? "dark" : "light");
+      if (window.Groove) Groove.setNavigationBarAppearance(applyTheme ? "dark" : "light");
+      if (window.Groove) Groove.setStatusBarAppearance(applyTheme ? "dark" : "light");
       document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setTheme(e, theme))
       if (!doNotSave) {
         localStorage.setItem("theme", theme)

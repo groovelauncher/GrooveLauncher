@@ -1,6 +1,7 @@
 // Global Variables
 :root {
     --app-transition-scale: 1;
+    --on-pause-easing: cubic-bezier(1, -0.01, 1, -0.01);
 }
 
 // Main Home Slider Component
@@ -31,11 +32,11 @@
                     transform-origin: 0% 50%;
 
                     // Default tile animation
-                    animation: tileListAppTransitionAnim0 calc(.2s * var(--animation-duration-scale)) calc((var(--app-animation-index) * .15s * var(--app-transition-scale)) * var(--animation-duration-scale)) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
+                    animation: tileListAppTransitionAnim0 calc(.2s * var(--animation-duration-scale)) calc((var(--app-animation-index) * .2s * var(--app-transition-scale)) * var(--animation-duration-scale)) var(--on-pause-easing) forwards;
 
                     // Selected tile animation (slightly different timing)
                     &.app-transition-selected {
-                        animation: tileListAppTransitionAnim0 calc(.15s * var(--animation-duration-scale)) calc((.15s * var(--app-transition-scale) + .2s) * var(--animation-duration-scale)) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
+                        animation: tileListAppTransitionAnim0 calc(.2s * var(--animation-duration-scale)) calc((.2s * var(--app-transition-scale) + .2s) * var(--animation-duration-scale)) var(--on-pause-easing) forwards;
                     }
 
                     // Tile exit animation
@@ -178,12 +179,13 @@
                 #search-icon {
                     transform-origin: var(--app-animation-distance) 50%;
 
+
                     // Default app tile animation
-                    animation: appListAppTransitionAnim0 calc(.15s * var(--animation-duration-scale)) calc((var(--app-animation-index) * .35s) * var(--animation-duration-scale)) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
+                    animation: appListAppTransitionAnim0 calc(.2s * var(--animation-duration-scale)) calc((var(--app-animation-index) * .2s * var(--app-transition-scale)) * var(--animation-duration-scale)) var(--on-pause-easing) forwards;
 
                     // Selected app tile animation
                     &.app-transition-selected {
-                        animation: appListAppTransitionAnim0 calc(.12s * var(--animation-duration-scale)) calc(1.5 * .3s * var(--animation-duration-scale)) cubic-bezier(.49, -0.01, 1, -0.01) forwards;
+                        animation: appListAppTransitionAnim0 calc(.2s * var(--animation-duration-scale)) calc(1.5 * .2s * var(--animation-duration-scale)) var(--on-pause-easing) forwards;
                     }
 
                     @keyframes appListAppTransitionAnim0 {
@@ -197,7 +199,7 @@
                         }
 
                         100% {
-                            transform: translateX(calc(var(--flow-perspective) / -2)) rotateY(-90deg) translateX(calc(0%));
+                            transform: translateX(calc(var(--flow-perspective) / -3)) rotateY(-90deg) translateX(calc(0%));
                             opacity: 0;
                         }
                     }

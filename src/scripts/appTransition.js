@@ -39,7 +39,14 @@ const ANIMATION_TIMINGS = {
     // Calculate base scale based on window height
     baseScale: () => window.innerHeight / 850 / 2 + 0.5,
     // Calculate launch hide timing with scale factor
-    launchHide: function () { return ((0.15 * this.baseScale() + 0.35) * 1000 + 500) * GrooveBoard.backendMethods.animationDurationScale.get() }
+    // calc(.3s * var(--animation-duration-scale)) calc((var(--app-animation-index) * .3s * var(--app-transition-scale)) * var(--animation-duration-scale))
+    launchHide: function () {
+        const animationDurationScale = GrooveBoard.backendMethods.animationDurationScale.get();
+        const appTransitionScale = this.baseScale()
+        const ms = (.2 * animationDurationScale) + (.2 * appTransitionScale * animationDurationScale) + .2 * animationDurationScale + .1
+        return ms * 1000;
+        return ((0.3 * this.baseScale() + 0.35) * 1000 + 500) * GrooveBoard.backendMethods.animationDurationScale.get()
+    }
 };
 
 // Check if an element is visible within the viewport

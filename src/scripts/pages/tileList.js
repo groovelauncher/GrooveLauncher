@@ -121,12 +121,12 @@ const homeTileEditSwitch = {
         const hash = hashStringToNumber(e.el.getAttribute("packagename"), 500)
         e.el.style.setProperty("--shake-x",
           Math.round(perlin.get(distance, hash) * 1.5
-            * 10
-          ) + "px")
+            * 10 * devicePixelRatio
+          ) / devicePixelRatio + "px")
         e.el.style.setProperty("--shake-y",
           Math.round(perlin.get(distance, hash + 1000) * 1.5
-            * 10
-          ) + "px")
+            * 10 * devicePixelRatio
+          ) / devicePixelRatio + "px")
       })
 
     }, 0);

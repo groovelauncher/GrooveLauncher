@@ -138,6 +138,8 @@ document.querySelector("#page-welcome button.right-btn").addEventListener("flowC
     } else if (setup.whats_new) {
         goToPage(6)
         history.push(6)
+    } else {
+        document.querySelector("#page-readme button.right-btn").dispatchEvent(new Event("flowClick"))
     }
 })
 document.querySelector("#page-wizard button.left-btn").addEventListener("flowClick", (e) => {
@@ -184,6 +186,8 @@ document.querySelector("#update-loading button.right-btn").addEventListener("flo
     } else if (setup.whats_new) {
         goToPage(6)
         history.push(6)
+    } else {
+        document.querySelector("#page-readme button.right-btn").dispatchEvent(new Event("flowClick"))
     }
 })
 document.querySelector("#page-access button.left-btn").addEventListener("flowClick", (e) => {
@@ -202,6 +206,8 @@ document.querySelector("#page-access button.right-btn").addEventListener("flowCl
     } else if (setup.whats_new) {
         goToPage(6)
         history.push(6)
+    } else {
+        document.querySelector("#page-readme button.right-btn").dispatchEvent(new Event("flowClick"))
     }
 })
 document.querySelector("#accent-color-picker button.left-btn").addEventListener("flowClick", (e) => {
@@ -216,6 +222,8 @@ document.querySelector("#accent-color-picker button.right-btn").addEventListener
     } else if (setup.whats_new) {
         goToPage(6)
         history.push(6)
+    } else {
+        document.querySelector("#page-readme button.right-btn").dispatchEvent(new Event("flowClick"))
     }
 })
 document.querySelector("#page-permissions button.left-btn").addEventListener("flowClick", (e) => {
@@ -227,6 +235,8 @@ document.querySelector("#page-permissions button.right-btn").addEventListener("f
     if (setup.whats_new) {
         goToPage(6)
         history.push(6)
+    } else {
+        document.querySelector("#page-readme button.right-btn").dispatchEvent(new Event("flowClick"))
     }
 })
 document.querySelector("#page-readme button.left-btn").addEventListener("flowClick", (e) => {

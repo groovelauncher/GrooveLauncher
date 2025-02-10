@@ -614,6 +614,14 @@ div.scroller {
     transform-style: preserve-3d;
     perspective: var(--flow-perspective);
     overflow: hidden;
+
+    div.flow-scrollable {
+        transform-style: preserve-3d;
+
+        div.group {
+            transform-style: preserve-3d;
+        }
+    }
 }
 
 body.fade-out {

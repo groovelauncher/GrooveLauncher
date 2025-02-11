@@ -25,6 +25,9 @@ class BuildConfigMock {
     CAK() {
         return buildConfig["CAK"] || "0"
     }
+    CHANGELOG() {
+        return "<strong>Hello</strong>Hello\nWorld"
+    }
     signed() {
         return buildConfig["signed"] || false
     }

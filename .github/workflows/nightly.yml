@@ -12,43 +12,70 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check for new commits
+        id: check_commits
+        run: |
+          LATEST_NIGHTLY=$(gh release list --exclude-drafts --limit 1 | awk 'tolower($0) ~ /nightly/ {print $1}' | cut -d'-' -f1)
+          LATEST_COMMIT=$(git rev-parse --short HEAD)
+          echo "Latest nightly: $LATEST_NIGHTLY"
+          echo "Current commit: $LATEST_COMMIT"
+          if [ "$LATEST_NIGHTLY" = "$LATEST_COMMIT" ]; then
+            echo "No new commits since last nightly build"
+            echo "skip_build=true" >> $GITHUB_OUTPUT
+          else
+            echo "New commits found, building new nightly"
+            echo "skip_build=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       - name: Setup Node.js
+        if: steps.check_commits.outputs.skip_build != 'true'
         uses: actions/setup-node@v3
         with:
           node-version: "16"
 
       - name: Setup Java
+        if: steps.check_commits.outputs.skip_build != 'true'
         uses: actions/setup-java@v3
         with:
           distribution: "temurin"
           java-version: "17"
 
       - name: Install Dependencies
+        if: steps.check_commits.outputs.skip_build != 'true'
         run: npm install
 
       - name: Decode Keystore
+        if: steps.check_commits.outputs.skip_build != 'true'
         run: |
           echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/keystore.jks
           mkdir android/app/app
           echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/app/keystore.jks
       
-          # Create local.properties file
       - name: Create local.properties
+        if: steps.check_commits.outputs.skip_build != 'true'
         env:
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
         run: |
           echo "$LOCAL_PROPERTIES" > android/gradle.local.properties
+          LATEST_NIGHTLY=$(gh release list --exclude-drafts --limit 1 | awk 'tolower($0) ~ /nightly/ {print $1}' | cut -d'-' -f1)
+          CHANGELOG=$(git log ${LATEST_NIGHTLY}..HEAD --pretty=format:"%h %s" | tr '\n' '\\n')
+          echo "CHANGELOG=$CHANGELOG" >> android/gradle.local.properties
 
       - name: Build Android APK
+        if: steps.check_commits.outputs.skip_build != 'true'
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
           KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
         run: |
           npm run build:android:nightly
 
-      # Delete previous nightly releases using GitHub CLI
       - name: Delete Previous Nightly Releases
+        if: steps.check_commits.outputs.skip_build != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
@@ -58,8 +85,8 @@ jobs:
             gh release delete "$tag" -y
           done
 
-      # Create a new nightly release and upload the generated APK
       - name: Create Nightly Release
+        if: steps.check_commits.outputs.skip_build != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |

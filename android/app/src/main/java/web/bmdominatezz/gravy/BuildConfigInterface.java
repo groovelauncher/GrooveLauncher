@@ -17,6 +17,12 @@ public class BuildConfigInterface {
     public String CAK() {
         return BuildConfig.CAK;
     }
+
+    @JavascriptInterface
+    public String CHANGELOG() {
+        return BuildConfig.CHANGELOG;
+    }
+
     @JavascriptInterface
     public boolean signed() {
         return true;

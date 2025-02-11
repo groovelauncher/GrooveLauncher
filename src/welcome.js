@@ -114,12 +114,19 @@ setup.welcome_back = updatedApp
 setup.update_wizard = updatedApp && localStorage["lastVersion"] != Groove.getAppVersion()
 setup.pick_accent = !!!localStorage["accentColor"]
 setup.accessibility = !!!localStorage["theme"] && !!!localStorage["UIScale"]
-setup.whats_new = !Groove.getAppVersion().includes("nightly")
+setup.whats_new = !Groove.getAppVersion().includes("nightly") || BuildConfig["CHANGELOG"]
 setup.permissions = !allPermissions.some(e => !Groove.checkPermission(e))
 
 if (updatedApp) {
     document.querySelector("#page-welcome > div.setup-body > h1").innerText = "Welcome back"
     document.querySelector("#page-welcome > div.setup-body > p:nth-child(3)").innerText = "Let’s check a few details to enhance your updated experience."
+}
+if ((Groove.getWebViewVersion().includes("chrome") || Groove.getAppVersion().includes("nightly")) && BuildConfig["CHANGELOG"] && setup.whats_new) {
+    try {
+        document.querySelector("#page-readme ul").innerHTML = BuildConfig["CHANGELOG"]().split("\n").map(e => `<li>${e}</li>`).join("")
+    } catch (error) {
+        setup.whats_new = false
+    }
 }
 var history = []
 history.push(0)

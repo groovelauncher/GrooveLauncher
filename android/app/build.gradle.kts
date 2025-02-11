@@ -45,6 +45,12 @@ android {
             name = "CAK",
             value = "\"${localProperties.getProperty("CAK", "")}\""
         )
+        // Add the changelog for Nightly builds
+        buildConfigField(
+            type = "String",
+            name = "CHANGELOG",
+            value = "\"${localProperties.getProperty("CHANGELOG", "")}\""
+        )
     }
     
     val commitHash = getGitCommitHash()

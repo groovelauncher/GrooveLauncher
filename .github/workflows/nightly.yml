@@ -102,5 +102,5 @@ jobs:
           echo "Creating release with tag $RELEASE_TAG"
           gh release create "$RELEASE_TAG" "$RENAMED_APK" \
             --title "$RELEASE_NAME" \
-            --notes "Nightly build for $(date)" \
+            --notes "Nightly build for $(date)\n\n$(git log ${LATEST_NIGHTLY}..HEAD --pretty=format:"**%h** %s\n" | tr '\n' '\\n')" \
             --prerelease

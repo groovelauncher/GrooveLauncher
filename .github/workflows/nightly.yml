@@ -60,6 +60,7 @@ jobs:
         if: steps.check_commits.outputs.skip_build != 'true'
         env:
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           echo "$LOCAL_PROPERTIES" > android/gradle.local.properties
           LATEST_NIGHTLY=$(gh release list --exclude-drafts --limit 1 | awk 'tolower($0) ~ /nightly/ {print $1}' | cut -d'-' -f1)

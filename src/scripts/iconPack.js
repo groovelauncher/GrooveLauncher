@@ -708,6 +708,7 @@ const iconPackConverter = [
             "com.sonymobile.notes",
             "com.asus.quickmemo",
             "com.lenovo.ideanotepad"
+            "com.gh.metro.notes"
         ],
         "icon": "notes"
     },

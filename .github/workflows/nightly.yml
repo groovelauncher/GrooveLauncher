@@ -2,7 +2,7 @@ name: Nightly APK Build
 
 on:
   schedule:
-    - cron: "*/30 * * * *"  # runs every 30 minutes
+    - cron: "0 * * * *"  # runs every 1 hour
   workflow_dispatch:
 
 jobs:
@@ -64,7 +64,7 @@ jobs:
         run: |
           echo "$LOCAL_PROPERTIES" > android/gradle.local.properties
           LATEST_NIGHTLY=$(gh release list --exclude-drafts --limit 1 | awk 'tolower($0) ~ /nightly/ {print $1}' | cut -d'-' -f1)
-          CHANGELOG=$(git log ${LATEST_NIGHTLY}..HEAD --pretty=format:"%h %s" | tr '\n' '\\n')
+          CHANGELOG=$(git log ${LATEST_NIGHTLY}..HEAD --pretty=format:"<strong>%h</strong> %s\n" | tr '\n' '\\n')
           echo "CHANGELOG=$CHANGELOG" >> android/gradle.local.properties
 
       - name: Build Android APK

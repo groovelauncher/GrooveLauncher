@@ -62,6 +62,7 @@ const iconPackConverter = [
             "com.freeme.camera",
             "com.fujitsu.mobile_phone.camera",
             "com.google.android.camera",
+            "com.google.android.GoogleCamera",
             "com.google.android.gallery3d",
             "com.hmdglobal.app.camera",
             "com.hmdglobal.camera2",
@@ -707,7 +708,7 @@ const iconPackConverter = [
             "com.lge.qmemo",
             "com.sonymobile.notes",
             "com.asus.quickmemo",
-            "com.lenovo.ideanotepad"
+            "com.lenovo.ideanotepad",
             "com.gh.metro.notes"
         ],
         "icon": "notes"

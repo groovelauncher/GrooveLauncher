@@ -100,6 +100,26 @@
                         that everything feels just right.</p>
                     <div class="scroller" style="margin: 0px;">
                         <div>
+                            <div class="group first-group">
+                                <p class="group-title" data-i18n="settings.ease_of_access.reduce_motion.title">Reduce
+                                    motion</p>
+                                <div class="tile-selector reduce-motion-toggle-switch" style="margin-bottom: 0px;">
+                                    <p data-i18n-init="common.actions.off">Off</p>
+                                    <div>
+                                        <div class="metro-toggle-switch"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="group" style="margin-top: 22px !important;">
+                                <p class="group-title" data-i18n="settings.ease_of_access.high_contrast.title">High
+                                    contrast</p>
+                                <div class="tile-selector high-contrast-toggle-switch" style="margin-bottom: 0px;">
+                                    <p data-i18n-init="common.actions.off">Off</p>
+                                    <div>
+                                        <div id="high-contrast-toggle-switch" class="metro-toggle-switch"></div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="group">
                                 <p class="group-title" data-i18n="welcome.access.background">Background</p>
                                 <div class="metro-dropdown-menu" id="theme-chooser" selected="1">
@@ -120,6 +140,16 @@
                                         data-i18n-params="{value: 110}">110%</div>
                                     <div class="metro-dropdown-option" data-i18n="common.numbers.percent"
                                         data-i18n-params="{value: 125}">125%</div>
+                                </div>
+                            </div>
+                            <div class="group">
+                                <p class="group-title" data-i18n="settings.ease_of_access.haptic_feedback.title">Haptic
+                                    feedback</p>
+                                <div class="tile-selector haptic-toggle-switch" style="margin-bottom: 0px;">
+                                    <p data-i18n-init="common.actions.off">Off</p>
+                                    <div>
+                                        <div id="haptic-toggle-switch" class="metro-toggle-switch"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -239,7 +269,9 @@
                                 <p class="permission-title"><span class="permission-icon"></span> <span
                                         data-i18n="welcome.permissions.groups.accessibility.title">Accessibility</span>
                                 </p>
-                                <p class="permission-description" data-i18n="welcome.permissions.groups.accessibility.description">Enable accessibility to lock device.</p>
+                                <p class="permission-description"
+                                    data-i18n="welcome.permissions.groups.accessibility.description">Enable
+                                    accessibility to lock device.</p>
                                 <button class="metro-button link" data-i18n="common.actions.allow">allow</button>
                             </div>
                         </div>

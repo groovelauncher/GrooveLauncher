@@ -91,6 +91,10 @@ const accent_color_scroller = new GrooveScroll("div.accent-color-catalogue", {
     scrollbar: true
 
 })
+const permissions_scroller = new GrooveScroll("#page-permissions div.scroller", {
+    scrollbar: true
+
+})
 const whats_new_scroller = new GrooveScroll("#page-readme div.scroller", {
     scrollbar: true
 
@@ -348,6 +352,7 @@ var welcomei = 0
 welcomeTitle.innerText = i18n.t(welcomeType)
 function startFlipping() {
     if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true); else GrooveBoard.backendMethods.setUIScale(.8, true)
+   
     setTimeout(() => {
         setTimeout(() => {
             if (isChristmas()) snowStorm.start()

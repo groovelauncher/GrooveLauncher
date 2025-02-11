@@ -123,7 +123,7 @@ if (updatedApp) {
 }
 if ((Groove.getWebViewVersion().includes("chrome") || Groove.getAppVersion().includes("nightly")) && BuildConfig["CHANGELOG"] && setup.whats_new) {
     try {
-        document.querySelector("#page-readme ul").innerHTML = BuildConfig["CHANGELOG"]().split("\n").map(e => `<li>${e}</li>`).join("")
+        document.querySelector("#page-readme ul").innerHTML = BuildConfig["CHANGELOG"]().split("{NEWLINE}").map(e => `<li>${e}</li>`).join("")
     } catch (error) {
         setup.whats_new = false
     }

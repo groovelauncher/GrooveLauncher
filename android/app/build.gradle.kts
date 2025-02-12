@@ -61,6 +61,8 @@ android {
             dimension = "default"
             // Regular build uses the default application ID
             applicationId = "web.bmdominatezz.gravy"
+            manifestPlaceholders["appIcon"] = "@mipmap/icon_default"
+            manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_default_round"
         }
         create("debugFlavor"){
             dimension = "default"
@@ -68,6 +70,8 @@ android {
             applicationId = "web.bmdominatezz.gravy.debug"
             // Override app name for debug builds
             resValue("string", "app_name", "Groove Debug")
+            manifestPlaceholders["appIcon"] = "@mipmap/icon_nightly"
+            manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_nightly_round"
             // Use the defaultConfig’s versionName + commit hash + -debug
             versionName = "$commitHash-debug"
         }
@@ -77,6 +81,8 @@ android {
             applicationId = "web.bmdominatezz.gravy.nightly"
             // Override app name for nightly builds
             resValue("string", "app_name", "Groove Nightly")
+            manifestPlaceholders["appIcon"] = "@mipmap/icon_nightly"
+            manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_nightly_round"
             // Use the defaultConfig’s versionName + commit hash + -nightly
             versionName = "$commitHash-nightly"
         }

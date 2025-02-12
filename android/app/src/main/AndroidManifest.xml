@@ -30,13 +30,14 @@
         tools:ignore="ProtectedPermissions" />
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/icon_default"
+        android:icon="${appIcon}"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/icon_default_round"
+        android:roundIcon="${appRoundIcon}"
         android:supportsRtl="false"
         android:theme="@style/Theme.GrooveLauncher">
         <receiver
@@ -47,12 +48,13 @@
                 <action android:name="web.bmdominatezz.gravy.client" />
             </intent-filter>
         </receiver>
+
         <service
             android:name=".NotificationListener"
             android:exported="true"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService"/>
+                <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
         <service
@@ -66,6 +68,7 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_service_config" />
         </service>
+
         <provider
             android:name="rikka.shizuku.ShizukuProvider"
             android:authorities="${applicationId}.shizuku"
@@ -96,8 +99,10 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="groove" />
             </intent-filter>
         </activity>

@@ -14,16 +14,16 @@
     "build:scss": "npx sass --no-source-map src/styles.scss www/dist/styles.css",
     "build:android-assets": "node ./scripts/build-android.js",
     "build:internal-apps": "node ./scripts/build-internal-apps.js",
-    "build:production": "rm -rf android/app/src/main/assets/* && npx webpack --env production && npx sass --no-source-map --style=compressed src/styles.scss www/dist/styles.css && node ./scripts/build-internal-apps.js --production && npm run build:android-assets && echo Compilation completed.",
-    "build:debug": "rm -rf android/app/src/main/assets/* && npx webpack && npx sass --no-source-map src/styles.scss www/dist/styles.css && node ./scripts/build-internal-apps.js && npm run build:android-assets && echo Compilation completed.",
+    "build:production": "rimraf android/app/src/main/assets/* && npx webpack --env production && npx sass --no-source-map --style=compressed src/styles.scss www/dist/styles.css && node ./scripts/build-internal-apps.js --production && npm run build:android-assets && echo Compilation completed.",
+    "build:debug": "rimraf android/app/src/main/assets/* && npx webpack && npx sass --no-source-map src/styles.scss www/dist/styles.css && node ./scripts/build-internal-apps.js && npm run build:android-assets && echo Compilation completed.",
     "build:android": "cd android && ./gradlew assembleRelease && cd ..",
     "build:android:nightly": "npm run build:production && cd android && ./gradlew assembleNightlyRelease -Pandroid.injected.signing.store.file=app/keystore.jks -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD -Pandroid.injected.signing.key.alias=key0 -Pandroid.injected.signing.key.password=$KEY_PASSWORD && cd ..",
     "debug:android": "npm run build:debug && cd android && ./gradlew assembleDebugFlavor && cd .. && adb install android/app/build/outputs/apk/debugFlavor/debug/app-debugFlavor-debug.apk && adb shell am start -n web.bmdominatezz.gravy.debug/web.bmdominatezz.gravy.MainActivity",
     "debug:web": "npx concurrently \"npm run build-watch:web\" \"npx live-server --port=8080 --watch=www\""
   },
-  "author": "",
+  "author": "berkaytumal",
   "license": "MIT",
-  "description": "",
+  "description": "A groovy personalized home screen experience for Android",
   "dependencies": {
     "@jaames/iro": "^5.5.2",
     "@vitalets/google-translate-api": "^9.2.0",
@@ -47,6 +47,7 @@
   "devDependencies": {
     "chokidar-cli": "^3.0.0",
     "concurrently": "^9.0.1",
+    "rimraf": "^6.0.1",
     "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4"
   }

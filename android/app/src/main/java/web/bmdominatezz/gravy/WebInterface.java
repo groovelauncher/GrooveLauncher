@@ -1,29 +1,19 @@
 package web.bmdominatezz.gravy;
 
 import static android.content.Context.MODE_PRIVATE;
-import static androidx.core.content.ContextCompat.getSystemService;
 import static web.bmdominatezz.gravy.DefaultApps.*;
-import static web.bmdominatezz.gravy.GrooveExperience.*;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.app.Notification;
 import android.content.pm.ServiceInfo;
-import android.graphics.Bitmap;
-import android.media.MediaMetadata;
-import android.media.session.MediaController;
-import android.media.session.MediaSession;
-import android.media.session.PlaybackState;
+import android.graphics.drawable.AdaptiveIconDrawable;
+import android.graphics.drawable.Drawable;
 import android.service.notification.StatusBarNotification;
-import android.util.Base64;
 import android.view.accessibility.AccessibilityManager;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,13 +22,11 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
-import android.os.Vibrator;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
@@ -62,24 +50,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.jar.JarException;
 
-import kotlin.contracts.Returns;
 import rikka.shizuku.Shizuku;
 import rikka.shizuku.ShizukuBinderWrapper;
-import web.bmdominatezz.gravy.LockScreenService;
 
 public class WebInterface {
     private static final String PREFS_NAME = "GrooveLauncherPrefs";
@@ -145,6 +126,14 @@ public class WebInterface {
 
                 appInfo.put("packageName", packageNameWithIntent);
                 appInfo.put("label", resolveInfo.loadLabel(mainActivity.packageManager).toString());
+                Boolean monochromeIcon = false;
+                try {
+                    monochromeIcon = IconUtils.hasMonochromeIcon(resolveInfo);
+                } catch (Exception ignored) {
+
+                }
+                appInfo.put("monochromeIcon", monochromeIcon);
+
                 if ((resolveInfo.activityInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
                     appInfo.put("type", 0);
                 } else {

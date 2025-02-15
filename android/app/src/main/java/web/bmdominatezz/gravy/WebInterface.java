@@ -7,6 +7,7 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.pm.ServiceInfo;
 import android.graphics.drawable.AdaptiveIconDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.view.accessibility.AccessibilityManager;
 
@@ -1004,15 +1005,23 @@ public class WebInterface {
                             2);
                 }
             } else if ("NOTIFICATIONS".equals(permission)) {
+                Intent intent;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    ComponentName componentName = new ComponentName(mainActivity.getPackageName(), NotificationListener.class.getName());
-                    Intent notificationAccessSettings = new Intent(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS));
-                    notificationAccessSettings.putExtra(Settings.EXTRA_NOTIFICATION_LISTENER_COMPONENT_NAME, componentName.flattenToString());
-                    mainActivity.startActivity(notificationAccessSettings);
+                    intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS);
+                    intent.putExtra(Settings.EXTRA_NOTIFICATION_LISTENER_COMPONENT_NAME,
+                            new ComponentName(mainActivity.getPackageName(), NotificationListener.class.getName()).flattenToString());
                 } else {
-                    Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS);
-                    mainActivity.startActivity(intent);
+                    intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
                 }
+
+                String value = mainActivity.getPackageName() + "/" + NotificationListener.class.getName();
+                String key = ":settings:fragment_args_key";
+                intent.putExtra(key, value);
+
+                Bundle bundle = new Bundle();
+                bundle.putString(key, value);
+                intent.putExtra(":settings:show_fragment_args", bundle);
+                mainActivity.startActivity(intent);
             } else if ("ACCESSIBILITY".equals(permission)) {
                 Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                 mainActivity.startActivity(intent);

@@ -280,18 +280,23 @@ const boardMethods = {
       }
     }
     const el = GrooveElements.wAppMenu(packageName, entries);
-    el.fullHeight = 214
-    el.elementHeight = 60
+    el.fullHeight = 219
+    el.elementHeight = 65
     document.querySelector("div.app-list-page").appendChild(el);
+    const items = {
+      pin: el.querySelector("div:nth-child(1)"),
+      info: el.querySelector("div:nth-child(2)"),
+      uninstall: el.querySelector("div:nth-child(3)")
+    }
     if (document.querySelectorAll(`div.groove-home-tile[packagename="${packageName}"]`).length > 0) {
-      el.querySelector("div:nth-child(1)").classList.add("disabled")
+      items.pin.classList.add("disabled")
     }
     if (packageName.startsWith("groove.internal")) {
-      el.querySelector("div:nth-child(2)").remove()
+      items.info.remove()
       el.fullHeight -= el.elementHeight
     }
     if (allappsarchive.filter(e => e.packageName == packageName)[0].type == 0) {
-      el.querySelector("div:nth-child(3)").remove()
+      items.uninstall.remove()
       el.fullHeight -= el.elementHeight
     }
     el.style.setProperty("--full-height", el.fullHeight + "px")

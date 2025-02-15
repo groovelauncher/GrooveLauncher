@@ -280,14 +280,22 @@ const boardMethods = {
       }
     }
     const el = GrooveElements.wAppMenu(packageName, entries);
+    el.fullHeight = 214
+    el.elementHeight = 60
     document.querySelector("div.app-list-page").appendChild(el);
     if (document.querySelectorAll(`div.groove-home-tile[packagename="${packageName}"]`).length > 0) {
       el.querySelector("div:nth-child(1)").classList.add("disabled")
     }
+    if (packageName.startsWith("groove.internal")) {
+      el.querySelector("div:nth-child(2)").remove()
+      el.fullHeight -= el.elementHeight
+    }
     if (allappsarchive.filter(e => e.packageName == packageName)[0].type == 0) {
       el.querySelector("div:nth-child(3)").remove()
-      el.style.setProperty("--full-height", "154px")
+      el.fullHeight -= el.elementHeight
     }
+    el.style.setProperty("--full-height", el.fullHeight + "px")
+
     return el;
   },
   createTileMenu: (el) => {

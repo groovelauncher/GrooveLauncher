@@ -223,9 +223,6 @@ class GrooveMock {
     setAccentColor(color) {
         console.log("Set accent color:", color)
     }
-    /*setAppIconColor(color) {
-        console.log("Set app icon color:", color)
-    }*/
     getSystemLocale() {
         return "en-US"
     }
@@ -329,7 +326,6 @@ function removeNotificationToSystem(notification) {
 }
 var notifications = []
 window.notificationsenderinterval = setInterval(() => {
-    console.log("hjsdkaf")
     if (notifications.length > 4) {
         clearInterval(window.notificationsenderinterval)
     } else {
@@ -347,7 +343,7 @@ window.notificationsenderinterval = setInterval(() => {
             postTime: new Date().getTime(),
             packageName: "com.google.android.apps.messaging"
         }
-        console.log("notification", notification)
+        //console.log("notification", notification)
         sendNotificationToSystem(notification)
 
     }
@@ -369,7 +365,7 @@ setTimeout(() => {
             songName: "Random Song"
         }
     }
-    console.log("notification", notification)
+   // console.log("notification", notification)
     sendNotificationToSystem(notification)
 }, 3000);
 

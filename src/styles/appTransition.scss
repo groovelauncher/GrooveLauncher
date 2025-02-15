@@ -1,7 +1,7 @@
 // Global Variables
 :root {
     --app-transition-scale: 1;
-    --on-pause-easing: cubic-bezier(1, -0.01, 1, -0.01);
+    --on-pause-easing: cubic-bezier(.75, 0, 1, 0);
 }
 
 // Main Home Slider Component
@@ -203,6 +203,38 @@
                             opacity: 0;
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+body.alternative-wallpaper {
+    #main-home-slider.app-transition.app-transition-on-pause {
+        div.slide-content {
+            animation: wallpaperAppTransitionAnim0 calc(.2s * var(--animation-duration-scale)) calc(.5s * var(--animation-duration-scale)) ease-in forwards;
+
+            @keyframes wallpaperAppTransitionAnim0 {
+                from {}
+
+                to {
+                    background: var(--metro-background);
+                }
+            }
+        }
+    }
+
+    #main-home-slider.app-transition.app-transition-on-resume {
+        div.slide-content {
+            animation: wallpaperAppTransitionAnim1 calc(.2s * var(--animation-duration-scale)) ease-in-out forwards !important;
+
+            @keyframes wallpaperAppTransitionAnim1 {
+                from {
+                    background: var(--metro-background);
+                }
+
+                to {
+                    background: transparent;
                 }
             }
         }

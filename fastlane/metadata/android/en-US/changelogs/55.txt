@@ -1,0 +1,1 @@
+This update includes auto dark mode, haptic feedback, improved high contrast and reduced motion settings, and a new permission dialog for groove services.

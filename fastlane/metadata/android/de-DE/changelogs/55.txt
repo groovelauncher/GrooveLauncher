@@ -1,0 +1,1 @@
+Dieses Update umfasst den automatischen Dunkelmodus, das haptische Feedback, einen verbesserten hohen Kontrast und reduzierten Bewegungseinstellungen sowie ein neues Berechtigungsdialog für Rillendienste.

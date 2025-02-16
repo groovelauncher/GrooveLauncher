@@ -1,0 +1,1 @@
+Cette mise à jour comprend le mode Dark Auto, des commentaires haptiques, un contraste élevé amélioré et des paramètres de mouvement réduits, et une nouvelle boîte de dialogue d'autorisation pour les services de groove.

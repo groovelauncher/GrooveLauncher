@@ -1,0 +1,1 @@
+Esta actualización incluye modo oscuro automático, retroalimentación háptica, alto contraste mejorado y configuración de movimiento reducido, y un nuevo diálogo de permiso para los servicios de ritmo.

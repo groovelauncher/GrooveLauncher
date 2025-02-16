@@ -1,0 +1,1 @@
+Questo aggiornamento include la modalità Auto Dark, il feedback tattico, il miglioramento del contrasto elevato e le impostazioni di movimento ridotte e una nuova finestra di dialogo per le autorizzazioni per i servizi di solco.

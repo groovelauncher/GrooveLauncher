@@ -13,83 +13,82 @@
   <div class="innerApp" style="visibility: hidden;">
     <h1 class="app-title">Tweaks</h1>
     <div class="app-tabs">
-
+      <p class="active-tab">Styles</p>
+      <p>Icons</p>
     </div>
     <div id="settings-pages">
       <div class="settings-pages-container">
-        <div class="settings-page active-page first-page" id="home-tab">
+        <div class="settings-page active-page first-page" id="styles-tab">
           <div class="groove-list-view skew">
 
+          </div>
+        </div>
+        <div class="settings-page" id="icons-tab">
+          <div class="group first-group">
+            <p class="group-title">Icon pack</p>
+            <div class="metro-dropdown-menu" id="icon-pack-chooser-dropdown" selected="0">
+              <div class="metro-dropdown-option" packagename="">None</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="innerAppPage" id="appDetailPage">
-    <h1 class="app-title">Settings</h1>
-    <div class="app-tabs">
-      <p class="active-tab" style="text-transform: none !important;">app name</p>
+  <div id="icon-pack-picker">
+    <h1 class="app-title">Icon pack</h1>
+    <div class="icon-pack-catalogue groove-list-view">
+      <div>
+        <div class="groove-list-view-item" style="--index:0;">
+          <img src="http://localhost:8080/www/mock/icons/default/com.android.chrome.png">
+          <p class="groove-list-view-item-title" data-i18n="settings.theme.title">
+            home+theme
+          </p>
+          </p>
+        </div>
+        <div class="groove-list-view-item" style="--index:1;">
+          <img src="http://localhost:8080/www/mock/icons/default/com.android.chrome.png">
+          <p class="groove-list-view-item-title" data-i18n="settings.theme.title">
+            home+theme
+          </p>
+          </p>
+        </div>
+      </div>
     </div>
-    <div class="settings-pages">
-      <div class="settings-pages-container">
-        <div class="settings-page-2" id="app-detail-tab">
-          <div>
-            <div class="group" style="pointer-events: auto;">
-              <p class="group-title">Info</p>
-              <p class="group-description" style="color: var(--metro-foreground);margin-bottom: 15px;"></p>
-              <button class="metro-button" id="uninstallappbutton" style="margin: 0px;">Uninstall
-                App</button>
+    <div class="custom-color-selector" style="display: none;">
+      <div>
+        <div id="iro-color-picker"></div>
+        <div class="color-picker-controls">
+          <p class="color-not-supported">This color is not supported.</p>
+          <div class="color-picker-controls-row">
+            <label for="hex-color-input">Hex Color:</label>
+            <div class="color-picker-controls-column">
+              <input type="text" id="hex-color-input" placeholder="#FFFFFF" style="width: 100%;" />
             </div>
-            <div class="app-preference-form">
-              <div class="group" id="app-preference-show">
-                <p class="group-title">Show in apps list</p>
-                <div class="tile-selector" style="margin-bottom: 0px;">
-                  <p data-i18n-init="common.actions.on">On</p>
-                  <div>
-                    <div id="app-list-show-toggle-switch" class="metro-toggle-switch" checked></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="group" id="app-preference-name">
-                <p class="group-title">Name</p>
-                <input type="text" class="metro-text-input">
-              </div>
-              <div class="group" style="display: none;" id="app-preference-icon">
-                <p class="group-title">Icon</p>
-                <div class="metro-dropdown-menu" selected="1">
-                  <div class="metro-dropdown-option">Default</div>
-                  <div class="metro-dropdown-option">Monochrome
-                  </div>
-                </div>
-              </div>
-              <div class="group" style="display: none;" id="app-preference-background">
-                <p class="group-title">Background</p>
-                <div class="metro-dropdown-menu" selected="1">
-                  <div class="metro-dropdown-option">Default
-                  </div>
-                  <div class="metro-dropdown-option">
-                    Transparent</div>
-                </div>
-              </div>
-              <div class="group" style="display: none;" id="app-preference-text-color">
-                <p class="group-title">Text color</p>
-                <div class="metro-dropdown-menu" selected="1">
-                  <div class="metro-dropdown-option">Auto</div>
-                  <div class="metro-dropdown-option">Dark</div>
-                  <div class="metro-dropdown-option">Light</div>
-                </div>
-              </div>
-              <div class="group" style="display: none;" id="app-preference-live-tile">
-                <p class="group-title">Live tile</p>
-                <div class="metro-dropdown-menu" selected="1">
-                  <div class="metro-dropdown-option">Light</div>
-                  <div class="metro-dropdown-option">Dark</div>
-                </div>
-              </div>
+          </div>
+          <div class="color-picker-controls-row">
+            <label for="hue-input">Hue:</label>
+            <div class="color-picker-controls-column">
+              <input type="number" id="hue-input" min="0" max="360" step="1" placeholder="0" style="width: 100%;" />
+              <input type="range" id="hue-range" min="0" max="360" step="1" value="0" style="width: 100%;" />
+            </div>
+          </div>
+          <div class="color-picker-controls-row">
+            <label for="saturation-input">Saturation:</label>
+            <div class="color-picker-controls-column">
+              <input type="number" id="saturation-input" min="0" max="100" step="1" placeholder="100"
+                style="width: 100%;" />
+              <input type="range" id="saturation-range" min="0" max="100" step="1" value="100" style="width: 100%;" />
+            </div>
+          </div>
+          <div class="color-picker-controls-row">
+            <label for="value-input">Value:</label>
+            <div class="color-picker-controls-column">
+              <input type="number" id="value-input" min="0" max="100" step="1" placeholder="100" style="width: 100%;" />
+              <input type="range" id="value-range" min="0" max="100" step="1" value="100" style="width: 100%;" />
             </div>
           </div>
         </div>
+        <button class="metro-button apply-custom-color">Apply</button>
       </div>
     </div>
   </div>

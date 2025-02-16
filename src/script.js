@@ -234,6 +234,7 @@ startUpSequence([
         if (!!localStorage.getItem("font")) GrooveBoard.backendMethods.font.set(localStorage.getItem("font"), true)
         if (!!localStorage.getItem("rotationLock")) Groove.setDisplayOrientationLock(localStorage.getItem("rotationLock"))
         if (localStorage.getItem("hapticFeedback") == "false") Groove.triggerHapticFeedback("DISABLED")
+        if (localStorage.getItem("iconPack")) Groove.applyIconPack(localStorage.getItem("iconPack"))
         //if (!!localStorage.getItem("packageManagerProvider")) GrooveBoard.backendMethods.packageManagerProvider.set(Number(localStorage.getItem("packageManagerProvider")), true)
         next()
     },

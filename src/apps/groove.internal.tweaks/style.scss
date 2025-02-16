@@ -472,6 +472,15 @@ div.credit-item {
             display: none;
         }
 
+        img {
+            pointer-events: none;
+            height: 50%;
+            top: 12%;
+            position: relative;
+            margin-right: 10px;
+            object-fit: contain;
+        }
+
         p.groove-list-view-item-title {
             margin: 0px;
             padding: 0px;
@@ -1001,6 +1010,142 @@ div.groove-context-menu {
         &.disabled {
             pointer-events: none !important;
             opacity: .5 !important;
+        }
+    }
+}
+
+#icon-pack-picker {
+    pointer-events: none;
+    background: transparent;
+    left: -22px;
+    position: fixed;
+    top: -18px;
+    width: calc(100% + 44px);
+    height: calc(100% + 36px);
+    left: 0px;
+    top: 0px;
+    width: 100vw;
+    height: 100vh;
+
+    * {
+        color: transparent;
+    }
+
+    &>div.icon-pack-catalogue>div>div {
+        //transform: perspective(calc(var(--flow-perspective) * 2)) rotateX(90deg);
+        opacity: 0;
+    }
+
+    &.shown-animation {
+        &>div.icon-pack-catalogue>div>div {
+            transition: calc(.075s * var(--animation-duration-scale)) calc(var(--index) * .02s * var(--animation-duration-scale)) ease-out;
+        }
+
+        &.shown {
+
+            &>div.icon-pack-catalogue>div>div {
+                //transform: perspective(calc(var(--flow-perspective) * 2)) rotateX(0deg);
+            }
+
+            pointer-events: all;
+            background: rgb(31, 31, 31);
+
+            body.light-mode & {
+                background: rgb(221, 221, 221);
+            }
+
+            * {
+                color: white;
+                opacity: 1;
+
+                body.light-mode & {
+                    color: black;
+                }
+            }
+        }
+
+        &.hidden {
+
+            &>div.icon-pack-catalogue>div>div {
+                transition: calc(.075s * var(--animation-duration-scale)) calc(var(--index)*.02s * var(--animation-duration-scale)) ease-in;
+                transform: perspective(calc(var(--flow-perspective) * 2)) rotateX(-90deg);
+
+            }
+
+            background: transparent;
+
+            * {
+                color: transparent;
+            }
+        }
+
+        transition: background-color calc(.5s * var(--animation-duration-scale)) var(--flow-ease-out),
+        color calc(.5s * var(--animation-duration-scale)) var(--flow-ease-out);
+    }
+
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    position: fixed;
+    perspective: var(--flow-perspective);
+    z-index: 100;
+    padding: 18px 22px;
+    align-items: center;
+    justify-content: center;
+
+    &.hidden {
+        .icon-pack-catalogue-item {
+            transform: translate(0px) !important;
+        }
+    }
+
+    h1.app-title {
+        max-width: 724px;
+        width: 100%;
+    }
+
+    div.icon-pack-catalogue {
+        height: 0px;
+        max-width: 724px;
+        width: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        margin-top: 30px;
+
+        &>div {
+            transform-style: preserve-3d;
+
+            &>div {
+                transform-style: preserve-3d;
+                display: flex;
+                flex-direction: row;
+                margin: 0px -5px;
+
+                div.icon-pack-catalogue-item {
+                    @include flow-touch;
+                    flex-grow: 1;
+                    aspect-ratio: 1;
+                    margin: 6px;
+
+                    p.system-accent-color {
+                        position: absolute;
+                        left: 0px;
+                        top: 0px;
+                        margin: 0px;
+                        padding: 10px;
+                        box-sizing: border-box;
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        font-weight: 300;
+                        text-transform: lowercase;
+                        font-size: 20px;
+                        overflow: hidden;
+                        pointer-events: none;
+                    }
+                }
+            }
         }
     }
 }

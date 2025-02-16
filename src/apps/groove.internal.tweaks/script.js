@@ -63,13 +63,34 @@ bs.on('beforeScrollStart', (e) => {
     scrollStartX = (-1 - bs.x / scrollWidth())
 })
 function handlePageAnim(index = 0, next = true, scroll = 0) {
-    return
     document.querySelectorAll("div.innerApp > div.app-tabs > p").forEach(e => e.classList.remove("active-tab"))
     document.querySelectorAll("div.innerApp > div.app-tabs > p")[index].classList.add("active-tab")
     document.querySelectorAll("div.settings-pages-container > div.settings-page").forEach(e => e.classList.remove("active-page"))
     document.querySelectorAll("div.settings-pages-container > div.settings-page")[index + 1].style.setProperty("--page-swipe-translate", (next ? scroll : -scroll) + "px")
     document.querySelectorAll("div.settings-pages-container > div.settings-page")[index + 1].style.setProperty("--page-swipe-direction", (next ? 1 : -1))
     document.querySelectorAll("div.settings-pages-container > div.settings-page")[index + 1].classList.add("active-page")
+    const maxIndex = document.querySelectorAll("div.settings-pages-container > div.settings-page").length - 1
+    console.log("handle page anim", index, maxIndex)
+    if (index == 0) {
+        document.querySelectorAll("div.settings-pages-container > div.settings-page")[maxIndex].classList.add("active-page")
+        document.querySelectorAll("div.settings-pages-container > div.settings-page")[maxIndex].style.setProperty("--page-swipe-translate", (next ? scroll : -scroll) + "px")
+        document.querySelectorAll("div.settings-pages-container > div.settings-page")[maxIndex].style.setProperty("--page-swipe-direction", (next ? 1 : -1))
+    } else if (index == maxIndex - 2) {
+        document.querySelectorAll("div.settings-pages-container > div.settings-page")[0].classList.add("active-page")
+        document.querySelectorAll("div.settings-pages-container > div.settings-page")[0].style.setProperty("--page-swipe-translate", (next ? scroll : -scroll) + "px")
+        document.querySelectorAll("div.settings-pages-container > div.settings-page")[0].style.setProperty("--page-swipe-direction", (next ? 1 : -1))
+    }
+    if (index == 0) {
+        appBar.setState(1)
+        //appBar.style.display = "block"
+        //appBar2.setState(0)
+        //appBar2.style.display = "none"
+    } else {
+        appBar.setState(0)
+        //appBar.style.display = "none"
+        //appBar2.setState(1)
+        //appBar2.style.display = "block"
+    }
 }
 const scrollWidth = () => { return Math.min(window.innerWidth, 768) }
 window.scrollWidth = scrollWidth
@@ -159,18 +180,7 @@ function activeTabScroll() {
             var transform = 0
             scrollEl.slice(0, Math.floor(scroll)).forEach(e => transform += e)
             transform += scrollEl[Math.floor(scroll)] * (scroll % 1)
-            /* allTabs.forEach(e => e.classList.remove("active-tab"))
-             allPages.forEach(e => e.classList.remove("active-page"))
-             try {
-                 allTabs[Math.floor(scroll + .5)].classList.add("active-tab")
-                 allPages[Math.floor(scroll + .5)].classList.add("active-page")
-             } catch (error) {
-                 try {
-                     allTabs[Math.floor(scroll + .5 - allTabs.length)].classList.add("active-tab")
-                     //allPages[Math.floor(scroll + .5 - allTabs.length)].classList.add("active-page")
-                 } catch (error) {
-                 }
-             }*/
+
             const tabswidth = maxscroll
             allTabs.forEach((e, index) => {
                 var extra = 0
@@ -180,10 +190,16 @@ function activeTabScroll() {
                 if (`"${innerText}"` != e.style.getPropertyValue("--ats-title")) e.style.setProperty("--ats-title", `"${innerText}"`)
                 const innerTextLeft = tabswidth - e.offsetWidth
                 if (`${innerTextLeft}px` != e.style.getPropertyValue("--ats-title-left")) e.style.setProperty("--ats-title-left", `${innerTextLeft}px`)
-
-                //   if (x <= 0) allPages[index].style.transform = scroll >= (index + 1) ? `translateX(${bs.content.offsetWidth - bs.wrapper.offsetWidth * 2}px)` : ""
             })
-            //  if (x > 0) { allPages.slice(-1)[0].style.transform = `translateX(${-100 * allPages.length}%)` }
+            const [firstPage, lastPage] = [allPages[0], allPages[allPages.length - 1]]
+            if (scrollStartX) if (scrollStartX == 0 || scrollStartX == allPages.length - 1) if (scrollStartX == 0) {
+
+            } else {
+
+            }
+
+
+            //console.log("scroll", scroll, allTabs.length)
             lastX = x
         }
     }
@@ -191,7 +207,7 @@ function activeTabScroll() {
 }
 window.activeTabScroll = activeTabScroll
 window.scrollers = {
-    home: new GrooveScroll("#home-tab", {
+    styles: new GrooveScroll("#styles-tab", {
         bounceTime: 300,
         swipeBounceTime: 200,
         outOfBoundaryDampingFactor: 1,
@@ -221,7 +237,11 @@ function showPageAnim() {
         document.querySelector("div.innerApp").style.removeProperty("visibility")
         document.querySelector("div.innerApp").classList.add("shown")
         document.querySelector("#splashscreen").remove()
-        appBar.setState(1)
+        try {
+            appBar.setState(1)
+        } catch (error) {
+
+        }
     }, 1000);
 }
 
@@ -260,7 +280,7 @@ const navigation = {
     }
 }
 window.pageNavigation = navigation
-$("#home-tab > div > div.groove-list-view > div.groove-list-view-item").on("flowClick", e => {
+$("#styles-tab > div > div.groove-list-view > div.groove-list-view-item").on("flowClick", e => {
     navigation.goToPage($(e.target).index())
 })
 
@@ -378,7 +398,7 @@ function appImmediateClose() {
         }
     })
 }
-scrollers.home.scroller.hooks.on('scrollStart', appImmediateClose)
+scrollers.styles.scroller.hooks.on('scrollStart', appImmediateClose)
 
 function contextMenuClose() {
     parent.GrooveBoard.backendMethods.navigation.invalidate("tweaksContextMenuOn")
@@ -395,7 +415,7 @@ window.contextMenuClose = contextMenuClose
 function refreshList(soft = false) {
     console.log("refresh start")
     const metadata = styleManagerInstance.getMetadata()
-    const listView = document.querySelector("#home-tab > div.groove-list-view")
+    const listView = document.querySelector("#styles-tab > div.groove-list-view")
     if (!soft) listView.innerHTML = ""
     if (Object.keys(metadata).length && !soft) {
         Object.entries(metadata).forEach(([id, data]) => {
@@ -467,7 +487,7 @@ function addListItemEventHandlers(el) {
         window.appMenuCreationFirstTimeout = setTimeout(() => {
             $("div.innerApp").addClass("app-menu-back-intro")
             const appMenu = createContextMenu(el)
-            const optionalTop = (e.target.offsetTop + scrollers.home.y + 64 + 83 + 5)
+            const optionalTop = (e.target.offsetTop + scrollers.styles.y + 64 + 83 + 5)
             appMenu.style.top = ((optionalTop + 154 >= window.innerHeight - windowInsets().bottom) ? optionalTop - 64 - 0 : optionalTop) + "px"
             appMenu.style.setProperty("--pointerX", e.pageX /*- $("div.app-list-page").position().left*/ + "px")
             appMenu.classList.add("intro")
@@ -495,7 +515,7 @@ function addListItemEventHandlers(el) {
             window.appMenuCreationSecondTimeout = setTimeout(() => {
                 $("div.innerApp").addClass("app-menu-back").removeClass("app-menu-back-intro")
                 e.target.appMenuState = true
-                scrollers.home.cancelScroll()
+                scrollers.styles.cancelScroll()
                 setTimeout(() => {
                     Groove.triggerHapticFeedback("CONFIRM")
                 }, 50);
@@ -640,10 +660,95 @@ function addManually() {
     console.log("alertView", alertView)
 
 }
+const iconPackPicker = document.getElementById("icon-pack-picker")
+
+function addIconPack() {
+    iconPackPicker.querySelector("div.groove-list-view div").innerHTML = ""
+    const iconPacks = JSON.parse(Groove.getIconPacks())
+    iconPacks.forEach((iconPack, index) => {
+        const iconPackInfo = window.parent.GrooveBoard.backendMethods.getAppDetails(iconPack, true);
+        const iconPackItem = GrooveElements.wListViewItem(iconPackInfo.label, "")
+        const iconPackImage = document.createElement("img")
+        iconPackImage.src = JSON.parse(window.parent.Groove.getAppIconURL(iconPack)).foreground
+        iconPackImage.style.cssText = `
+        background-image: url(${JSON.parse(window.parent.Groove.getAppIconURL(iconPack)).background});
+        background-size: cover;
+        background-position: center;
+        `
+        iconPackItem.prepend(iconPackImage)
+        iconPackPicker.querySelector("div.groove-list-view div").appendChild(iconPackItem)
+    })
+
+
+    clearTimeout(window.iconPackPickerTimeout)
+    iconPackPicker.classList.add("shown-animation", "shown")
+    window.parent.GrooveBoard.backendMethods.navigation.push("settings-inner-page:accent-color-picker", () => { }, () => {
+        clearTimeout(window.iconPackPickerTimeout)
+        iconPackPicker.classList.remove("shown")
+        iconPackPicker.classList.add("hidden")
+        window.iconPackPickerTimeout = setTimeout(() => {
+            iconPackPicker.classList.remove("shown-animation", "hidden")
+
+        }, 500 * animationDurationScale);
+        Array.from({ length: 6 }, (_, i) => {
+            setTimeout(() => {
+                Groove.triggerHapticFeedback("CLOCK_TICK");
+            }, (i * 20 + 60) * window.parent.GrooveBoard.backendMethods.animationDurationScale.get());
+        });
+    })
+    Array.from({ length: 6 }, (_, i) => {
+        setTimeout(() => {
+            Groove.triggerHapticFeedback("CLOCK_TICK");
+        }, i * 20 * window.parent.GrooveBoard.backendMethods.animationDurationScale.get());
+    });
+
+}
 const appBar = GrooveElements.wAppBar([
     {
         title: "Add", icon: "󰐕", size: "38px", action: addManually
     }
 ])
+const appBar2 = GrooveElements.wAppBar([
+    {
+        title: "Add", icon: "󰐕", size: "38px", action: addIconPack
+    }
+])
 document.body.append(appBar)
+document.body.append(appBar2)
 window.appBar = appBar
+window.appBar2 = appBar2
+
+const iconPacks = JSON.parse(Groove.getIconPacks())
+iconPacks.forEach((iconPack, index) => {
+
+
+    const item = document.createElement("div")
+    item.classList.add("metro-dropdown-option")
+    item.setAttribute("packagename", iconPack)
+    item.innerText = window.parent.GrooveBoard.backendMethods.getAppDetails(iconPack, true).label
+    document.querySelector("#icon-pack-chooser-dropdown").append(item)
+})
+document.getElementById("icon-pack-chooser-dropdown").addEventListener('selected', (e) => {
+    localStorage.setItem("iconPack", document.getElementById("icon-pack-chooser-dropdown").querySelectorAll("div.metro-dropdown-option")[e.detail.index].getAttribute("packagename"))
+    Groove.applyIconPack(document.getElementById("icon-pack-chooser-dropdown").querySelectorAll("div.metro-dropdown-option")[e.detail.index].getAttribute("packagename"))
+    window.parent.GrooveBoard.alert(
+        "Notice",
+        "You need to restart the app to apply the icon pack.",
+        [{
+            title: "Ok", style: "default", action: () => {
+                window.parent.location.reload()
+            }
+        },
+        { title: "Later", style: "default", action: () => { } }
+        ]
+    );
+});
+if (localStorage.getItem("iconPack")) {
+    Groove.applyIconPack(localStorage.getItem("iconPack"))
+    document.querySelector("#icon-pack-chooser-dropdown").querySelectorAll("div.metro-dropdown-option").forEach((e, i) => {
+        if (e.getAttribute("packagename") === localStorage.getItem("iconPack")) {
+            document.getElementById("icon-pack-chooser-dropdown").setAttribute("selected", i);
+            document.getElementById("icon-pack-chooser-dropdown").selectOption(i);
+        }
+    })
+}

@@ -53,6 +53,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -62,6 +63,7 @@ import java.util.Set;
 
 import rikka.shizuku.Shizuku;
 import rikka.shizuku.ShizukuBinderWrapper;
+import web.bmdominatezz.gravy.IconPack.IconPack;
 
 public class WebInterface {
     private static final String PREFS_NAME = "GrooveLauncherPrefs";
@@ -1051,5 +1053,24 @@ public class WebInterface {
     @JavascriptInterface
     public String getNotificationExtra(StatusBarNotification sbn, String key) {
         return sbn.getNotification().extras.getString(key);
+    }
+
+    @JavascriptInterface
+    public String getIconPacks() {
+        String[] iconPacks = mainActivity.iconPackManager.getAvailableIconPacks(true)
+                .stream()
+                .filter(iconPack -> !iconPack.packageName.equals("None"))
+                .map(iconPack -> iconPack.packageName)
+                .toArray(String[]::new);
+        return new JSONArray(Arrays.asList(iconPacks)).toString();
+    }
+
+    @JavascriptInterface
+    public void applyIconPack(String i) {
+        mainActivity.iconPack = i;
+        mainActivity.iconPackInstance = new IconPack();
+        mainActivity.iconPackInstance.packageName = i;
+        mainActivity.iconPackInstance.setContext(mainActivity);
+        mainActivity.iconPackInstance.load();
     }
 }

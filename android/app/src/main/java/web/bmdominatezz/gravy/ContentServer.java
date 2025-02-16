@@ -93,6 +93,11 @@ public class ContentServer extends WebViewClientCompat {
                                 InputStream inputStream = null;
                                 Bitmap dra = grooveWebView.getAppIcon(grooveWebView.packageManager,
                                         iconPackageNameWithIntent);
+                                if (mainActivity.iconPack != "") {
+                                    if (mainActivity.iconPackInstance.hasIconForPackage(iconPackageName)) {
+                                        dra = mainActivity.iconPackInstance.getIconForPackage(iconPackageName, dra);
+                                    }
+                                }
                                 if (dra != null)
                                     inputStream = Utils.loadBitmapAsStream(dra);
                                 if (inputStream != null) {
@@ -131,6 +136,11 @@ public class ContentServer extends WebViewClientCompat {
                                 InputStream inputStream = null;
                                 Bitmap dra = grooveWebView.getAppIconBackground(grooveWebView.packageManager,
                                         iconPackageNameWithIntent);
+                                if (mainActivity.iconPack != "") {
+                                    if (mainActivity.iconPackInstance.hasIconForPackage(iconPackageName)) {
+                                        return new WebResourceResponse(null, null, null);
+                                    }
+                                }
                                 if (dra != null)
                                     inputStream = Utils.loadBitmapAsStream(dra);
                                 if (inputStream != null) {
@@ -156,7 +166,7 @@ public class ContentServer extends WebViewClientCompat {
                                     String.valueOf(contactId));
                             Cursor cursor = grooveWebView.getContext().getContentResolver().query(
                                     contactUri,
-                                    new String[] { ContactsContract.Contacts.PHOTO_URI },
+                                    new String[]{ContactsContract.Contacts.PHOTO_URI},
                                     null,
                                     null,
                                     null);
@@ -208,7 +218,7 @@ public class ContentServer extends WebViewClientCompat {
 
                         Cursor cursor = grooveWebView.getContext().getContentResolver().query(
                                 photoUri,
-                                new String[] { MediaStore.Images.Media.DATA },
+                                new String[]{MediaStore.Images.Media.DATA},
                                 null,
                                 null,
                                 null);

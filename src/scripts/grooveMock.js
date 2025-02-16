@@ -310,6 +310,12 @@ class GrooveMock {
     getNotificationExtra(id, key) {
         return ""//sbn.getNotification().extras.getString(key);
     }
+    getIconPacks() {
+        return JSON.stringify(["com.android.chrome", "com.android.chrome"])
+    }
+    applyIconPack(packageName) {
+        console.log("Apply icon pack:", packageName)
+    }
 }
 function sendNotificationToSystem(notification) {
     const existingIndex = notifications.findIndex(n => n.id === notification.id);
@@ -365,7 +371,7 @@ setTimeout(() => {
             songName: "Random Song"
         }
     }
-   // console.log("notification", notification)
+    // console.log("notification", notification)
     sendNotificationToSystem(notification)
 }, 3000);
 

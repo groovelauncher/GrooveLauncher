@@ -31,6 +31,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import fi.iki.elonen.NanoHTTPD;
+import web.bmdominatezz.gravy.IconPack.IconPack;
+import web.bmdominatezz.gravy.IconPack.IconPackManager;
 import web.bmdominatezz.gravyservices.GravyServer;
 
 public class MainActivity extends AppCompatActivity {
@@ -60,6 +62,10 @@ public class MainActivity extends AppCompatActivity {
     private MyLocalServer myServer;
     public boolean isAppReady = false;
     public NotificationDelegate notificationDelegate;
+    public IconPackManager iconPackManager;
+    public String iconPack = "";
+    public IconPack iconPackInstance;
+
     public class MyLocalServer extends NanoHTTPD {
 
         public MyLocalServer(int port) throws IOException {
@@ -149,6 +155,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
+        iconPackManager = new IconPackManager();
+        iconPackManager.setContext(this);
+
         webView = (GrooveWebView) findViewById(R.id.webview);
         packageManager = getPackageManager();
         handler = new Handler();

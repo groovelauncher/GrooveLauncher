@@ -1079,19 +1079,6 @@ const iconPackConverter = [
          ],
          "icon": ""
      },
-     // WHATSAPP
-     {
-         "apps": [
-             "com.whatsapp"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "org.telegram.messenger"
-         ],
-         "icon": ""
-     },
      {
          "apps": [
              "org.torproject.torbrowser"

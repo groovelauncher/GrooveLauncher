@@ -746,6 +746,8 @@ const iconPackConverter = [
         ],
         "icon": "thirdparty/chatgpt"
     },
+    // OFFICE/MS APPS SUB-SECTION
+    
     // OFFICE
     {
         "apps": [
@@ -761,7 +763,56 @@ const iconPackConverter = [
             ],
         "icon": "thirdparty/onenote",
         "accent": "#80397B"
-    }
+    },
+    // POWERPOINT
+    {
+        "apps": [
+            "com.microsoft.office.powerpoint"
+            ],
+        "icon": "thirdparty/pwrpoint",
+        "accent": "#CE4924"
+    },
+    // EXCEL
+    {
+        "apps": [
+            "com.microsoft.office.excel"
+            ],
+        "icon": "thirdparty/excel",
+        "accent": "#217348"
+    },
+    // WORD
+    {
+        "apps": [
+            "com.microsoft.office.word"
+            ],
+        "icon": "thirdparty/word",
+        "accent": "#2C5A98"
+    },
+    // ONEDRIVE
+    {
+        "apps": [
+            "com.microsoft.skydrive"
+            ],
+        "icon": "thirdparty/onedrive",
+        "accent": "#1048AF"
+    },
+    // OUTLOOK
+    {
+        "apps": [
+            "com.microsoft.office.outlook",
+            "com.microsoft.outlooklite"
+            ],
+        "icon": "thirdparty/outlook"
+    },
+    // TEAMS
+    {
+        "apps": [
+            "com.microsoft.teams"
+            ],
+        "icon": "thirdparty/teams",
+        "accent": "#3F4790"
+    },
+    
     //DICT.CC
     {
         "apps": [

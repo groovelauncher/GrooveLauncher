@@ -754,6 +754,14 @@ const iconPackConverter = [
         "icon": "thirdparty/office",
         "accent": "#E93B01"
     },
+    // ONENOTE
+    {
+        "apps": [
+            "com.microsoft.office.onenote"
+            ],
+        "icon": "thirdparty/onenote",
+        "accent": "#80397B"
+    }
     //DICT.CC
     {
         "apps": [

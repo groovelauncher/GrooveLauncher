@@ -746,6 +746,14 @@ const iconPackConverter = [
         ],
         "icon": "thirdparty/chatgpt"
     },
+    // OFFICE
+    {
+        "apps": [
+            "com.microsoft.office.officehubrow"
+            ],
+        "icon": "thirdparty/office",
+        "accent": "#E93B01"
+    },
     //DICT.CC
     {
         "apps": [

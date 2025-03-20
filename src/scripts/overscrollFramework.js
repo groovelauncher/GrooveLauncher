@@ -1,4 +1,5 @@
-const nativeScroll = () => (localStorage.nativeScroll == "true" || true) && false
+var nativeScroll = () => (localStorage.nativeScroll == "true" || true) && false
+nativeScroll = () => false
 import BScroll from "better-scroll";
 import { merge } from "lodash";
 import jQuery from "jquery";

@@ -797,7 +797,10 @@ const iconPackConverter = [
     //TELEGRAM
     {
         "apps": [
-            "org.telegram.messenger"
+            "org.telegram.messenger",
+            "com.radolyn.ayugram",
+            "tw.nekomimi.nekogram",
+            "com.exteragram.messenger"
         ],
         "icon": "thirdparty/telegram",
         "accent": "#2CA4E0"
@@ -890,6 +893,36 @@ const iconPackConverter = [
         "icon": "thirdparty/tdk",
         "accent": "#FFFFFF"
     },
+    // DISCORD
+    {
+        "apps": [
+           "com.discord",
+           "com.aliucord"
+        ],
+        "icon": "thirdparty/discord"
+    },
+    // WHATSAPP
+    { 
+       "apps": [
+          "com.whatsapp"
+       ],
+      "icon": "thirdparty/whatsapp"
+    },
+    // TIKTOK
+    {
+       "apps": [
+          "com.ss.android.ugc.trill",
+          "com.zhiliaoapp.musically"
+       ],
+       "icon": "thirdparty/tiktok"
+    },
+    // TWITTER X
+    {
+       "apps": [
+         "com.twitter.android"
+       ],
+       "icon": "thirdparty/twitter"
+    },
     /* {
          "apps": [
              "com.android.stk"
@@ -921,13 +954,6 @@ const iconPackConverter = [
      {
          "apps": [
              "web.bmdominatezz.gravy"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.discord",
-             "com.aliucord"
          ],
          "icon": ""
      },
@@ -1050,18 +1076,6 @@ const iconPackConverter = [
      {
          "apps": [
              "com.google.android.apps.maps"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.whatsapp"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "org.telegram.messenger"
          ],
          "icon": ""
      },

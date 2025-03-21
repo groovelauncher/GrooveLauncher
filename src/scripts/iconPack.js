@@ -769,7 +769,7 @@ const iconPackConverter = [
         "apps": [
             "com.microsoft.office.powerpoint"
             ],
-        "icon": "thirdparty/pwrpoint",
+        "icon": "thirdparty/powerpoint",
         "accent": "#CE4924"
     },
     // EXCEL

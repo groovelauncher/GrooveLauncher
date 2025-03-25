@@ -1,15 +1,15 @@
 [versions]
-agp = "8.5.0"
+agp = "8.6.1"
 coreSplashscreen = "1.0.1"
-geckoview = "93.0.0"
+geckoview = "136.0.20250317200840"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
-activity = "1.9.1"
-constraintlayout = "2.1.4"
-webkit = "1.11.0"
+activity = "1.10.1"
+constraintlayout = "2.2.1"
+webkit = "1.13.0"
 
 [libraries]
 core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }

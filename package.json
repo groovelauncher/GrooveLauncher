@@ -19,6 +19,7 @@
     "build:android": "cd android && ./gradlew assembleRelease && cd ..",
     "build:android:nightly": "npm run build:production && cd android && ./gradlew assembleNightlyRelease -Pandroid.injected.signing.store.file=app/keystore.jks -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD -Pandroid.injected.signing.key.alias=key0 -Pandroid.injected.signing.key.password=$KEY_PASSWORD && cd ..",
     "debug:android": "npm run build:debug && cd android && ./gradlew assembleDebugFlavor && cd .. && adb install android/app/build/outputs/apk/debugFlavor/debug/app-debugFlavor-debug.apk && adb shell am start -n web.bmdominatezz.gravy.debug/web.bmdominatezz.gravy.MainActivity",
+    "debug:android:geckoview": "npm run build:debug && cd android && ./gradlew assembleDebugFlavorGeckoView && cd .. && adb install android/app/build/outputs/apk/geckoFlavor/debug/app-geckoFlavor-debug.apk && adb shell am start -n web.bmdominatezz.gravy.debug/web.bmdominatezz.gravy.MainActivity",
     "debug:web": "npx concurrently \"npm run build-watch:web\" \"npx live-server --port=8080 --watch=www\""
   },
   "author": "berkaytumal",

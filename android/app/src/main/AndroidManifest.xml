@@ -80,7 +80,7 @@
         <activity
             android:name=".MainActivity"
             android:clearTaskOnLaunch="true"
-            android:configChanges="orientation|screenSize|uiMode"
+            android:configChanges="orientation|screenSize|uiMode|screenLayout|smallestScreenSize|screenSize|layoutDirection"
             android:enabled="true"
             android:excludeFromRecents="true"
             android:exported="true"

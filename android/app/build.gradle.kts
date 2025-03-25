@@ -25,7 +25,7 @@ val localProperties = Properties().apply {
 
 android {
     namespace = "web.bmdominatezz.gravy"
-    compileSdk = 34
+    compileSdk = 35
 
     buildFeatures {
         buildConfig = true  // Enable BuildConfig generation
@@ -34,7 +34,7 @@ android {
     defaultConfig {
         applicationId = "web.bmdominatezz.gravy"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 55
         versionName = "0.5.5-beta.5"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -82,6 +82,7 @@ android {
             manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_nightly_round"
             // Use the defaultConfig’s versionName + commit hash + -debug
             versionName = "$commitHash-debug"
+            buildConfigField("String", "WEB_ENGINE", "\"WebView\"")
         }
         create("debugFlavorGeckoView") {
             dimension = "default"
@@ -105,6 +106,7 @@ android {
             manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_nightly_round"
             // Use the defaultConfig’s versionName + commit hash + -nightly
             versionName = "$commitHash-nightly"
+            buildConfigField("String", "WEB_ENGINE", "\"WebView\"")
         }
         create("nightlyGeckoView") {
             dimension = "default"

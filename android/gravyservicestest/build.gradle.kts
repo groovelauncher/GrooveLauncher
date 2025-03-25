@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
 }
-
 android {
     namespace = "web.bmdominatezz.gravyservicestest"
     compileSdk = 34

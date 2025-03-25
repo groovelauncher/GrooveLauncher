@@ -64,6 +64,14 @@ android {
             manifestPlaceholders["appIcon"] = "@mipmap/icon_default"
             manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_default_round"
         }
+        create("regularGeckoView") {
+            // GeckoView flavor
+            applicationIdSuffix = ".geckoview"
+            buildConfigField("String", "WEB_ENGINE", "\"GeckoView\"")
+            dependencies {
+                implementation(libs.geckoview)
+            }
+        }
         create("debugFlavor"){
             dimension = "default"
             // Debug build uses the default application ID
@@ -75,6 +83,18 @@ android {
             // Use the defaultConfig’s versionName + commit hash + -debug
             versionName = "$commitHash-debug"
         }
+        create("debugFlavorGeckoView") {
+            dimension = "default"
+            applicationId = "web.bmdominatezz.gravy.debug.geckoview"
+            resValue("string", "app_name", "Groove Debug GeckoView")
+            manifestPlaceholders["appIcon"] = "@mipmap/icon_nightly"
+            manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_nightly_round"
+            versionName = "$commitHash-debug-geckoview"
+            buildConfigField("String", "WEB_ENGINE", "\"GeckoView\"")
+            dependencies {
+                implementation(libs.geckoview)
+            }
+        }
         create("nightly") {
             dimension = "default"
             // Change package name for nightly builds
@@ -85,6 +105,18 @@ android {
             manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_nightly_round"
             // Use the defaultConfig’s versionName + commit hash + -nightly
             versionName = "$commitHash-nightly"
+        }
+        create("nightlyGeckoView") {
+            dimension = "default"
+            applicationId = "web.bmdominatezz.gravy.nightly.geckoview"
+            resValue("string", "app_name", "Groove Nightly GeckoView")
+            manifestPlaceholders["appIcon"] = "@mipmap/icon_nightly"
+            manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_nightly_round"
+            versionName = "$commitHash-nightly-geckoview"
+            buildConfigField("String", "WEB_ENGINE", "\"GeckoView\"")
+            dependencies {
+                implementation(libs.geckoview)
+            }
         }
     }
     buildTypes {

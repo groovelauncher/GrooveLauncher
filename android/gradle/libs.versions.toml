@@ -1,11 +1,7 @@
 [versions]
 agp = "8.6.1"
 coreSplashscreen = "1.0.1"
-<<<<<<< HEAD
 geckoview = "136.0.20250317200840"
-=======
-geckoview = "93.0.0"
->>>>>>> d3dd0ba (Add GeckoView build flavors and update dependencies)
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"

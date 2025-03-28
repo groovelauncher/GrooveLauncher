@@ -96,18 +96,6 @@ android {
                 implementation(libs.geckoview)
             }
         }
-        create("debugFlavorGeckoView") {
-            dimension = "default"
-            applicationId = "web.bmdominatezz.gravy.debug.geckoview"
-            resValue("string", "app_name", "Groove Debug GeckoView")
-            manifestPlaceholders["appIcon"] = "@mipmap/icon_nightly"
-            manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_nightly_round"
-            versionName = "$commitHash-debug-geckoview"
-            buildConfigField("String", "WEB_ENGINE", "\"GeckoView\"")
-            dependencies {
-                implementation(libs.geckoview)
-            }
-        }
         create("nightly") {
             dimension = "default"
             // Change package name for nightly builds
@@ -119,18 +107,6 @@ android {
             // Use the defaultConfig’s versionName + commit hash + -nightly
             versionName = "$commitHash-nightly"
             buildConfigField("String", "WEB_ENGINE", "\"WebView\"")
-        }
-        create("nightlyGeckoView") {
-            dimension = "default"
-            applicationId = "web.bmdominatezz.gravy.nightly.geckoview"
-            resValue("string", "app_name", "Groove Nightly GeckoView")
-            manifestPlaceholders["appIcon"] = "@mipmap/icon_nightly"
-            manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_nightly_round"
-            versionName = "$commitHash-nightly-geckoview"
-            buildConfigField("String", "WEB_ENGINE", "\"GeckoView\"")
-            dependencies {
-                implementation(libs.geckoview)
-            }
         }
         create("nightlyGeckoView") {
             dimension = "default"

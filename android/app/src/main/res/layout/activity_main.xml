@@ -7,9 +7,4 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <web.bmdominatezz.gravy.GrooveWebView
-        android:id="@+id/webview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

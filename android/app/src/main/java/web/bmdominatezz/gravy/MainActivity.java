@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -37,6 +38,7 @@ import web.bmdominatezz.gravyservices.GravyServer;
 
 public class MainActivity extends AppCompatActivity {
     private static MainActivity instance;
+    public static String webEngine = BuildConfig.WEB_ENGINE;
 
     public static MainActivity getInstance() {
         return instance;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     public WebEvents webEvents;
     public GravyServer gravyServer;
     public GrooveWebView webView;
+    public GrooveGeckoView grooveView;
     public PackageManager packageManager;
     private Handler handler;
     private Runnable pauseRunnable;
@@ -97,7 +100,10 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 activityPaused = true;
                 if (activityDispatchEvent) {
-                    webEvents.dispatchEvent(WebEvents.events.activityPause, null);
+                    if (webEngine.equals("WebView")) {
+
+                        webEvents.dispatchEvent(WebEvents.events.activityPause, null);
+                    }
                 }
                 Log.d("groovelauncher", "onPause: ");
             }
@@ -112,17 +118,20 @@ public class MainActivity extends AppCompatActivity {
             handler.removeCallbacks(pauseRunnable);
             if (activityPaused) {
                 if (activityDispatchEvent) {
-                    webEvents.dispatchEvent(WebEvents.events.activityResume, null);
+                    if (webEngine.equals("WebView"))
+                        webEvents.dispatchEvent(WebEvents.events.activityResume, null);
                 }
                 activityPaused = false;
             }
             if (activityDispatchHomeEvent) {
-                webEvents.dispatchEvent(WebEvents.events.homeButtonPress, null);
+                if (webEngine.equals("WebView"))
+                    webEvents.dispatchEvent(WebEvents.events.homeButtonPress, null);
             }
             Log.d("groovelauncher", "homeButtonPress: ");
         } else {
             if (activityDispatchEvent) {
-                webEvents.dispatchEvent(WebEvents.events.activityResume, null);
+                if (webEngine.equals("WebView"))
+                    webEvents.dispatchEvent(WebEvents.events.activityResume, null);
             }
             activityPaused = false;
             Log.d("groovelauncher", "onResume: ");
@@ -133,7 +142,8 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
-        webEvents.dispatchEvent(WebEvents.events.backButtonPress, null);
+        if (webEngine.equals("WebView"))
+            webEvents.dispatchEvent(WebEvents.events.backButtonPress, null);
         // super.onBackPressed();
     }
 
@@ -141,16 +151,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         notificationDelegate = new NotificationDelegate(this);
         instance = this;  // Set the instance
-        String accentColor = getSharedPreferences("GrooveLauncherPrefs", MODE_PRIVATE).getString("accent_color", "#AA00FF");
-        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
-        splashScreen.setOnExitAnimationListener(splashScreenView -> {
-            new android.os.Handler().postDelayed(() -> {
-                // Start your animation here
-                splashScreenView.remove();
-            }, 100); // Delay in millisecon
-        });
-        // Keep the splash screen visible until the app is ready
-        splashScreen.setKeepOnScreenCondition(() -> !isAppReady);
+        if (webEngine.equals("WebView")) {
+            SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+            splashScreen.setOnExitAnimationListener(splashScreenView -> {
+                new android.os.Handler().postDelayed(() -> {
+                    // Start your animation here
+                    splashScreenView.remove();
+                }, 100); // Delay in millisecon
+            });
+            // Keep the splash screen visible until the app is ready
+            splashScreen.setKeepOnScreenCondition(() -> !isAppReady);
+        }
+
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -158,21 +170,39 @@ public class MainActivity extends AppCompatActivity {
 
         iconPackManager = new IconPackManager();
         iconPackManager.setContext(this);
-
-        webView = (GrooveWebView) findViewById(R.id.webview);
         packageManager = getPackageManager();
         handler = new Handler();
-        webView.init(packageManager, this);
-        // webView.setWebChromeClient(new ChromeClient());
         systemEvents = new SystemEvents(this);
-        webEvents = webView.webEvents;
+
+        if (webEngine.equals("WebView")) {
+
+            webView = new GrooveWebView(this);
+            webView.setLayoutParams(new ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.MATCH_PARENT,
+                    ConstraintLayout.LayoutParams.MATCH_PARENT));
+            ConstraintLayout mainLayout = findViewById(R.id.main);
+            mainLayout.addView(webView);
+
+            webView.init(packageManager, this);
+            // webView.setWebChromeClient(new ChromeClient());
+            webEvents = webView.webEvents;
+        } else {
+            grooveView = new GrooveGeckoView(this);
+            grooveView.setLayoutParams(new ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.MATCH_PARENT,
+                    ConstraintLayout.LayoutParams.MATCH_PARENT));
+            ConstraintLayout mainLayout = findViewById(R.id.main);
+            mainLayout.addView(grooveView);
+        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             // Don't uncomment this cause webview itself will deal with inset paddings
             // v.setPadding(systemBars.left, systemBars.top, systemBars.right,
             // systemBars.bottom);
-            webEvents.dispatchEvent(WebEvents.events.systemInsetsChange, null);
-            webView.lastInsets = systemBars;
+            if (webEngine.equals("WebView")) {
+                webEvents.dispatchEvent(WebEvents.events.systemInsetsChange, null);
+                webView.lastInsets = systemBars;
+            }
             return insets;
         });
 
@@ -181,13 +211,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        // Simulate some initialization work
-        /*
-         * handler.postDelayed(() -> {
-         * isAppReady = true;
-         * }, 3000); // Delay of 3 seconds
-         */
         gravyServer = new GravyServer() {
 
         };
@@ -200,7 +223,9 @@ public class MainActivity extends AppCompatActivity {
         String theme = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES ? "dark" : "light";
         Log.d("ThemeChange", "System theme changed: " + theme);
         try {
-            webEvents.dispatchEvent(WebEvents.events.systemThemeChange, new JSONObject().put("theme", theme));
+            if (webEngine.equals("WebView")) {
+                webEvents.dispatchEvent(WebEvents.events.systemThemeChange, new JSONObject().put("theme", theme));
+            }
         } catch (JSONException e) {
         }
 
@@ -210,7 +235,9 @@ public class MainActivity extends AppCompatActivity {
                 String theme = (newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES ? "dark" : "light";
                 Log.d("ThemeChange", "System theme changed: " + theme);
                 try {
-                    webEvents.dispatchEvent(WebEvents.events.systemThemeChange, new JSONObject().put("theme", theme));
+                    if (webEngine.equals("WebView")) {
+                        webEvents.dispatchEvent(WebEvents.events.systemThemeChange, new JSONObject().put("theme", theme));
+                    }
                 } catch (JSONException e) {
                 }
             }
@@ -346,6 +373,8 @@ public class MainActivity extends AppCompatActivity {
     private void handleGrooveUrl(String url) throws JSONException {
         JSONObject argument = new JSONObject();
         argument.put("url", url);
-        webEvents.dispatchEvent(WebEvents.events.deepLink, argument);
+        if (webEngine.equals("WebView")) {
+            webEvents.dispatchEvent(WebEvents.events.deepLink, argument);
+        }
     }
 }

@@ -130,12 +130,18 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    splits {
-        abi {
-            isEnable = true
-            reset()
-            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
-            isUniversalApk = false
+}
+
+// Only enable ABI splits for GeckoView flavors
+afterEvaluate {
+    android.applicationVariants.all {
+        if (flavorName.endsWith("GeckoView", ignoreCase = true)) {
+            splits.abi.isEnable = true
+            splits.abi.reset()
+            splits.abi.include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            splits.abi.isUniversalApk = false
+        } else {
+            splits.abi.isEnable = false
         }
     }
 }

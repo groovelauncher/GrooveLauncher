@@ -57,3 +57,7 @@ public class BuildConfigInterface {
         return System.getProperty("os.arch", "unknown");
     }
 }
+//HELLO YALL
+//THIS IS THE BUILD CONFIG INTERFACE
+//I ADDED THESE LINES TO TRIGGER AN UNNECESSARY REBUILD
+//HEHEHE

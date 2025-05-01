@@ -487,7 +487,7 @@ function addListItemEventHandlers(el) {
         window.appMenuCreationFirstTimeout = setTimeout(() => {
             $("div.innerApp").addClass("app-menu-back-intro")
             const appMenu = createContextMenu(el)
-            const optionalTop = (e.target.offsetTop + scrollers.styles.y + 64 + 83 + 5)
+            const optionalTop = (e.target.offsetTop + scrollers.styles.y + 64 + 83 + 5 + 90)
             appMenu.style.top = ((optionalTop + 154 >= window.innerHeight - windowInsets().bottom) ? optionalTop - 64 - 0 : optionalTop) + "px"
             appMenu.style.setProperty("--pointerX", e.pageX /*- $("div.app-list-page").position().left*/ + "px")
             appMenu.classList.add("intro")

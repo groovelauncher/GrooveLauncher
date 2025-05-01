@@ -48,7 +48,7 @@ setTimeout(() => {
     }
 }, 1000);
 function checkUpdate(force = false) {
-    const isBeta = window.parent.Groove.getAppVersion().includes("beta") || window.parent.Groove.getAppVersion() == 'web-test'
+    const isBeta = window.parent.BuildConfig.getAppVersion().includes("beta") || window.parent.BuildConfig.getAppVersion() == 'web-test'
     return new Promise((resolve, reject) => {
         if (!force && localStorage.getItem(lastFetchedUpdate)) {
             if (isUpdateNew(JSON.parse(localStorage[lastFetchedUpdate]))) {
@@ -64,7 +64,7 @@ function checkUpdate(force = false) {
                     const availableReleases = releases.filter(release => (release.name.includes("beta") == isBeta))
                     if (availableReleases.length) {
                         const update = availableReleases[0]
-                        if (update.name == window.parent.Groove.getAppVersion()) {
+                        if (update.name == window.parent.BuildConfig.getAppVersion()) {
                             resolve(false)
                         } else {
                             if (isUpdateValid(update)) {
@@ -101,12 +101,12 @@ function dismissUpdate(update) {
     return false
 }
 function isUpdateNew(update) {
-    return update.name != window.parent.Groove.getAppVersion()
+    return update.name != window.parent.BuildConfig.getAppVersion()
 }
 function getBestApkAsset(update) {
     if (!update || !update.assets || !update.assets.length) return null;
-    const isGecko = window.parent.Groove.isGeckoView && window.parent.Groove.isGeckoView();
-    const arch = window.parent.Groove.appArchitecture ? window.parent.Groove.appArchitecture() : "";
+    const isGecko = window.parent.BuildConfig.isGeckoView && window.parent.BuildConfig.isGeckoView();
+    const arch = window.parent.BuildConfig.appArchitecture ? window.parent.BuildConfig.appArchitecture() : "";
     // APK name format: GrooveLauncher_${RELEASE_TAG}_${WebView or GeckoView}_${architecture}.apk
     const engine = isGecko ? "GeckoView" : "WebView";
     // Try to find exact match
@@ -140,7 +140,7 @@ function showUpdateBanner(update) {
     updateBanner.querySelector("button.update-read-more").addEventListener("flowClick", () => {
         if (localStorage.getItem(lastFetchedUpdate)) {
             const update = JSON.parse(localStorage.getItem(lastFetchedUpdate))
-            if (update.name == Groove.getAppVersion()) {
+            if (update.name == window.parent.BuildConfig.getAppVersion()) {
                 dismissUpdate(update)
             } else {
                 const apkAsset = getBestApkAsset(update);

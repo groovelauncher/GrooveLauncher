@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     public WebEvents webEvents;
     public GravyServer gravyServer;
     public GrooveWebView webView;
-    public GrooveGeckoView grooveView;
+    public GrooveGeckoView grooveView; // <-- keep this, but only use it if GeckoView is present
     public PackageManager packageManager;
     private Handler handler;
     private Runnable pauseRunnable;
@@ -163,7 +163,6 @@ public class MainActivity extends AppCompatActivity {
             splashScreen.setKeepOnScreenCondition(() -> !isAppReady);
         }
 
-
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -175,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
         systemEvents = new SystemEvents(this);
 
         if (webEngine.equals("WebView")) {
-
             webView = new GrooveWebView(this);
             webView.setLayoutParams(new ConstraintLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.MATCH_PARENT,
@@ -186,13 +184,13 @@ public class MainActivity extends AppCompatActivity {
             webView.init(packageManager, this);
             // webView.setWebChromeClient(new ChromeClient());
             webEvents = webView.webEvents;
-        } else {
+        } else if (webEngine.equals("GeckoView")) {
             grooveView = new GrooveGeckoView(this);
             grooveView.setLayoutParams(new ConstraintLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.MATCH_PARENT,
                     ConstraintLayout.LayoutParams.MATCH_PARENT));
             ConstraintLayout mainLayout = findViewById(R.id.main);
-            mainLayout.addView(grooveView);
+            mainLayout.addView((android.view.View) grooveView);
         }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

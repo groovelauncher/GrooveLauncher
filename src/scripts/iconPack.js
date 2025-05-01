@@ -387,7 +387,8 @@ const iconPackConverter = [
             "com.zui.gallery",
             "jp.kyocera.kyoceradrmgallery",
             "org.codeaurora.gallery",
-            "org.mokee.venus"
+            "org.mokee.venus",
+            "org.lineageos.glimpse"
         ],
         "icon": "photos"
     },
@@ -427,6 +428,7 @@ const iconPackConverter = [
             "com.sonyericsson.music",
             "net.oneplus.music",
             "org.lineageos.eleven",
+            "org.lineageos.twelve",
             "com.huawei.music"
         ],
         "icon": "music",

@@ -141,20 +141,6 @@ android {
     // Only keep split APKs for GeckoView flavors in your release scripts/workflow
 }
 
-// Only enable ABI splits for GeckoView flavors
-afterEvaluate {
-    android.applicationVariants.all {
-        if (flavorName.endsWith("GeckoView", ignoreCase = true)) {
-            splits.abi.isEnable = true
-            splits.abi.reset()
-            splits.abi.include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
-            splits.abi.isUniversalApk = false
-        } else {
-            splits.abi.isEnable = false
-        }
-    }
-}
-
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)

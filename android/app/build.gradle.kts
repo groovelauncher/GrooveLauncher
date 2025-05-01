@@ -68,9 +68,6 @@ android {
             // GeckoView flavor
             applicationIdSuffix = ".geckoview"
             buildConfigField("String", "WEB_ENGINE", "\"GeckoView\"")
-            dependencies {
-                implementation(libs.geckoview)
-            }
         }
         create("debugFlavor"){
             dimension = "default"
@@ -92,9 +89,6 @@ android {
             manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_nightly_round"
             versionName = "$commitHash-debug-geckoview"
             buildConfigField("String", "WEB_ENGINE", "\"GeckoView\"")
-            dependencies {
-                implementation(libs.geckoview)
-            }
         }
         create("nightly") {
             dimension = "default"
@@ -116,9 +110,6 @@ android {
             manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_nightly_round"
             versionName = "$commitHash-nightly-geckoview"
             buildConfigField("String", "WEB_ENGINE", "\"GeckoView\"")
-            dependencies {
-                implementation(libs.geckoview)
-            }
         }
     }
     buildTypes {
@@ -155,4 +146,8 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.core.splashscreen)
+    // Add GeckoView only to GeckoView flavors
+    "regularGeckoViewImplementation"(libs.geckoview)
+    "debugFlavorGeckoViewImplementation"(libs.geckoview)
+    "nightlyGeckoViewImplementation"(libs.geckoview)
 }

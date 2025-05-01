@@ -67,13 +67,28 @@ jobs:
           CHANGELOG=$(git log ${LATEST_NIGHTLY}..HEAD --pretty=format:"<strong>%h</strong> %s{NEWLINE}" | tr '\n' '\\n')
           echo "CHANGELOG=$CHANGELOG" >> android/gradle.local.properties
 
-      - name: Build Android APK
+      - name: Build Android APKs (WebView & GeckoView)
         if: steps.check_commits.outputs.skip_build != 'true'
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
           KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
         run: |
-          npm run build:android:nightly
+          npm run build:android:nightly:webview
+          npm run build:android:nightly:geckoview
+
+      - name: Rename and Collect APKs for Release
+        if: steps.check_commits.outputs.skip_build != 'true'
+        run: |
+          COMMIT_ID=$(git rev-parse --short HEAD)
+          RELEASE_TAG="${COMMIT_ID}-nightly"
+          # WebView APK
+          WEBVIEW_APK="android/app/build/outputs/apk/nightly/release/app-nightly-release.apk"
+          cp "$WEBVIEW_APK" "GrooveLauncher_${RELEASE_TAG}_webview.apk"
+          # GeckoView APKs (split by ABI)
+          for apk in android/app/build/outputs/apk/nightlyGeckoView/release/app-nightlyGeckoView-*-release.apk; do
+            arch=$(echo $apk | sed -n 's/.*app-nightlyGeckoView-\(.*\)-release.apk/\1/p')
+            cp "$apk" "GrooveLauncher_${RELEASE_TAG}_geckoview_${arch}.apk"
+          done
 
       - name: Delete Previous Nightly Releases
         if: steps.check_commits.outputs.skip_build != 'true'
@@ -94,13 +109,9 @@ jobs:
           COMMIT_ID=$(git rev-parse --short HEAD)
           RELEASE_TAG="${COMMIT_ID}-nightly"
           RELEASE_NAME="${COMMIT_ID}-nightly"
-          ORIGINAL_APK="android/app/build/outputs/apk/nightly/release/app-nightly-release.apk"
-          RENAMED_APK="GrooveLauncher_${RELEASE_TAG}.apk"
-          
-          cp "$ORIGINAL_APK" "$RENAMED_APK"
-          
+          ASSETS=$(ls GrooveLauncher_${RELEASE_TAG}_*.apk | xargs)
           echo "Creating release with tag $RELEASE_TAG"
-          gh release create "$RELEASE_TAG" "$RENAMED_APK" \
+          gh release create "$RELEASE_TAG" $ASSETS \
             --title "$RELEASE_NAME" \
             --notes "Nightly build for $(date)\n\n$(git log ${LATEST_NIGHTLY}..HEAD --pretty=format:"**%h** %s\n" | tr '\n' '\\n')" \
             --prerelease

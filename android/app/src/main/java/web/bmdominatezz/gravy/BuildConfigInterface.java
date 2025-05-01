@@ -27,4 +27,33 @@ public class BuildConfigInterface {
     public boolean signed() {
         return true;
     }
-} 
+
+    @JavascriptInterface
+    public boolean isGeckoView() {
+        // Replace with actual detection if available
+        return BuildConfig.FLAVOR != null && BuildConfig.FLAVOR.toLowerCase().contains("geckoview");
+    }
+
+    @JavascriptInterface
+    public boolean isWebView() {
+        // Replace with actual detection if available
+        return !isGeckoView();
+    }
+
+    @JavascriptInterface
+    public boolean isNightly() {
+        // Replace with actual detection if available
+        return BuildConfig.BUILD_TYPE != null && BuildConfig.BUILD_TYPE.toLowerCase().contains("nightly");
+    }
+
+    @JavascriptInterface
+    public String appVersion() {
+        return BuildConfig.VERSION_NAME;
+    }
+
+    @JavascriptInterface
+    public String appArchitecture() {
+        // Replace with actual architecture detection if needed
+        return System.getProperty("os.arch", "unknown");
+    }
+}

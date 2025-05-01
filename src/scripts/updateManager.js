@@ -103,6 +103,24 @@ function dismissUpdate(update) {
 function isUpdateNew(update) {
     return update.name != window.parent.Groove.getAppVersion()
 }
+function getBestApkAsset(update) {
+    if (!update || !update.assets || !update.assets.length) return null;
+    const isGecko = window.parent.Groove.isGeckoView && window.parent.Groove.isGeckoView();
+    const arch = window.parent.Groove.appArchitecture ? window.parent.Groove.appArchitecture() : "";
+    // APK name format: GrooveLauncher_${RELEASE_TAG}_${WebView or GeckoView}_${architecture}.apk
+    const engine = isGecko ? "GeckoView" : "WebView";
+    // Try to find exact match
+    let apk = update.assets.find(a => a.name && a.name.includes(engine) && a.name.includes(arch));
+    if (!apk) {
+        // Fallback: match engine only
+        apk = update.assets.find(a => a.name && a.name.includes(engine));
+    }
+    if (!apk) {
+        // Fallback: any APK
+        apk = update.assets.find(a => a.name && a.name.endsWith('.apk'));
+    }
+    return apk;
+}
 function showUpdateBanner(update) {
     if (!isUpdateValid(update)) return
     if (isUpdateDismissed(update)) return
@@ -125,12 +143,12 @@ function showUpdateBanner(update) {
             if (update.name == Groove.getAppVersion()) {
                 dismissUpdate(update)
             } else {
-                const updateUrl = update.assets.length == 1 ? update.assets[0].browser_download_url : update.html_url
+                const apkAsset = getBestApkAsset(update);
+                const updateUrl = apkAsset ? apkAsset.browser_download_url : update.html_url;
                 parent.GrooveBoard.alert(
                     window.i18n.t("settings.alerts.update_available.title"),
-                    update.assets.length == 1 ?
-                        //`A new version <strong>(${update.name})</strong> is available, sized at ${formatFileSize(update.assets[0].size)}. Would you like to download it?`
-                        window.i18n.t("settings.alerts.update_available.message", { version: update.name, size: formatFileSize(update.assets[0].size) })
+                    apkAsset && apkAsset.size ?
+                        window.i18n.t("settings.alerts.update_available.message", { version: update.name, size: formatFileSize(apkAsset.size) })
                         :
                         window.i18n.t("settings.alerts.update_available.message2", { version: update.name }),
                     [{

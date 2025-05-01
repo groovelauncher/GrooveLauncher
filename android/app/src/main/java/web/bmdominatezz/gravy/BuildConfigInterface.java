@@ -47,12 +47,12 @@ public class BuildConfigInterface {
     }
 
     @JavascriptInterface
-    public String appVersion() {
+    public String getAppVersion() {
         return BuildConfig.VERSION_NAME;
     }
 
     @JavascriptInterface
-    public String appArchitecture() {
+    public String getAppArchitecture() {
         // Replace with actual architecture detection if needed
         return System.getProperty("os.arch", "unknown");
     }

@@ -106,7 +106,7 @@ function isUpdateNew(update) {
 function getBestApkAsset(update) {
     if (!update || !update.assets || !update.assets.length) return null;
     const isGecko = window.parent.BuildConfig.isGeckoView && window.parent.BuildConfig.isGeckoView();
-    const arch = window.parent.BuildConfig.appArchitecture ? window.parent.BuildConfig.appArchitecture() : "";
+    const arch = window.parent.BuildConfig.getAppArchitecture ? window.parent.BuildConfig.getAppArchitecture() : "";
     // APK name format: GrooveLauncher_${RELEASE_TAG}_${WebView or GeckoView}_${architecture}.apk
     const engine = isGecko ? "GeckoView" : "WebView";
     // Try to find exact match

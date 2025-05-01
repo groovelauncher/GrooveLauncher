@@ -76,6 +76,12 @@ jobs:
           npm run build:android:nightly:webview
           npm run build:android:nightly:geckoview
 
+      - name: List all generated APKs for debugging
+        if: steps.check_commits.outputs.skip_build != 'true'
+        run: |
+          echo "Listing all APKs in build directory:"
+          find android/app/build/ -name "*.apk" -print
+
       - name: Rename and Collect APKs for Release
         if: steps.check_commits.outputs.skip_build != 'true'
         run: |

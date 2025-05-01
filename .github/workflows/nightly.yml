@@ -87,13 +87,15 @@ jobs:
         run: |
           COMMIT_ID=$(git rev-parse --short HEAD)
           RELEASE_TAG="${COMMIT_ID}-nightly"
-          # WebView APK
-          WEBVIEW_APK="android/app/build/outputs/apk/nightly/release/app-nightly-release.apk"
-          cp "$WEBVIEW_APK" "GrooveLauncher_${RELEASE_TAG}_webview.apk"
+          # WebView APKs (split by ABI)
+          for apk in android/app/build/outputs/apk/nightly/release/app-nightly-*-release.apk; do
+            arch=$(echo $apk | sed -n 's/.*app-nightly-\(.*\)-release.apk/\1/p')
+            cp "$apk" "GrooveLauncher_${RELEASE_TAG}_WebView_${arch}.apk"
+          done
           # GeckoView APKs (split by ABI)
           for apk in android/app/build/outputs/apk/nightlyGeckoView/release/app-nightlyGeckoView-*-release.apk; do
             arch=$(echo $apk | sed -n 's/.*app-nightlyGeckoView-\(.*\)-release.apk/\1/p')
-            cp "$apk" "GrooveLauncher_${RELEASE_TAG}_geckoview_${arch}.apk"
+            cp "$apk" "GrooveLauncher_${RELEASE_TAG}_GeckoView_${arch}.apk"
           done
 
       - name: Delete Previous Nightly Releases

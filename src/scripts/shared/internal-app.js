@@ -25,9 +25,7 @@ const setTheme = (theme) => {
   if (Object.values(grooveThemes).includes(theme)) {
     var applyTheme = 0;
     if (theme == 2) applyTheme = Number(window.parent.matchMedia("(prefers-color-scheme: light)").matches ? 1 : 0); else applyTheme = theme;
-    console.log("İNPUT", theme, "appliing", applyTheme)
     document.body.classList[applyTheme ? "add" : "remove"]("light-mode");
-    console.log("APPLYING THEME", applyTheme)
     document.body.classList.add("showBackground")
   } else {
     console.error("Invalid theme!");

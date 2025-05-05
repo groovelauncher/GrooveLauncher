@@ -446,8 +446,8 @@ function createContextMenu(ell) {
         contextMenuClose()
         document.querySelectorAll("div.app-tile-clone").forEach(e => e.remove())
         styleManagerInstance.removeStyle(ell.style_id)
+        refreshList()
         ell.remove()
-        refreshList(true)
         window.parent.GrooveBoard.backendMethods.refreshStyles()
     }
     const el = GrooveElements.wContextMenu(ell, entries);
@@ -706,6 +706,12 @@ function addIconPack() {
 const appBar = GrooveElements.wAppBar([
     {
         title: "Add", icon: "󰐕", size: "38px", action: addManually
+    },
+    {
+        title: "Add File", icon: "󰁦", size: "38px"
+    },
+    {
+        title: "Edit", icon: "󰲶"
     }
 ])
 const appBar2 = GrooveElements.wAppBar([

@@ -31,5 +31,26 @@ class BuildConfigMock {
     signed() {
         return buildConfig["signed"] || false
     }
+    isGeckoView() {
+        // For web mock, detect via query param or default to false
+        return window.location.search.includes('engine=geckoview') || false;
+    }
+    isWebView() {
+        // For web mock, detect via query param or default to true
+        return !this.isGeckoView();
+    }
+    isNightly() {
+        // For web mock, detect via query param or default to true
+        return window.location.search.includes('nightly=true') || true;
+    }
+    getAppVersion() {
+        // Try to get from buildConfig or fallback
+        return buildConfig["VERSION_NAME"] || "web-nightly";
+    }
+    getAppArchitecture() {
+        // For web mock, detect via query param or fallback
+        const match = window.location.search.match(/arch=([\w-]+)/);
+        return match ? match[1] : "x86_64";
+    }
 }
 export default BuildConfigMock;

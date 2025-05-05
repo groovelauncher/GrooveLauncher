@@ -446,8 +446,8 @@ function createContextMenu(ell) {
         contextMenuClose()
         document.querySelectorAll("div.app-tile-clone").forEach(e => e.remove())
         styleManagerInstance.removeStyle(ell.style_id)
+        refreshList()
         ell.remove()
-        refreshList(true)
         window.parent.GrooveBoard.backendMethods.refreshStyles()
     }
     const el = GrooveElements.wContextMenu(ell, entries);
@@ -487,7 +487,7 @@ function addListItemEventHandlers(el) {
         window.appMenuCreationFirstTimeout = setTimeout(() => {
             $("div.innerApp").addClass("app-menu-back-intro")
             const appMenu = createContextMenu(el)
-            const optionalTop = (e.target.offsetTop + scrollers.styles.y + 64 + 83 + 5)
+            const optionalTop = (e.target.offsetTop + scrollers.styles.y + 64 + 83 + 5 + 90)
             appMenu.style.top = ((optionalTop + 154 >= window.innerHeight - windowInsets().bottom) ? optionalTop - 64 - 0 : optionalTop) + "px"
             appMenu.style.setProperty("--pointerX", e.pageX /*- $("div.app-list-page").position().left*/ + "px")
             appMenu.classList.add("intro")
@@ -706,6 +706,12 @@ function addIconPack() {
 const appBar = GrooveElements.wAppBar([
     {
         title: "Add", icon: "󰐕", size: "38px", action: addManually
+    },
+    {
+        title: "Add File", icon: "󰁦", size: "38px"
+    },
+    {
+        title: "Edit", icon: "󰲶"
     }
 ])
 const appBar2 = GrooveElements.wAppBar([

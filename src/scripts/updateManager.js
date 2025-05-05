@@ -48,7 +48,7 @@ setTimeout(() => {
     }
 }, 1000);
 function checkUpdate(force = false) {
-    const isBeta = window.parent.Groove.getAppVersion().includes("beta") || window.parent.Groove.getAppVersion() == 'web-test'
+    const isBeta = window.parent.BuildConfig.getAppVersion().includes("beta") || window.parent.BuildConfig.getAppVersion() == 'web-test'
     return new Promise((resolve, reject) => {
         if (!force && localStorage.getItem(lastFetchedUpdate)) {
             if (isUpdateNew(JSON.parse(localStorage[lastFetchedUpdate]))) {
@@ -64,7 +64,7 @@ function checkUpdate(force = false) {
                     const availableReleases = releases.filter(release => (release.name.includes("beta") == isBeta))
                     if (availableReleases.length) {
                         const update = availableReleases[0]
-                        if (update.name == window.parent.Groove.getAppVersion()) {
+                        if (update.name == window.parent.BuildConfig.getAppVersion()) {
                             resolve(false)
                         } else {
                             if (isUpdateValid(update)) {
@@ -101,7 +101,25 @@ function dismissUpdate(update) {
     return false
 }
 function isUpdateNew(update) {
-    return update.name != window.parent.Groove.getAppVersion()
+    return update.name != window.parent.BuildConfig.getAppVersion()
+}
+function getBestApkAsset(update) {
+    if (!update || !update.assets || !update.assets.length) return null;
+    const isGecko = window.parent.BuildConfig.isGeckoView && window.parent.BuildConfig.isGeckoView();
+    const arch = window.parent.BuildConfig.getAppArchitecture ? window.parent.BuildConfig.getAppArchitecture() : "";
+    // APK name format: GrooveLauncher_${RELEASE_TAG}_${WebView or GeckoView}_${architecture}.apk
+    const engine = isGecko ? "GeckoView" : "WebView";
+    // Try to find exact match
+    let apk = update.assets.find(a => a.name && a.name.includes(engine) && a.name.includes(arch));
+    if (!apk) {
+        // Fallback: match engine only
+        apk = update.assets.find(a => a.name && a.name.includes(engine));
+    }
+    if (!apk) {
+        // Fallback: any APK
+        apk = update.assets.find(a => a.name && a.name.endsWith('.apk'));
+    }
+    return apk;
 }
 function showUpdateBanner(update) {
     if (!isUpdateValid(update)) return
@@ -122,15 +140,15 @@ function showUpdateBanner(update) {
     updateBanner.querySelector("button.update-read-more").addEventListener("flowClick", () => {
         if (localStorage.getItem(lastFetchedUpdate)) {
             const update = JSON.parse(localStorage.getItem(lastFetchedUpdate))
-            if (update.name == Groove.getAppVersion()) {
+            if (update.name == window.parent.BuildConfig.getAppVersion()) {
                 dismissUpdate(update)
             } else {
-                const updateUrl = update.assets.length == 1 ? update.assets[0].browser_download_url : update.html_url
+                const apkAsset = getBestApkAsset(update);
+                const updateUrl = apkAsset ? apkAsset.browser_download_url : update.html_url;
                 parent.GrooveBoard.alert(
                     window.i18n.t("settings.alerts.update_available.title"),
-                    update.assets.length == 1 ?
-                        //`A new version <strong>(${update.name})</strong> is available, sized at ${formatFileSize(update.assets[0].size)}. Would you like to download it?`
-                        window.i18n.t("settings.alerts.update_available.message", { version: update.name, size: formatFileSize(update.assets[0].size) })
+                    apkAsset && apkAsset.size ?
+                        window.i18n.t("settings.alerts.update_available.message", { version: update.name, size: formatFileSize(apkAsset.size) })
                         :
                         window.i18n.t("settings.alerts.update_available.message2", { version: update.name }),
                     [{

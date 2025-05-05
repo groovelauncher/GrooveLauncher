@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     public WebEvents webEvents;
     public GravyServer gravyServer;
     public GrooveWebView webView;
-    public GrooveGeckoView grooveView;
+    public GrooveGeckoView grooveView; // <-- keep this, but only use it if GeckoView is present
     public PackageManager packageManager;
     private Handler handler;
     private Runnable pauseRunnable;
@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     public IconPackManager iconPackManager;
     public String iconPack = "";
     public IconPack iconPackInstance;
+    public LogcatReader logcatReader;
 
     public class MyLocalServer extends NanoHTTPD {
 
@@ -163,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
             splashScreen.setKeepOnScreenCondition(() -> !isAppReady);
         }
 
-
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -175,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
         systemEvents = new SystemEvents(this);
 
         if (webEngine.equals("WebView")) {
-
             webView = new GrooveWebView(this);
             webView.setLayoutParams(new ConstraintLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.MATCH_PARENT,
@@ -186,13 +185,13 @@ public class MainActivity extends AppCompatActivity {
             webView.init(packageManager, this);
             // webView.setWebChromeClient(new ChromeClient());
             webEvents = webView.webEvents;
-        } else {
+        } else if (webEngine.equals("GeckoView")) {
             grooveView = new GrooveGeckoView(this);
             grooveView.setLayoutParams(new ConstraintLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.MATCH_PARENT,
                     ConstraintLayout.LayoutParams.MATCH_PARENT));
             ConstraintLayout mainLayout = findViewById(R.id.main);
-            mainLayout.addView(grooveView);
+            mainLayout.addView((android.view.View) grooveView);
         }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -247,6 +246,9 @@ public class MainActivity extends AppCompatActivity {
                 // Handle low memory situations if necessary
             }
         });
+
+        logcatReader = new LogcatReader();
+        logcatReader.start();
     }
 
     Handler activityDispatchEventTimeout;
@@ -333,6 +335,10 @@ public class MainActivity extends AppCompatActivity {
         if (myServer != null) {
             myServer.stop();
         }
+        if (logcatReader != null) {
+            logcatReader.stopReader();
+            logcatReader = null;
+        }
     }
 
     @Override
@@ -375,6 +381,71 @@ public class MainActivity extends AppCompatActivity {
         argument.put("url", url);
         if (webEngine.equals("WebView")) {
             webEvents.dispatchEvent(WebEvents.events.deepLink, argument);
+        }
+    }
+    public void LogToUI(String type, String message) {
+        if (webEngine.equals("WebView")) {
+            try {
+                JSONObject argument = new JSONObject();
+                argument.put("type", type);
+                argument.put("message", message);
+                webEvents.dispatchEvent(WebEvents.events.debugLog, argument);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class LogcatReader {
+        private Thread thread;
+        private volatile boolean running = false;
+        private Process process;
+        private final int MAX_LOGS = 200;
+        private final java.util.LinkedList<String> logBuffer = new java.util.LinkedList<>();
+
+        public java.util.List<String> getLastLogs() {
+            synchronized (logBuffer) {
+                return new java.util.ArrayList<>(logBuffer);
+            }
+        }
+
+        public void start() {
+            running = true;
+            thread = new Thread(() -> {
+                try {
+                    process = Runtime.getRuntime().exec("logcat");
+                    BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(process.getInputStream()));
+                    String line;
+                    while (running && (line = reader.readLine()) != null) {
+                        String type = "V"; // default to Verbose
+                        if (line.contains("/D")) type = "D";
+                        else if (line.contains("/I")) type = "I";
+                        else if (line.contains("/W")) type = "W";
+                        else if (line.contains("/E")) type = "E";
+                        else if (line.contains("/F")) type = "F";
+                        LogToUI(type, line);
+                        synchronized (logBuffer) {
+                            if (logBuffer.size() >= MAX_LOGS) logBuffer.removeFirst();
+                            logBuffer.add(type + ": " + line);
+                        }
+                    }
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (process != null) process.destroy();
+                }
+            });
+            thread.start();
+        }
+
+        public void stopReader() {
+            running = false;
+            if (process != null) process.destroy();
+            if (thread != null) {
+                try { thread.join(500); } catch (InterruptedException ignored) {}
+            }
         }
     }
 }

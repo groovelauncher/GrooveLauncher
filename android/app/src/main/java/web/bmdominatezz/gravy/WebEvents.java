@@ -22,7 +22,8 @@ public class WebEvents {
         deepLink,
         systemThemeChange,
         notificationPosted,
-        notificationRemoved
+        notificationRemoved,
+        debugLog
     }
 
     WebEvents(Context c, WebView w) {

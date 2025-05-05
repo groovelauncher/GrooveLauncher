@@ -1073,4 +1073,14 @@ public class WebInterface {
         mainActivity.iconPackInstance.setContext(mainActivity);
         mainActivity.iconPackInstance.load();
     }
+
+    @JavascriptInterface
+    public String getLastLogs() {
+        if (mainActivity.logcatReader != null) {
+            java.util.List<String> logs = mainActivity.logcatReader.getLastLogs();
+            org.json.JSONArray arr = new org.json.JSONArray(logs);
+            return arr.toString();
+        }
+        return "[]";
+    }
 }

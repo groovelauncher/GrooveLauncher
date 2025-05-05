@@ -107,7 +107,8 @@ const iconPackConverter = [
             "jp.kyocera.camera",
             "org.codeaurora.snapcam",
             "org.cyanogenmod.snap",
-            "org.lineageos.snap"
+            "org.lineageos.snap",
+            "jp.co.sony.mc.cameraapp2"
         ],
         "icon": "camera"
     },
@@ -387,7 +388,8 @@ const iconPackConverter = [
             "com.zui.gallery",
             "jp.kyocera.kyoceradrmgallery",
             "org.codeaurora.gallery",
-            "org.mokee.venus"
+            "org.mokee.venus",
+            "org.lineageos.glimpse"
         ],
         "icon": "photos"
     },
@@ -427,6 +429,7 @@ const iconPackConverter = [
             "com.sonyericsson.music",
             "net.oneplus.music",
             "org.lineageos.eleven",
+            "org.lineageos.twelve",
             "com.huawei.music"
         ],
         "icon": "music",
@@ -747,12 +750,12 @@ const iconPackConverter = [
         "icon": "thirdparty/chatgpt"
     },
     // OFFICE/MS APPS SUB-SECTION
-    
+
     // OFFICE
     {
         "apps": [
             "com.microsoft.office.officehubrow"
-            ],
+        ],
         "icon": "thirdparty/office",
         "accent": "#E93B01"
     },
@@ -760,7 +763,7 @@ const iconPackConverter = [
     {
         "apps": [
             "com.microsoft.office.onenote"
-            ],
+        ],
         "icon": "thirdparty/onenote",
         "accent": "#80397B"
     },
@@ -768,7 +771,7 @@ const iconPackConverter = [
     {
         "apps": [
             "com.microsoft.office.powerpoint"
-            ],
+        ],
         "icon": "thirdparty/powerpoint",
         "accent": "#CE4924"
     },
@@ -776,7 +779,7 @@ const iconPackConverter = [
     {
         "apps": [
             "com.microsoft.office.excel"
-            ],
+        ],
         "icon": "thirdparty/excel",
         "accent": "#217348"
     },
@@ -784,7 +787,7 @@ const iconPackConverter = [
     {
         "apps": [
             "com.microsoft.office.word"
-            ],
+        ],
         "icon": "thirdparty/word",
         "accent": "#2C5A98"
     },
@@ -792,7 +795,7 @@ const iconPackConverter = [
     {
         "apps": [
             "com.microsoft.skydrive"
-            ],
+        ],
         "icon": "thirdparty/onedrive",
         "accent": "#1048AF"
     },
@@ -801,18 +804,18 @@ const iconPackConverter = [
         "apps": [
             "com.microsoft.office.outlook",
             "com.microsoft.outlooklite"
-            ],
+        ],
         "icon": "thirdparty/outlook"
     },
     // TEAMS
     {
         "apps": [
             "com.microsoft.teams"
-            ],
+        ],
         "icon": "thirdparty/teams",
         "accent": "#3F4790"
     },
-    
+
     //DICT.CC
     {
         "apps": [
@@ -963,255 +966,33 @@ const iconPackConverter = [
     // DISCORD
     {
         "apps": [
-           "com.discord",
-           "com.aliucord"
+            "com.discord",
+            "com.aliucord"
         ],
         "icon": "thirdparty/discord"
     },
     // WHATSAPP
-    { 
-       "apps": [
-          "com.whatsapp"
-       ],
-      "icon": "thirdparty/whatsapp"
+    {
+        "apps": [
+            "com.whatsapp"
+        ],
+        "icon": "thirdparty/whatsapp"
     },
     // TIKTOK
     {
-       "apps": [
-          "com.ss.android.ugc.trill",
-          "com.zhiliaoapp.musically"
-       ],
-       "icon": "thirdparty/tiktok"
+        "apps": [
+            "com.ss.android.ugc.trill",
+            "com.zhiliaoapp.musically"
+        ],
+        "icon": "thirdparty/tiktok"
     },
     // TWITTER X
     {
-       "apps": [
-         "com.twitter.android"
-       ],
-       "icon": "thirdparty/twitter"
-    },
-    /* {
-         "apps": [
-             "com.android.stk"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.google.android.gm",
-             "com.samsung.android.email.provider"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.android.app.fm",
-             "com.sec.android.app.fm"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.google.android.apps.fitness",
-             "com.sec.android.app.shealth"
-         ],
-         "icon": "",
-         "accent": "rgb(210,71,38)"
-     },
-     {
-         "apps": [
-             "web.bmdominatezz.gravy"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.android.chrome"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.spotify.music"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.reddit.frontpage"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.google.android.googlequicksearchbox"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.valvesoftware.android.steam.community"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.pinterest"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.linkedin.android"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.facebook.katana"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.facebook.orca"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.chess"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "org.lichess.mobileapp"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.ebay.mobile"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "org.mozilla.firefox"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.google.android.apps.fitness"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.instagram.android"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "org.krita"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.netflix.mediaclient"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "app.revanced.android.youtube",
-             "com.google.android.youtube",
-             "app.rvx.android.youtube"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.google.android.apps.youtube.creator"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.google.android.apps.maps"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "org.torproject.torbrowser"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.google.android.apps.translate"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.samsung.android.app.tips"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.microsoft.teams"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.skype.raider"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.snapchat.android"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.microsoft.skydrive"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.microsoft.office.onenote"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.microsoft.office.outlook"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.microsoft.office.officehubrow"
-         ],
-         "icon": ""
-     },
-     {
-         "apps": [
-             "com.google.android.apps.docs"
-         ],
-         "icon": ""
-     }*/
+        "apps": [
+            "com.twitter.android"
+        ],
+        "icon": "thirdparty/twitter"
+    }
 ]
 window.iconPackDB = {}
 iconPackConverter.forEach(icon => {

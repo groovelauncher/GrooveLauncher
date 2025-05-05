@@ -94,10 +94,10 @@ document.querySelector("div.force-rtl-toggle-switch > div > .metro-toggle-switch
     e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
     localStorage.setItem("forceRTL", e.target.hasAttribute("checked"))
     if (localStorage.getItem("textDirection") == "rtl" || localStorage.getItem("forceRTL") == "true"){
-        GrooveBoard.backendMethods.setTextDirection("rtl");
+        window.parent.GrooveBoard.backendMethods.setTextDirection("rtl");
         window.parent.GrooveBoard.backendMethods.setTextDirection("rtl");
     }  else {
-        GrooveBoard.backendMethods.setTextDirection("ltr");
+        window.parent.GrooveBoard.backendMethods.setTextDirection("ltr");
         window.parent.GrooveBoard.backendMethods.setTextDirection("ltr");
     }
 

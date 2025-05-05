@@ -824,6 +824,17 @@ const backendMethods = {
     Groove.setUIScale(scale)
     if (!doNotSave) localStorage.setItem("UIScale", scale)
   },
+  setTextDirection: (direction, doNotSave = false) => {
+    if (direction == "ltr") {
+      document.body.classList.remove("rtl");
+    } else if (direction == "rtl") {
+      document.body.classList.add("rtl");
+    } else {
+      console.error("Invalid text direction!");
+      return;
+    }
+    if (!doNotSave) localStorage.setItem("textDirection", direction)
+  },
   packageManagerProvider: {
     set: (id, doNotSave = false) => {
       id = (id == 0 || id == 1 || id == 2) ? id : 0

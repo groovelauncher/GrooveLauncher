@@ -4,6 +4,7 @@ import "../flowTouch.js";
 import applyOverscroll from "../overscrollFramework.js";
 import fontStore from "../fontStore.js";
 import GrooveMock from "./../grooveMock.js";
+import { set } from "lodash";
 // Initialize mock environment if Groove isn't available
 const GrooveMockInstance = !window.Groove
 if (GrooveMockInstance) {
@@ -33,7 +34,6 @@ const setTheme = (theme) => {
     console.error("Invalid theme!");
   }
 };
-
 // Manages font selection (0-2) and loads custom fonts when needed
 const setFont = (font) => {
   font = Number(font)
@@ -77,6 +77,16 @@ function setAnimationDurationScale(scale) {
   document.body.style.setProperty("--animation-duration-scale", scale)
   document.querySelector("html").style.setProperty("--animation-duration-scale", scale)
 }
+const setTextDirection = (direction) => {
+  if (direction == "ltr") {
+    document.body.classList.remove("rtl");
+  } else if (direction == "rtl") {
+    document.body.classList.add("rtl");
+  } else {
+    console.error("Invalid text direction!");
+    return;
+  }
+}
 // Expose functions to window for external access
 window.setAccentColor = setAccentColor;
 window.setTheme = setTheme;
@@ -113,6 +123,8 @@ requestAnimationFrame(() => {
 const urlParams = new URLSearchParams(window.location.search);
 setAccentColor(localStorage["accentColor"] || grooveColors.violet);
 setTheme(localStorage["theme"] === undefined ? grooveThemes.dark : Number(localStorage["theme"]));
+setTextDirection(localStorage["textDirection"] || "ltr");
+if(localStorage.getItem("forceRTL") == "true") setTextDirection("rtl")
 // Event handlers for communicating with parent window
 const appViewEvents = {
   setAccentColor: (color) => {

@@ -74,7 +74,8 @@
       "shizuku": "Shizuku"
     },
     "double_tap_to_sleep": "Double tap to sleep",
-    "alternative_wallpaper": "Alternative wallpaper placing"
+    "alternative_wallpaper": "Alternative wallpaper placing",
+    "force_rtl": "Force RTL layout"
   },
   "alerts": {
     "reset": {

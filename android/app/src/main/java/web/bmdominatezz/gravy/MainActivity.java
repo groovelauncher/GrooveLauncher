@@ -385,13 +385,18 @@ public class MainActivity extends AppCompatActivity {
             webEvents.dispatchEvent(WebEvents.events.deepLink, argument);
         }
     }
+
     public void LogToUI(String type, String message) {
         if (webEngine.equals("WebView")) {
             try {
                 JSONObject argument = new JSONObject();
                 argument.put("type", type);
                 argument.put("message", message);
-                webEvents.dispatchEvent(WebEvents.events.debugLog, argument);
+
+                runOnUiThread(() -> {
+                    webEvents.dispatchEvent(WebEvents.events.debugLog, argument);
+                });
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -404,6 +409,9 @@ public class MainActivity extends AppCompatActivity {
         private Process process;
         private final int MAX_LOGS = 200;
         private final java.util.LinkedList<String> logBuffer = new java.util.LinkedList<>();
+        private final java.util.List<String> pendingLogs = new java.util.ArrayList<>();
+        private final Handler logHandler = new Handler();
+        private final int LOG_UPDATE_INTERVAL_MS = 500; // Throttle UI updates to every 500ms
 
         public java.util.List<String> getLastLogs() {
             synchronized (logBuffer) {
@@ -417,8 +425,10 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     process = Runtime.getRuntime().exec("logcat");
                     BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(process.getInputStream()));
+                            new InputStreamReader(process.getInputStream()));
                     String line;
+                    // Start periodic UI updater
+                    logHandler.post(logUpdateRunnable);
                     while (running && (line = reader.readLine()) != null) {
                         String type = "V"; // default to Verbose
                         if (line.contains("/D")) type = "D";
@@ -426,10 +436,12 @@ public class MainActivity extends AppCompatActivity {
                         else if (line.contains("/W")) type = "W";
                         else if (line.contains("/E")) type = "E";
                         else if (line.contains("/F")) type = "F";
-                        LogToUI(type, line);
                         synchronized (logBuffer) {
                             if (logBuffer.size() >= MAX_LOGS) logBuffer.removeFirst();
                             logBuffer.add(type + ": " + line);
+                        }
+                        synchronized (pendingLogs) {
+                            pendingLogs.add(type + ": " + line);
                         }
                     }
                     reader.close();
@@ -442,11 +454,41 @@ public class MainActivity extends AppCompatActivity {
             thread.start();
         }
 
+        private final Runnable logUpdateRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (!running) return;
+                java.util.List<String> logsToSend = new java.util.ArrayList<>();
+                synchronized (pendingLogs) {
+                    if (!pendingLogs.isEmpty()) {
+                        logsToSend.addAll(pendingLogs);
+                        pendingLogs.clear();
+                    }
+                }
+                if (!logsToSend.isEmpty()) {
+                    // Only send the last log line to UI to avoid flooding
+                    String lastLog = logsToSend.get(logsToSend.size() - 1);
+                    String type = "V";
+                    if (lastLog.contains(": ")) {
+                        int idx = lastLog.indexOf(": ");
+                        type = lastLog.substring(0, idx);
+                        lastLog = lastLog.substring(idx + 2);
+                    }
+                    LogToUI(type, lastLog);
+                }
+                logHandler.postDelayed(this, LOG_UPDATE_INTERVAL_MS);
+            }
+        };
+
         public void stopReader() {
             running = false;
+            logHandler.removeCallbacks(logUpdateRunnable);
             if (process != null) process.destroy();
             if (thread != null) {
-                try { thread.join(500); } catch (InterruptedException ignored) {}
+                try {
+                    thread.join(500);
+                } catch (InterruptedException ignored) {
+                }
             }
         }
     }

@@ -135,8 +135,16 @@
       }
     }
     div.settings-page,
-    h1.app-title {
+    h1.app-title,
+    div.settings-page-2 {
       direction: rtl;
+    }
+    #wallpaper-group {
+      padding-right: 170px;
+      padding-left: 0px;
+      #wallpaper-thumbnail {
+        right: 0px;
+      }
     }
   }
 }

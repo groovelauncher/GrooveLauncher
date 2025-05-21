@@ -89,7 +89,7 @@ function alert(title = "Alert!", message = "Message", actions = [{ title: "" }])
       }
     }
   });
-  function closeW(params) {
+  function closeW() {
     if ($("div.groove-element.groove-element-alert").length == 1) {
       var layer = $("div.groove-element-alert-layer").addClass("taken")
       layer.addClass("exit")
@@ -102,10 +102,13 @@ function alert(title = "Alert!", message = "Message", actions = [{ title: "" }])
       alertmenu.remove()
     }, 200);
   }
-  alertmenu.click(function (e) {
-    if (e.target == this) closeW()
-  })
-  alertmenu.children("button").click(closeW)
+  alertmenu.on("click", function (e) {
+    // Only close if the click is directly on the alert background, not on a button or its descendants
+    if (e.target.classList.contains("groove-element-alert-action")) {
+      closeW();
+    }
+  });
+  alertmenu.children("button").on("click", closeW);
   return alertmenu[0]
 }
 const boardMethods = {

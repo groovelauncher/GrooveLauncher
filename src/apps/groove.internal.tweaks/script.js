@@ -686,10 +686,40 @@ function writeManually() {
         flyout.querySelector("textarea.manual-css-input").focus();
     }, 200);
 
-    // Cancel button
-    flyout.querySelector(".install-flyout-cancel").addEventListener("click", () => {
+    // Helper to close flyout
+    function closeFlyout() {
         flyout.classList.add("hidden");
         setTimeout(() => flyout.remove(), 400);
+        window.parent.GrooveBoard.backendMethods.navigation.invalidate("manualWriteFlyout");
+        window.removeEventListener("popstate", onBack);
+    }
+
+    // Cancel button
+    flyout.querySelector(".install-flyout-cancel").addEventListener("click", () => {
+        const cssText = flyout.querySelector("textarea.manual-css-input").value.trim();
+        if (cssText) {
+            parent.GrooveBoard.alert(
+                "Discard Edits?",
+                "You have unsaved changes. Discard them?",
+                [
+                    {
+                        title: "Discard", style: "destructive", action: () => closeFlyout()
+                    },
+                    { title: "Cancel", style: "default", action: () => {
+                        // Add back to GrooveBoard navigation history
+                        if (window.parent.GrooveBoard?.backendMethods?.navigation?.push) {
+                            window.parent.GrooveBoard.backendMethods.navigation.push(
+                                "manualWriteFlyout",
+                                () => {},
+                                () => { onBack(); }
+                            );
+                        }
+                    } }
+                ]
+            );
+        } else {
+            closeFlyout();
+        }
     });
 
     // Apply button
@@ -702,7 +732,7 @@ function writeManually() {
         e.target.innerText = "Installing...";
         try {
             styleManagerInstance.installStyle(cssText);
-            flyout.remove();
+            closeFlyout();
             parent.GrooveBoard.alert("Style Installed", "The style has been installed successfully.", [{
                 title: "OK", style: "default", action: () => {
                     refreshList();
@@ -716,6 +746,49 @@ function writeManually() {
         }
     });
 
+    // Back button support
+    function onBack() {
+        const cssText = flyout.querySelector("textarea.manual-css-input").value.trim();
+        if (cssText) {
+            parent.GrooveBoard.alert(
+                "Discard Edits?",
+                "You have unsaved changes. Discard them?",
+                [
+                    {
+                        title: "Discard", style: "destructive", action: () => {
+                            closeFlyout();
+                            history.back();
+                        }
+                    },
+                    { title: "Cancel", style: "default", action: () => {
+                        // push state again to keep flyout open and add back to GrooveBoard navigation history
+                        history.pushState({}, "");
+                        if (window.parent.GrooveBoard?.backendMethods?.navigation?.push) {
+                            window.parent.GrooveBoard.backendMethods.navigation.push(
+                                "manualWriteFlyout",
+                                () => {},
+                                () => { onBack(); }
+                            );
+                        }
+                    } }
+                ]
+            );
+        } else {
+            closeFlyout();
+            history.back();
+        }
+    }
+
+    // Register with GrooveBoard navigation stack if available
+    if (window.parent.GrooveBoard?.backendMethods?.navigation?.push) {
+        window.parent.GrooveBoard.backendMethods.navigation.push(
+            "manualWriteFlyout",
+            () => {},
+            () => {
+                onBack();
+            }
+        );
+    }
 }
 function addFile(){
     // Open a file selector for .css files

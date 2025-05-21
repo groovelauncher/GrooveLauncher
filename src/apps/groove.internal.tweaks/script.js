@@ -574,9 +574,12 @@ function addManually() {
                     fetch(url)
                         .then(response => response.text())
                         .then(cssText => {
-
-                            console.log("css", cssText)
-
+                            //check if response code is successful
+                            if (!response.ok) {
+                                //show a different error about network problem
+                                parent.GrooveBoard.alert("Error", "An error occurred while loading the CSS file. Please check the URL and try again.", [{ title: "OK", style: "default", action: () => { } }])
+                                return;
+                            }
 
                             // Regular expressions to extract metadata
                             const titleMatch = cssText.match(/\/\* title: (.*?) \*\//);

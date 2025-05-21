@@ -234,6 +234,7 @@ startUpSequence([
         if (!!localStorage.getItem("rotationLock")) Groove.setDisplayOrientationLock(localStorage.getItem("rotationLock"))
         if (localStorage.getItem("hapticFeedback") == "false") Groove.triggerHapticFeedback("DISABLED")
         if (localStorage.getItem("iconPack")) Groove.applyIconPack(localStorage.getItem("iconPack"))
+        if (localStorage.getItem("textDirection") == "rtl" || localStorage.getItem("forceRTL") == "true") GrooveBoard.backendMethods.setTextDirection("rtl", true);
         //if (!!localStorage.getItem("packageManagerProvider")) GrooveBoard.backendMethods.packageManagerProvider.set(Number(localStorage.getItem("packageManagerProvider")), true)
         next()
     },

@@ -64,6 +64,21 @@ div.tile-list-page {
         transition: .75s cubic-bezier(0.075, 0.82, 0.165, 1), --shake-distance 1s !important;
         transform: translateZ(-50px) !important;
 
+        div.live-tile-container {
+            display: none !important;
+        }
+
+        div.groove-home-tile {
+            div.groove-home-inner-tile {
+
+                img.groove-home-tile-imageicon[src] {
+                    display: block !important;
+                }
+            }
+        }
+
+
+
         // opacity: .5;
         div.groove-home-tile.home-menu-selected {
             transition: all .25s cubic-bezier(.43, 1.5, .5, 1), left .1s, top .1s, width .1s, height .1s, scale .25s cubic-bezier(.43, 2, .5, 1) !important;

@@ -101,7 +101,6 @@ function onItemClick(el) {
                 item.querySelector(".download-container").style.display = "block"
                 button.classList.remove("loading")
                 button.style.display = "none"
-
                 i18n.setLocale(locale.languageId, (progress) => {
                     switch (progress.status) {
                         case 'downloading':

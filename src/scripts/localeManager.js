@@ -506,6 +506,10 @@ class LocaleManager {
     window._i18n.currentLocale = locale;
     if (window.parent != window) window.parent._i18n.currentLocale = locale;
 
+    // Set RTL if needed
+    let isRTL = i18n.isRTL(locale);
+    window.parent.GrooveBoard?.backendMethods?.setTextDirection(isRTL ? "rtl" : "ltr");
+
 
     localStorage.setItem('language', locale);
     await this.init();
@@ -528,6 +532,14 @@ class LocaleManager {
 
   getLocale() {
     return window._i18n.currentLocale;
+  }
+  isRTL(locale) {
+    try {
+      const loc = new Intl.Locale(locale);
+      return loc.textInfo?.direction === 'rtl';
+    } catch (e) {
+      return false; // Fallback for invalid or unsupported locale
+    }
   }
 }
 

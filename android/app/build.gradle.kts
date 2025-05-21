@@ -84,7 +84,7 @@ android {
         create("debugFlavorGeckoView") {
             dimension = "default"
             applicationId = "web.bmdominatezz.gravy.debug.geckoview"
-            resValue("string", "app_name", "Groove Debug GeckoView")
+            //resValue("string", "app_name", "Groove Debug GeckoView")
             manifestPlaceholders["appIcon"] = "@mipmap/icon_nightly"
             manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_nightly_round"
             versionName = "$commitHash-debug-geckoview"

@@ -90,6 +90,18 @@ document.querySelector("div.alternative-wallpaper-toggle-switch > div > .metro-t
     localStorage.setItem("alternativeWallpaper", e.target.hasAttribute("checked"))
     window.parent.GrooveBoard.backendMethods.wallpaper.alternative()
 })
+document.querySelector("div.force-rtl-toggle-switch > div > .metro-toggle-switch").addEventListener("checked", (e) => {
+    e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
+    localStorage.setItem("forceRTL", e.target.hasAttribute("checked"))
+    if (localStorage.getItem("textDirection") == "rtl" || localStorage.getItem("forceRTL") == "true"){
+        window.parent.GrooveBoard.backendMethods.setTextDirection("rtl");
+        window.parent.GrooveBoard.backendMethods.setTextDirection("rtl");
+    }  else {
+        window.parent.GrooveBoard.backendMethods.setTextDirection("ltr");
+        window.parent.GrooveBoard.backendMethods.setTextDirection("ltr");
+    }
+
+})
 
 if (localStorage["doubleTapSleep"] == "true") {
     document.querySelector("div.double-tap-sleep-toggle-switch > p").innerText = i18n.t("common.actions.on")
@@ -98,4 +110,8 @@ if (localStorage["doubleTapSleep"] == "true") {
 if (localStorage["alternativeWallpaper"] == "true") {
     document.querySelector("div.alternative-wallpaper-toggle-switch > p").innerText = i18n.t("common.actions.on")
     document.querySelector("div.alternative-wallpaper-toggle-switch > div > .metro-toggle-switch").setAttribute("checked", "")
+}
+if (localStorage["forceRTL"] == "true") {
+    document.querySelector("div.force-rtl-toggle-switch > p").innerText = i18n.t("common.actions.on")
+    document.querySelector("div.force-rtl-toggle-switch > div > .metro-toggle-switch").setAttribute("checked", "")
 }

@@ -572,8 +572,8 @@ function addManually() {
                 const url = alertView.querySelector("input.enter-style-url").value
                 if (url.endsWith(".css")) {
                     fetch(url)
-                        .then(response => response.text())
-                        .then(cssText => {
+                        .then(response => response.text().then(cssText => ({ cssText, response })))
+                        .then(({ cssText, response }) => {
                             //check if response code is successful
                             if (!response.ok) {
                                 //show a different error about network problem
@@ -663,6 +663,143 @@ function addManually() {
     console.log("alertView", alertView)
 
 }
+function writeManually() {
+    // Create a flyout for manual CSS entry with fullscreen textarea and Apply/Cancel buttons
+    const flyout = document.createElement("div");
+    flyout.classList.add("install-flyout", "manual-write-flyout");
+    flyout.innerHTML = `
+        <div class="install-flyout-inner" style="height: 100vh; display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="flex:1; display:flex; flex-direction:column;">
+                <p class="install-flyout-title" style="font-size: 1.3em; margin-bottom: 12px;">Write or Paste CSS</p>
+                <textarea class="manual-css-input" style="flex:1; width:100%; min-height:300px; resize:vertical; font-family:monospace; font-size:1em; border-radius:8px; border:1px solid #ccc; padding:12px;" placeholder="Paste your CSS here..."></textarea>
+            </div>
+            <div style="display:flex; gap:12px; margin-top:24px;">
+                <button class="install-flyout-cancel metro-button" style="flex:1;">Cancel</button>
+                <button class="install-flyout-install metro-button" style="flex:1;">Apply</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(flyout);
+
+    // Focus textarea
+    setTimeout(() => {
+        flyout.querySelector("textarea.manual-css-input").focus();
+    }, 200);
+
+    // Cancel button
+    flyout.querySelector(".install-flyout-cancel").addEventListener("click", () => {
+        flyout.classList.add("hidden");
+        setTimeout(() => flyout.remove(), 400);
+    });
+
+    // Apply button
+    flyout.querySelector(".install-flyout-install").addEventListener("click", async (e) => {
+        const cssText = flyout.querySelector("textarea.manual-css-input").value.trim();
+        if (!cssText) {
+            parent.GrooveBoard.alert("Error", "Please enter some CSS.", [{ title: "OK", style: "default", action: () => { } }]);
+            return;
+        }
+        e.target.innerText = "Installing...";
+        try {
+            styleManagerInstance.installStyle(cssText);
+            flyout.remove();
+            parent.GrooveBoard.alert("Style Installed", "The style has been installed successfully.", [{
+                title: "OK", style: "default", action: () => {
+                    refreshList();
+                    window.parent.GrooveBoard.backendMethods.refreshStyles();
+                }
+            }]);
+            refreshList();
+            window.parent.GrooveBoard.backendMethods.refreshStyles();
+        } catch (error) {
+            parent.GrooveBoard.alert("Error", "An error occurred while installing the style. Please try again later.", [{ title: "OK", style: "default", action: () => { } }]);
+        }
+    });
+
+}
+function addFile(){
+    // Open a file selector for .css files
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.css,text/css';
+    input.style.display = 'none';
+    document.body.appendChild(input);
+
+    input.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        if (!file) {
+            input.remove();
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const cssText = e.target.result;
+            // Try to extract metadata
+            const titleMatch = cssText.match(/\/\* title: (.*?) \*\//);
+            const authorMatch = cssText.match(/\/\* author: (.*?) \*\//);
+            const iconMatch = cssText.match(/\/\* icon: (.*?) \*\//);
+            const descriptionMatch = cssText.match(/\/\* description: (.*?) \*\//);
+
+            let metadata = {
+                title: titleMatch ? titleMatch[1] : 'No title',
+                author: authorMatch ? authorMatch[1] : 'No author',
+                icon: iconMatch ? iconMatch[1] : 'No icon',
+                description: descriptionMatch ? descriptionMatch[1] : 'No description',
+            };
+            const flyout = document.createElement("div");
+            flyout.classList.add("install-flyout");
+            const author = metadata.author.match(/\[(.*?)\]\((.*?)\)/);
+            const authorHTML = author ? author[1] : metadata.author;
+
+            flyout.innerHTML = `
+                <div class="install-flyout-inner">
+                <img class="install-flyout-icon" src="${metadata.icon}">
+                <p class="install-flyout-title">${metadata.title}</p>
+                <p class="install-flyout-author">${authorHTML}</p>
+                <p class="install-flyout-description">${metadata.description}</p>
+                <button class="install-flyout-install">Install</button>
+                </div>
+            `;
+            if (author) {
+                flyout.querySelector("p.install-flyout-author").addEventListener("click", () => {
+                    parent.GrooveBoard.alert("External Link Warning", "This link opens up an external website. Proceed with caution.", [{
+                        title: "Proceed", style: "default", action: () => {
+                            Groove.openURL(author[2])
+                        }
+                    }, { title: "Cancel", style: "default", action: () => { } }])
+                })
+            }
+            window.parent.GrooveBoard.backendMethods.navigation.push("appMenuOpened", () => { }, () => {
+                flyout.classList.add("hidden")
+                setTimeout(() => {
+                    flyout.remove()
+                }, 500);
+            })
+            flyout.querySelector("button.install-flyout-install").addEventListener("click", async (e) => {
+                e.target.innerText = "Installing..."
+                try {
+                    styleManagerInstance.installStyle(cssText)
+                    flyout.remove()
+                    parent.GrooveBoard.alert("Style Installed", "The style has been installed successfully.", [{
+                        title: "OK", style: "default", action: () => {
+                            refreshList();
+                            window.parent.GrooveBoard.backendMethods.refreshStyles();
+                        }
+                    }])
+                    refreshList()
+                    window.parent.GrooveBoard.backendMethods.refreshStyles()
+                } catch (error) {
+                    parent.GrooveBoard.alert("Error", "An error occurred while installing the style. Please try again later.", [{ title: "OK", style: "default", action: () => { } }])
+                }
+            });
+            document.body.appendChild(flyout);
+            input.remove();
+        };
+        reader.readAsText(file);
+    });
+
+    input.click();
+}
 const iconPackPicker = document.getElementById("icon-pack-picker")
 
 function addIconPack() {
@@ -711,10 +848,10 @@ const appBar = GrooveElements.wAppBar([
         title: "Add", icon: "󰐕", size: "38px", action: addManually
     },
     {
-        title: "Add File", icon: "󰁦", size: "38px"
+        title: "Add File", icon: "󰁦", size: "38px", action: addFile
     },
     {
-        title: "Edit", icon: "󰲶"
+        title: "Edit", icon: "󰲶", action: writeManually
     }
 ])
 const appBar2 = GrooveElements.wAppBar([

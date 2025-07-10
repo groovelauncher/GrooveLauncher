@@ -550,7 +550,8 @@ const iconPackConverter = [
             "com.vivo.weather",
             "com.yahoo.mobile.client.android.weather",
             "de.beowulf.wetter",
-            "net.oneplus.weather"
+            "net.oneplus.weather",
+            "com.metro.weather"
         ],
         "icon": "weather"
     },

@@ -31,7 +31,8 @@ const iconPackConverter = [
             "com.zui.calculator",
             "my.android.calc",
             "org.mmin.handycalc",
-            "com.huawei.calculator"
+            "com.huawei.calculator",
+            "org.fossify.math"
         ],
         "icon": "calculator"
     },
@@ -206,6 +207,7 @@ const iconPackConverter = [
             "com.sec.android.app.samsungapps",
             "com.xiaomi.market",
             "com.huawei.appmarket",
+            "org.fdroid.fdroid",
             "groove.internal.store"
         ],
         "icon": "store"
@@ -246,7 +248,8 @@ const iconPackConverter = [
             "com.yulong.android.calendar",
             "org.lineageos.etar",
             "ws.xsoh.etar",
-            "com.huawei.calendar"
+            "com.huawei.calendar",
+            "org.fossify.calendar"
         ],
         "icon": "calendar"
     },
@@ -344,7 +347,8 @@ const iconPackConverter = [
             "org.openintents.cmfilemanager",
             "org.openintents.filemanager",
             "xcxin.filexpert",
-            "zte.com.cn.filer"
+            "zte.com.cn.filer",
+            "ru.zdevs.zarchiver"
         ],
         "icon": "files"
     },
@@ -389,7 +393,9 @@ const iconPackConverter = [
             "jp.kyocera.kyoceradrmgallery",
             "org.codeaurora.gallery",
             "org.mokee.venus",
-            "org.lineageos.glimpse"
+            "org.lineageos.glimpse",
+            "app.alextran.immich",
+            "org.fossify.gallery"
         ],
         "icon": "photos"
     },
@@ -551,7 +557,8 @@ const iconPackConverter = [
             "com.yahoo.mobile.client.android.weather",
             "de.beowulf.wetter",
             "net.oneplus.weather",
-            "com.metro.weather"
+            "com.metro.weather",
+            "org.breezyweather"
         ],
         "icon": "weather"
     },
@@ -572,7 +579,8 @@ const iconPackConverter = [
             "com.samsung.android.email.ui",
             "com.sonymobile.email",
             "com.tct.email",
-            "com.vivo.email"
+            "com.vivo.email",
+            "net.thunderbird.android"
         ],
         "icon": "mail"
     },
@@ -713,7 +721,8 @@ const iconPackConverter = [
             "com.sonymobile.notes",
             "com.asus.quickmemo",
             "com.lenovo.ideanotepad",
-            "com.gh.metro.notes"
+            "com.gh.metro.notes",
+            "it.niedermann.owncloud.notes"
         ],
         "icon": "notes"
     },

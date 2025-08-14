@@ -113,7 +113,11 @@ public class GeckoContentDelegate implements GeckoSession.ContentDelegate {
             "  console.log('GrooveBoard not yet available, interfaces injected for when it loads.');" +
             "}";
 
-        session.evaluateJS(jsCode);
+        session.evaluateJS(jsCode).accept(result -> {
+            Log.d(TAG, "JavaScript injection completed");
+        }, exception -> {
+            Log.e(TAG, "JavaScript injection failed", exception);
+        });
     }
 
     @Override

@@ -786,7 +786,7 @@ const backendMethods = {
       document.body.classList[applyTheme ? "add" : "remove"]("light-mode");
       if (window.Groove) Groove.setNavigationBarAppearance(applyTheme ? "dark" : "light");
       if (window.Groove) Groove.setStatusBarAppearance(applyTheme ? "dark" : "light");
-      document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setTheme(e, theme))
+      document.querySelectorAll("iframe.groove-app-view").forEach(e => appViewEvents.setTheme(e, applyTheme))
       if (!doNotSave) {
         localStorage.setItem("theme", theme)
         setTimeout(() => {

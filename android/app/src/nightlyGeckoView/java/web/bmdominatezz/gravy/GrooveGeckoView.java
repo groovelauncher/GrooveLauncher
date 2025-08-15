@@ -20,6 +20,7 @@ public class GrooveGeckoView extends GeckoView {
     private GeckoSession session;
     private MainActivity mainActivity;
     private PackageManager packageManager;
+    private AssetServer assetServer;
     public List<ResolveInfo> retrievedApps;
 
     public GrooveGeckoView(Context context) {
@@ -56,9 +57,14 @@ public class GrooveGeckoView extends GeckoView {
             setSession(session);
             Log.d(TAG, "GeckoSession opened and set to view");
             
-            // Load the web content
-            Log.d(TAG, "Loading URL: https://appassets.androidplatform.net/assets/index.html");
-            session.loadUri("https://appassets.androidplatform.net/assets/index.html");
+            // Start HTTP server for assets
+            assetServer = new AssetServer(context, 8080);
+            assetServer.startServer();
+            
+            // Load the web content from HTTP server
+            String serverUrl = assetServer.getServerUrl();
+            Log.d(TAG, "Loading URL: " + serverUrl);
+            session.loadUri(serverUrl);
             
             // Retrieve apps like WebView does
             retrieveApps();
@@ -80,6 +86,9 @@ public class GrooveGeckoView extends GeckoView {
     public void cleanup() {
         Log.d(TAG, "Cleaning up GeckoView resources...");
         try {
+            if (assetServer != null) {
+                assetServer.stopServer();
+            }
             if (session != null) {
                 Log.d(TAG, "Closing GeckoSession");
                 session.close();

@@ -2,7 +2,6 @@ package web.bmdominatezz.gravy;
 
 import android.util.Log;
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoResult;
 
 /**
  * Content delegate for GeckoView to handle page loading and JavaScript interface
@@ -113,11 +112,9 @@ public class GeckoContentDelegate implements GeckoSession.ContentDelegate {
             "  console.log('GrooveBoard not yet available, interfaces injected for when it loads.');" +
             "}";
 
-        session.evaluateJS(jsCode).accept(result -> {
-            Log.d(TAG, "JavaScript injection completed");
-        }, exception -> {
-            Log.e(TAG, "JavaScript injection failed", exception);
-        });
+        // Use loadUri with javascript: prefix as recommended for GeckoView
+        session.loadUri("javascript:" + jsCode);
+        Log.d(TAG, "JavaScript injection completed via loadUri");
     }
 
     @Override

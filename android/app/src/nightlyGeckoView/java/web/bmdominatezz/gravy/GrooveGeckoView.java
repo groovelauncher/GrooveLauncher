@@ -7,6 +7,7 @@ import android.content.pm.ResolveInfo;
 import android.util.Log;
 
 import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.geckoview.GeckoRuntimeSettings;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoView;
 import org.mozilla.geckoview.WebExtension;
@@ -35,9 +36,14 @@ public class GrooveGeckoView extends GeckoView {
         try {
             Log.d(TAG, "Initializing GeckoView...");
             
-            // Initialize GeckoRuntime
-            runtime = GeckoRuntime.create(context);
-            Log.d(TAG, "GeckoRuntime created successfully");
+            // Initialize GeckoRuntime with debugging enabled
+            GeckoRuntimeSettings.Builder runtimeSettingsBuilder = new GeckoRuntimeSettings.Builder();
+            runtimeSettingsBuilder.remoteDebuggingEnabled(true);
+            runtimeSettingsBuilder.consoleOutput(true);
+            runtimeSettingsBuilder.debugLogging(true);
+            
+            runtime = GeckoRuntime.create(context, runtimeSettingsBuilder.build());
+            Log.d(TAG, "GeckoRuntime created successfully with debugging enabled");
             
             // Create and configure GeckoSession
             session = new GeckoSession();

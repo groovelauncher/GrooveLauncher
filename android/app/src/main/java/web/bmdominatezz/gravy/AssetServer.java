@@ -6,6 +6,8 @@ import android.util.Log;
 
 import fi.iki.elonen.NanoHTTPD;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -35,6 +37,11 @@ public class AssetServer extends NanoHTTPD {
             uri = "index.html";
         }
 
+        // Handle special paths for android directory files
+        if (uri.startsWith("android/")) {
+            return serveAndroidFile(uri);
+        }
+
         try {
             InputStream inputStream = assetManager.open(uri);
             String mimeType = getMimeType(uri);
@@ -44,6 +51,41 @@ public class AssetServer extends NanoHTTPD {
         } catch (IOException e) {
             Log.e(TAG, "Asset not found: " + uri, e);
             return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "Asset not found: " + uri);
+        }
+    }
+
+    private Response serveAndroidFile(String uri) {
+        try {
+            // Special handling for gradle.local.properties - return empty content if not found
+            if (uri.equals("android/gradle.local.properties")) {
+                Log.d(TAG, "Serving empty gradle.local.properties");
+                return newFixedLengthResponse(Response.Status.OK, "text/plain", "");
+            }
+            
+            // Get the app's data directory and navigate to the project root
+            File appDir = context.getFilesDir();
+            // Navigate up to find the project root (this might need adjustment based on your setup)
+            File projectRoot = appDir.getParentFile().getParentFile().getParentFile().getParentFile();
+            
+            // Remove "android/" prefix and construct the file path
+            String relativePath = uri.substring(8); // Remove "android/" prefix
+            File targetFile = new File(projectRoot, "android/" + relativePath);
+            
+            Log.d(TAG, "Attempting to serve android file: " + targetFile.getAbsolutePath());
+            
+            if (targetFile.exists() && targetFile.isFile()) {
+                InputStream inputStream = new FileInputStream(targetFile);
+                String mimeType = getMimeType(uri);
+                
+                Log.d(TAG, "Successfully serving android file: " + uri + " with mime type: " + mimeType);
+                return newChunkedResponse(Response.Status.OK, mimeType, inputStream);
+            } else {
+                Log.e(TAG, "Android file not found: " + targetFile.getAbsolutePath());
+                return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "Android file not found: " + uri);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Error serving android file: " + uri, e);
+            return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, "text/plain", "Error serving android file: " + uri);
         }
     }
 
@@ -64,6 +106,8 @@ public class AssetServer extends NanoHTTPD {
             return "image/webp";
         } else if (uri.endsWith(".json")) {
             return "application/json";
+        } else if (uri.endsWith(".properties")) {
+            return "text/plain";
         } else if (uri.endsWith(".woff") || uri.endsWith(".woff2")) {
             return "font/woff";
         } else if (uri.endsWith(".ttf")) {

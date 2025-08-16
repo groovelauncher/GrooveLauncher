@@ -147,3 +147,6 @@ finalize.js
 version.json
 
 pagespublic
+
+# Javac temporary files
+javac.*.args

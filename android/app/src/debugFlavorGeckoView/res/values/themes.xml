@@ -1,4 +1,3 @@
-<!-- filepath: /Volumes/SSD_Documents/LocalProjects(Mac)/GrooveLauncher/android/app/src/main/res/values/themes.xml -->
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.GrooveLauncher" parent="Theme.AppCompat.DayNight.NoActionBar">
@@ -19,6 +18,5 @@
         <item name="postSplashScreenTheme">@style/Theme.GrooveLauncher</item>
         <item name="android:navigationBarColor">#00000000</item>
         <item name="android:statusBarColor">#00000000</item>
-
     </style>
 </resources>

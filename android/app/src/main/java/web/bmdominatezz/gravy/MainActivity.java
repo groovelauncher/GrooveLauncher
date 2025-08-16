@@ -194,6 +194,9 @@ public class MainActivity extends AppCompatActivity {
                     ConstraintLayout.LayoutParams.MATCH_PARENT));
             ConstraintLayout mainLayout = findViewById(R.id.main);
             mainLayout.addView((android.view.View) grooveView);
+            
+            // Initialize GeckoView similar to WebView
+            grooveView.init(packageManager, this);
         }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -340,6 +343,9 @@ public class MainActivity extends AppCompatActivity {
         if (logcatReader != null) {
             logcatReader.stopReader();
             logcatReader = null;
+        }
+        if (webEngine.equals("GeckoView") && grooveView != null) {
+            grooveView.cleanup();
         }
     }
 

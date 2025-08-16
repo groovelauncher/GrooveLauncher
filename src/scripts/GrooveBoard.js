@@ -1215,17 +1215,29 @@ const backendMethods = {
     if (!tileElement || !packageName) return;
     
     const prefs = backendMethods.getEffectiveTilePreferences(packageName);
-    const iconElement = tileElement.querySelector('.groove-app-tile-imageicon');
-    const titleElement = tileElement.querySelector('.groove-app-tile-title');
+    
+    // Determine if this is a home tile or app tile
+    const isHomeTile = tileElement.classList.contains('groove-home-tile');
+    const isAppTile = tileElement.classList.contains('groove-app-tile');
+    
+    let iconElement, titleElement, backgroundTarget;
+    
+    if (isHomeTile) {
+      iconElement = tileElement.querySelector('.groove-home-tile-imageicon');
+      titleElement = tileElement.querySelector('.groove-home-tile-title');
+      backgroundTarget = tileElement.querySelector('.groove-home-inner-tile'); // Apply background to inner tile
+    } else if (isAppTile) {
+      iconElement = tileElement.querySelector('.groove-app-tile-imageicon');
+      titleElement = tileElement.querySelector('.groove-app-tile-title');
+      backgroundTarget = iconElement; // For app tiles, apply background to icon element
+    }
     
     // Apply background preference
-    if (prefs.background === 'accent') {
-      if (iconElement) {
-        iconElement.style.backgroundColor = 'var(--metro-accent)';
-      }
-    } else {
-      if (iconElement) {
-        iconElement.style.backgroundColor = '';
+    if (backgroundTarget) {
+      if (prefs.background === 'accent') {
+        backgroundTarget.style.backgroundColor = 'var(--metro-accent)';
+      } else {
+        backgroundTarget.style.backgroundColor = '';
       }
     }
     

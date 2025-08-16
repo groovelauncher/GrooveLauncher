@@ -185,8 +185,11 @@ document.querySelector("#app-list-show-toggle-switch").addEventListener("checked
 
 // Per-app tile preferences functionality
 function setupPerAppTilePreferences(appdetail) {
+    console.log("Setting up per-app tile preferences for:", appdetail.packageName);
+    
     // Get current per-app tile preferences
     const tilePrefs = getAppTilePreferences(appdetail.packageName);
+    console.log("Loaded tile preferences:", tilePrefs);
     
     // Setup icon dropdown
     setupIconDropdown(appdetail, tilePrefs);
@@ -201,6 +204,8 @@ function setupPerAppTilePreferences(appdetail) {
 function setupIconDropdown(appdetail, tilePrefs) {
     const iconGroup = document.querySelector("#app-preference-icon");
     const iconDropdown = iconGroup.querySelector("div.metro-dropdown-menu");
+    
+    console.log("Setting up icon dropdown for:", appdetail.packageName, "current pref:", tilePrefs.icon);
     
     // Clear existing options
     iconDropdown.innerHTML = "";
@@ -247,10 +252,12 @@ function setupIconDropdown(appdetail, tilePrefs) {
         }
     });
     iconDropdown.setAttribute("selected", selectedIndex);
+    console.log("Set icon dropdown to index:", selectedIndex, "value:", tilePrefs.icon);
     
     // Add event listener
     iconDropdown.addEventListener('selected', (e) => {
         const selectedValue = options[e.detail.index].getAttribute("value");
+        console.log("Icon preference changed to:", selectedValue);
         const prefs = getAppTilePreferences(appdetail.packageName);
         prefs.icon = selectedValue;
         setAppTilePreferences(appdetail.packageName, prefs);
@@ -264,6 +271,8 @@ function setupBackgroundDropdown(appdetail, tilePrefs) {
     const backgroundGroup = document.querySelector("#app-preference-background");
     const backgroundDropdown = backgroundGroup.querySelector("div.metro-dropdown-menu");
     
+    console.log("Setting up background dropdown for:", appdetail.packageName, "current pref:", tilePrefs.background);
+    
     // Set current selection
     const options = backgroundDropdown.querySelectorAll("div.metro-dropdown-option");
     let selectedIndex = 0;
@@ -273,10 +282,12 @@ function setupBackgroundDropdown(appdetail, tilePrefs) {
         }
     });
     backgroundDropdown.setAttribute("selected", selectedIndex);
+    console.log("Set background dropdown to index:", selectedIndex, "value:", tilePrefs.background);
     
     // Add event listener
     backgroundDropdown.addEventListener('selected', (e) => {
         const selectedValue = options[e.detail.index].getAttribute("value");
+        console.log("Background preference changed to:", selectedValue);
         const prefs = getAppTilePreferences(appdetail.packageName);
         prefs.background = selectedValue;
         setAppTilePreferences(appdetail.packageName, prefs);
@@ -290,6 +301,8 @@ function setupTextColorDropdown(appdetail, tilePrefs) {
     const textColorGroup = document.querySelector("#app-preference-text-color");
     const textColorDropdown = textColorGroup.querySelector("div.metro-dropdown-menu");
     
+    console.log("Setting up text color dropdown for:", appdetail.packageName, "current pref:", tilePrefs.textColor);
+    
     // Set current selection
     const options = textColorDropdown.querySelectorAll("div.metro-dropdown-option");
     let selectedIndex = 0;
@@ -299,10 +312,12 @@ function setupTextColorDropdown(appdetail, tilePrefs) {
         }
     });
     textColorDropdown.setAttribute("selected", selectedIndex);
+    console.log("Set text color dropdown to index:", selectedIndex, "value:", tilePrefs.textColor);
     
     // Add event listener
     textColorDropdown.addEventListener('selected', (e) => {
         const selectedValue = options[e.detail.index].getAttribute("value");
+        console.log("Text color preference changed to:", selectedValue);
         const prefs = getAppTilePreferences(appdetail.packageName);
         prefs.textColor = selectedValue;
         setAppTilePreferences(appdetail.packageName, prefs);
@@ -317,6 +332,7 @@ function applyTilePreferencesToApp(packageName, prefs) {
     try {
         // Get effective preferences (applying global defaults where app setting is "default")
         const effectivePrefs = getEffectiveTilePreferences(packageName);
+        console.log("Applying effective tile preferences for", packageName, ":", effectivePrefs);
         
         // Find the app tile in the parent launcher window
         const homeTile = window.parent.document.querySelector(`div.groove-home-tile[packagename='${packageName}']`);
@@ -325,14 +341,13 @@ function applyTilePreferencesToApp(packageName, prefs) {
         // Apply preferences to both home tile and app list item
         [homeTile, appListItem].forEach(element => {
             if (element) {
-                applyTilePreferencesToElement(element, effectivePrefs, packageName);
+                console.log("Applying preferences to element:", element);
+                // Use the main GrooveBoard function to apply preferences
+                if (window.parent.GrooveBoard && window.parent.GrooveBoard.backendMethods.applyTilePreferences) {
+                    window.parent.GrooveBoard.backendMethods.applyTilePreferences(element, packageName);
+                }
             }
         });
-        
-        // Also update the home board if available
-        if (window.parent.GrooveBoard && window.parent.GrooveBoard.applyAppTilePreferences) {
-            window.parent.GrooveBoard.applyAppTilePreferences(packageName, effectivePrefs);
-        }
         
         console.log("Applied tile preferences for", packageName, effectivePrefs);
     } catch (error) {
@@ -438,22 +453,24 @@ function setAppTilePreferences(packageName, data) {
     try {
         if (window.parent.Groove && window.parent.Groove.setAppTilePreferences) {
             window.parent.Groove.setAppTilePreferences(packageName, JSON.stringify(data));
-            return;
+            console.log("Saved app tile preferences via Groove API:", packageName, data);
         }
     } catch (error) {
-        console.log("Error setting app tile preferences:", error);
+        console.log("Error setting app tile preferences via Groove API:", error);
     }
     
-    // Fallback to localStorage for web mode
+    // Also save to localStorage for web mode and as backup
     getAppTilePreferences(packageName);
     const perAppTilePreferences = JSON.parse(localStorage["perAppTilePreferences"]);
     perAppTilePreferences[packageName] = data;
     localStorage["perAppTilePreferences"] = JSON.stringify(perAppTilePreferences);
+    console.log("Saved app tile preferences to localStorage:", packageName, data);
     
     // Trigger tile refresh when per-app preferences change
     if (window.parent) {
         window.parent.dispatchEvent(new CustomEvent('tilePreferencesChanged', { 
             detail: { packageName, preferences: data } 
         }));
+        console.log("Dispatched tilePreferencesChanged event");
     }
 }

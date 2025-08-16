@@ -1068,6 +1068,7 @@ function setupGlobalBackgroundDropdown() {
     backgroundDropdown.addEventListener('selected', (e) => {
         const selectedOption = options[e.detail.index];
         const value = selectedOption.getAttribute("value");
+        console.log("Global background preference changed to:", value);
         setGlobalTilePreference("background", value);
     });
 }
@@ -1091,6 +1092,7 @@ function setupGlobalTextColorDropdown() {
     textColorDropdown.addEventListener('selected', (e) => {
         const selectedOption = options[e.detail.index];
         const value = selectedOption.getAttribute("value");
+        console.log("Global text color preference changed to:", value);
         setGlobalTilePreference("textColor", value);
     });
 }
@@ -1118,12 +1120,14 @@ function setGlobalTilePreference(key, value) {
     const prefs = JSON.parse(localStorage["globalTilePreferences"]);
     prefs[key] = value;
     localStorage["globalTilePreferences"] = JSON.stringify(prefs);
+    console.log("Saved global tile preference:", key, "=", value);
     
     // Trigger tile refresh when global preferences change
     if (window.parent) {
         window.parent.dispatchEvent(new CustomEvent('tilePreferencesChanged', { 
             detail: { global: true, key, value } 
         }));
+        console.log("Dispatched tilePreferencesChanged event for global preference change");
     }
 }
 

@@ -946,13 +946,15 @@ function initializeGlobalTilePreferences() {
 
 function checkMonochromeIconsSupport() {
     try {
-        // Check if we're in web mode or if API level supports monochrome icons (Android 13+ / API 33)
-        if (window.Groove && window.Groove.getAPILevel) {
+        // Check both API level and explicit support method
+        if (window.Groove && window.Groove.supportsMonochromeIcons) {
+            return window.Groove.supportsMonochromeIcons() === "true";
+        } else if (window.Groove && window.Groove.getAPILevel) {
             const apiLevel = parseInt(window.Groove.getAPILevel());
             return apiLevel >= 33; // Android 13 (TIRAMISU) and above
         } else {
-            // In web mode, show it for testing purposes
-            return true;
+            // Fallback for web mode - don't assume support
+            return false;
         }
     } catch (error) {
         console.log("Error checking monochrome icons support:", error);

@@ -367,7 +367,7 @@ window.addEventListener("pointerdown", (e) => {
             delete window.doubleTapOverride
             delete window.doubleTapOverrideTimeout
         })
-        if (Groove.checkPermission("ACCESSIBILITY")) {
+        if (Groove.checkPermission("ACCESSIBILITY") === "true") {
             Groove.requestScreenLock()
             console.log("double tap sleep")
         } else {

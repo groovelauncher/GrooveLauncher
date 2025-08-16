@@ -145,8 +145,8 @@ class GrooveMock {
         return versionName + " (code: " + versionCode + ")";
 
     }
-    isDeviceRooted() { return false }
-    isShizukuAvailable() { return true }
+    isDeviceRooted() { return "false" }
+    isShizukuAvailable() { return "true" }
     getDefaultApps() {
         return JSON.stringify({
             "phoneApp": "com.google.android.dialer",
@@ -163,10 +163,10 @@ class GrooveMock {
         try {
             await navigator.clipboard.writeText(text);
             console.log("Copied to clipboard:", text);
-            return true;
+            return "true";
         } catch (error) {
             console.error("Failed to copy to clipboard:", error);
-            return false;
+            return "false";
         }
     }
     getDisplayOrientation() {
@@ -318,11 +318,15 @@ class GrooveMock {
     }
     
     getAPILevel() {
-        return "33"; // Mock Android 13 (TIRAMISU) to support monochrome icons in web mode
+        // Allow configuring API level via localStorage for testing
+        const configuredLevel = localStorage.getItem("groove_mock_api_level");
+        return configuredLevel || "33"; // Default to Android 13 for monochrome support
     }
     
     supportsMonochromeIcons() {
-        return true; // Always return true in web mode for testing
+        // Check API level for more realistic monochrome support
+        const apiLevel = parseInt(this.getAPILevel());
+        return (apiLevel >= 33).toString(); // Android 13+ support as string
     }
     
     setMonochromeIcons(enable) {
@@ -331,7 +335,7 @@ class GrooveMock {
     }
     
     getMonochromeIcons() {
-        return localStorage.getItem("groove_monochrome_icons") === "true";
+        return localStorage.getItem("groove_monochrome_icons") === "true" ? "true" : "false";
     }
 
     // Per-app tile preferences methods

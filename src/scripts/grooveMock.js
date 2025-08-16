@@ -316,24 +316,22 @@ class GrooveMock {
     applyIconPack(packageName) {
         console.log("Apply icon pack:", packageName)
     }
-    
+
     getAPILevel() {
         // Allow configuring API level via localStorage for testing
         const configuredLevel = localStorage.getItem("groove_mock_api_level");
         return configuredLevel || "33"; // Default to Android 13 for monochrome support
     }
-    
+
     supportsMonochromeIcons() {
-        // Check API level for more realistic monochrome support
-        const apiLevel = parseInt(this.getAPILevel());
-        return (apiLevel >= 33).toString(); // Android 13+ support as string
+        return false.toString()
     }
-    
+
     setMonochromeIcons(enable) {
         localStorage.setItem("groove_monochrome_icons", enable.toString());
         console.log("Set monochrome icons:", enable);
     }
-    
+
     getMonochromeIcons() {
         return localStorage.getItem("groove_monochrome_icons") === "true" ? "true" : "false";
     }

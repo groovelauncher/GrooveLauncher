@@ -144,6 +144,7 @@
     },
     "text_color": "Text color",
     "text_color_selections": {
+      "default": "Default",
       "auto": "Auto",
       "dark": "dark",
       "light": "light"

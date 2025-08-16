@@ -937,42 +937,13 @@ document.body.append(appBar2)
 window.appBar = appBar
 window.appBar2 = appBar2
 
-const iconPacks = JSON.parse(Groove.getIconPacks())
-iconPacks.forEach((iconPack, index) => {
-
-
-    const item = document.createElement("div")
-    item.classList.add("metro-dropdown-option")
-    item.setAttribute("packagename", iconPack)
-    item.innerText = window.parent.GrooveBoard.backendMethods.getAppDetails(iconPack, true).label
-    document.querySelector("#icon-pack-chooser-dropdown").append(item)
-})
-document.getElementById("icon-pack-chooser-dropdown").addEventListener('selected', (e) => {
-    localStorage.setItem("iconPack", document.getElementById("icon-pack-chooser-dropdown").querySelectorAll("div.metro-dropdown-option")[e.detail.index].getAttribute("packagename"))
-    Groove.applyIconPack(document.getElementById("icon-pack-chooser-dropdown").querySelectorAll("div.metro-dropdown-option")[e.detail.index].getAttribute("packagename"))
-    window.parent.GrooveBoard.alert(
-        "Notice",
-        "You need to restart the app to apply the icon pack.",
-        [{
-            title: "Ok", style: "default", action: () => {
-                window.parent.location.reload()
-            }
-        },
-        { title: "Later", style: "default", action: () => { } }
-        ]
-    );
-});
-if (localStorage.getItem("iconPack")) {
-    Groove.applyIconPack(localStorage.getItem("iconPack"))
-    document.querySelector("#icon-pack-chooser-dropdown").querySelectorAll("div.metro-dropdown-option").forEach((e, i) => {
-        if (e.getAttribute("packagename") === localStorage.getItem("iconPack")) {
-            document.getElementById("icon-pack-chooser-dropdown").setAttribute("selected", i);
-            document.getElementById("icon-pack-chooser-dropdown").selectOption(i);
-        }
-    })
+// Global tile preferences functionality
+function initializeGlobalTilePreferences() {
+    setupGlobalIconDropdown();
+    setupGlobalBackgroundDropdown();
+    setupGlobalTextColorDropdown();
 }
 
-// Monochrome icons support
 function checkMonochromeIconsSupport() {
     try {
         // Check if we're in web mode or if API level supports monochrome icons (Android 13+ / API 33)
@@ -989,47 +960,163 @@ function checkMonochromeIconsSupport() {
     }
 }
 
-// Initialize monochrome icons functionality
-if (checkMonochromeIconsSupport()) {
-    const monochromeGroup = document.getElementById("monochrome-icons-group");
-    if (monochromeGroup) {
-        monochromeGroup.style.display = "block";
-        
-        // Load saved preference
-        const savedSetting = localStorage.getItem("monochromeIcons") || "default";
-        const dropdown = document.getElementById("monochrome-icons-dropdown");
-        
-        // Set initial selection
-        const options = dropdown.querySelectorAll("div.metro-dropdown-option");
-        options.forEach((option, index) => {
-            if (option.getAttribute("value") === savedSetting) {
-                dropdown.setAttribute("selected", index);
-                dropdown.selectOption(index);
-            }
+function setupGlobalIconDropdown() {
+    const iconDropdown = document.getElementById("global-icon-dropdown");
+    
+    // Clear existing options except the first "Default" option
+    const defaultOption = iconDropdown.querySelector("div.metro-dropdown-option[value='default']");
+    iconDropdown.innerHTML = "";
+    iconDropdown.appendChild(defaultOption);
+    
+    // Add monochrome option if supported
+    if (checkMonochromeIconsSupport()) {
+        const monochromeOption = document.createElement("div");
+        monochromeOption.classList.add("metro-dropdown-option");
+        monochromeOption.setAttribute("value", "monochrome");
+        monochromeOption.setAttribute("data-i18n", "settings.apps.icon_selections.monochrome");
+        monochromeOption.innerText = "Monochrome";
+        iconDropdown.appendChild(monochromeOption);
+    }
+    
+    // Add icon pack options
+    try {
+        const iconPacks = JSON.parse(Groove.getIconPacks());
+        iconPacks.forEach(iconPack => {
+            const iconPackInfo = window.parent.GrooveBoard.backendMethods.getAppDetails(iconPack, true);
+            const option = document.createElement("div");
+            option.classList.add("metro-dropdown-option");
+            option.setAttribute("value", iconPack);
+            option.innerText = iconPackInfo.label;
+            iconDropdown.appendChild(option);
         });
+    } catch (error) {
+        console.log("Error loading icon packs:", error);
+    }
+    
+    // Load saved preference
+    const savedIconPref = getGlobalTilePreference("icon");
+    const options = iconDropdown.querySelectorAll("div.metro-dropdown-option");
+    let selectedIndex = 0;
+    options.forEach((option, index) => {
+        if (option.getAttribute("value") === savedIconPref) {
+            selectedIndex = index;
+        }
+    });
+    iconDropdown.setAttribute("selected", selectedIndex);
+    iconDropdown.selectOption(selectedIndex);
+    
+    // Handle dropdown changes
+    iconDropdown.addEventListener('selected', (e) => {
+        const selectedOption = options[e.detail.index];
+        const value = selectedOption.getAttribute("value");
         
-        // Handle dropdown changes
-        dropdown.addEventListener('selected', (e) => {
-            const selectedOption = dropdown.querySelectorAll("div.metro-dropdown-option")[e.detail.index];
-            const value = selectedOption.getAttribute("value");
-            
-            localStorage.setItem("monochromeIcons", value);
-            
-            // Apply the setting if available
+        setGlobalTilePreference("icon", value);
+        
+        // Apply legacy behavior for icon packs
+        if (value !== "default" && value !== "monochrome") {
+            localStorage.setItem("iconPack", value);
+            Groove.applyIconPack(value);
+            window.parent.GrooveBoard.alert(
+                "Notice",
+                "You need to restart the app to apply the icon pack.",
+                [{
+                    title: "Ok", style: "default", action: () => {
+                        window.parent.location.reload()
+                    }
+                },
+                { title: "Later", style: "default", action: () => { } }
+                ]
+            );
+        } else if (value === "default") {
+            localStorage.setItem("iconPack", "");
+            Groove.applyIconPack("");
+        }
+        
+        // Apply monochrome setting
+        if (value === "monochrome") {
+            localStorage.setItem("monochromeIcons", "enable");
             if (window.Groove && window.Groove.setMonochromeIcons) {
-                window.Groove.setMonochromeIcons(value === "enable");
+                window.Groove.setMonochromeIcons(true);
             }
-            
-            // Show notification
-            if (window.parent && window.parent.GrooveBoard) {
-                window.parent.GrooveBoard.alert(
-                    "Notice",
-                    "Monotone icons setting has been updated. You may need to restart the app to see all changes.",
-                    [{
-                        title: "Ok", style: "default", action: () => {}
-                    }]
-                );
+        } else {
+            localStorage.setItem("monochromeIcons", "default");
+            if (window.Groove && window.Groove.setMonochromeIcons) {
+                window.Groove.setMonochromeIcons(false);
             }
+        }
+    });
+}
+
+function setupGlobalBackgroundDropdown() {
+    const backgroundDropdown = document.getElementById("global-background-dropdown");
+    
+    // Load saved preference
+    const savedBackgroundPref = getGlobalTilePreference("background");
+    const options = backgroundDropdown.querySelectorAll("div.metro-dropdown-option");
+    let selectedIndex = 0;
+    options.forEach((option, index) => {
+        if (option.getAttribute("value") === savedBackgroundPref) {
+            selectedIndex = index;
+        }
+    });
+    backgroundDropdown.setAttribute("selected", selectedIndex);
+    backgroundDropdown.selectOption(selectedIndex);
+    
+    // Handle dropdown changes
+    backgroundDropdown.addEventListener('selected', (e) => {
+        const selectedOption = options[e.detail.index];
+        const value = selectedOption.getAttribute("value");
+        setGlobalTilePreference("background", value);
+    });
+}
+
+function setupGlobalTextColorDropdown() {
+    const textColorDropdown = document.getElementById("global-text-color-dropdown");
+    
+    // Load saved preference
+    const savedTextColorPref = getGlobalTilePreference("textColor");
+    const options = textColorDropdown.querySelectorAll("div.metro-dropdown-option");
+    let selectedIndex = 0;
+    options.forEach((option, index) => {
+        if (option.getAttribute("value") === savedTextColorPref) {
+            selectedIndex = index;
+        }
+    });
+    textColorDropdown.setAttribute("selected", selectedIndex);
+    textColorDropdown.selectOption(selectedIndex);
+    
+    // Handle dropdown changes
+    textColorDropdown.addEventListener('selected', (e) => {
+        const selectedOption = options[e.detail.index];
+        const value = selectedOption.getAttribute("value");
+        setGlobalTilePreference("textColor", value);
+    });
+}
+
+function getGlobalTilePreference(key) {
+    if (!localStorage["globalTilePreferences"]) {
+        localStorage["globalTilePreferences"] = JSON.stringify({
+            icon: "default",
+            background: "default",
+            textColor: "default"
         });
     }
+    const prefs = JSON.parse(localStorage["globalTilePreferences"]);
+    return prefs[key] || "default";
 }
+
+function setGlobalTilePreference(key, value) {
+    if (!localStorage["globalTilePreferences"]) {
+        localStorage["globalTilePreferences"] = JSON.stringify({
+            icon: "default",
+            background: "default", 
+            textColor: "default"
+        });
+    }
+    const prefs = JSON.parse(localStorage["globalTilePreferences"]);
+    prefs[key] = value;
+    localStorage["globalTilePreferences"] = JSON.stringify(prefs);
+}
+
+// Initialize global tile preferences
+initializeGlobalTilePreferences();

@@ -24,17 +24,25 @@
           </div>
         </div>
         <div class="settings-page" id="tiles-tab">
-          <div class="group first-group">
-            <p class="group-title">Icon pack</p>
-            <div class="metro-dropdown-menu" id="icon-pack-chooser-dropdown" selected="0">
-              <div class="metro-dropdown-option" packagename="">None</div>
+          <div class="group first-group" id="global-tile-icon">
+            <p class="group-title" data-i18n="settings.apps.icon">Icon</p>
+            <div class="metro-dropdown-menu" id="global-icon-dropdown" selected="0">
+              <div class="metro-dropdown-option" value="default" data-i18n="settings.apps.icon_selections.default">Default</div>
             </div>
           </div>
-          <div class="group" id="monochrome-icons-group" style="display: none;">
-            <p class="group-title">Monotone icons</p>
-            <div class="metro-dropdown-menu" id="monochrome-icons-dropdown" selected="0">
-              <div class="metro-dropdown-option" value="default">Default</div>
-              <div class="metro-dropdown-option" value="enable">Enable</div>
+          <div class="group" id="global-tile-background">
+            <p class="group-title" data-i18n="settings.apps.background">Background</p>
+            <div class="metro-dropdown-menu" id="global-background-dropdown" selected="0">
+              <div class="metro-dropdown-option" value="default" data-i18n="settings.apps.background_selections.default">Default</div>
+              <div class="metro-dropdown-option" value="accent_color" data-i18n="settings.apps.background_selections.accent_color">Accent Color</div>
+            </div>
+          </div>
+          <div class="group" id="global-tile-text-color">
+            <p class="group-title" data-i18n="settings.apps.text_color">Text color</p>
+            <div class="metro-dropdown-menu" id="global-text-color-dropdown" selected="0">
+              <div class="metro-dropdown-option" value="default" data-i18n="settings.apps.text_color_selections.default">Default</div>
+              <div class="metro-dropdown-option" value="light" data-i18n="settings.apps.text_color_selections.light">Light</div>
+              <div class="metro-dropdown-option" value="dark" data-i18n="settings.apps.text_color_selections.dark">Dark</div>
             </div>
           </div>
         </div>

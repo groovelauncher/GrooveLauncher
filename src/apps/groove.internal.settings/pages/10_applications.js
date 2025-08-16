@@ -315,6 +315,9 @@ function setupTextColorDropdown(appdetail, tilePrefs) {
 // Apply tile preferences to the actual app in the launcher
 function applyTilePreferencesToApp(packageName, prefs) {
     try {
+        // Get effective preferences (applying global defaults where app setting is "default")
+        const effectivePrefs = getEffectiveTilePreferences(packageName);
+        
         // Find the app tile in the parent launcher window
         const homeTile = window.parent.document.querySelector(`div.groove-home-tile[packagename='${packageName}']`);
         const appListItem = window.parent.document.querySelector(`div.groove-app-tile[packagename='${packageName}']`);
@@ -322,41 +325,41 @@ function applyTilePreferencesToApp(packageName, prefs) {
         // Apply preferences to both home tile and app list item
         [homeTile, appListItem].forEach(element => {
             if (element) {
-                applyTilePreferencesToElement(element, prefs, packageName);
+                applyTilePreferencesToElement(element, effectivePrefs, packageName);
             }
         });
         
         // Also update the home board if available
         if (window.parent.GrooveBoard && window.parent.GrooveBoard.applyAppTilePreferences) {
-            window.parent.GrooveBoard.applyAppTilePreferences(packageName, prefs);
+            window.parent.GrooveBoard.applyAppTilePreferences(packageName, effectivePrefs);
         }
         
-        console.log("Applied tile preferences for", packageName, prefs);
+        console.log("Applied tile preferences for", packageName, effectivePrefs);
     } catch (error) {
         console.log("Error applying tile preferences:", error);
     }
 }
 
-function applyTilePreferencesToElement(element, prefs, packageName) {
+function applyTilePreferencesToElement(element, effectivePrefs, packageName) {
     // Apply icon preference
-    if (prefs.icon !== "default") {
+    if (effectivePrefs.icon !== "default") {
         // TODO: Implement icon preference application
         // This would involve changing the icon source based on the preference
     }
     
     // Apply background preference
-    if (prefs.background === "accent_color") {
+    if (effectivePrefs.background === "accent_color") {
         element.style.backgroundColor = "var(--accent-color)";
-    } else if (prefs.background === "default") {
+    } else if (effectivePrefs.background === "default") {
         element.style.backgroundColor = ""; // Reset to default
     }
     
     // Apply text color preference
     const titleElement = element.querySelector(".groove-home-tile-title, .groove-app-tile-title");
     if (titleElement) {
-        if (prefs.textColor === "light") {
+        if (effectivePrefs.textColor === "light") {
             titleElement.style.color = "#ffffff";
-        } else if (prefs.textColor === "dark") {
+        } else if (effectivePrefs.textColor === "dark") {
             titleElement.style.color = "#000000";
         } else {
             titleElement.style.color = ""; // Reset to default
@@ -402,6 +405,31 @@ function getAppTilePreferences(packageName) {
         localStorage["perAppTilePreferences"] = JSON.stringify(perAppTilePreferences);
     }
     return perAppTilePreferences[packageName];
+}
+
+function getGlobalTilePreferences() {
+    // Get global preferences from Groove Tweaks
+    if (!localStorage["globalTilePreferences"]) {
+        localStorage["globalTilePreferences"] = JSON.stringify({
+            icon: "default",
+            background: "default",
+            textColor: "default"
+        });
+    }
+    return JSON.parse(localStorage["globalTilePreferences"]);
+}
+
+function getEffectiveTilePreferences(packageName) {
+    // Get per-app preferences
+    const appPrefs = getAppTilePreferences(packageName);
+    const globalPrefs = getGlobalTilePreferences();
+    
+    // Return effective preferences (use global when app pref is "default")
+    return {
+        icon: appPrefs.icon === "default" ? globalPrefs.icon : appPrefs.icon,
+        background: appPrefs.background === "default" ? globalPrefs.background : appPrefs.background,
+        textColor: appPrefs.textColor === "default" ? globalPrefs.textColor : appPrefs.textColor
+    };
 }
 
 function setAppTilePreferences(packageName, data) {

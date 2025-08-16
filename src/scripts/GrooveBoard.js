@@ -1172,12 +1172,41 @@ const backendMethods = {
   },
 
   getAppTilePreferences: (packageName) => {
-    if (!localStorage["perAppTilePreferences"]) {
-      localStorage["perAppTilePreferences"] = JSON.stringify({});
+    // Try to use WebInterface method first
+    if (window.Groove && window.Groove.getAppTilePreferences) {
+      try {
+        const prefsStr = window.Groove.getAppTilePreferences(packageName);
+        return JSON.parse(prefsStr);
+      } catch (error) {
+        console.log("Error getting app tile preferences via WebInterface:", error);
+      }
     }
-    const perAppTilePreferences = JSON.parse(localStorage["perAppTilePreferences"]);
+    
+    // Fallback to localStorage
+    const key = `groove_app_tiles_${packageName}`;
     const defaultPrefs = { icon: "default", background: "default", textColor: "default" };
-    return perAppTilePreferences[packageName] || defaultPrefs;
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : defaultPrefs;
+  },
+
+  setAppTilePreferences: (packageName, preferences) => {
+    // Try to use WebInterface method first
+    if (window.Groove && window.Groove.setAppTilePreferences) {
+      try {
+        window.Groove.setAppTilePreferences(packageName, JSON.stringify(preferences));
+      } catch (error) {
+        console.log("Error setting app tile preferences via WebInterface:", error);
+      }
+    }
+    
+    // Also save to localStorage as backup
+    const key = `groove_app_tiles_${packageName}`;
+    localStorage.setItem(key, JSON.stringify(preferences));
+    
+    // Trigger refresh
+    window.dispatchEvent(new CustomEvent('tilePreferencesChanged', { 
+      detail: { packageName, preferences } 
+    }));
   },
 
   getEffectiveTilePreferences: (packageName) => {
@@ -1192,13 +1221,15 @@ const backendMethods = {
   },
 
   refreshAllTiles: () => {
-    // Refresh home tiles by reloading the home configuration
-    try {
-      backendMethods.homeConfiguration.save();
-      boardMethods.liveTiles.refresh();
-    } catch (error) {
-      console.log("Error refreshing home tiles:", error);
-    }
+    // Refresh home tiles directly
+    setTimeout(() => {
+      document.querySelectorAll('.groove-home-tile[packagename]').forEach(tile => {
+        const packageName = tile.getAttribute('packagename');
+        if (packageName) {
+          backendMethods.applyTilePreferences(tile, packageName);
+        }
+      });
+    }, 50);
     
     // Refresh app list tiles
     setTimeout(() => {

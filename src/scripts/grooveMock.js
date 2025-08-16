@@ -324,7 +324,8 @@ class GrooveMock {
     }
 
     supportsMonochromeIcons() {
-        return false.toString()
+        const apiLevel = parseInt(this.getAPILevel());
+        return (apiLevel >= 33).toString(); // Proper API level check
     }
 
     setMonochromeIcons(enable) {
@@ -341,6 +342,11 @@ class GrooveMock {
         const key = `groove_app_tiles_${packageName}`;
         localStorage.setItem(key, preferences);
         console.log("Set tile preferences for", packageName, ":", preferences);
+        
+        // Trigger tile refresh
+        window.dispatchEvent(new CustomEvent('tilePreferencesChanged', { 
+            detail: { packageName, preferences } 
+        }));
     }
 
     getAppTilePreferences(packageName) {

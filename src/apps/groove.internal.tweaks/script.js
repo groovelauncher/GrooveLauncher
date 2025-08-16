@@ -1118,6 +1118,13 @@ function setGlobalTilePreference(key, value) {
     const prefs = JSON.parse(localStorage["globalTilePreferences"]);
     prefs[key] = value;
     localStorage["globalTilePreferences"] = JSON.stringify(prefs);
+    
+    // Trigger tile refresh when global preferences change
+    if (window.parent) {
+        window.parent.dispatchEvent(new CustomEvent('tilePreferencesChanged', { 
+            detail: { global: true, key, value } 
+        }));
+    }
 }
 
 // Initialize global tile preferences

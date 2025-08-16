@@ -449,4 +449,11 @@ function setAppTilePreferences(packageName, data) {
     const perAppTilePreferences = JSON.parse(localStorage["perAppTilePreferences"]);
     perAppTilePreferences[packageName] = data;
     localStorage["perAppTilePreferences"] = JSON.stringify(perAppTilePreferences);
+    
+    // Trigger tile refresh when per-app preferences change
+    if (window.parent) {
+        window.parent.dispatchEvent(new CustomEvent('tilePreferencesChanged', { 
+            detail: { packageName, preferences: data } 
+        }));
+    }
 }

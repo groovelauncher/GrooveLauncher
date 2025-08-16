@@ -154,6 +154,10 @@ const boardMethods = {
       ),
       config
     );
+    
+    // Apply tile preferences to home tile
+    backendMethods.applyTilePreferences(widget, options.packageName);
+    
     if (window.scrollers) window.scrollers.tile_page_scroller.refresh();
     return widget;
 
@@ -213,6 +217,10 @@ const boardMethods = {
         "#main-home-slider > div > div:nth-child(2) > div > div.app-list > div.app-list-container"
       )
       .appendChild(el);
+    
+    // Apply tile preferences
+    backendMethods.applyTilePreferences(el, options.packageName);
+    
     return el;
   },
   createLetterTile: (letter) => {
@@ -903,6 +911,10 @@ const backendMethods = {
             y: tile.t
           }
         );
+        
+        // Apply tile preferences to home tile
+        backendMethods.applyTilePreferences(homeTile, tile.p);
+        
         el.setAttribute("gs-x", tile.l)
         el.setAttribute("gs-y", tile.t)
         el.setAttribute("gs-w", tile.w)
@@ -1145,6 +1157,102 @@ const backendMethods = {
     Object.keys(styleManagerInstance.getMetadata()).forEach(id => {
       styleManagerInstance.applyStyle(id)
     })
+  },
+
+  // Tile Preference System
+  getGlobalTilePreferences: () => {
+    if (!localStorage["globalTilePreferences"]) {
+      localStorage["globalTilePreferences"] = JSON.stringify({
+        icon: "default",
+        background: "default",
+        textColor: "default"
+      });
+    }
+    return JSON.parse(localStorage["globalTilePreferences"]);
+  },
+
+  getAppTilePreferences: (packageName) => {
+    if (!localStorage["perAppTilePreferences"]) {
+      localStorage["perAppTilePreferences"] = JSON.stringify({});
+    }
+    const perAppTilePreferences = JSON.parse(localStorage["perAppTilePreferences"]);
+    const defaultPrefs = { icon: "default", background: "default", textColor: "default" };
+    return perAppTilePreferences[packageName] || defaultPrefs;
+  },
+
+  getEffectiveTilePreferences: (packageName) => {
+    const appPrefs = backendMethods.getAppTilePreferences(packageName);
+    const globalPrefs = backendMethods.getGlobalTilePreferences();
+    
+    return {
+      icon: appPrefs.icon === "default" ? globalPrefs.icon : appPrefs.icon,
+      background: appPrefs.background === "default" ? globalPrefs.background : appPrefs.background,
+      textColor: appPrefs.textColor === "default" ? globalPrefs.textColor : appPrefs.textColor
+    };
+  },
+
+  refreshAllTiles: () => {
+    // Refresh home tiles by reloading the home configuration
+    try {
+      backendMethods.homeConfiguration.save();
+      boardMethods.liveTiles.refresh();
+    } catch (error) {
+      console.log("Error refreshing home tiles:", error);
+    }
+    
+    // Refresh app list tiles
+    setTimeout(() => {
+      document.querySelectorAll('.groove-app-tile[packagename]').forEach(tile => {
+        const packageName = tile.getAttribute('packagename');
+        if (packageName) {
+          backendMethods.applyTilePreferences(tile, packageName);
+        }
+      });
+    }, 100);
+  },
+
+  applyTilePreferences: (tileElement, packageName) => {
+    if (!tileElement || !packageName) return;
+    
+    const prefs = backendMethods.getEffectiveTilePreferences(packageName);
+    const iconElement = tileElement.querySelector('.groove-app-tile-imageicon');
+    const titleElement = tileElement.querySelector('.groove-app-tile-title');
+    
+    // Apply background preference
+    if (prefs.background === 'accent') {
+      if (iconElement) {
+        iconElement.style.backgroundColor = 'var(--metro-accent)';
+      }
+    } else {
+      if (iconElement) {
+        iconElement.style.backgroundColor = '';
+      }
+    }
+    
+    // Apply text color preference
+    if (titleElement) {
+      if (prefs.textColor === 'light') {
+        titleElement.style.color = 'var(--metro-foreground-light)';
+      } else if (prefs.textColor === 'dark') {
+        titleElement.style.color = 'var(--metro-foreground-dark)';
+      } else {
+        titleElement.style.color = '';
+      }
+    }
+    
+    // Apply icon preference (monochrome, icon packs, etc.)
+    if (prefs.icon === 'monochrome' && iconElement) {
+      // Check if monochrome is supported
+      if (window.Groove && window.Groove.supportsMonochromeIcons && window.Groove.supportsMonochromeIcons() === "true") {
+        iconElement.style.filter = 'grayscale(1) brightness(0) invert(1)';
+        // Adjust filter based on text color for better contrast
+        if (prefs.textColor === 'dark' || (prefs.textColor === 'default' && prefs.background === 'accent')) {
+          iconElement.style.filter = 'grayscale(1) brightness(0)';
+        }
+      }
+    } else if (iconElement) {
+      iconElement.style.filter = '';
+    }
   }
 
 };
@@ -1183,6 +1291,12 @@ window.addEventListener("appUninstall", function (e) {
     clearOldAppPreferences()
   }, 20000)
 });
+
+// Listen for tile preferences changes and refresh tiles
+window.addEventListener("tilePreferencesChanged", function(e) {
+  backendMethods.refreshAllTiles();
+});
+
 function clearOldAppPreferences() {
   setTimeout(() => {
     if (localStorage["perAppPreferences"]) {

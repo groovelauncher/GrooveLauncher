@@ -316,6 +316,23 @@ class GrooveMock {
     applyIconPack(packageName) {
         console.log("Apply icon pack:", packageName)
     }
+    
+    getAPILevel() {
+        return "33"; // Mock Android 13 (TIRAMISU) to support monochrome icons in web mode
+    }
+    
+    supportsMonochromeIcons() {
+        return true; // Always return true in web mode for testing
+    }
+    
+    setMonochromeIcons(enable) {
+        localStorage.setItem("groove_monochrome_icons", enable.toString());
+        console.log("Set monochrome icons:", enable);
+    }
+    
+    getMonochromeIcons() {
+        return localStorage.getItem("groove_monochrome_icons") === "true";
+    }
 }
 function sendNotificationToSystem(notification) {
     const existingIndex = notifications.findIndex(n => n.id === notification.id);

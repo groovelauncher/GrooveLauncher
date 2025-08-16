@@ -971,3 +971,65 @@ if (localStorage.getItem("iconPack")) {
         }
     })
 }
+
+// Monochrome icons support
+function checkMonochromeIconsSupport() {
+    try {
+        // Check if we're in web mode or if API level supports monochrome icons (Android 13+ / API 33)
+        if (window.Groove && window.Groove.getAPILevel) {
+            const apiLevel = parseInt(window.Groove.getAPILevel());
+            return apiLevel >= 33; // Android 13 (TIRAMISU) and above
+        } else {
+            // In web mode, show it for testing purposes
+            return true;
+        }
+    } catch (error) {
+        console.log("Error checking monochrome icons support:", error);
+        return false;
+    }
+}
+
+// Initialize monochrome icons functionality
+if (checkMonochromeIconsSupport()) {
+    const monochromeGroup = document.getElementById("monochrome-icons-group");
+    if (monochromeGroup) {
+        monochromeGroup.style.display = "block";
+        
+        // Load saved preference
+        const savedSetting = localStorage.getItem("monochromeIcons") || "default";
+        const dropdown = document.getElementById("monochrome-icons-dropdown");
+        
+        // Set initial selection
+        const options = dropdown.querySelectorAll("div.metro-dropdown-option");
+        options.forEach((option, index) => {
+            if (option.getAttribute("value") === savedSetting) {
+                dropdown.setAttribute("selected", index);
+                dropdown.selectOption(index);
+            }
+        });
+        
+        // Handle dropdown changes
+        dropdown.addEventListener('selected', (e) => {
+            const selectedOption = dropdown.querySelectorAll("div.metro-dropdown-option")[e.detail.index];
+            const value = selectedOption.getAttribute("value");
+            
+            localStorage.setItem("monochromeIcons", value);
+            
+            // Apply the setting if available
+            if (window.Groove && window.Groove.setMonochromeIcons) {
+                window.Groove.setMonochromeIcons(value === "enable");
+            }
+            
+            // Show notification
+            if (window.parent && window.parent.GrooveBoard) {
+                window.parent.GrooveBoard.alert(
+                    "Notice",
+                    "Monotone icons setting has been updated. You may need to restart the app to see all changes.",
+                    [{
+                        title: "Ok", style: "default", action: () => {}
+                    }]
+                );
+            }
+        });
+    }
+}

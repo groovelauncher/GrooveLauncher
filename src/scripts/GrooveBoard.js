@@ -1182,9 +1182,23 @@ const backendMethods = {
       }
     }
     
-    // Fallback to localStorage
-    const key = `groove_app_tiles_${packageName}`;
+    // Fallback to localStorage - check new format first, then old format
     const defaultPrefs = { icon: "default", background: "default", textColor: "default" };
+    
+    // Check new perAppTilePreferences format (used by Groove Settings)
+    if (localStorage["perAppTilePreferences"]) {
+      try {
+        const perAppPrefs = JSON.parse(localStorage["perAppTilePreferences"]);
+        if (perAppPrefs[packageName]) {
+          return perAppPrefs[packageName];
+        }
+      } catch (error) {
+        console.log("Error reading perAppTilePreferences:", error);
+      }
+    }
+    
+    // Check old individual key format  
+    const key = `groove_app_tiles_${packageName}`;
     const stored = localStorage.getItem(key);
     return stored ? JSON.parse(stored) : defaultPrefs;
   },
@@ -1266,18 +1280,22 @@ const backendMethods = {
     // Apply background preference
     if (backgroundTarget) {
       if (prefs.background === 'accent') {
-        backgroundTarget.style.backgroundColor = 'var(--metro-accent)';
+        // Get the actual accent color from localStorage instead of using undefined CSS variables
+        const accentColor = localStorage.getItem('accentColor') || '#F472D0';
+        backgroundTarget.style.backgroundColor = accentColor;
+        backgroundTarget.style.backgroundImage = ''; // Clear any existing background image
       } else {
         backgroundTarget.style.backgroundColor = '';
+        // Don't clear background image for default - it should keep the adaptive icon background
       }
     }
     
     // Apply text color preference
     if (titleElement) {
       if (prefs.textColor === 'light') {
-        titleElement.style.color = 'var(--metro-foreground-light)';
+        titleElement.style.color = '#FFFFFF';
       } else if (prefs.textColor === 'dark') {
-        titleElement.style.color = 'var(--metro-foreground-dark)';
+        titleElement.style.color = '#000000';
       } else {
         titleElement.style.color = '';
       }

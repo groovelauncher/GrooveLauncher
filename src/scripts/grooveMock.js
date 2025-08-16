@@ -350,8 +350,22 @@ class GrooveMock {
     }
 
     getAppTilePreferences(packageName) {
-        const key = `groove_app_tiles_${packageName}`;
         const defaultPrefs = '{"icon":"default","background":"default","textColor":"default"}';
+        
+        // Check new perAppTilePreferences format first (used by Groove Settings)
+        if (localStorage["perAppTilePreferences"]) {
+            try {
+                const perAppPrefs = JSON.parse(localStorage["perAppTilePreferences"]);
+                if (perAppPrefs[packageName]) {
+                    return JSON.stringify(perAppPrefs[packageName]);
+                }
+            } catch (error) {
+                console.log("Error reading perAppTilePreferences:", error);
+            }
+        }
+        
+        // Check old individual key format
+        const key = `groove_app_tiles_${packageName}`;
         return localStorage.getItem(key) || defaultPrefs;
     }
 

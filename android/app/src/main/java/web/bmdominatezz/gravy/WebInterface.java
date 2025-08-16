@@ -1111,4 +1111,33 @@ public class WebInterface {
         SharedPreferences prefs = mainActivity.getSharedPreferences("groove_settings", Context.MODE_PRIVATE);
         return prefs.getBoolean("monochrome_icons", false);
     }
+
+    // Per-app tile preferences methods
+    @JavascriptInterface
+    public void setAppTilePreferences(String packageName, String preferences) {
+        SharedPreferences prefs = mainActivity.getSharedPreferences("groove_app_tiles", Context.MODE_PRIVATE);
+        prefs.edit().putString(packageName, preferences).apply();
+        Log.d("GrooveLauncher", "Set tile preferences for " + packageName + ": " + preferences);
+    }
+
+    @JavascriptInterface
+    public String getAppTilePreferences(String packageName) {
+        SharedPreferences prefs = mainActivity.getSharedPreferences("groove_app_tiles", Context.MODE_PRIVATE);
+        // Return default preferences if none set
+        String defaultPrefs = "{\"icon\":\"default\",\"background\":\"default\",\"textColor\":\"default\"}";
+        return prefs.getString(packageName, defaultPrefs);
+    }
+
+    @JavascriptInterface
+    public boolean hasAppTilePreferences(String packageName) {
+        SharedPreferences prefs = mainActivity.getSharedPreferences("groove_app_tiles", Context.MODE_PRIVATE);
+        return prefs.contains(packageName);
+    }
+
+    @JavascriptInterface
+    public void removeAppTilePreferences(String packageName) {
+        SharedPreferences prefs = mainActivity.getSharedPreferences("groove_app_tiles", Context.MODE_PRIVATE);
+        prefs.edit().remove(packageName).apply();
+        Log.d("GrooveLauncher", "Removed tile preferences for " + packageName);
+    }
 }

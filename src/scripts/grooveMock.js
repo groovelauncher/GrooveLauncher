@@ -333,6 +333,30 @@ class GrooveMock {
     getMonochromeIcons() {
         return localStorage.getItem("groove_monochrome_icons") === "true";
     }
+
+    // Per-app tile preferences methods
+    setAppTilePreferences(packageName, preferences) {
+        const key = `groove_app_tiles_${packageName}`;
+        localStorage.setItem(key, preferences);
+        console.log("Set tile preferences for", packageName, ":", preferences);
+    }
+
+    getAppTilePreferences(packageName) {
+        const key = `groove_app_tiles_${packageName}`;
+        const defaultPrefs = '{"icon":"default","background":"default","textColor":"default"}';
+        return localStorage.getItem(key) || defaultPrefs;
+    }
+
+    hasAppTilePreferences(packageName) {
+        const key = `groove_app_tiles_${packageName}`;
+        return localStorage.getItem(key) !== null;
+    }
+
+    removeAppTilePreferences(packageName) {
+        const key = `groove_app_tiles_${packageName}`;
+        localStorage.removeItem(key);
+        console.log("Removed tile preferences for", packageName);
+    }
 }
 function sendNotificationToSystem(notification) {
     const existingIndex = notifications.findIndex(n => n.id === notification.id);

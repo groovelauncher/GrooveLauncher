@@ -223,15 +223,17 @@ function setupIconDropdown(appdetail, tilePrefs) {
     
     // Add icon pack options
     try {
-        const iconPacks = JSON.parse(window.parent.Groove.getIconPacks());
-        iconPacks.forEach(iconPack => {
-            const iconPackInfo = window.parent.GrooveBoard.backendMethods.getAppDetails(iconPack, true);
-            const option = document.createElement("div");
-            option.classList.add("metro-dropdown-option");
-            option.setAttribute("value", iconPack);
-            option.innerText = iconPackInfo.label;
-            iconDropdown.appendChild(option);
-        });
+        if (window.parent.Groove && window.parent.Groove.getIconPacks) {
+            const iconPacks = JSON.parse(window.parent.Groove.getIconPacks());
+            iconPacks.forEach(iconPack => {
+                const iconPackInfo = window.parent.GrooveBoard.backendMethods.getAppDetails(iconPack, true);
+                const option = document.createElement("div");
+                option.classList.add("metro-dropdown-option");
+                option.setAttribute("value", iconPack);
+                option.innerText = iconPackInfo.label;
+                iconDropdown.appendChild(option);
+            });
+        }
     } catch (error) {
         console.log("Error loading icon packs:", error);
     }
@@ -252,6 +254,9 @@ function setupIconDropdown(appdetail, tilePrefs) {
         const prefs = getAppTilePreferences(appdetail.packageName);
         prefs.icon = selectedValue;
         setAppTilePreferences(appdetail.packageName, prefs);
+        
+        // Apply the preference change immediately
+        applyTilePreferencesToApp(appdetail.packageName, prefs);
     });
 }
 
@@ -275,6 +280,9 @@ function setupBackgroundDropdown(appdetail, tilePrefs) {
         const prefs = getAppTilePreferences(appdetail.packageName);
         prefs.background = selectedValue;
         setAppTilePreferences(appdetail.packageName, prefs);
+        
+        // Apply the preference change immediately
+        applyTilePreferencesToApp(appdetail.packageName, prefs);
     });
 }
 
@@ -298,7 +306,62 @@ function setupTextColorDropdown(appdetail, tilePrefs) {
         const prefs = getAppTilePreferences(appdetail.packageName);
         prefs.textColor = selectedValue;
         setAppTilePreferences(appdetail.packageName, prefs);
+        
+        // Apply the preference change immediately
+        applyTilePreferencesToApp(appdetail.packageName, prefs);
     });
+}
+
+// Apply tile preferences to the actual app in the launcher
+function applyTilePreferencesToApp(packageName, prefs) {
+    try {
+        // Find the app tile in the parent launcher window
+        const homeTile = window.parent.document.querySelector(`div.groove-home-tile[packagename='${packageName}']`);
+        const appListItem = window.parent.document.querySelector(`div.groove-app-tile[packagename='${packageName}']`);
+        
+        // Apply preferences to both home tile and app list item
+        [homeTile, appListItem].forEach(element => {
+            if (element) {
+                applyTilePreferencesToElement(element, prefs, packageName);
+            }
+        });
+        
+        // Also update the home board if available
+        if (window.parent.GrooveBoard && window.parent.GrooveBoard.applyAppTilePreferences) {
+            window.parent.GrooveBoard.applyAppTilePreferences(packageName, prefs);
+        }
+        
+        console.log("Applied tile preferences for", packageName, prefs);
+    } catch (error) {
+        console.log("Error applying tile preferences:", error);
+    }
+}
+
+function applyTilePreferencesToElement(element, prefs, packageName) {
+    // Apply icon preference
+    if (prefs.icon !== "default") {
+        // TODO: Implement icon preference application
+        // This would involve changing the icon source based on the preference
+    }
+    
+    // Apply background preference
+    if (prefs.background === "accent_color") {
+        element.style.backgroundColor = "var(--accent-color)";
+    } else if (prefs.background === "default") {
+        element.style.backgroundColor = ""; // Reset to default
+    }
+    
+    // Apply text color preference
+    const titleElement = element.querySelector(".groove-home-tile-title, .groove-app-tile-title");
+    if (titleElement) {
+        if (prefs.textColor === "light") {
+            titleElement.style.color = "#ffffff";
+        } else if (prefs.textColor === "dark") {
+            titleElement.style.color = "#000000";
+        } else {
+            titleElement.style.color = ""; // Reset to default
+        }
+    }
 }
 
 function checkMonochromeIconsSupport() {
@@ -318,6 +381,16 @@ function checkMonochromeIconsSupport() {
 }
 
 function getAppTilePreferences(packageName) {
+    try {
+        if (window.parent.Groove && window.parent.Groove.getAppTilePreferences) {
+            const prefsStr = window.parent.Groove.getAppTilePreferences(packageName);
+            return JSON.parse(prefsStr);
+        }
+    } catch (error) {
+        console.log("Error getting app tile preferences:", error);
+    }
+    
+    // Fallback to localStorage for web mode
     if (!localStorage["perAppTilePreferences"]) localStorage["perAppTilePreferences"] = JSON.stringify({});
     const perAppTilePreferences = JSON.parse(localStorage["perAppTilePreferences"]);
     if (!perAppTilePreferences[packageName]) {
@@ -332,6 +405,16 @@ function getAppTilePreferences(packageName) {
 }
 
 function setAppTilePreferences(packageName, data) {
+    try {
+        if (window.parent.Groove && window.parent.Groove.setAppTilePreferences) {
+            window.parent.Groove.setAppTilePreferences(packageName, JSON.stringify(data));
+            return;
+        }
+    } catch (error) {
+        console.log("Error setting app tile preferences:", error);
+    }
+    
+    // Fallback to localStorage for web mode
     getAppTilePreferences(packageName);
     const perAppTilePreferences = JSON.parse(localStorage["perAppTilePreferences"]);
     perAppTilePreferences[packageName] = data;

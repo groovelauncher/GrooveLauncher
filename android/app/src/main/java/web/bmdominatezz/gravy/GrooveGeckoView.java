@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.util.Log;
 
+import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoRuntimeSettings;
 import org.mozilla.geckoview.GeckoSession;
@@ -45,6 +46,9 @@ public class GrooveGeckoView extends GeckoView {
             runtime = GeckoRuntime.create(context, runtimeSettingsBuilder.build());
             Log.d(TAG, "GeckoRuntime created successfully with debugging enabled");
             
+            // Load WebExtension for Android bridge
+            loadGrooveBridgeExtension();
+            
             // Create and configure GeckoSession
             session = new GeckoSession();
             Log.d(TAG, "GeckoSession created");
@@ -79,6 +83,50 @@ public class GrooveGeckoView extends GeckoView {
             Log.d(TAG, "GeckoView initialization completed successfully");
         } catch (Exception e) {
             Log.e(TAG, "Error initializing GeckoView", e);
+        }
+    }
+
+    private void loadGrooveBridgeExtension() {
+        try {
+            Log.d(TAG, "Loading Groove Bridge WebExtension...");
+            
+            // Load the WebExtension from assets
+            runtime.getWebExtensionController().install("resource://android/assets/extensions/groove-bridge/")
+                .then(new GeckoResult.OnValueListener<WebExtension, Void>() {
+                    @Override
+                    public GeckoResult<Void> onValue(WebExtension installedExtension) {
+                        Log.d(TAG, "Groove Bridge WebExtension installed successfully: " + installedExtension.id);
+                        
+                        // Set up message delegate for communication with extension
+                        installedExtension.setMessageDelegate(
+                            new WebExtension.MessageDelegate() {
+                                @Override
+                                public GeckoResult<Object> onMessage(
+                                    String nativeApp,
+                                    Object message,
+                                    WebExtension.MessageSender sender
+                                ) {
+                                    Log.d(TAG, "Received message from extension: " + message);
+                                    // Handle messages from WebExtension here
+                                    // This is where we'll implement actual Android functionality
+                                    return GeckoResult.fromValue(null);
+                                }
+                            },
+                            "grooveBridge"
+                        );
+                        
+                        return null;
+                    }
+                }, new GeckoResult.OnExceptionListener<Void>() {
+                    @Override
+                    public GeckoResult<Void> onException(Throwable exception) {
+                        Log.e(TAG, "Failed to install Groove Bridge WebExtension", exception);
+                        return null;
+                    }
+                });
+                
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading Groove Bridge WebExtension", e);
         }
     }
 

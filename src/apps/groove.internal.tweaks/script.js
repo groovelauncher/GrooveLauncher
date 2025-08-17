@@ -1014,6 +1014,17 @@ function setupGlobalIconDropdown() {
         } else if (value === "default") {
             localStorage.setItem("iconPack", "");
             Groove.applyIconPack("");
+            window.parent.GrooveBoard.alert(
+                "Notice",
+                "You need to restart the app to apply the icon pack.",
+                [{
+                    title: "Ok", style: "default", action: () => {
+                        window.parent.location.reload()
+                    }
+                },
+                { title: "Later", style: "default", action: () => { } }
+                ]
+            );
         }
 
         // Apply monochrome setting

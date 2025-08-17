@@ -1291,8 +1291,8 @@ const backendMethods = {
       }
     }
     
-    // Apply text color preference
-    if (titleElement) {
+    // Apply text color preference only to home tiles (not app list tiles)
+    if (titleElement && isHomeTile) {
       if (prefs.textColor === 'light') {
         titleElement.style.color = '#FFFFFF';
       } else if (prefs.textColor === 'dark') {

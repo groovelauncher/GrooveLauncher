@@ -252,6 +252,7 @@ function setupIconDropdown(appdetail, tilePrefs) {
         }
     });
     iconDropdown.setAttribute("selected", selectedIndex);
+    iconDropdown.selectOption(selectedIndex);
     console.log("Set icon dropdown to index:", selectedIndex, "value:", tilePrefs.icon);
     
     // Add event listener
@@ -282,6 +283,7 @@ function setupBackgroundDropdown(appdetail, tilePrefs) {
         }
     });
     backgroundDropdown.setAttribute("selected", selectedIndex);
+    backgroundDropdown.selectOption(selectedIndex);
     console.log("Set background dropdown to index:", selectedIndex, "value:", tilePrefs.background);
     
     // Add event listener
@@ -312,6 +314,7 @@ function setupTextColorDropdown(appdetail, tilePrefs) {
         }
     });
     textColorDropdown.setAttribute("selected", selectedIndex);
+    textColorDropdown.selectOption(selectedIndex);
     console.log("Set text color dropdown to index:", selectedIndex, "value:", tilePrefs.textColor);
     
     // Add event listener

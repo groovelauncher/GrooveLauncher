@@ -14,7 +14,15 @@ if (!whatsNewContent) {
 console.log('Updating welcome.html with AI-generated what\'s new content');
 
 // Use the content directly from command line argument
-const trimmedContent = whatsNewContent.trim();
+let trimmedContent = whatsNewContent.trim();
+
+// Remove markdown code blocks if present
+// Remove ```html or ``` from the beginning
+trimmedContent = trimmedContent.replace(/^```html?\s*\n?/, '');
+// Remove ``` from the end
+trimmedContent = trimmedContent.replace(/\n?\s*```$/, '');
+// Trim again after removing code blocks
+trimmedContent = trimmedContent.trim();
 
 // Check if welcome.html exists
 const welcomeHtmlPath = path.join('www', 'welcome.html');

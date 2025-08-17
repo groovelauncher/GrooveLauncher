@@ -174,7 +174,7 @@ jobs:
           echo "Listing all non-GeckoView AABs in build directory:"
           find android/app/build/outputs/bundle/ -name "*.aab" ! -path "*GeckoView*" -print
 
-      - name: Rename and Collect APKs for Release
+      - name: Rename and Collect APKs and AAB for Release
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
           # WebView APKs (split by ABI)
@@ -191,10 +191,14 @@ jobs:
               cp "$apk" "GrooveLauncher_v${VERSION_NAME}_GeckoView_${arch}.apk"
             fi
           done
+          # WebView AAB
+          if [ -f "android/app/build/outputs/bundle/regularRelease/app-regular-release.aab" ]; then
+            cp "android/app/build/outputs/bundle/regularRelease/app-regular-release.aab" "GrooveLauncher.aab"
+          fi
           
           # List generated release files
           echo "Generated release files:"
-          ls -la GrooveLauncher_v${VERSION_NAME}_*.apk
+          ls -la GrooveLauncher_v${VERSION_NAME}_*.apk GrooveLauncher.aab 2>/dev/null || ls -la GrooveLauncher_v${VERSION_NAME}_*.apk
 
       - name: Generate Release Description with Gemini
         if: ${{ steps.version_vars.outputs.generate_release_description == 'true' }}
@@ -250,7 +254,7 @@ jobs:
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
           RELEASE_TAG="v${VERSION_NAME}"
-          ASSETS=$(ls GrooveLauncher_v${VERSION_NAME}_*.apk | xargs)
+          ASSETS=$(ls GrooveLauncher_v${VERSION_NAME}_*.apk GrooveLauncher.aab 2>/dev/null | xargs || ls GrooveLauncher_v${VERSION_NAME}_*.apk | xargs)
           
           # Use generated release notes if available, otherwise use default
           if [ -f "release_description.md" ] && [ "${{ steps.release_description.outputs.release_notes_generated }}" = "true" ]; then
@@ -297,8 +301,10 @@ jobs:
         if: ${{ steps.version_vars.outputs.create_release != 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: GrooveLauncher-v${{ steps.version_vars.outputs.version_name }}-APKs
-          path: GrooveLauncher_v${{ steps.version_vars.outputs.version_name }}_*.apk
+          name: GrooveLauncher-v${{ steps.version_vars.outputs.version_name }}-APKs-AAB
+          path: |
+            GrooveLauncher_v${{ steps.version_vars.outputs.version_name }}_*.apk
+            GrooveLauncher.aab
           retention-days: 30
           
       - name: Commit and Push Version Changes
@@ -324,8 +330,8 @@ jobs:
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
           echo "🎉 Build completed successfully!"
           echo "📦 Version: v${VERSION_NAME}"
-          echo "📱 Generated APKs:"
-          ls -la GrooveLauncher_v${VERSION_NAME}_*.apk
+          echo "📱 Generated APKs and AAB:"
+          ls -la GrooveLauncher_v${VERSION_NAME}_*.apk GrooveLauncher.aab 2>/dev/null || ls -la GrooveLauncher_v${VERSION_NAME}_*.apk
           
           # AI-generated content summary
           if [ "${{ steps.release_description.outputs.release_notes_generated }}" = "true" ]; then

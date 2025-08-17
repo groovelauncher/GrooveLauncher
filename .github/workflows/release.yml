@@ -215,7 +215,7 @@ jobs:
           fi
           
           # Prepare prompt for Gemini
-          PROMPT="Based on these git commits, generate a GitHub release description in markdown format for Groove Launcher v${VERSION_NAME}. Only include categories (Added, Removed, Improved, Fixed) that have actual changes - skip empty categories entirely. Format each item as '- **feature name**: Description'. Include a Full Changelog link at the end. Here are the commits:\n\n${COMMITS}"
+          PROMPT="Based on these git commits, generate a GitHub release description in markdown format for Groove Launcher v${VERSION_NAME}. Only include categories (Added, Removed, Improved, Fixed) that have actual changes - skip empty categories entirely. Format each item as '- **feature name**: Description'. Do NOT include any Full Changelog link. Here are the commits:\n\n${COMMITS}"
           
           # Call Gemini API
           RESPONSE=$(curl -s "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent" \
@@ -239,6 +239,10 @@ jobs:
           
           if [ -n "$RELEASE_NOTES" ] && [ "$RELEASE_NOTES" != "null" ]; then
             echo "Generated release description successfully"
+            
+            # Add Full Changelog link
+            RELEASE_NOTES="${RELEASE_NOTES}\n\n**Full Changelog**: https://github.com/groovelauncher/GrooveLauncher/compare/${LAST_TAG}...v${VERSION_NAME}"
+            
             # Save to file for later use
             echo "$RELEASE_NOTES" > release_description.md
             echo "release_notes_generated=true" >> $GITHUB_OUTPUT

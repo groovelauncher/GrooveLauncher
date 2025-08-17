@@ -371,6 +371,9 @@ jobs:
           # Configure git to use the token for authentication
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/groovelauncher/GrooveLauncher.git
           
+          # Pull latest changes to avoid push rejection
+          git pull origin main
+          
           # Add version files
           git add package.json src/scripts/grooveMock.js android/app/build.gradle.kts
           

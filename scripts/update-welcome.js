@@ -3,18 +3,18 @@
 const fs = require('fs');
 const path = require('path');
 
-// Get the what's new content file path from command line arguments
-const whatsNewFile = process.argv[2] || 'whats_new.html';
+// Get the what's new content from command line arguments
+const whatsNewContent = process.argv[2];
 
-if (!fs.existsSync(whatsNewFile)) {
-  console.log(`What's new file ${whatsNewFile} not found, skipping welcome.html update`);
+if (!whatsNewContent) {
+  console.log('No what\'s new content provided, skipping welcome.html update');
   process.exit(0);
 }
 
 console.log('Updating welcome.html with AI-generated what\'s new content');
 
-// Read the generated HTML content
-const whatsNewContent = fs.readFileSync(whatsNewFile, 'utf8').trim();
+// Use the content directly from command line argument
+const trimmedContent = whatsNewContent.trim();
 
 // Check if welcome.html exists
 const welcomeHtmlPath = path.join('www', 'welcome.html');
@@ -48,7 +48,7 @@ const afterMarker = welcomeContent.substring(endIndex);
 // Create the new content with proper indentation
 const newContent = `${beforeMarker}
                             <ul>
-${whatsNewContent}
+${trimmedContent}
                             </ul>
                             ${afterMarker}`;
 

@@ -1176,7 +1176,9 @@ const backendMethods = {
     if (window.Groove && window.Groove.getAppTilePreferences) {
       try {
         const prefsStr = window.Groove.getAppTilePreferences(packageName);
-        return JSON.parse(prefsStr);
+        if (prefsStr && prefsStr !== "undefined" && prefsStr !== "null") {
+          return JSON.parse(prefsStr);
+        }
       } catch (error) {
         console.log("Error getting app tile preferences via WebInterface:", error);
       }
@@ -1279,14 +1281,13 @@ const backendMethods = {
     
     // Apply background preference
     if (backgroundTarget) {
-      if (prefs.background === 'accent') {
-        // Get the actual accent color from localStorage instead of using undefined CSS variables
-        const accentColor = localStorage.getItem('accentColor') || '#F472D0';
-        backgroundTarget.style.backgroundColor = accentColor;
-        backgroundTarget.style.backgroundImage = ''; // Clear any existing background image
+      if (prefs.background === 'accent_color') {
+        // Use the CSS variable for accent color
+        backgroundTarget.style.backgroundColor = 'var(--accent-color)';
+        backgroundTarget.style.backgroundImage = 'none'; // Clear any existing background image
       } else {
         backgroundTarget.style.backgroundColor = '';
-        // Don't clear background image for default - it should keep the adaptive icon background
+        backgroundTarget.style.backgroundImage = ''; // Reset background image
       }
     }
     
@@ -1307,7 +1308,7 @@ const backendMethods = {
       if (window.Groove && window.Groove.supportsMonochromeIcons && window.Groove.supportsMonochromeIcons() === "true") {
         iconElement.style.filter = 'grayscale(1) brightness(0) invert(1)';
         // Adjust filter based on text color for better contrast
-        if (prefs.textColor === 'dark' || (prefs.textColor === 'default' && prefs.background === 'accent')) {
+        if (prefs.textColor === 'dark' || (prefs.textColor === 'default' && prefs.background === 'accent_color')) {
           iconElement.style.filter = 'grayscale(1) brightness(0)';
         }
       }

@@ -366,7 +366,11 @@ class GrooveMock {
         
         // Check old individual key format
         const key = `groove_app_tiles_${packageName}`;
-        return localStorage.getItem(key) || defaultPrefs;
+        const stored = localStorage.getItem(key);
+        if (stored && stored !== "undefined" && stored !== "null") {
+            return stored;
+        }
+        return defaultPrefs;
     }
 
     hasAppTilePreferences(packageName) {

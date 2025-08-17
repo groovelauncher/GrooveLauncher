@@ -319,6 +319,8 @@ startUpSequence([
         setTimeout(() => {
             GrooveBoard.backendMethods.refreshStyles()
             if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true); else GrooveBoard.backendMethods.setUIScale(.8, true)
+            // Refresh tiles to apply any saved preferences
+            GrooveBoard.backendMethods.refreshAllTiles()
         }, 500);
     }
 )
@@ -367,7 +369,7 @@ window.addEventListener("pointerdown", (e) => {
             delete window.doubleTapOverride
             delete window.doubleTapOverrideTimeout
         })
-        if (Groove.checkPermission("ACCESSIBILITY")) {
+        if (Groove.checkPermission("ACCESSIBILITY") === "true") {
             Groove.requestScreenLock()
             console.log("double tap sleep")
         } else {

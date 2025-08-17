@@ -3,7 +3,7 @@ const pmtryagaian = {
         var firstanswer = Groove.isDeviceRooted()
         setTimeout(() => {
             var secondanswer = Groove.isDeviceRooted()
-            if (secondanswer) {
+            if (secondanswer === "true") {
                 parent.GrooveBoard.backendMethods.packageManagerProvider.set(1)
             } else {
                 parent.GrooveBoard.alert(
@@ -23,7 +23,7 @@ const pmtryagaian = {
         var firstanswer = Groove.isShizukuAvailable()
         setTimeout(() => {
             var secondanswer = Groove.isShizukuAvailable()
-            if (secondanswer) {
+            if (secondanswer === "true") {
                 parent.GrooveBoard.backendMethods.packageManagerProvider.set(2)
             } else {
                 parent.GrooveBoard.alert(

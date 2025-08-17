@@ -154,6 +154,10 @@ const boardMethods = {
       ),
       config
     );
+    
+    // Apply tile preferences to home tile
+    backendMethods.applyTilePreferences(widget, options.packageName);
+    
     if (window.scrollers) window.scrollers.tile_page_scroller.refresh();
     return widget;
 
@@ -213,6 +217,10 @@ const boardMethods = {
         "#main-home-slider > div > div:nth-child(2) > div > div.app-list > div.app-list-container"
       )
       .appendChild(el);
+    
+    // Apply tile preferences
+    backendMethods.applyTilePreferences(el, options.packageName);
+    
     return el;
   },
   createLetterTile: (letter) => {
@@ -779,7 +787,6 @@ const backendMethods = {
     }
   },
   setTheme: (theme, doNotSave = false) => {
-    console.log("CALLED GROOVEBOARD SETTHEME", theme, doNotSave)
     if (Object.values(grooveThemes).includes(theme)) {
       var applyTheme
       if (theme == 2) applyTheme = Number(localStorage.getItem("autoTheme")); else applyTheme = theme
@@ -903,6 +910,10 @@ const backendMethods = {
             y: tile.t
           }
         );
+        
+        // Apply tile preferences to home tile
+        backendMethods.applyTilePreferences(homeTile, tile.p);
+        
         el.setAttribute("gs-x", tile.l)
         el.setAttribute("gs-y", tile.t)
         el.setAttribute("gs-w", tile.w)
@@ -1145,6 +1156,164 @@ const backendMethods = {
     Object.keys(styleManagerInstance.getMetadata()).forEach(id => {
       styleManagerInstance.applyStyle(id)
     })
+  },
+
+  // Tile Preference System
+  getGlobalTilePreferences: () => {
+    if (!localStorage["globalTilePreferences"]) {
+      localStorage["globalTilePreferences"] = JSON.stringify({
+        icon: "default",
+        background: "default",
+        textColor: "default"
+      });
+    }
+    return JSON.parse(localStorage["globalTilePreferences"]);
+  },
+
+  getAppTilePreferences: (packageName) => {
+    // Try to use WebInterface method first
+    if (window.Groove && window.Groove.getAppTilePreferences) {
+      try {
+        const prefsStr = window.Groove.getAppTilePreferences(packageName);
+        if (prefsStr && prefsStr !== "undefined" && prefsStr !== "null") {
+          return JSON.parse(prefsStr);
+        }
+      } catch (error) {
+        console.log("Error getting app tile preferences via WebInterface:", error);
+      }
+    }
+    
+    // Fallback to localStorage - check new format first, then old format
+    const defaultPrefs = { icon: "default", background: "default", textColor: "default" };
+    
+    // Check new perAppTilePreferences format (used by Groove Settings)
+    if (localStorage["perAppTilePreferences"]) {
+      try {
+        const perAppPrefs = JSON.parse(localStorage["perAppTilePreferences"]);
+        if (perAppPrefs[packageName]) {
+          return perAppPrefs[packageName];
+        }
+      } catch (error) {
+        console.log("Error reading perAppTilePreferences:", error);
+      }
+    }
+    
+    // Check old individual key format  
+    const key = `groove_app_tiles_${packageName}`;
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : defaultPrefs;
+  },
+
+  setAppTilePreferences: (packageName, preferences) => {
+    // Try to use WebInterface method first
+    if (window.Groove && window.Groove.setAppTilePreferences) {
+      try {
+        window.Groove.setAppTilePreferences(packageName, JSON.stringify(preferences));
+      } catch (error) {
+        console.log("Error setting app tile preferences via WebInterface:", error);
+      }
+    }
+    
+    // Also save to localStorage as backup
+    const key = `groove_app_tiles_${packageName}`;
+    localStorage.setItem(key, JSON.stringify(preferences));
+    
+    // Trigger refresh
+    window.dispatchEvent(new CustomEvent('tilePreferencesChanged', { 
+      detail: { packageName, preferences } 
+    }));
+  },
+
+  getEffectiveTilePreferences: (packageName) => {
+    const appPrefs = backendMethods.getAppTilePreferences(packageName);
+    const globalPrefs = backendMethods.getGlobalTilePreferences();
+    
+    return {
+      icon: appPrefs.icon === "default" ? globalPrefs.icon : appPrefs.icon,
+      background: appPrefs.background === "default" ? globalPrefs.background : appPrefs.background,
+      textColor: appPrefs.textColor === "default" ? globalPrefs.textColor : appPrefs.textColor
+    };
+  },
+
+  refreshAllTiles: () => {
+    // Refresh home tiles directly
+    setTimeout(() => {
+      document.querySelectorAll('.groove-home-tile[packagename]').forEach(tile => {
+        const packageName = tile.getAttribute('packagename');
+        if (packageName) {
+          backendMethods.applyTilePreferences(tile, packageName);
+        }
+      });
+    }, 50);
+    
+    // Refresh app list tiles
+    setTimeout(() => {
+      document.querySelectorAll('.groove-app-tile[packagename]').forEach(tile => {
+        const packageName = tile.getAttribute('packagename');
+        if (packageName) {
+          backendMethods.applyTilePreferences(tile, packageName);
+        }
+      });
+    }, 100);
+  },
+
+  applyTilePreferences: (tileElement, packageName) => {
+    if (!tileElement || !packageName) return;
+    
+    const prefs = backendMethods.getEffectiveTilePreferences(packageName);
+    
+    // Determine if this is a home tile or app tile
+    const isHomeTile = tileElement.classList.contains('groove-home-tile');
+    const isAppTile = tileElement.classList.contains('groove-app-tile');
+    
+    let iconElement, titleElement, backgroundTarget;
+    
+    if (isHomeTile) {
+      iconElement = tileElement.querySelector('.groove-home-tile-imageicon');
+      titleElement = tileElement.querySelector('.groove-home-tile-title');
+      backgroundTarget = tileElement.querySelector('.groove-home-inner-tile'); // Apply background to inner tile
+    } else if (isAppTile) {
+      iconElement = tileElement.querySelector('.groove-app-tile-imageicon');
+      titleElement = tileElement.querySelector('.groove-app-tile-title');
+      backgroundTarget = iconElement; // For app tiles, apply background to icon element
+    }
+    
+    // Apply background preference
+    if (backgroundTarget) {
+      if (prefs.background === 'accent_color') {
+        // Use the CSS variable for accent color
+        backgroundTarget.style.backgroundColor = 'var(--accent-color)';
+        backgroundTarget.style.backgroundImage = 'none'; // Clear any existing background image
+      } else {
+        backgroundTarget.style.backgroundColor = '';
+        backgroundTarget.style.backgroundImage = ''; // Reset background image
+      }
+    }
+    
+    // Apply text color preference only to home tiles (not app list tiles)
+    if (titleElement && isHomeTile) {
+      if (prefs.textColor === 'light') {
+        titleElement.style.color = '#FFFFFF';
+      } else if (prefs.textColor === 'dark') {
+        titleElement.style.color = '#000000';
+      } else {
+        titleElement.style.color = '';
+      }
+    }
+    
+    // Apply icon preference (monochrome, icon packs, etc.)
+    if (prefs.icon === 'monochrome' && iconElement) {
+      // Check if monochrome is supported
+      if (window.Groove && window.Groove.supportsMonochromeIcons && window.Groove.supportsMonochromeIcons() === "true") {
+        iconElement.style.filter = 'grayscale(1) brightness(0) invert(1)';
+        // Adjust filter based on text color for better contrast
+        if (prefs.textColor === 'dark' || (prefs.textColor === 'default' && prefs.background === 'accent_color')) {
+          iconElement.style.filter = 'grayscale(1) brightness(0)';
+        }
+      }
+    } else if (iconElement) {
+      iconElement.style.filter = '';
+    }
   }
 
 };
@@ -1183,6 +1352,12 @@ window.addEventListener("appUninstall", function (e) {
     clearOldAppPreferences()
   }, 20000)
 });
+
+// Listen for tile preferences changes and refresh tiles
+window.addEventListener("tilePreferencesChanged", function(e) {
+  backendMethods.refreshAllTiles();
+});
+
 function clearOldAppPreferences() {
   setTimeout(() => {
     if (localStorage["perAppPreferences"]) {

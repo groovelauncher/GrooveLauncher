@@ -145,8 +145,8 @@ class GrooveMock {
         return versionName + " (code: " + versionCode + ")";
 
     }
-    isDeviceRooted() { return false }
-    isShizukuAvailable() { return true }
+    isDeviceRooted() { return "false" }
+    isShizukuAvailable() { return "true" }
     getDefaultApps() {
         return JSON.stringify({
             "phoneApp": "com.google.android.dialer",
@@ -163,10 +163,10 @@ class GrooveMock {
         try {
             await navigator.clipboard.writeText(text);
             console.log("Copied to clipboard:", text);
-            return true;
+            return "true";
         } catch (error) {
             console.error("Failed to copy to clipboard:", error);
-            return false;
+            return "false";
         }
     }
     getDisplayOrientation() {
@@ -315,6 +315,75 @@ class GrooveMock {
     }
     applyIconPack(packageName) {
         console.log("Apply icon pack:", packageName)
+    }
+
+    getAPILevel() {
+        // Allow configuring API level via localStorage for testing
+        const configuredLevel = localStorage.getItem("groove_mock_api_level");
+        return configuredLevel || "28"; // default to 28 (Android 9)
+    }
+
+    supportsMonochromeIcons() {
+        const apiLevel = parseInt(this.getAPILevel());
+        return apiLevel >= 33; // Proper API level check
+    }
+
+    setMonochromeIcons(enable) {
+        localStorage.setItem("groove_monochrome_icons", enable.toString());
+        console.log("Set monochrome icons:", enable);
+    }
+
+    getMonochromeIcons() {
+        //testing
+        return false
+        return localStorage.getItem("groove_monochrome_icons") === "true" ? "true" : "false";
+    }
+
+    // Per-app tile preferences methods
+    setAppTilePreferences(packageName, preferences) {
+        const key = `groove_app_tiles_${packageName}`;
+        localStorage.setItem(key, preferences);
+        console.log("Set tile preferences for", packageName, ":", preferences);
+
+        // Trigger tile refresh
+        window.dispatchEvent(new CustomEvent('tilePreferencesChanged', {
+            detail: { packageName, preferences }
+        }));
+    }
+
+    getAppTilePreferences(packageName) {
+        const defaultPrefs = '{"icon":"default","background":"default","textColor":"default"}';
+
+        // Check new perAppTilePreferences format first (used by Groove Settings)
+        if (localStorage["perAppTilePreferences"]) {
+            try {
+                const perAppPrefs = JSON.parse(localStorage["perAppTilePreferences"]);
+                if (perAppPrefs[packageName]) {
+                    return JSON.stringify(perAppPrefs[packageName]);
+                }
+            } catch (error) {
+                console.log("Error reading perAppTilePreferences:", error);
+            }
+        }
+
+        // Check old individual key format
+        const key = `groove_app_tiles_${packageName}`;
+        const stored = localStorage.getItem(key);
+        if (stored && stored !== "undefined" && stored !== "null") {
+            return stored;
+        }
+        return defaultPrefs;
+    }
+
+    hasAppTilePreferences(packageName) {
+        const key = `groove_app_tiles_${packageName}`;
+        return localStorage.getItem(key) !== null;
+    }
+
+    removeAppTilePreferences(packageName) {
+        const key = `groove_app_tiles_${packageName}`;
+        localStorage.removeItem(key);
+        console.log("Removed tile preferences for", packageName);
     }
 }
 function sendNotificationToSystem(notification) {

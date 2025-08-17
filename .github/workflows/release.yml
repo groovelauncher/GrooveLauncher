@@ -162,11 +162,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
           KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
         run: |
-          npm run build:production
-          cd android
-          ./gradlew assembleRegularRelease -Pandroid.injected.signing.store.file=app/keystore.jks -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD -Pandroid.injected.signing.key.alias=key0 -Pandroid.injected.signing.key.password=$KEY_PASSWORD
-          ./gradlew assembleRegularGeckoViewRelease -Pandroid.injected.signing.store.file=app/keystore.jks -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD -Pandroid.injected.signing.key.alias=key0 -Pandroid.injected.signing.key.password=$KEY_PASSWORD
-          cd ..
+          npm run build:android:release
 
       - name: List all generated APKs for debugging
         run: |

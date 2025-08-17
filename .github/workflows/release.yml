@@ -169,6 +169,11 @@ jobs:
           echo "Listing all APKs in build directory:"
           find android/app/build/ -name "*.apk" -print
 
+      - name: List all generated AABs (non-GeckoView) for debugging
+        run: |
+          echo "Listing all non-GeckoView AABs in build directory:"
+          find android/app/build/outputs/bundle/ -name "*.aab" ! -path "*GeckoView*" -print
+
       - name: Rename and Collect APKs for Release
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"

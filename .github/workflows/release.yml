@@ -71,14 +71,16 @@ jobs:
           # Update package.json
           npm version $VERSION_NAME --no-git-tag-version
           
-          # Update grooveMock.js
-          sed -i '' "s/version: '[^']*'/version: '$VERSION_NAME'/g" src/scripts/grooveMock.js
+          # Update grooveMock.js version between comment markers
+          sed -i '' "/\/\/ VERSIONNAME START/,/\/\/ VERSIONNAME END/s/return \"[^\"]*\"/return \"$VERSION_NAME\"/g" src/scripts/grooveMock.js
           
-          # Update build.gradle.kts
-          sed -i '' "s/versionName = \"[^\"]*\"/versionName = \"$VERSION_NAME\"/g" android/app/build.gradle.kts
-          sed -i '' "s/versionCode = [0-9]*/versionCode = $VERSION_CODE/g" android/app/build.gradle.kts
+          # Update build.gradle.kts version name between comment markers
+          sed -i '' "/\/\/ VERSIONNAME START/,/\/\/ VERSIONNAME END/s/versionName = \"[^\"]*\"/versionName = \"$VERSION_NAME\"/g" android/app/build.gradle.kts
           
-          echo "Version numbers updated successfully"
+          # Update build.gradle.kts version code between comment markers
+          sed -i '' "/\/\/ VERSIONCODE START/,/\/\/ VERSIONCODE END/s/versionCode = [0-9]*/versionCode = $VERSION_CODE/g" android/app/build.gradle.kts
+          
+          echo "Version numbers updated successfully using comment markers"
 
       - name: Decode Keystore
         run: |
@@ -296,12 +298,14 @@ jobs:
               # Create a backup
               cp www/welcome.html www/welcome.html.backup
               
-              # Update the what's new section in welcome.html
-              # This assumes there's a placeholder or existing what's new section
-              # You may need to adjust this based on your welcome.html structure
-              echo "What's new content generated and ready for manual integration:"
-              echo "$WHATS_NEW_CONTENT"
-              echo "Please manually update www/welcome.html with this content."
+              # Escape special characters for sed
+              ESCAPED_CONTENT=$(echo "$WHATS_NEW_CONTENT" | sed 's/[[\/.\*^$()+?{|]/\\&/g')
+              
+              # Replace content between HTML comment markers
+              sed -i '' "/<!--WHATS NEW START-->/,/<!--WHATS NEW END-->/{/<!--WHATS NEW START-->/!{/<!--WHATS NEW END-->/!d;};}" www/welcome.html
+              sed -i '' "/<!--WHATS NEW START-->/a\\\n                            <ul>\\\n$ESCAPED_CONTENT\\\n                            </ul>" www/welcome.html
+              
+              echo "Successfully updated www/welcome.html with AI-generated what's new content"
             else
               echo "welcome.html not found at www/welcome.html"
             fi

@@ -313,10 +313,15 @@ jobs:
           
       - name: Commit and Push Version Changes
         if: ${{ steps.version_vars.outputs.create_release == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          
+          # Configure git to use the token for authentication
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/groovelauncher/GrooveLauncher.git
           
           # Add version files
           git add package.json src/scripts/grooveMock.js android/app/build.gradle.kts

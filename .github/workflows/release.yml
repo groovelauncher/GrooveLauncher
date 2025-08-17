@@ -88,7 +88,54 @@ jobs:
         run: |
           echo "$LOCAL_PROPERTIES" > android/gradle.local.properties
           echo "CHANGELOG=Stable release ${{ steps.version_vars.outputs.version_name }}" >> android/gradle.local.properties
-      
+
+      - name: Generate What's New Description with Gemini
+        if: ${{ steps.version_vars.outputs.generate_whats_new == 'true' }}
+        id: whats_new
+        run: |
+          VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
+          
+          # Get git log since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            COMMITS=$(git log ${LAST_TAG}..HEAD --oneline --no-merges)
+          else
+            COMMITS=$(git log --oneline --no-merges -10)
+          fi
+          
+          # Prepare prompt for Gemini
+          PROMPT="Based on these git commits, generate a 'What's New' HTML list for Groove Launcher v${VERSION_NAME}. Format as HTML <li> elements with <strong> tags for feature names. Make it human-readable and user-friendly. Example: <li><strong>Feature name:</strong> User-friendly description</li>. Here are the commits:\n\n${COMMITS}"
+          
+          # Call Gemini API
+          RESPONSE=$(curl -s "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent" \
+            -H "x-goog-api-key: ${{ secrets.GEMINI_API_KEY }}" \
+            -H 'Content-Type: application/json' \
+            -X POST \
+            -d "{
+              \"contents\": [
+                {
+                  \"parts\": [
+                    {
+                      \"text\": \"${PROMPT}\"
+                    }
+                  ]
+                }
+              ]
+            }")
+          
+          # Extract text from response
+          WHATS_NEW_HTML=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text' 2>/dev/null || echo "")
+          
+          if [ -n "$WHATS_NEW_HTML" ] && [ "$WHATS_NEW_HTML" != "null" ]; then
+            echo "Generated what's new description successfully"
+            # Save to file for later use
+            echo "$WHATS_NEW_HTML" > whats_new.html
+            echo "whats_new_generated=true" >> $GITHUB_OUTPUT
+          else
+            echo "Failed to generate what's new description"
+            echo "whats_new_generated=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Update Welcome.html with What's New
         if: ${{ steps.whats_new.outputs.whats_new_generated == 'true' }}
         run: |
@@ -102,19 +149,14 @@ jobs:
               # Create a backup
               cp www/welcome.html www/welcome.html.backup
               
-              # Escape special characters for sed
-              ESCAPED_CONTENT=$(echo "$WHATS_NEW_CONTENT" | sed 's/[[\/.\*^$()+?{|]/\\&/g')
-              
-              # Replace content between HTML comment markers
-              sed -i '' "/<!--WHATS NEW START-->/,/<!--WHATS NEW END-->/{/<!--WHATS NEW START-->/!{/<!--WHATS NEW END-->/!d;};}" www/welcome.html
-              sed -i '' "/<!--WHATS NEW START-->/a\\\n                            <ul>\\\n$ESCAPED_CONTENT\\\n                            </ul>" www/welcome.html
+              # Use Node.js script to update welcome.html
+              node scripts/update-welcome.js "$WHATS_NEW_CONTENT"
               
               echo "Successfully updated www/welcome.html with AI-generated what's new content"
             else
               echo "welcome.html not found at www/welcome.html"
             fi
           fi
-
       - name: Build Android APKs (WebView & GeckoView)
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
@@ -198,53 +240,6 @@ jobs:
           else
             echo "Failed to generate release description, using default"
             echo "release_notes_generated=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Generate What's New Description with Gemini
-        if: ${{ steps.version_vars.outputs.generate_whats_new == 'true' }}
-        id: whats_new
-        run: |
-          VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
-          
-          # Get git log since last tag
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          if [ -n "$LAST_TAG" ]; then
-            COMMITS=$(git log ${LAST_TAG}..HEAD --oneline --no-merges)
-          else
-            COMMITS=$(git log --oneline --no-merges -10)
-          fi
-          
-          # Prepare prompt for Gemini
-          PROMPT="Based on these git commits, generate a 'What's New' HTML list for Groove Launcher v${VERSION_NAME}. Format as HTML <li> elements with <strong> tags for feature names. Make it human-readable and user-friendly. Example: <li><strong>Feature name:</strong> User-friendly description</li>. Here are the commits:\n\n${COMMITS}"
-          
-          # Call Gemini API
-          RESPONSE=$(curl -s "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent" \
-            -H "x-goog-api-key: ${{ secrets.GEMINI_API_KEY }}" \
-            -H 'Content-Type: application/json' \
-            -X POST \
-            -d "{
-              \"contents\": [
-                {
-                  \"parts\": [
-                    {
-                      \"text\": \"${PROMPT}\"
-                    }
-                  ]
-                }
-              ]
-            }")
-          
-          # Extract text from response
-          WHATS_NEW_HTML=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text' 2>/dev/null || echo "")
-          
-          if [ -n "$WHATS_NEW_HTML" ] && [ "$WHATS_NEW_HTML" != "null" ]; then
-            echo "Generated what's new description successfully"
-            # Save to file for later use
-            echo "$WHATS_NEW_HTML" > whats_new.html
-            echo "whats_new_generated=true" >> $GITHUB_OUTPUT
-          else
-            echo "Failed to generate what's new description"
-            echo "whats_new_generated=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Create GitHub Release

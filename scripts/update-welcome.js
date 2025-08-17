@@ -1,0 +1,58 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+
+// Get the what's new content file path from command line arguments
+const whatsNewFile = process.argv[2] || 'whats_new.html';
+
+if (!fs.existsSync(whatsNewFile)) {
+  console.log(`What's new file ${whatsNewFile} not found, skipping welcome.html update`);
+  process.exit(0);
+}
+
+console.log('Updating welcome.html with AI-generated what\'s new content');
+
+// Read the generated HTML content
+const whatsNewContent = fs.readFileSync(whatsNewFile, 'utf8').trim();
+
+// Check if welcome.html exists
+const welcomeHtmlPath = path.join('www', 'welcome.html');
+if (!fs.existsSync(welcomeHtmlPath)) {
+  console.log('welcome.html not found at www/welcome.html');
+  process.exit(1);
+}
+
+// Create a backup
+fs.copyFileSync(welcomeHtmlPath, welcomeHtmlPath + '.backup');
+
+// Read the welcome.html file
+let welcomeContent = fs.readFileSync(welcomeHtmlPath, 'utf8');
+
+// Replace content between HTML comment markers
+const startMarker = '<!--WHATS NEW START-->';
+const endMarker = '<!--WHATS NEW END-->';
+
+const startIndex = welcomeContent.indexOf(startMarker);
+const endIndex = welcomeContent.indexOf(endMarker);
+
+if (startIndex === -1 || endIndex === -1) {
+  console.log('Could not find HTML comment markers in welcome.html');
+  process.exit(1);
+}
+
+// Calculate positions
+const beforeMarker = welcomeContent.substring(0, startIndex + startMarker.length);
+const afterMarker = welcomeContent.substring(endIndex);
+
+// Create the new content with proper indentation
+const newContent = `${beforeMarker}
+                            <ul>
+${whatsNewContent}
+                            </ul>
+                            ${afterMarker}`;
+
+// Write the updated content back to the file
+fs.writeFileSync(welcomeHtmlPath, newContent);
+
+console.log('Successfully updated www/welcome.html with AI-generated what\'s new content');

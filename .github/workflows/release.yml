@@ -32,6 +32,9 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: write
+  actions: read
 
 jobs:
   build-and-release:
@@ -292,7 +295,7 @@ jobs:
           echo "Creating release with tag $RELEASE_TAG"
           gh release create "$RELEASE_TAG" $ASSETS \
             --title "${VERSION_NAME}" \
-            --notes "$RELEASE_NOTES" \
+            --notes "$(echo -e "$RELEASE_NOTES")" \
             --latest
             
       - name: Display Generated Descriptions (No Release)
@@ -344,7 +347,7 @@ jobs:
       - name: Commit and Push Version Changes
         if: ${{ steps.version_vars.outputs.create_release == 'true' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
           git config --local user.email "action@github.com"

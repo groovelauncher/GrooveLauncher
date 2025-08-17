@@ -134,7 +134,7 @@ jobs:
           ls -la GrooveLauncher_v${VERSION_NAME}_*.apk
 
       - name: Generate Release Description with Gemini
-        if: ${{ steps.version_vars.outputs.generate_release_description == 'true' && secrets.GEMINI_API_KEY != '' }}
+        if: ${{ steps.version_vars.outputs.generate_release_description == 'true' }}
         id: release_description
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
@@ -181,7 +181,7 @@ jobs:
           fi
 
       - name: Generate What's New Description with Gemini
-        if: ${{ steps.version_vars.outputs.generate_whats_new == 'true' && secrets.GEMINI_API_KEY != '' }}
+        if: ${{ steps.version_vars.outputs.generate_whats_new == 'true' }}
         id: whats_new
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"

@@ -71,14 +71,8 @@ jobs:
           # Update package.json
           npm version $VERSION_NAME --no-git-tag-version
           
-          # Update grooveMock.js version between comment markers
-          sed -i '' '/\/\/ VERSIONNAME START/,/\/\/ VERSIONNAME END/{ /return "/s/return "[^"]*"/return "'$VERSION_NAME'"/; }' src/scripts/grooveMock.js
-          
-          # Update build.gradle.kts version name between comment markers  
-          sed -i '' '/\/\/ VERSIONNAME START/,/\/\/ VERSIONNAME END/{ /versionName =/s/versionName = "[^"]*"/versionName = "'$VERSION_NAME'"/; }' android/app/build.gradle.kts
-          
-          # Update build.gradle.kts version code between comment markers
-          sed -i '' '/\/\/ VERSIONCODE START/,/\/\/ VERSIONCODE END/{ /versionCode =/s/versionCode = [0-9]*/versionCode = '$VERSION_CODE'/; }' android/app/build.gradle.kts
+          # Update version numbers using Node.js script
+          node scripts/update-versions.js "$VERSION_NAME" "$VERSION_CODE"
           
           echo "Version numbers updated successfully using comment markers"
 

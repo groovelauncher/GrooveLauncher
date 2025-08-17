@@ -67,11 +67,14 @@ android {
             applicationId = "web.bmdominatezz.gravy"
             manifestPlaceholders["appIcon"] = "@mipmap/icon_default"
             manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_default_round"
+            buildConfigField("String", "WEB_ENGINE", "\"WebView\"")
         }
         create("regularGeckoView") {
             // GeckoView flavor
             applicationIdSuffix = ".geckoview"
             buildConfigField("String", "WEB_ENGINE", "\"GeckoView\"")
+            manifestPlaceholders["appIcon"] = "@mipmap/icon_default"
+            manifestPlaceholders["appRoundIcon"] = "@mipmap/icon_default_round"
         }
         create("debugFlavor"){
             dimension = "default"

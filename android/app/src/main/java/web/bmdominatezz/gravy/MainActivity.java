@@ -38,6 +38,9 @@ import web.bmdominatezz.gravy.IconPack.IconPack;
 import web.bmdominatezz.gravy.IconPack.IconPackManager;
 import web.bmdominatezz.gravyservices.GravyServer;
 
+import java.util.Map;
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity {
     private static MainActivity instance;
     public static String webEngine = BuildConfig.WEB_ENGINE;
@@ -70,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     public IconPackManager iconPackManager;
     public String iconPack = "";
     public IconPack iconPackInstance;
+    public Map<String, String> iconPackPerApp;
     public LogcatReader logcatReader;
 
     public class MyLocalServer extends NanoHTTPD {
@@ -172,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
         iconPackManager = new IconPackManager();
         iconPackManager.setContext(this);
+        iconPackPerApp = new HashMap<>();
         packageManager = getPackageManager();
         handler = new Handler();
         systemEvents = new SystemEvents(this);

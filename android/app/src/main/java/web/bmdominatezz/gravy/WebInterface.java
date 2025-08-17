@@ -1075,6 +1075,18 @@ public class WebInterface {
     }
 
     @JavascriptInterface
+    public void applyIconPackPerApp(String appPackageName, String iconPackPackageName) {
+        if (iconPackPackageName == null || iconPackPackageName.isEmpty()) {
+            // Remove per-app icon pack if empty package name is provided
+            mainActivity.iconPackPerApp.remove(appPackageName);
+        } else {
+            // Set per-app icon pack
+            mainActivity.iconPackPerApp.put(appPackageName, iconPackPackageName);
+        }
+        Log.d("GrooveLauncher", "Applied icon pack " + iconPackPackageName + " for app " + appPackageName);
+    }
+
+    @JavascriptInterface
     public String getLastLogs() {
         if (mainActivity.logcatReader != null) {
             java.util.List<String> logs = mainActivity.logcatReader.getLastLogs();

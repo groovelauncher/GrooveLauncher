@@ -263,6 +263,41 @@ function setupIconDropdown(appdetail, tilePrefs) {
         prefs.icon = selectedValue;
         setAppTilePreferences(appdetail.packageName, prefs);
 
+        // Handle per-app icon pack functionality
+        if (selectedValue !== "default" && selectedValue !== "monochrome") {
+            // Apply per-app icon pack
+            savePerAppIconPack(appdetail.packageName, selectedValue);
+            window.parent.Groove.applyIconPackPerApp(appdetail.packageName, selectedValue);
+            
+            window.parent.GrooveBoard.alert(
+                "Notice",
+                "You need to restart the app to apply the icon pack.",
+                [{
+                    title: "Ok", style: "default", action: () => {
+                        window.parent.location.reload()
+                    }
+                },
+                { title: "Later", style: "default", action: () => { } }
+                ]
+            );
+        } else if (selectedValue === "default") {
+            // Remove per-app icon pack (falls back to global)
+            removePerAppIconPack(appdetail.packageName);
+            window.parent.Groove.applyIconPackPerApp(appdetail.packageName, "");
+            
+            window.parent.GrooveBoard.alert(
+                "Notice",
+                "You need to restart the app to apply the icon pack.",
+                [{
+                    title: "Ok", style: "default", action: () => {
+                        window.parent.location.reload()
+                    }
+                },
+                { title: "Later", style: "default", action: () => { } }
+                ]
+            );
+        }
+
         // Apply the preference change immediately
         applyTilePreferencesToApp(appdetail.packageName, prefs);
     });
@@ -458,4 +493,37 @@ function setAppTilePreferences(packageName, data) {
         }));
         //console.log("Dispatched tilePreferencesChanged event");
     }
+}
+
+// Helper functions for per-app icon pack management
+function savePerAppIconPack(appPackageName, iconPackPackageName) {
+    let iconPackPerApp = {};
+    try {
+        if (localStorage["iconPackPerApp"]) {
+            iconPackPerApp = JSON.parse(localStorage["iconPackPerApp"]);
+        }
+    } catch (error) {
+        console.log("Error parsing iconPackPerApp from localStorage:", error);
+        iconPackPerApp = {};
+    }
+    
+    iconPackPerApp[appPackageName] = iconPackPackageName;
+    localStorage["iconPackPerApp"] = JSON.stringify(iconPackPerApp);
+    console.log("Saved per-app icon pack:", appPackageName, "->", iconPackPackageName);
+}
+
+function removePerAppIconPack(appPackageName) {
+    let iconPackPerApp = {};
+    try {
+        if (localStorage["iconPackPerApp"]) {
+            iconPackPerApp = JSON.parse(localStorage["iconPackPerApp"]);
+        }
+    } catch (error) {
+        console.log("Error parsing iconPackPerApp from localStorage:", error);
+        return;
+    }
+    
+    delete iconPackPerApp[appPackageName];
+    localStorage["iconPackPerApp"] = JSON.stringify(iconPackPerApp);
+    console.log("Removed per-app icon pack for:", appPackageName);
 }

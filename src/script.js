@@ -234,6 +234,19 @@ startUpSequence([
         if (!!localStorage.getItem("rotationLock")) Groove.setDisplayOrientationLock(localStorage.getItem("rotationLock"))
         if (localStorage.getItem("hapticFeedback") == "false") Groove.triggerHapticFeedback("DISABLED")
         if (localStorage.getItem("iconPack")) Groove.applyIconPack(localStorage.getItem("iconPack"))
+        // Load per-app icon pack preferences
+        if (localStorage.getItem("iconPackPerApp")) {
+            try {
+                const iconPackPerApp = JSON.parse(localStorage.getItem("iconPackPerApp"));
+                Object.entries(iconPackPerApp).forEach(([appPackageName, iconPackPackageName]) => {
+                    if (iconPackPackageName && iconPackPackageName.trim() !== "") {
+                        Groove.applyIconPackPerApp(appPackageName, iconPackPackageName);
+                    }
+                });
+            } catch (error) {
+                console.log("Error loading per-app icon pack preferences:", error);
+            }
+        }
         if (localStorage.getItem("textDirection") == "rtl" || localStorage.getItem("forceRTL") == "true") GrooveBoard.backendMethods.setTextDirection("rtl", true);
         //if (!!localStorage.getItem("packageManagerProvider")) GrooveBoard.backendMethods.packageManagerProvider.set(Number(localStorage.getItem("packageManagerProvider")), true)
         next()

@@ -316,6 +316,9 @@ class GrooveMock {
     applyIconPack(packageName) {
         console.log("Apply icon pack:", packageName)
     }
+    applyIconPackPerApp(appPackageName, iconPackPackageName) {
+        console.log("Apply icon pack", iconPackPackageName, "for app", appPackageName)
+    }
 
     getAPILevel() {
         // Allow configuring API level via localStorage for testing

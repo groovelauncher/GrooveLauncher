@@ -65,6 +65,73 @@ body.animate-intro #welcome-page {
             from {
                 transform: translate(800px);
             }
+        }
+
+        // Reduced motion animations - only fade in/out
+        body.reduce-motion & {
+            &.enter-0-reduce-motion {
+                pointer-events: none !important;
+                animation: page-enter-0-reduce-motion .3s ease-in-out forwards;
+                opacity: 0;
+
+                @keyframes page-enter-0-reduce-motion {
+                    from {
+                        opacity: 0;
+                    }
+
+                    to {
+                        opacity: 1;
+                    }
+                }
+            }
+
+            &.leave-0-reduce-motion {
+                pointer-events: none !important;
+                animation: page-leave-0-reduce-motion .3s ease-in-out forwards;
+                opacity: 1;
+
+                @keyframes page-leave-0-reduce-motion {
+                    from {
+                        opacity: 1;
+                    }
+
+                    to {
+                        opacity: 0;
+                    }
+                }
+            }
+
+            &.enter-1-reduce-motion {
+                pointer-events: none !important;
+                animation: page-enter-1-reduce-motion .3s ease-in-out forwards;
+                opacity: 0;
+
+                @keyframes page-enter-1-reduce-motion {
+                    from {
+                        opacity: 0;
+                    }
+
+                    to {
+                        opacity: 1;
+                    }
+                }
+            }
+
+            &.leave-1-reduce-motion {
+                pointer-events: none !important;
+                animation: page-leave-1-reduce-motion .3s ease-in-out forwards;
+                opacity: 1;
+
+                @keyframes page-leave-1-reduce-motion {
+                    from {
+                        opacity: 1;
+                    }
+
+                    to {
+                        opacity: 0;
+                    }
+                }
+            }
 
             to {
                 transform: translate(0px);

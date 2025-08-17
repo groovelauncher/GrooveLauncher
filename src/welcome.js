@@ -1,5 +1,6 @@
 import iconPackConverter from "./scripts/iconPack.js";
 import { newerThan, olderThan, compareVersions } from "./scripts/versioning.js";
+import { grooveThemes } from "./scripts/GrooveProperties.js";
 window.newerThan = newerThan
 window.olderThan = olderThan
 window.compareVersions = compareVersions
@@ -326,9 +327,35 @@ setTimeout(() => {
     // goToPage(3)
 }, 500);
 
+// Reduce motion toggle
+document.querySelector("div.reduce-motion-toggle-switch > div > .metro-toggle-switch").addEventListener("checked", (e) => {
+    e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
+    GrooveBoard.backendMethods.setReduceMotion(e.target.hasAttribute("checked"))
+})
+
+// High contrast toggle
+document.querySelector("div.high-contrast-toggle-switch > div > .metro-toggle-switch").addEventListener("checked", (e) => {
+    e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
+    GrooveBoard.backendMethods.setHighContrast(e.target.hasAttribute("checked"))
+})
+
+// Haptic feedback toggle
+document.querySelector("div.haptic-toggle-switch > div > .metro-toggle-switch").addEventListener("checked", (e) => {
+    e.target.parentNode.parentNode.querySelector("p").innerText = e.target.hasAttribute("checked") ? i18n.t("common.actions.on") : i18n.t("common.actions.off")
+    localStorage.setItem("hapticFeedback", e.target.hasAttribute("checked"))
+    if (e.target.hasAttribute("checked")) {
+        Groove.triggerHapticFeedback("ENABLED")
+    } else {
+        Groove.triggerHapticFeedback("DISABLED")
+    }
+})
+
+// Theme chooser (update to include auto option)
 document.getElementById("theme-chooser").addEventListener('selected', (e) => {
-    GrooveBoard.backendMethods.setTheme(e.detail.index == 0 ? grooveThemes.light : grooveThemes.dark)
+    const themes = [grooveThemes.light, grooveThemes.dark, grooveThemes.auto]
+    GrooveBoard.backendMethods.setTheme(themes[e.detail.index])
 });
+
 document.getElementById("display-scaling-chooser").addEventListener("selected", (e) => {
     const options = [.8, .9, 1, 1.1, 1.25]
     GrooveBoard.backendMethods.setUIScale(options[e.detail.index])
@@ -339,6 +366,24 @@ document.querySelectorAll("div.accent-color-catalogue-item").forEach(e => e.addE
 if (!!localStorage.getItem("tileColumns")) GrooveBoard.backendMethods.setTileColumns(Number(localStorage.getItem("tileColumns")), true)
 if (!!localStorage.getItem("theme")) GrooveBoard.backendMethods.setTheme(Number(localStorage.getItem("theme")), true)
 if (!!localStorage.getItem("accentColor")) GrooveBoard.backendMethods.setAccentColor(localStorage.getItem("accentColor"), true)
+
+// Initialize toggle states from localStorage
+setTimeout(() => {
+    if (localStorage["reducedMotion"] == "true") {
+        document.querySelector("div.reduce-motion-toggle-switch > p").innerText = i18n.t("common.actions.on")
+        document.querySelector("div.reduce-motion-toggle-switch > div > .metro-toggle-switch").setAttribute("checked", "")
+        document.body.classList.add("reduced-motion")
+    }
+    if (localStorage["highContrast"] == "true") {
+        document.querySelector("div.high-contrast-toggle-switch > p").innerText = i18n.t("common.actions.on")
+        document.querySelector("div.high-contrast-toggle-switch > div > .metro-toggle-switch").setAttribute("checked", "")
+        document.body.classList.add("high-contrast")
+    }
+    if (localStorage.getItem("hapticFeedback") != "false") {
+        document.querySelector("div.haptic-toggle-switch > p").innerText = i18n.t("common.actions.on")
+        document.querySelector("div.haptic-toggle-switch > div > .metro-toggle-switch").setAttribute("checked", "")
+    }
+}, 500);
 
 i18n.translateDOM();
 

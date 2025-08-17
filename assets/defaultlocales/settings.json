@@ -140,10 +140,11 @@
     "background": "Background",
     "background_selections": {
       "default": "Default",
-      "transparent": "Transparent"
+      "accent_color": "Accent color"
     },
     "text_color": "Text color",
     "text_color_selections": {
+      "default": "Default",
       "auto": "Auto",
       "dark": "dark",
       "light": "light"

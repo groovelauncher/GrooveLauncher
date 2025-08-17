@@ -65,73 +65,6 @@ body.animate-intro #welcome-page {
             from {
                 transform: translate(800px);
             }
-        }
-
-        // Reduced motion animations - only fade in/out
-        body.reduce-motion & {
-            &.enter-0-reduce-motion {
-                pointer-events: none !important;
-                animation: page-enter-0-reduce-motion .3s ease-in-out forwards;
-                opacity: 0;
-
-                @keyframes page-enter-0-reduce-motion {
-                    from {
-                        opacity: 0;
-                    }
-
-                    to {
-                        opacity: 1;
-                    }
-                }
-            }
-
-            &.leave-0-reduce-motion {
-                pointer-events: none !important;
-                animation: page-leave-0-reduce-motion .3s ease-in-out forwards;
-                opacity: 1;
-
-                @keyframes page-leave-0-reduce-motion {
-                    from {
-                        opacity: 1;
-                    }
-
-                    to {
-                        opacity: 0;
-                    }
-                }
-            }
-
-            &.enter-1-reduce-motion {
-                pointer-events: none !important;
-                animation: page-enter-1-reduce-motion .3s ease-in-out forwards;
-                opacity: 0;
-
-                @keyframes page-enter-1-reduce-motion {
-                    from {
-                        opacity: 0;
-                    }
-
-                    to {
-                        opacity: 1;
-                    }
-                }
-            }
-
-            &.leave-1-reduce-motion {
-                pointer-events: none !important;
-                animation: page-leave-1-reduce-motion .3s ease-in-out forwards;
-                opacity: 1;
-
-                @keyframes page-leave-1-reduce-motion {
-                    from {
-                        opacity: 1;
-                    }
-
-                    to {
-                        opacity: 0;
-                    }
-                }
-            }
 
             to {
                 transform: translate(0px);
@@ -464,7 +397,7 @@ body.animate-intro #welcome-page {
     background-position: 50%;
     background-size: cover;
 
-    body.animate-intro & {
+    body.animate-intro:not(.reduced-motion) & {
         animation: wallpaper-enter 1s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
@@ -477,7 +410,10 @@ body.animate-intro #welcome-page {
     transition: 1s .1s cubic-bezier(0.075, 0.82, 0.165, 1);
 
     &.hide {
-        background-position: calc(50% - 50px);
+        body:not(.reduced-motion) {
+            background-position: calc(50% - 50px);
+        }
+
         opacity: 0;
     }
 
@@ -783,6 +719,7 @@ ul {
         }
     }
 }
+
 .tile-selector {
     display: flex;
     margin-bottom: 30px;
@@ -796,6 +733,7 @@ ul {
 
     div {}
 }
+
 p.groups-title {
     color: var(--metro-foreground);
     font-size: 35px !important;
@@ -832,4 +770,78 @@ p.groups-title {
     }
 }
 
+body.reduced-motion #welcome-page div.setup-pages div.setup-page {
+    &.enter-0 {
+        pointer-events: none !important;
+        animation: page-enter-0-reduced-motion .3s ease-in-out forwards !important;
+        opacity: 1 !important;
 
+        @keyframes page-enter-0-reduced-motion {
+            from {
+                filter: opacity(0);
+                transform: translateX(50%);
+            }
+
+            to {
+                filter: opacity(1);
+                transform: translateX(0%);
+            }
+        }
+    }
+
+    &.leave-0 {
+        pointer-events: none !important;
+        animation: page-leave-0-reduced-motion .3s ease-in-out forwards !important;
+        opacity: 1 !important;
+
+        @keyframes page-leave-0-reduced-motion {
+            from {
+                filter: opacity(1);
+                transform: translateX(0%);
+            }
+
+            to {
+                filter: opacity(0);
+                transform: translateX(-50%);
+            }
+        }
+    }
+
+    &.enter-1 {
+        pointer-events: none !important;
+        animation: page-enter-1-reduced-motion .3s ease-in-out forwards !important;
+        opacity: 1 !important;
+
+        @keyframes page-enter-1-reduced-motion {
+            from {
+                filter: opacity(0);
+                transform: translateX(-50%);
+            }
+
+            to {
+                filter: opacity(1);
+                transform: translateX(0%);
+            }
+        }
+    }
+
+    &.leave-1 {
+        pointer-events: none !important;
+        animation: page-leave-1-reduced-motion .3s ease-in-out forwards !important;
+        opacity: 1 !important;
+
+        @keyframes page-leave-1-reduced-motion {
+            from {
+                transform: translateX(0%);
+                filter: opacity(1);
+            }
+
+            to {
+                transform: translateX(50%);
+                filter: opacity(0);
+            }
+        }
+    }
+
+
+}

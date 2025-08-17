@@ -1,6 +1,6 @@
 {
   "name": "groovelauncher",
-  "version": "0.5.5",
+  "version": "0.7.0-beta",
   "main": "index.js",
   "scripts": {
     "build-watch": "npx concurrently \"npm run build-watch:webpack\" \"npm run build-watch:scss\" \"npm run build-watch:internal-apps\" \"npm run build-watch:android\"",

@@ -113,8 +113,11 @@ jobs:
             COMMITS=$(git log --oneline --no-merges -10)
           fi
           
-          # Prepare prompt for Gemini
+          # Prepare prompt for Gemini (escape quotes and newlines for JSON)
           PROMPT="Based on these git commits, generate a 'What's New' HTML list for Groove Launcher v${VERSION_NAME}. ONLY include changes that directly affect end users (new features, UI improvements, bug fixes users would notice). EXCLUDE technical changes like code refactoring, build system updates, dependency updates, or developer-only improvements. Format as HTML <li> elements with <strong> tags for feature names. Make it human-readable and user-friendly. Example: <li><strong>Feature name:</strong> User-friendly description</li>. If no user-facing changes are found, return an empty string. IMPORTANT: Return ONLY the HTML content without any markdown code blocks (no \`\`\`html or \`\`\`). Here are the commits:\n\n${COMMITS}"
+          
+          # Escape the prompt for JSON
+          ESCAPED_PROMPT=$(echo "$PROMPT" | jq -Rs .)
           
           # Call Gemini API
           RESPONSE=$(curl -s "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent" \
@@ -126,7 +129,7 @@ jobs:
                 {
                   \"parts\": [
                     {
-                      \"text\": \"${PROMPT}\"
+                      \"text\": ${ESCAPED_PROMPT}
                     }
                   ]
                 }
@@ -235,8 +238,11 @@ jobs:
             COMMITS=$(git log --oneline --no-merges -10)
           fi
           
-          # Prepare prompt for Gemini
+          # Prepare prompt for Gemini (escape quotes and newlines for JSON)
           PROMPT="Based on these git commits, generate a GitHub release description in markdown format for Groove Launcher v${VERSION_NAME}. Only include categories (Added, Removed, Improved, Fixed) that have actual changes - skip empty categories entirely. Format each item as '- **feature name**: Description'. Do NOT include any Full Changelog link. Here are the commits:\n\n${COMMITS}"
+          
+          # Escape the prompt for JSON
+          ESCAPED_PROMPT=$(echo "$PROMPT" | jq -Rs .)
           
           # Call Gemini API
           RESPONSE=$(curl -s "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent" \
@@ -248,7 +254,7 @@ jobs:
                 {
                   \"parts\": [
                     {
-                      \"text\": \"${PROMPT}\"
+                      \"text\": ${ESCAPED_PROMPT}
                     }
                   ]
                 }

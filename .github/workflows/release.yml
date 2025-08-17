@@ -15,14 +15,19 @@ on:
         description: 'Create GitHub release with artifacts'
         required: false
         type: boolean
-        default: false
+        default: true
       generate_release_description:
         description: 'Generate AI-powered release description for GitHub release'
         required: false
         type: boolean
-        default: false
+        default: true
       generate_whats_new:
         description: "Generate AI-powered what's new description for welcome.html"
+        required: false
+        type: boolean
+        default: true
+      include_geckoview:
+        description: 'Include GeckoView APKs in release and artifacts'
         required: false
         type: boolean
         default: false
@@ -45,6 +50,7 @@ jobs:
           echo "create_release=${{ github.event.inputs.create_release }}" >> $GITHUB_OUTPUT
           echo "generate_release_description=${{ github.event.inputs.generate_release_description }}" >> $GITHUB_OUTPUT
           echo "generate_whats_new=${{ github.event.inputs.generate_whats_new }}" >> $GITHUB_OUTPUT
+          echo "include_geckoview=${{ github.event.inputs.include_geckoview }}" >> $GITHUB_OUTPUT
           echo "Using manual inputs: ${{ github.event.inputs.version_name }}"
 
       - name: Setup Node.js
@@ -177,6 +183,8 @@ jobs:
       - name: Rename and Collect APKs and AAB for Release
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
+          INCLUDE_GECKOVIEW="${{ steps.version_vars.outputs.include_geckoview }}"
+          
           # WebView APKs (split by ABI)
           for apk in android/app/build/outputs/apk/regular/release/app-regular-*-release.apk; do
             if [ -f "$apk" ]; then
@@ -184,13 +192,17 @@ jobs:
               cp "$apk" "GrooveLauncher_v${VERSION_NAME}_WebView_${arch}.apk"
             fi
           done
-          # GeckoView APKs (split by ABI)
-          for apk in android/app/build/outputs/apk/regularGeckoView/release/app-regularGeckoView-*-release.apk; do
-            if [ -f "$apk" ]; then
-              arch=$(echo $apk | sed -n 's/.*app-regularGeckoView-\(.*\)-release.apk/\1/p')
-              cp "$apk" "GrooveLauncher_v${VERSION_NAME}_GeckoView_${arch}.apk"
-            fi
-          done
+          
+          # GeckoView APKs (split by ABI) - only if include_geckoview is true
+          if [ "$INCLUDE_GECKOVIEW" = "true" ]; then
+            for apk in android/app/build/outputs/apk/regularGeckoView/release/app-regularGeckoView-*-release.apk; do
+              if [ -f "$apk" ]; then
+                arch=$(echo $apk | sed -n 's/.*app-regularGeckoView-\(.*\)-release.apk/\1/p')
+                cp "$apk" "GrooveLauncher_v${VERSION_NAME}_GeckoView_${arch}.apk"
+              fi
+            done
+          fi
+          
           # WebView AAB
           if [ -f "android/app/build/outputs/bundle/regularRelease/app-regular-release.aab" ]; then
             cp "android/app/build/outputs/bundle/regularRelease/app-regular-release.aab" "GrooveLauncher.aab"
@@ -257,8 +269,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
+          INCLUDE_GECKOVIEW="${{ steps.version_vars.outputs.include_geckoview }}"
           RELEASE_TAG="v${VERSION_NAME}"
-          ASSETS=$(ls GrooveLauncher_v${VERSION_NAME}_*.apk GrooveLauncher.aab 2>/dev/null | xargs || ls GrooveLauncher_v${VERSION_NAME}_*.apk | xargs)
+          
+          # Build assets list based on include_geckoview setting
+          if [ "$INCLUDE_GECKOVIEW" = "true" ]; then
+            ASSETS=$(ls GrooveLauncher_v${VERSION_NAME}_*.apk GrooveLauncher.aab 2>/dev/null | xargs || ls GrooveLauncher_v${VERSION_NAME}_*.apk | xargs)
+          else
+            ASSETS=$(ls GrooveLauncher_v${VERSION_NAME}_WebView_*.apk GrooveLauncher.aab 2>/dev/null | xargs || ls GrooveLauncher_v${VERSION_NAME}_WebView_*.apk | xargs)
+          fi
           
           # Use generated release notes if available, otherwise use default
           if [ -f "release_description.md" ] && [ "${{ steps.release_description.outputs.release_notes_generated }}" = "true" ]; then
@@ -301,13 +320,23 @@ jobs:
             echo "ℹ️ No AI descriptions were generated for this build."
           fi
 
-      - name: Upload Artifacts (No Release)
-        if: ${{ steps.version_vars.outputs.create_release != 'true' }}
+      - name: Upload Artifacts (No Release) - All APKs
+        if: ${{ steps.version_vars.outputs.create_release != 'true' && steps.version_vars.outputs.include_geckoview == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: GrooveLauncher-v${{ steps.version_vars.outputs.version_name }}-APKs-AAB
           path: |
             GrooveLauncher_v${{ steps.version_vars.outputs.version_name }}_*.apk
+            GrooveLauncher.aab
+          retention-days: 30
+          
+      - name: Upload Artifacts (No Release) - WebView Only
+        if: ${{ steps.version_vars.outputs.create_release != 'true' && steps.version_vars.outputs.include_geckoview != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: GrooveLauncher-v${{ steps.version_vars.outputs.version_name }}-APKs-AAB
+          path: |
+            GrooveLauncher_v${{ steps.version_vars.outputs.version_name }}_WebView_*.apk
             GrooveLauncher.aab
           retention-days: 30
           
@@ -337,10 +366,18 @@ jobs:
       - name: Summary
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
+          INCLUDE_GECKOVIEW="${{ steps.version_vars.outputs.include_geckoview }}"
           echo "🎉 Build completed successfully!"
           echo "📦 Version: v${VERSION_NAME}"
           echo "📱 Generated APKs and AAB:"
-          ls -la GrooveLauncher_v${VERSION_NAME}_*.apk GrooveLauncher.aab 2>/dev/null || ls -la GrooveLauncher_v${VERSION_NAME}_*.apk
+          
+          if [ "$INCLUDE_GECKOVIEW" = "true" ]; then
+            echo "📱 Including both WebView and GeckoView APKs"
+            ls -la GrooveLauncher_v${VERSION_NAME}_*.apk GrooveLauncher.aab 2>/dev/null || ls -la GrooveLauncher_v${VERSION_NAME}_*.apk
+          else
+            echo "📱 Including WebView APKs only (GeckoView excluded)"
+            ls -la GrooveLauncher_v${VERSION_NAME}_WebView_*.apk GrooveLauncher.aab 2>/dev/null || ls -la GrooveLauncher_v${VERSION_NAME}_WebView_*.apk
+          fi
           
           # AI-generated content summary
           if [ "${{ steps.release_description.outputs.release_notes_generated }}" = "true" ]; then

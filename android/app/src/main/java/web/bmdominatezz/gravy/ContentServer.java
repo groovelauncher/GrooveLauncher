@@ -35,6 +35,8 @@ import androidx.annotation.Nullable;
 import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewClientCompat;
 
+import web.bmdominatezz.gravy.IconPack.IconPack;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -93,11 +95,28 @@ public class ContentServer extends WebViewClientCompat {
                                 InputStream inputStream = null;
                                 Bitmap dra = grooveWebView.getAppIcon(grooveWebView.packageManager,
                                         iconPackageNameWithIntent);
-                                if (mainActivity.iconPack != "") {
+                                
+                                // Check per-app icon pack first
+                                if (mainActivity.iconPackPerApp.containsKey(iconPackageName) && 
+                                    mainActivity.iconPackPerApp.get(iconPackageName) != null &&
+                                    !mainActivity.iconPackPerApp.get(iconPackageName).isEmpty()) {
+                                    
+                                    String perAppIconPack = mainActivity.iconPackPerApp.get(iconPackageName);
+                                    IconPack perAppIconPackInstance = new IconPack();
+                                    perAppIconPackInstance.packageName = perAppIconPack;
+                                    perAppIconPackInstance.setContext(mainActivity);
+                                    perAppIconPackInstance.load();
+                                    
+                                    if (perAppIconPackInstance.hasIconForPackage(iconPackageName)) {
+                                        dra = perAppIconPackInstance.getIconForPackage(iconPackageName, dra);
+                                    }
+                                } else if (mainActivity.iconPack != "") {
+                                    // Fall back to global icon pack
                                     if (mainActivity.iconPackInstance.hasIconForPackage(iconPackageName)) {
                                         dra = mainActivity.iconPackInstance.getIconForPackage(iconPackageName, dra);
                                     }
                                 }
+                                
                                 if (dra != null)
                                     inputStream = Utils.loadBitmapAsStream(dra);
                                 if (inputStream != null) {
@@ -136,11 +155,28 @@ public class ContentServer extends WebViewClientCompat {
                                 InputStream inputStream = null;
                                 Bitmap dra = grooveWebView.getAppIconBackground(grooveWebView.packageManager,
                                         iconPackageNameWithIntent);
-                                if (mainActivity.iconPack != "") {
+                                
+                                // Check per-app icon pack first
+                                if (mainActivity.iconPackPerApp.containsKey(iconPackageName) && 
+                                    mainActivity.iconPackPerApp.get(iconPackageName) != null &&
+                                    !mainActivity.iconPackPerApp.get(iconPackageName).isEmpty()) {
+                                    
+                                    String perAppIconPack = mainActivity.iconPackPerApp.get(iconPackageName);
+                                    IconPack perAppIconPackInstance = new IconPack();
+                                    perAppIconPackInstance.packageName = perAppIconPack;
+                                    perAppIconPackInstance.setContext(mainActivity);
+                                    perAppIconPackInstance.load();
+                                    
+                                    if (perAppIconPackInstance.hasIconForPackage(iconPackageName)) {
+                                        return new WebResourceResponse(null, null, null);
+                                    }
+                                } else if (mainActivity.iconPack != "") {
+                                    // Fall back to global icon pack
                                     if (mainActivity.iconPackInstance.hasIconForPackage(iconPackageName)) {
                                         return new WebResourceResponse(null, null, null);
                                     }
                                 }
+                                
                                 if (dra != null)
                                     inputStream = Utils.loadBitmapAsStream(dra);
                                 if (inputStream != null) {

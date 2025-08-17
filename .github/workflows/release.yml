@@ -94,6 +94,32 @@ jobs:
         run: |
           echo "$LOCAL_PROPERTIES" > android/gradle.local.properties
           echo "CHANGELOG=Stable release ${{ steps.version_vars.outputs.version_name }}" >> android/gradle.local.properties
+      
+      - name: Update Welcome.html with What's New
+        if: ${{ steps.whats_new.outputs.whats_new_generated == 'true' }}
+        run: |
+          if [ -f "whats_new.html" ]; then
+            echo "Updating welcome.html with AI-generated what's new content"
+            # Read the generated HTML content
+            WHATS_NEW_CONTENT=$(cat whats_new.html)
+            
+            # Check if welcome.html exists
+            if [ -f "www/welcome.html" ]; then
+              # Create a backup
+              cp www/welcome.html www/welcome.html.backup
+              
+              # Escape special characters for sed
+              ESCAPED_CONTENT=$(echo "$WHATS_NEW_CONTENT" | sed 's/[[\/.\*^$()+?{|]/\\&/g')
+              
+              # Replace content between HTML comment markers
+              sed -i '' "/<!--WHATS NEW START-->/,/<!--WHATS NEW END-->/{/<!--WHATS NEW START-->/!{/<!--WHATS NEW END-->/!d;};}" www/welcome.html
+              sed -i '' "/<!--WHATS NEW START-->/a\\\n                            <ul>\\\n$ESCAPED_CONTENT\\\n                            </ul>" www/welcome.html
+              
+              echo "Successfully updated www/welcome.html with AI-generated what's new content"
+            else
+              echo "welcome.html not found at www/welcome.html"
+            fi
+          fi
 
       - name: Build Android APKs (WebView & GeckoView)
         env:
@@ -285,32 +311,6 @@ jobs:
           path: GrooveLauncher_v${{ steps.version_vars.outputs.version_name }}_*.apk
           retention-days: 30
           
-      - name: Update Welcome.html with What's New
-        if: ${{ steps.whats_new.outputs.whats_new_generated == 'true' }}
-        run: |
-          if [ -f "whats_new.html" ]; then
-            echo "Updating welcome.html with AI-generated what's new content"
-            # Read the generated HTML content
-            WHATS_NEW_CONTENT=$(cat whats_new.html)
-            
-            # Check if welcome.html exists
-            if [ -f "www/welcome.html" ]; then
-              # Create a backup
-              cp www/welcome.html www/welcome.html.backup
-              
-              # Escape special characters for sed
-              ESCAPED_CONTENT=$(echo "$WHATS_NEW_CONTENT" | sed 's/[[\/.\*^$()+?{|]/\\&/g')
-              
-              # Replace content between HTML comment markers
-              sed -i '' "/<!--WHATS NEW START-->/,/<!--WHATS NEW END-->/{/<!--WHATS NEW START-->/!{/<!--WHATS NEW END-->/!d;};}" www/welcome.html
-              sed -i '' "/<!--WHATS NEW START-->/a\\\n                            <ul>\\\n$ESCAPED_CONTENT\\\n                            </ul>" www/welcome.html
-              
-              echo "Successfully updated www/welcome.html with AI-generated what's new content"
-            else
-              echo "welcome.html not found at www/welcome.html"
-            fi
-          fi
-
       - name: Commit and Push Version Changes
         if: ${{ steps.version_vars.outputs.create_release == 'true' }}
         run: |

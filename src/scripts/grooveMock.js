@@ -137,7 +137,9 @@ class GrooveMock {
         window.open(url, "_blank")
     }
     getAppVersion() {
+        // VERSIONNAME START
         return "0.5.5-beta.5"
+        // VERSIONNAME END
     }
     getWebViewVersion() {
         const versionName = "chrome"

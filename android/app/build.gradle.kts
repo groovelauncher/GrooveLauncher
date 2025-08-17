@@ -35,8 +35,12 @@ android {
         applicationId = "web.bmdominatezz.gravy"
         minSdk = 26
         targetSdk = 35
+        // VERSIONCODE START
         versionCode = 55
+        // VERSIONCODE END
+        // VERSIONNAME START
         versionName = "0.5.5-beta.5"
+        // VERSIONNAME END
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // Add the API key

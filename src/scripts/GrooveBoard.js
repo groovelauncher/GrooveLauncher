@@ -55,7 +55,7 @@ function hexToRgb(hex) {
 }
 import GrooveElements from "./GrooveElements";
 
-function alert(title = "Alert!", message = "Message", actions = [{ title: "" }]) {
+function alert(title = "Alert!", message = "Message", actions = [{ title: "" }], inline) {
   var items = ""
   actions.forEach(element => {
     if (!element["style"]) element.style = "cancel"
@@ -77,7 +77,7 @@ function alert(title = "Alert!", message = "Message", actions = [{ title: "" }])
   </div>`)
   }
   var alertmenu = $("div.groove-element.groove-element-alert").last()
-  if (actions.length <= 2) alertmenu.addClass("inline")
+  if ((actions.length <= 2 && !inline)) alertmenu.addClass("inline")
   actions.forEach((element, index) => {
     if (element["action"]) {
       if (typeof element["action"] == "function") {
@@ -154,10 +154,10 @@ const boardMethods = {
       ),
       config
     );
-    
+
     // Apply tile preferences to home tile
     backendMethods.applyTilePreferences(widget, options.packageName);
-    
+
     if (window.scrollers) window.scrollers.tile_page_scroller.refresh();
     return widget;
 
@@ -217,10 +217,10 @@ const boardMethods = {
         "#main-home-slider > div > div:nth-child(2) > div > div.app-list > div.app-list-container"
       )
       .appendChild(el);
-    
+
     // Apply tile preferences
     backendMethods.applyTilePreferences(el, options.packageName);
-    
+
     return el;
   },
   createLetterTile: (letter) => {
@@ -910,10 +910,10 @@ const backendMethods = {
             y: tile.t
           }
         );
-        
+
         // Apply tile preferences to home tile
         backendMethods.applyTilePreferences(homeTile, tile.p);
-        
+
         el.setAttribute("gs-x", tile.l)
         el.setAttribute("gs-y", tile.t)
         el.setAttribute("gs-w", tile.w)
@@ -1182,10 +1182,10 @@ const backendMethods = {
         console.log("Error getting app tile preferences via WebInterface:", error);
       }
     }
-    
+
     // Fallback to localStorage - check new format first, then old format
     const defaultPrefs = { icon: "default", background: "default", textColor: "default" };
-    
+
     // Check new perAppTilePreferences format (used by Groove Settings)
     if (localStorage["perAppTilePreferences"]) {
       try {
@@ -1197,7 +1197,7 @@ const backendMethods = {
         console.log("Error reading perAppTilePreferences:", error);
       }
     }
-    
+
     // Check old individual key format  
     const key = `groove_app_tiles_${packageName}`;
     const stored = localStorage.getItem(key);
@@ -1213,21 +1213,21 @@ const backendMethods = {
         console.log("Error setting app tile preferences via WebInterface:", error);
       }
     }
-    
+
     // Also save to localStorage as backup
     const key = `groove_app_tiles_${packageName}`;
     localStorage.setItem(key, JSON.stringify(preferences));
-    
+
     // Trigger refresh
-    window.dispatchEvent(new CustomEvent('tilePreferencesChanged', { 
-      detail: { packageName, preferences } 
+    window.dispatchEvent(new CustomEvent('tilePreferencesChanged', {
+      detail: { packageName, preferences }
     }));
   },
 
   getEffectiveTilePreferences: (packageName) => {
     const appPrefs = backendMethods.getAppTilePreferences(packageName);
     const globalPrefs = backendMethods.getGlobalTilePreferences();
-    
+
     return {
       icon: appPrefs.icon === "default" ? globalPrefs.icon : appPrefs.icon,
       background: appPrefs.background === "default" ? globalPrefs.background : appPrefs.background,
@@ -1245,7 +1245,7 @@ const backendMethods = {
         }
       });
     }, 50);
-    
+
     // Refresh app list tiles
     setTimeout(() => {
       document.querySelectorAll('.groove-app-tile[packagename]').forEach(tile => {
@@ -1259,15 +1259,15 @@ const backendMethods = {
 
   applyTilePreferences: (tileElement, packageName) => {
     if (!tileElement || !packageName) return;
-    
+
     const prefs = backendMethods.getEffectiveTilePreferences(packageName);
-    
+
     // Determine if this is a home tile or app tile
     const isHomeTile = tileElement.classList.contains('groove-home-tile');
     const isAppTile = tileElement.classList.contains('groove-app-tile');
-    
+
     let iconElement, titleElement, backgroundTarget;
-    
+
     if (isHomeTile) {
       iconElement = tileElement.querySelector('.groove-home-tile-imageicon');
       titleElement = tileElement.querySelector('.groove-home-tile-title');
@@ -1277,7 +1277,7 @@ const backendMethods = {
       titleElement = tileElement.querySelector('.groove-app-tile-title');
       backgroundTarget = iconElement; // For app tiles, apply background to icon element
     }
-    
+
     // Apply background preference
     if (backgroundTarget) {
       if (prefs.background === 'accent_color') {
@@ -1289,7 +1289,7 @@ const backendMethods = {
         backgroundTarget.style.backgroundImage = ''; // Reset background image
       }
     }
-    
+
     // Apply text color preference only to home tiles (not app list tiles)
     if (titleElement && isHomeTile) {
       if (prefs.textColor === 'light') {
@@ -1300,7 +1300,7 @@ const backendMethods = {
         titleElement.style.color = '';
       }
     }
-    
+
     // Apply icon preference (monochrome, icon packs, etc.)
     if (prefs.icon === 'monochrome' && iconElement) {
       // Check if monochrome is supported
@@ -1354,7 +1354,7 @@ window.addEventListener("appUninstall", function (e) {
 });
 
 // Listen for tile preferences changes and refresh tiles
-window.addEventListener("tilePreferencesChanged", function(e) {
+window.addEventListener("tilePreferencesChanged", function (e) {
   backendMethods.refreshAllTiles();
 });
 

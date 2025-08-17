@@ -397,7 +397,7 @@ var welcomei = 0
 welcomeTitle.innerText = i18n.t(welcomeType)
 function startFlipping() {
     if (!!localStorage.getItem("UIScale")) GrooveBoard.backendMethods.setUIScale(Number(localStorage.getItem("UIScale")), true); else GrooveBoard.backendMethods.setUIScale(.8, true)
-   
+
     setTimeout(() => {
         setTimeout(() => {
             if (isChristmas()) snowStorm.start()
@@ -555,7 +555,21 @@ document.querySelectorAll("div.permission-group").forEach((e, index) => {
         }
     }
     e.querySelector("button").addEventListener("flowClick", () => {
-        Groove.requestPermission(allPermissions[index])
+        if (allPermissions[index] == "ACCESSIBILITY") {
+            const alert = GrooveBoard.alert("Enable Double-Tap to Lock", "This feature needs Accessibility permission to lock your screen with a double-tap. Do you want to enable it?", [
+                {
+                    title: "Accept",
+                    action: () => {
+                        Groove.requestPermission(allPermissions[index])
+                    }
+                },
+                {
+                    title: "Decline"
+                }
+            ], true)
+        } else {
+            Groove.requestPermission(allPermissions[index])
+        }
         console.log(index, allPermissions[index])
     })
     setInterval(interval, 1000)

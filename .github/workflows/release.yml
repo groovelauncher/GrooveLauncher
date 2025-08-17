@@ -16,6 +16,17 @@ on:
         required: false
         type: boolean
         default: false
+      generate_release_description:
+        description: 'Generate AI-powered release description for GitHub release'
+        required: false
+        type: boolean
+        default: false
+      generate_whats_new:
+        description: "Generate AI-powered what's new description for welcome.html"
+        required: false
+        type: boolean
+        default: false
+
 
 jobs:
   build-and-release:
@@ -32,6 +43,8 @@ jobs:
         run: |
           echo "version_name=${{ github.event.inputs.version_name }}" >> $GITHUB_OUTPUT
           echo "create_release=${{ github.event.inputs.create_release }}" >> $GITHUB_OUTPUT
+          echo "generate_release_description=${{ github.event.inputs.generate_release_description }}" >> $GITHUB_OUTPUT
+          echo "generate_whats_new=${{ github.event.inputs.generate_whats_new }}" >> $GITHUB_OUTPUT
           echo "Using manual inputs: ${{ github.event.inputs.version_name }}"
 
       - name: Setup Node.js
@@ -118,6 +131,100 @@ jobs:
           echo "Generated release files:"
           ls -la GrooveLauncher_v${VERSION_NAME}_*.apk
 
+      - name: Generate Release Description with Gemini
+        if: ${{ steps.version_vars.outputs.generate_release_description == 'true' && secrets.GEMINI_API_KEY != '' }}
+        id: release_description
+        run: |
+          VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
+          
+          # Get git log since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            COMMITS=$(git log ${LAST_TAG}..HEAD --oneline --no-merges)
+          else
+            COMMITS=$(git log --oneline --no-merges -10)
+          fi
+          
+          # Prepare prompt for Gemini
+          PROMPT="Based on these git commits, generate a GitHub release description in markdown format for Groove Launcher v${VERSION_NAME}. Use categories: Added, Removed, Improved, Fixed. Format each item as '- **feature name**: Description'. Include a Full Changelog link at the end. Here are the commits:\n\n${COMMITS}"
+          
+          # Call Gemini API
+          RESPONSE=$(curl -s "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent" \
+            -H "x-goog-api-key: ${{ secrets.GEMINI_API_KEY }}" \
+            -H 'Content-Type: application/json' \
+            -X POST \
+            -d "{
+              \"contents\": [
+                {
+                  \"parts\": [
+                    {
+                      \"text\": \"${PROMPT}\"
+                    }
+                  ]
+                }
+              ]
+            }")
+          
+          # Extract text from response
+          RELEASE_NOTES=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text' 2>/dev/null || echo "")
+          
+          if [ -n "$RELEASE_NOTES" ] && [ "$RELEASE_NOTES" != "null" ]; then
+            echo "Generated release description successfully"
+            # Save to file for later use
+            echo "$RELEASE_NOTES" > release_description.md
+            echo "release_notes_generated=true" >> $GITHUB_OUTPUT
+          else
+            echo "Failed to generate release description, using default"
+            echo "release_notes_generated=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate What's New Description with Gemini
+        if: ${{ steps.version_vars.outputs.generate_whats_new == 'true' && secrets.GEMINI_API_KEY != '' }}
+        id: whats_new
+        run: |
+          VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
+          
+          # Get git log since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            COMMITS=$(git log ${LAST_TAG}..HEAD --oneline --no-merges)
+          else
+            COMMITS=$(git log --oneline --no-merges -10)
+          fi
+          
+          # Prepare prompt for Gemini
+          PROMPT="Based on these git commits, generate a 'What's New' HTML list for Groove Launcher v${VERSION_NAME}. Format as HTML <li> elements with <strong> tags for feature names. Make it human-readable and user-friendly. Example: <li><strong>Feature name:</strong> User-friendly description</li>. Here are the commits:\n\n${COMMITS}"
+          
+          # Call Gemini API
+          RESPONSE=$(curl -s "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent" \
+            -H "x-goog-api-key: ${{ secrets.GEMINI_API_KEY }}" \
+            -H 'Content-Type: application/json' \
+            -X POST \
+            -d "{
+              \"contents\": [
+                {
+                  \"parts\": [
+                    {
+                      \"text\": \"${PROMPT}\"
+                    }
+                  ]
+                }
+              ]
+            }")
+          
+          # Extract text from response
+          WHATS_NEW_HTML=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text' 2>/dev/null || echo "")
+          
+          if [ -n "$WHATS_NEW_HTML" ] && [ "$WHATS_NEW_HTML" != "null" ]; then
+            echo "Generated what's new description successfully"
+            # Save to file for later use
+            echo "$WHATS_NEW_HTML" > whats_new.html
+            echo "whats_new_generated=true" >> $GITHUB_OUTPUT
+          else
+            echo "Failed to generate what's new description"
+            echo "whats_new_generated=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Create GitHub Release
         if: ${{ steps.version_vars.outputs.create_release == 'true' }}
         env:
@@ -127,12 +234,47 @@ jobs:
           RELEASE_TAG="v${VERSION_NAME}"
           ASSETS=$(ls GrooveLauncher_v${VERSION_NAME}_*.apk | xargs)
           
+          # Use generated release notes if available, otherwise use default
+          if [ -f "release_description.md" ] && [ "${{ steps.release_description.outputs.release_notes_generated }}" = "true" ]; then
+            RELEASE_NOTES=$(cat release_description.md)
+            echo "Using AI-generated release description"
+          else
+            RELEASE_NOTES="## Groove Launcher v${VERSION_NAME}\n\nStable release of Groove Launcher.\n\n### Downloads\n- **WebView**: Standard Android WebView engine\n- **GeckoView**: Mozilla's GeckoView engine\n\n### Architecture Support\n- ARM64 (arm64-v8a) - Recommended for most devices\n- ARMv7 (armeabi-v7a) - Older ARM devices\n- x86_64 - Intel/AMD 64-bit emulators\n- x86 - Intel/AMD 32-bit emulators"
+            echo "Using default release description"
+          fi
+          
           echo "Creating release with tag $RELEASE_TAG"
           gh release create "$RELEASE_TAG" $ASSETS \
             --title "Groove Launcher v${VERSION_NAME}" \
-            --notes "## Groove Launcher v${VERSION_NAME}\n\nStable release of Groove Launcher.\n\n### Downloads\n- **WebView**: Standard Android WebView engine\n- **GeckoView**: Mozilla's GeckoView engine\n\n### Architecture Support\n- ARM64 (arm64-v8a) - Recommended for most devices\n- ARMv7 (armeabi-v7a) - Older ARM devices\n- x86_64 - Intel/AMD 64-bit emulators\n- x86 - Intel/AMD 32-bit emulators" \
+            --notes "$RELEASE_NOTES" \
             --latest
             
+      - name: Display Generated Descriptions (No Release)
+        if: ${{ steps.version_vars.outputs.create_release != 'true' }}
+        run: |
+          echo "📋 Generated AI Descriptions:"
+          echo "================================"
+          
+          if [ "${{ steps.release_description.outputs.release_notes_generated }}" = "true" ] && [ -f "release_description.md" ]; then
+            echo "🤖 AI-Generated Release Description:"
+            echo "-----------------------------------"
+            cat release_description.md
+            echo ""
+            echo "================================"
+          fi
+          
+          if [ "${{ steps.whats_new.outputs.whats_new_generated }}" = "true" ] && [ -f "whats_new.html" ]; then
+            echo "🤖 AI-Generated What's New Content:"
+            echo "----------------------------------"
+            cat whats_new.html
+            echo ""
+            echo "================================"
+          fi
+          
+          if [ "${{ steps.release_description.outputs.release_notes_generated }}" != "true" ] && [ "${{ steps.whats_new.outputs.whats_new_generated }}" != "true" ]; then
+            echo "ℹ️ No AI descriptions were generated for this build."
+          fi
+
       - name: Upload Artifacts (No Release)
         if: ${{ steps.version_vars.outputs.create_release != 'true' }}
         uses: actions/upload-artifact@v4
@@ -141,13 +283,45 @@ jobs:
           path: GrooveLauncher_v${{ steps.version_vars.outputs.version_name }}_*.apk
           retention-days: 30
           
+      - name: Update Welcome.html with What's New
+        if: ${{ steps.whats_new.outputs.whats_new_generated == 'true' }}
+        run: |
+          if [ -f "whats_new.html" ]; then
+            echo "Updating welcome.html with AI-generated what's new content"
+            # Read the generated HTML content
+            WHATS_NEW_CONTENT=$(cat whats_new.html)
+            
+            # Check if welcome.html exists
+            if [ -f "www/welcome.html" ]; then
+              # Create a backup
+              cp www/welcome.html www/welcome.html.backup
+              
+              # Update the what's new section in welcome.html
+              # This assumes there's a placeholder or existing what's new section
+              # You may need to adjust this based on your welcome.html structure
+              echo "What's new content generated and ready for manual integration:"
+              echo "$WHATS_NEW_CONTENT"
+              echo "Please manually update www/welcome.html with this content."
+            else
+              echo "welcome.html not found at www/welcome.html"
+            fi
+          fi
+
       - name: Commit and Push Version Changes
         if: ${{ steps.version_vars.outputs.create_release == 'true' }}
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          
+          # Add version files
           git add package.json src/scripts/grooveMock.js android/app/build.gradle.kts
+          
+          # Add welcome.html if it was updated
+          if [ -f "www/welcome.html.backup" ]; then
+            git add www/welcome.html
+          fi
+          
           git commit -m "Bump version to v${VERSION_NAME}" || echo "No changes to commit"
           git push
           
@@ -159,8 +333,20 @@ jobs:
           echo "📱 Generated APKs:"
           ls -la GrooveLauncher_v${VERSION_NAME}_*.apk
           
+          # AI-generated content summary
+          if [ "${{ steps.release_description.outputs.release_notes_generated }}" = "true" ]; then
+            echo "🤖 AI-generated release description created"
+          fi
+          
+          if [ "${{ steps.whats_new.outputs.whats_new_generated }}" = "true" ]; then
+            echo "🤖 AI-generated what's new content created"
+          fi
+          
           if [ "${{ steps.version_vars.outputs.create_release }}" = "true" ]; then
             echo "🚀 GitHub release created: v${VERSION_NAME}"
+            if [ "${{ steps.release_description.outputs.release_notes_generated }}" = "true" ]; then
+              echo "📝 Release includes AI-generated description"
+            fi
             echo "📝 Version changes committed and pushed"
           else
             echo "📦 APKs uploaded as artifacts (no release created)"

@@ -1,9 +1,21 @@
-name: Nightly APK Build
+name: Stable APK Build
 
 on:
-  schedule:
-    - cron: "0 * * * *"  # runs every 1 hour
   workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'Version name (e.g., 0.5.6-beta.1)'
+        required: true
+        type: string
+      version_code:
+        description: 'Version code (integer, e.g., 56)'
+        required: true
+        type: string
+      create_release:
+        description: 'Create GitHub release with artifacts'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build-and-release:
@@ -15,111 +27,142 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check for new commits
-        id: check_commits
+      - name: Set version variables
+        id: version_vars
         run: |
-          LATEST_NIGHTLY=$(gh release list --exclude-drafts --limit 1 | awk 'tolower($0) ~ /nightly/ {print $1}' | cut -d'-' -f1)
-          LATEST_COMMIT=$(git rev-parse --short HEAD)
-          echo "Latest nightly: $LATEST_NIGHTLY"
-          echo "Current commit: $LATEST_COMMIT"
-          if [ "$LATEST_NIGHTLY" = "$LATEST_COMMIT" ]; then
-            echo "No new commits since last nightly build"
-            echo "skip_build=true" >> $GITHUB_OUTPUT
-          else
-            echo "New commits found, building new nightly"
-            echo "skip_build=false" >> $GITHUB_OUTPUT
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          echo "version_name=${{ github.event.inputs.version_name }}" >> $GITHUB_OUTPUT
+          echo "create_release=${{ github.event.inputs.create_release }}" >> $GITHUB_OUTPUT
+          echo "Using manual inputs: ${{ github.event.inputs.version_name }}"
 
       - name: Setup Node.js
-        if: steps.check_commits.outputs.skip_build != 'true'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "16"
+          node-version: "18"
 
       - name: Setup Java
-        if: steps.check_commits.outputs.skip_build != 'true'
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "17"
 
       - name: Install Dependencies
-        if: steps.check_commits.outputs.skip_build != 'true'
         run: npm install
 
+      - name: Update Version Numbers
+        run: |
+          VERSION_NAME="${{ github.event.inputs.version_name }}"
+          VERSION_CODE="${{ github.event.inputs.version_code }}"
+          
+          echo "Updating version to: $VERSION_NAME (code: $VERSION_CODE)"
+          
+          # Update package.json
+          npm version $VERSION_NAME --no-git-tag-version
+          
+          # Update grooveMock.js
+          sed -i '' "s/version: '[^']*'/version: '$VERSION_NAME'/g" src/scripts/grooveMock.js
+          
+          # Update build.gradle.kts
+          sed -i '' "s/versionName = \"[^\"]*\"/versionName = \"$VERSION_NAME\"/g" android/app/build.gradle.kts
+          sed -i '' "s/versionCode = [0-9]*/versionCode = $VERSION_CODE/g" android/app/build.gradle.kts
+          
+          echo "Version numbers updated successfully"
+
       - name: Decode Keystore
-        if: steps.check_commits.outputs.skip_build != 'true'
         run: |
           echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/keystore.jks
-          mkdir android/app/app
+          mkdir -p android/app/app
           echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/app/keystore.jks
       
       - name: Create local.properties
-        if: steps.check_commits.outputs.skip_build != 'true'
         env:
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           echo "$LOCAL_PROPERTIES" > android/gradle.local.properties
-          LATEST_NIGHTLY=$(gh release list --exclude-drafts --limit 1 | awk 'tolower($0) ~ /nightly/ {print $1}' | cut -d'-' -f1)
-          CHANGELOG=$(git log ${LATEST_NIGHTLY}..HEAD --pretty=format:"<strong>%h</strong> %s{NEWLINE}" | tr '\n' '\\n')
-          echo "CHANGELOG=$CHANGELOG" >> android/gradle.local.properties
+          echo "CHANGELOG=Stable release ${{ steps.version_vars.outputs.version_name }}" >> android/gradle.local.properties
 
       - name: Build Android APKs (WebView & GeckoView)
-        if: steps.check_commits.outputs.skip_build != 'true'
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
           KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
         run: |
-          npm run build:android:nightly:webview
-          npm run build:android:nightly:geckoview
+          npm run build:production
+          cd android
+          ./gradlew assembleRegularRelease -Pandroid.injected.signing.store.file=app/keystore.jks -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD -Pandroid.injected.signing.key.alias=key0 -Pandroid.injected.signing.key.password=$KEY_PASSWORD
+          ./gradlew assembleRegularGeckoViewRelease -Pandroid.injected.signing.store.file=app/keystore.jks -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD -Pandroid.injected.signing.key.alias=key0 -Pandroid.injected.signing.key.password=$KEY_PASSWORD
+          cd ..
 
       - name: List all generated APKs for debugging
-        if: steps.check_commits.outputs.skip_build != 'true'
         run: |
           echo "Listing all APKs in build directory:"
           find android/app/build/ -name "*.apk" -print
 
       - name: Rename and Collect APKs for Release
-        if: steps.check_commits.outputs.skip_build != 'true'
         run: |
-          COMMIT_ID=$(git rev-parse --short HEAD)
-          RELEASE_TAG="${COMMIT_ID}-nightly"
+          VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
           # WebView APKs (split by ABI)
-          for apk in android/app/build/outputs/apk/nightly/release/app-nightly-*-release.apk; do
-            arch=$(echo $apk | sed -n 's/.*app-nightly-\(.*\)-release.apk/\1/p')
-            cp "$apk" "GrooveLauncher_${RELEASE_TAG}_WebView_${arch}.apk"
+          for apk in android/app/build/outputs/apk/regular/release/app-regular-*-release.apk; do
+            if [ -f "$apk" ]; then
+              arch=$(echo $apk | sed -n 's/.*app-regular-\(.*\)-release.apk/\1/p')
+              cp "$apk" "GrooveLauncher_v${VERSION_NAME}_WebView_${arch}.apk"
+            fi
           done
           # GeckoView APKs (split by ABI)
-          for apk in android/app/build/outputs/apk/nightlyGeckoView/release/app-nightlyGeckoView-*-release.apk; do
-            arch=$(echo $apk | sed -n 's/.*app-nightlyGeckoView-\(.*\)-release.apk/\1/p')
-            cp "$apk" "GrooveLauncher_${RELEASE_TAG}_GeckoView_${arch}.apk"
+          for apk in android/app/build/outputs/apk/regularGeckoView/release/app-regularGeckoView-*-release.apk; do
+            if [ -f "$apk" ]; then
+              arch=$(echo $apk | sed -n 's/.*app-regularGeckoView-\(.*\)-release.apk/\1/p')
+              cp "$apk" "GrooveLauncher_v${VERSION_NAME}_GeckoView_${arch}.apk"
+            fi
           done
+          
+          # List generated release files
+          echo "Generated release files:"
+          ls -la GrooveLauncher_v${VERSION_NAME}_*.apk
 
-      - name: Delete Previous Nightly Releases
-        if: steps.check_commits.outputs.skip_build != 'true'
+      - name: Create GitHub Release
+        if: ${{ steps.version_vars.outputs.create_release == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
-          echo "Listing and deleting previous nightly releases"
-          for tag in $(gh release list --exclude-drafts --limit 100 | awk 'tolower($0) ~ /nightly/ {print $1}'); do
-            echo "Deleting release: $tag"
-            gh release delete "$tag" -y
-          done
-
-      - name: Create Nightly Release
-        if: steps.check_commits.outputs.skip_build != 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        run: |
-          COMMIT_ID=$(git rev-parse --short HEAD)
-          RELEASE_TAG="${COMMIT_ID}-nightly"
-          RELEASE_NAME="${COMMIT_ID}-nightly"
-          ASSETS=$(ls GrooveLauncher_${RELEASE_TAG}_*.apk | xargs)
+          VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
+          RELEASE_TAG="v${VERSION_NAME}"
+          ASSETS=$(ls GrooveLauncher_v${VERSION_NAME}_*.apk | xargs)
+          
           echo "Creating release with tag $RELEASE_TAG"
           gh release create "$RELEASE_TAG" $ASSETS \
-            --title "$RELEASE_NAME" \
-            --notes "Nightly build for $(date)\n\n$(git log ${LATEST_NIGHTLY}..HEAD --pretty=format:"**%h** %s\n" | tr '\n' '\\n')" \
-            --prerelease
+            --title "Groove Launcher v${VERSION_NAME}" \
+            --notes "## Groove Launcher v${VERSION_NAME}\n\nStable release of Groove Launcher.\n\n### Downloads\n- **WebView**: Standard Android WebView engine\n- **GeckoView**: Mozilla's GeckoView engine\n\n### Architecture Support\n- ARM64 (arm64-v8a) - Recommended for most devices\n- ARMv7 (armeabi-v7a) - Older ARM devices\n- x86_64 - Intel/AMD 64-bit emulators\n- x86 - Intel/AMD 32-bit emulators" \
+            --latest
+            
+      - name: Upload Artifacts (No Release)
+        if: ${{ steps.version_vars.outputs.create_release != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: GrooveLauncher-v${{ steps.version_vars.outputs.version_name }}-APKs
+          path: GrooveLauncher_v${{ steps.version_vars.outputs.version_name }}_*.apk
+          retention-days: 30
+          
+      - name: Commit and Push Version Changes
+        if: ${{ steps.version_vars.outputs.create_release == 'true' }}
+        run: |
+          VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add package.json src/scripts/grooveMock.js android/app/build.gradle.kts
+          git commit -m "Bump version to v${VERSION_NAME}" || echo "No changes to commit"
+          git push
+          
+      - name: Summary
+        run: |
+          VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
+          echo "🎉 Build completed successfully!"
+          echo "📦 Version: v${VERSION_NAME}"
+          echo "📱 Generated APKs:"
+          ls -la GrooveLauncher_v${VERSION_NAME}_*.apk
+          
+          if [ "${{ steps.version_vars.outputs.create_release }}" = "true" ]; then
+            echo "🚀 GitHub release created: v${VERSION_NAME}"
+            echo "📝 Version changes committed and pushed"
+          else
+            echo "📦 APKs uploaded as artifacts (no release created)"
+            echo "⚠️ Version changes not committed (create_release was false)"
+          fi

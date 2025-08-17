@@ -308,8 +308,7 @@ jobs:
             --notes "$(echo -e "$RELEASE_NOTES")" \
             --latest
             
-      - name: Display Generated Descriptions (No Release)
-        if: ${{ steps.version_vars.outputs.create_release != 'true' }}
+      - name: Display Generated Descriptions
         run: |
           echo "📋 Generated AI Descriptions:"
           echo "================================"

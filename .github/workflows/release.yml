@@ -104,7 +104,7 @@ jobs:
           fi
           
           # Prepare prompt for Gemini
-          PROMPT="Based on these git commits, generate a 'What's New' HTML list for Groove Launcher v${VERSION_NAME}. Format as HTML <li> elements with <strong> tags for feature names. Make it human-readable and user-friendly. Example: <li><strong>Feature name:</strong> User-friendly description</li>. Here are the commits:\n\n${COMMITS}"
+          PROMPT="Based on these git commits, generate a 'What's New' HTML list for Groove Launcher v${VERSION_NAME}. ONLY include changes that directly affect end users (new features, UI improvements, bug fixes users would notice). EXCLUDE technical changes like code refactoring, build system updates, dependency updates, or developer-only improvements. Format as HTML <li> elements with <strong> tags for feature names. Make it human-readable and user-friendly. Example: <li><strong>Feature name:</strong> User-friendly description</li>. If no user-facing changes are found, return an empty string. Here are the commits:\n\n${COMMITS}"
           
           # Call Gemini API
           RESPONSE=$(curl -s "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent" \

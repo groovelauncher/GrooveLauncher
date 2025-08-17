@@ -23,28 +23,29 @@
     },
     "themes": {
         "light": "Light",
-        "dark": "Dark"
+        "dark": "Dark",
+        "auto": "Auto"
     },
     "colors": {
         "title": "Choose your color",
         "description": "Pick a color that matches your mood."
     },
-    "permissions":{
+    "permissions": {
         "title": "Permissions",
-        "groups":{
-            "contacts":{
+        "groups": {
+            "contacts": {
                 "title": "Contacts",
                 "description": "Access to contacts is needed to display your contacts live tile."
             },
-            "photos":{
+            "photos": {
                 "title": "Photos",
                 "description": "Access to photos is needed to display your photos live tile."
             },
-            "notifications":{
+            "notifications": {
                 "title": "Notifications",
                 "description": "Access to notifications is needed to display your notifications live tile."
             },
-            "accessibility":{
+            "accessibility": {
                 "title": "Accessibility",
                 "description": "Enable accessibility to lock device."
             }

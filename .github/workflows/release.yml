@@ -95,8 +95,8 @@ jobs:
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
           
-          # Get git log since last tag
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          # Get git log since last non-nightly tag
+          LAST_TAG=$(git tag -l | grep -v nightly | sort -V | tail -1 || echo "")
           if [ -n "$LAST_TAG" ]; then
             COMMITS=$(git log ${LAST_TAG}..HEAD --oneline --no-merges)
           else
@@ -206,8 +206,8 @@ jobs:
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
           
-          # Get git log since last tag
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          # Get git log since last non-nightly tag
+          LAST_TAG=$(git tag -l | grep -v nightly | sort -V | tail -1 || echo "")
           if [ -n "$LAST_TAG" ]; then
             COMMITS=$(git log ${LAST_TAG}..HEAD --oneline --no-merges)
           else

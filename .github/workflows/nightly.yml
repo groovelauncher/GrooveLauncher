@@ -36,7 +36,7 @@ jobs:
         if: steps.check_commits.outputs.skip_build != 'true'
         uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: "22"
 
       - name: Setup Java
         if: steps.check_commits.outputs.skip_build != 'true'

@@ -72,13 +72,13 @@ jobs:
           npm version $VERSION_NAME --no-git-tag-version
           
           # Update grooveMock.js version between comment markers
-          perl -i -pe 'BEGIN{undef $/;} s/(\/\/ VERSIONNAME START.*?return ")[^"]*(";.*?\/\/ VERSIONNAME END)/${1}$ENV{VERSION_NAME}${2}/smg' src/scripts/grooveMock.js
+          sed -i '' '/\/\/ VERSIONNAME START/,/\/\/ VERSIONNAME END/{ /return "/s/return "[^"]*"/return "'$VERSION_NAME'"/; }' src/scripts/grooveMock.js
           
-          # Update build.gradle.kts version name between comment markers
-          perl -i -pe 'BEGIN{undef $/;} s/(\/\/ VERSIONNAME START.*?versionName = ")[^"]*(";.*?\/\/ VERSIONNAME END)/${1}$ENV{VERSION_NAME}${2}/smg' android/app/build.gradle.kts
+          # Update build.gradle.kts version name between comment markers  
+          sed -i '' '/\/\/ VERSIONNAME START/,/\/\/ VERSIONNAME END/{ /versionName =/s/versionName = "[^"]*"/versionName = "'$VERSION_NAME'"/; }' android/app/build.gradle.kts
           
           # Update build.gradle.kts version code between comment markers
-          perl -i -pe 'BEGIN{undef $/;} s/(\/\/ VERSIONCODE START.*?versionCode = )[0-9]+(.*?\/\/ VERSIONCODE END)/${1}$ENV{VERSION_CODE}${2}/smg' android/app/build.gradle.kts
+          sed -i '' '/\/\/ VERSIONCODE START/,/\/\/ VERSIONCODE END/{ /versionCode =/s/versionCode = [0-9]*/versionCode = '$VERSION_CODE'/; }' android/app/build.gradle.kts
           
           echo "Version numbers updated successfully using comment markers"
 

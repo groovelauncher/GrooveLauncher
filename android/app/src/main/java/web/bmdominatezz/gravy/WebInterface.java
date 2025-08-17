@@ -1091,7 +1091,9 @@ public class WebInterface {
 
     @JavascriptInterface
     public boolean supportsMonochromeIcons() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU; // Android 13+ (API 33)
+        //testing
+        return false;
+        //return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU; // Android 13+ (API 33)
     }
 
     @JavascriptInterface

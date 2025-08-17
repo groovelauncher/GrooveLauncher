@@ -320,12 +320,12 @@ class GrooveMock {
     getAPILevel() {
         // Allow configuring API level via localStorage for testing
         const configuredLevel = localStorage.getItem("groove_mock_api_level");
-        return configuredLevel || "33"; // Default to Android 13 for monochrome support
+        return configuredLevel || "28"; // default to 28 (Android 9)
     }
 
     supportsMonochromeIcons() {
         const apiLevel = parseInt(this.getAPILevel());
-        return (apiLevel >= 33).toString(); // Proper API level check
+        return apiLevel >= 33; // Proper API level check
     }
 
     setMonochromeIcons(enable) {
@@ -334,6 +334,8 @@ class GrooveMock {
     }
 
     getMonochromeIcons() {
+        //testing
+        return false
         return localStorage.getItem("groove_monochrome_icons") === "true" ? "true" : "false";
     }
 
@@ -342,16 +344,16 @@ class GrooveMock {
         const key = `groove_app_tiles_${packageName}`;
         localStorage.setItem(key, preferences);
         console.log("Set tile preferences for", packageName, ":", preferences);
-        
+
         // Trigger tile refresh
-        window.dispatchEvent(new CustomEvent('tilePreferencesChanged', { 
-            detail: { packageName, preferences } 
+        window.dispatchEvent(new CustomEvent('tilePreferencesChanged', {
+            detail: { packageName, preferences }
         }));
     }
 
     getAppTilePreferences(packageName) {
         const defaultPrefs = '{"icon":"default","background":"default","textColor":"default"}';
-        
+
         // Check new perAppTilePreferences format first (used by Groove Settings)
         if (localStorage["perAppTilePreferences"]) {
             try {
@@ -363,7 +365,7 @@ class GrooveMock {
                 console.log("Error reading perAppTilePreferences:", error);
             }
         }
-        
+
         // Check old individual key format
         const key = `groove_app_tiles_${packageName}`;
         const stored = localStorage.getItem(key);

@@ -787,7 +787,6 @@ const backendMethods = {
     }
   },
   setTheme: (theme, doNotSave = false) => {
-    console.log("CALLED GROOVEBOARD SETTHEME", theme, doNotSave)
     if (Object.values(grooveThemes).includes(theme)) {
       var applyTheme
       if (theme == 2) applyTheme = Number(localStorage.getItem("autoTheme")); else applyTheme = theme

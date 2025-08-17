@@ -70,7 +70,6 @@ function handlePageAnim(index = 0, next = true, scroll = 0) {
     document.querySelectorAll("div.settings-pages-container > div.settings-page")[index + 1].style.setProperty("--page-swipe-direction", (next ? 1 : -1))
     document.querySelectorAll("div.settings-pages-container > div.settings-page")[index + 1].classList.add("active-page")
     const maxIndex = document.querySelectorAll("div.settings-pages-container > div.settings-page").length - 1
-    console.log("handle page anim", index, maxIndex)
     if (index == 0) {
         document.querySelectorAll("div.settings-pages-container > div.settings-page")[maxIndex].classList.add("active-page")
         document.querySelectorAll("div.settings-pages-container > div.settings-page")[maxIndex].style.setProperty("--page-swipe-translate", (next ? scroll : -scroll) + "px")
@@ -413,7 +412,6 @@ function contextMenuClose() {
 }
 window.contextMenuClose = contextMenuClose
 function refreshList(soft = false) {
-    console.log("refresh start")
     const metadata = styleManagerInstance.getMetadata()
     const listView = document.querySelector("#styles-tab > div.groove-list-view")
     if (!soft) listView.innerHTML = ""
@@ -429,13 +427,11 @@ function refreshList(soft = false) {
             //currentItem.addEventListener("flowClick", onItemClick)
             addListItemEventHandlers(currentItem)
             listView.append(currentItem)
-            console.log("append")
         })
     } else {
         listView.innerHTML = "<p style='font-size: 30px; font-weight: 200; opacity: .6;'></p>"
         listView.querySelector("p").innerText = emptyResponses[Math.floor(Math.random() * emptyResponses.length)]
     }
-    console.log("refresh stop")
 }
 window.refreshList = refreshList
 refreshList()
@@ -641,7 +637,6 @@ function addManually() {
 
                             })
                             document.body.appendChild(flyout)
-                            console.log("metadata", metadata)
                         })
                         .catch(error => {
                             console.error('Error loading CSS:', error)
@@ -660,8 +655,6 @@ function addManually() {
     setTimeout(() => {
         alertView.querySelector("input.enter-style-url").focus()
     }, 250);
-    console.log("alertView", alertView)
-
 }
 function writeManually() {
     // Create a flyout for manual CSS entry with fullscreen textarea and Apply/Cancel buttons
@@ -705,16 +698,18 @@ function writeManually() {
                     {
                         title: "Discard", style: "destructive", action: () => closeFlyout()
                     },
-                    { title: "Cancel", style: "default", action: () => {
-                        // Add back to GrooveBoard navigation history
-                        if (window.parent.GrooveBoard?.backendMethods?.navigation?.push) {
-                            window.parent.GrooveBoard.backendMethods.navigation.push(
-                                "manualWriteFlyout",
-                                () => {},
-                                () => { onBack(); }
-                            );
+                    {
+                        title: "Cancel", style: "default", action: () => {
+                            // Add back to GrooveBoard navigation history
+                            if (window.parent.GrooveBoard?.backendMethods?.navigation?.push) {
+                                window.parent.GrooveBoard.backendMethods.navigation.push(
+                                    "manualWriteFlyout",
+                                    () => { },
+                                    () => { onBack(); }
+                                );
+                            }
                         }
-                    } }
+                    }
                 ]
             );
         } else {
@@ -760,17 +755,19 @@ function writeManually() {
                             history.back();
                         }
                     },
-                    { title: "Cancel", style: "default", action: () => {
-                        // push state again to keep flyout open and add back to GrooveBoard navigation history
-                        history.pushState({}, "");
-                        if (window.parent.GrooveBoard?.backendMethods?.navigation?.push) {
-                            window.parent.GrooveBoard.backendMethods.navigation.push(
-                                "manualWriteFlyout",
-                                () => {},
-                                () => { onBack(); }
-                            );
+                    {
+                        title: "Cancel", style: "default", action: () => {
+                            // push state again to keep flyout open and add back to GrooveBoard navigation history
+                            history.pushState({}, "");
+                            if (window.parent.GrooveBoard?.backendMethods?.navigation?.push) {
+                                window.parent.GrooveBoard.backendMethods.navigation.push(
+                                    "manualWriteFlyout",
+                                    () => { },
+                                    () => { onBack(); }
+                                );
+                            }
                         }
-                    } }
+                    }
                 ]
             );
         } else {
@@ -783,14 +780,14 @@ function writeManually() {
     if (window.parent.GrooveBoard?.backendMethods?.navigation?.push) {
         window.parent.GrooveBoard.backendMethods.navigation.push(
             "manualWriteFlyout",
-            () => {},
+            () => { },
             () => {
                 onBack();
             }
         );
     }
 }
-function addFile(){
+function addFile() {
     // Open a file selector for .css files
     const input = document.createElement('input');
     input.type = 'file';
@@ -944,42 +941,27 @@ function initializeGlobalTilePreferences() {
     setupGlobalTextColorDropdown();
 }
 
-function checkMonochromeIconsSupport() {
-    try {
-        // Check both API level and explicit support method
-        if (window.Groove && window.Groove.supportsMonochromeIcons) {
-            return window.Groove.supportsMonochromeIcons() === "true";
-        } else if (window.Groove && window.Groove.getAPILevel) {
-            const apiLevel = parseInt(window.Groove.getAPILevel());
-            return apiLevel >= 33; // Android 13 (TIRAMISU) and above
-        } else {
-            // Fallback for web mode - don't assume support
-            return false;
-        }
-    } catch (error) {
-        console.log("Error checking monochrome icons support:", error);
-        return false;
-    }
-}
-
 function setupGlobalIconDropdown() {
     const iconDropdown = document.getElementById("global-icon-dropdown");
-    
+
     // Clear existing options except the first "Default" option
     const defaultOption = iconDropdown.querySelector("div.metro-dropdown-option[value='default']");
     iconDropdown.innerHTML = "";
     iconDropdown.appendChild(defaultOption);
-    
+
     // Add monochrome option if supported
-    if (checkMonochromeIconsSupport()) {
+    if (window.parent.Groove.supportsMonochromeIcons()) {
+        console.log("monochrome supported")
         const monochromeOption = document.createElement("div");
         monochromeOption.classList.add("metro-dropdown-option");
         monochromeOption.setAttribute("value", "monochrome");
         monochromeOption.setAttribute("data-i18n", "settings.apps.icon_selections.monochrome");
         monochromeOption.innerText = "Monochrome";
         iconDropdown.appendChild(monochromeOption);
+    } else {
+        console.log("monochrome not supported")
     }
-    
+
     // Add icon pack options
     try {
         const iconPacks = JSON.parse(Groove.getIconPacks());
@@ -994,7 +976,7 @@ function setupGlobalIconDropdown() {
     } catch (error) {
         console.log("Error loading icon packs:", error);
     }
-    
+
     // Load saved preference
     const savedIconPref = getGlobalTilePreference("icon");
     const options = iconDropdown.querySelectorAll("div.metro-dropdown-option");
@@ -1006,14 +988,14 @@ function setupGlobalIconDropdown() {
     });
     iconDropdown.setAttribute("selected", selectedIndex);
     iconDropdown.selectOption(selectedIndex);
-    
+
     // Handle dropdown changes
     iconDropdown.addEventListener('selected', (e) => {
         const selectedOption = options[e.detail.index];
         const value = selectedOption.getAttribute("value");
-        
+
         setGlobalTilePreference("icon", value);
-        
+
         // Apply legacy behavior for icon packs
         if (value !== "default" && value !== "monochrome") {
             localStorage.setItem("iconPack", value);
@@ -1033,7 +1015,7 @@ function setupGlobalIconDropdown() {
             localStorage.setItem("iconPack", "");
             Groove.applyIconPack("");
         }
-        
+
         // Apply monochrome setting
         if (value === "monochrome") {
             localStorage.setItem("monochromeIcons", "enable");
@@ -1051,7 +1033,7 @@ function setupGlobalIconDropdown() {
 
 function setupGlobalBackgroundDropdown() {
     const backgroundDropdown = document.getElementById("global-background-dropdown");
-    
+
     // Load saved preference
     const savedBackgroundPref = getGlobalTilePreference("background");
     const options = backgroundDropdown.querySelectorAll("div.metro-dropdown-option");
@@ -1063,19 +1045,19 @@ function setupGlobalBackgroundDropdown() {
     });
     backgroundDropdown.setAttribute("selected", selectedIndex);
     backgroundDropdown.selectOption(selectedIndex);
-    
+
     // Handle dropdown changes
     backgroundDropdown.addEventListener('selected', (e) => {
         const selectedOption = options[e.detail.index];
         const value = selectedOption.getAttribute("value");
-        console.log("Global background preference changed to:", value);
+        //console.log("Global background preference changed to:", value);
         setGlobalTilePreference("background", value);
     });
 }
 
 function setupGlobalTextColorDropdown() {
     const textColorDropdown = document.getElementById("global-text-color-dropdown");
-    
+
     // Load saved preference
     const savedTextColorPref = getGlobalTilePreference("textColor");
     const options = textColorDropdown.querySelectorAll("div.metro-dropdown-option");
@@ -1087,12 +1069,12 @@ function setupGlobalTextColorDropdown() {
     });
     textColorDropdown.setAttribute("selected", selectedIndex);
     textColorDropdown.selectOption(selectedIndex);
-    
+
     // Handle dropdown changes
     textColorDropdown.addEventListener('selected', (e) => {
         const selectedOption = options[e.detail.index];
         const value = selectedOption.getAttribute("value");
-        console.log("Global text color preference changed to:", value);
+        //console.log("Global text color preference changed to:", value);
         setGlobalTilePreference("textColor", value);
     });
 }
@@ -1113,21 +1095,21 @@ function setGlobalTilePreference(key, value) {
     if (!localStorage["globalTilePreferences"]) {
         localStorage["globalTilePreferences"] = JSON.stringify({
             icon: "default",
-            background: "default", 
+            background: "default",
             textColor: "default"
         });
     }
     const prefs = JSON.parse(localStorage["globalTilePreferences"]);
     prefs[key] = value;
     localStorage["globalTilePreferences"] = JSON.stringify(prefs);
-    console.log("Saved global tile preference:", key, "=", value);
-    
+    //console.log("Saved global tile preference:", key, "=", value);
+
     // Trigger tile refresh when global preferences change
     if (window.parent) {
-        window.parent.dispatchEvent(new CustomEvent('tilePreferencesChanged', { 
-            detail: { global: true, key, value } 
+        window.parent.dispatchEvent(new CustomEvent('tilePreferencesChanged', {
+            detail: { global: true, key, value }
         }));
-        console.log("Dispatched tilePreferencesChanged event for global preference change");
+        //console.log("Dispatched tilePreferencesChanged event for global preference change");
     }
 }
 

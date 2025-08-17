@@ -82,9 +82,7 @@ function refreshAppList(params) {
             const liveTileGroup = document.querySelector("#app-preference-live-tile")
             liveTileGroup.querySelector("div.metro-dropdown-menu").innerHTML = ""
             if (window.parent.liveTileProviders) {
-                console.log("buldum")
                 parent.liveTileProviders.forEach((provider, i) => {
-                    console.log("provide", provider)
                     if (provider.metadata.provide.includes(appdetail.packageName)) {
                         const option = document.createElement("div")
                         option.classList.add("metro-dropdown-option")
@@ -97,7 +95,6 @@ function refreshAppList(params) {
                         }
                         option.innerText = assignedName;
                         option.setAttribute("data-id", provider.id)
-                        console.log("ekledim", option)
                         liveTileGroup.querySelector("div.metro-dropdown-menu").append(option)
                     }
                 })
@@ -113,13 +110,13 @@ function refreshAppList(params) {
 
             pageNavigation.goToPage(6)
         } catch (error) {
-            
+
             parent.GrooveBoard.alert(
                 "Unable to Get App Details!",
                 "Couldn’t retrieve details for this app.",
                 [{ title: "Ok", style: "default", inline: true, action: () => { } }]
             );
-       throw error;
+            throw error;
         }
 
     })
@@ -185,18 +182,18 @@ document.querySelector("#app-list-show-toggle-switch").addEventListener("checked
 
 // Per-app tile preferences functionality
 function setupPerAppTilePreferences(appdetail) {
-    console.log("Setting up per-app tile preferences for:", appdetail.packageName);
-    
+    //console.log("Setting up per-app tile preferences for:", appdetail.packageName);
+
     // Get current per-app tile preferences
     const tilePrefs = getAppTilePreferences(appdetail.packageName);
-    console.log("Loaded tile preferences:", tilePrefs);
-    
+    //console.log("Loaded tile preferences:", tilePrefs);
+
     // Setup icon dropdown
     setupIconDropdown(appdetail, tilePrefs);
-    
+
     // Setup background dropdown  
     setupBackgroundDropdown(appdetail, tilePrefs);
-    
+
     // Setup text color dropdown
     setupTextColorDropdown(appdetail, tilePrefs);
 }
@@ -204,28 +201,31 @@ function setupPerAppTilePreferences(appdetail) {
 function setupIconDropdown(appdetail, tilePrefs) {
     const iconGroup = document.querySelector("#app-preference-icon");
     const iconDropdown = iconGroup.querySelector("div.metro-dropdown-menu");
-    
-    console.log("Setting up icon dropdown for:", appdetail.packageName, "current pref:", tilePrefs.icon);
-    
+
+    //    console.log("Setting up icon dropdown for:", appdetail.packageName, "current pref:", tilePrefs.icon);
+
     // Clear existing options
     iconDropdown.innerHTML = "";
-    
+
     // Add default option
     const defaultOption = document.createElement("div");
     defaultOption.classList.add("metro-dropdown-option");
     defaultOption.setAttribute("value", "default");
     defaultOption.innerText = "Default";
     iconDropdown.appendChild(defaultOption);
-    
+
     // Add monochrome option (only if supported)
-    if (checkMonochromeIconsSupport()) {
+    if (window.parent.Groove.supportsMonochromeIcons()) {
+        console.log("monochrome supported")
         const monochromeOption = document.createElement("div");
         monochromeOption.classList.add("metro-dropdown-option");
         monochromeOption.setAttribute("value", "monochrome");
         monochromeOption.innerText = "Monochrome";
         iconDropdown.appendChild(monochromeOption);
+    } else {
+        console.log("monochrome not supported")
     }
-    
+
     // Add icon pack options
     try {
         if (window.parent.Groove && window.parent.Groove.getIconPacks) {
@@ -242,7 +242,7 @@ function setupIconDropdown(appdetail, tilePrefs) {
     } catch (error) {
         console.log("Error loading icon packs:", error);
     }
-    
+
     // Set current selection
     const options = iconDropdown.querySelectorAll("div.metro-dropdown-option");
     let selectedIndex = 0;
@@ -253,16 +253,16 @@ function setupIconDropdown(appdetail, tilePrefs) {
     });
     iconDropdown.setAttribute("selected", selectedIndex);
     iconDropdown.selectOption(selectedIndex);
-    console.log("Set icon dropdown to index:", selectedIndex, "value:", tilePrefs.icon);
-    
+    //console.log("Set icon dropdown to index:", selectedIndex, "value:", tilePrefs.icon);
+
     // Add event listener
     iconDropdown.addEventListener('selected', (e) => {
         const selectedValue = options[e.detail.index].getAttribute("value");
-        console.log("Icon preference changed to:", selectedValue);
+        //console.log("Icon preference changed to:", selectedValue);
         const prefs = getAppTilePreferences(appdetail.packageName);
         prefs.icon = selectedValue;
         setAppTilePreferences(appdetail.packageName, prefs);
-        
+
         // Apply the preference change immediately
         applyTilePreferencesToApp(appdetail.packageName, prefs);
     });
@@ -271,9 +271,9 @@ function setupIconDropdown(appdetail, tilePrefs) {
 function setupBackgroundDropdown(appdetail, tilePrefs) {
     const backgroundGroup = document.querySelector("#app-preference-background");
     const backgroundDropdown = backgroundGroup.querySelector("div.metro-dropdown-menu");
-    
-    console.log("Setting up background dropdown for:", appdetail.packageName, "current pref:", tilePrefs.background);
-    
+
+    //console.log("Setting up background dropdown for:", appdetail.packageName, "current pref:", tilePrefs.background);
+
     // Set current selection
     const options = backgroundDropdown.querySelectorAll("div.metro-dropdown-option");
     let selectedIndex = 0;
@@ -284,16 +284,16 @@ function setupBackgroundDropdown(appdetail, tilePrefs) {
     });
     backgroundDropdown.setAttribute("selected", selectedIndex);
     backgroundDropdown.selectOption(selectedIndex);
-    console.log("Set background dropdown to index:", selectedIndex, "value:", tilePrefs.background);
-    
+    //console.log("Set background dropdown to index:", selectedIndex, "value:", tilePrefs.background);
+
     // Add event listener
     backgroundDropdown.addEventListener('selected', (e) => {
         const selectedValue = options[e.detail.index].getAttribute("value");
-        console.log("Background preference changed to:", selectedValue);
+        //console.log("Background preference changed to:", selectedValue);
         const prefs = getAppTilePreferences(appdetail.packageName);
         prefs.background = selectedValue;
         setAppTilePreferences(appdetail.packageName, prefs);
-        
+
         // Apply the preference change immediately
         applyTilePreferencesToApp(appdetail.packageName, prefs);
     });
@@ -302,9 +302,9 @@ function setupBackgroundDropdown(appdetail, tilePrefs) {
 function setupTextColorDropdown(appdetail, tilePrefs) {
     const textColorGroup = document.querySelector("#app-preference-text-color");
     const textColorDropdown = textColorGroup.querySelector("div.metro-dropdown-menu");
-    
-    console.log("Setting up text color dropdown for:", appdetail.packageName, "current pref:", tilePrefs.textColor);
-    
+
+    //console.log("Setting up text color dropdown for:", appdetail.packageName, "current pref:", tilePrefs.textColor);
+
     // Set current selection
     const options = textColorDropdown.querySelectorAll("div.metro-dropdown-option");
     let selectedIndex = 0;
@@ -315,16 +315,16 @@ function setupTextColorDropdown(appdetail, tilePrefs) {
     });
     textColorDropdown.setAttribute("selected", selectedIndex);
     textColorDropdown.selectOption(selectedIndex);
-    console.log("Set text color dropdown to index:", selectedIndex, "value:", tilePrefs.textColor);
-    
+    //console.log("Set text color dropdown to index:", selectedIndex, "value:", tilePrefs.textColor);
+
     // Add event listener
     textColorDropdown.addEventListener('selected', (e) => {
         const selectedValue = options[e.detail.index].getAttribute("value");
-        console.log("Text color preference changed to:", selectedValue);
+        //console.log("Text color preference changed to:", selectedValue);
         const prefs = getAppTilePreferences(appdetail.packageName);
         prefs.textColor = selectedValue;
         setAppTilePreferences(appdetail.packageName, prefs);
-        
+
         // Apply the preference change immediately
         applyTilePreferencesToApp(appdetail.packageName, prefs);
     });
@@ -335,24 +335,24 @@ function applyTilePreferencesToApp(packageName, prefs) {
     try {
         // Get effective preferences (applying global defaults where app setting is "default")
         const effectivePrefs = getEffectiveTilePreferences(packageName);
-        console.log("Applying effective tile preferences for", packageName, ":", effectivePrefs);
-        
+        //        console.log("Applying effective tile preferences for", packageName, ":", effectivePrefs);
+
         // Find the app tile in the parent launcher window
         const homeTile = window.parent.document.querySelector(`div.groove-home-tile[packagename='${packageName}']`);
         const appListItem = window.parent.document.querySelector(`div.groove-app-tile[packagename='${packageName}']`);
-        
+
         // Apply preferences to both home tile and app list item
         [homeTile, appListItem].forEach(element => {
             if (element) {
-                console.log("Applying preferences to element:", element);
+                //console.log("Applying preferences to element:", element);
                 // Use the main GrooveBoard function to apply preferences
                 if (window.parent.GrooveBoard && window.parent.GrooveBoard.backendMethods.applyTilePreferences) {
                     window.parent.GrooveBoard.backendMethods.applyTilePreferences(element, packageName);
                 }
             }
         });
-        
-        console.log("Applied tile preferences for", packageName, effectivePrefs);
+
+        //console.log("Applied tile preferences for", packageName, effectivePrefs);
     } catch (error) {
         console.log("Error applying tile preferences:", error);
     }
@@ -364,14 +364,14 @@ function applyTilePreferencesToElement(element, effectivePrefs, packageName) {
         // TODO: Implement icon preference application
         // This would involve changing the icon source based on the preference
     }
-    
+
     // Apply background preference
     if (effectivePrefs.background === "accent_color") {
         element.style.backgroundColor = "var(--accent-color)";
     } else if (effectivePrefs.background === "default") {
         element.style.backgroundColor = ""; // Reset to default
     }
-    
+
     // Apply text color preference
     const titleElement = element.querySelector(".groove-home-tile-title, .groove-app-tile-title");
     if (titleElement) {
@@ -385,24 +385,6 @@ function applyTilePreferencesToElement(element, effectivePrefs, packageName) {
     }
 }
 
-function checkMonochromeIconsSupport() {
-    try {
-        // Check both API level and explicit support method
-        if (window.parent.Groove && window.parent.Groove.supportsMonochromeIcons) {
-            return window.parent.Groove.supportsMonochromeIcons() === "true";
-        } else if (window.parent.Groove && window.parent.Groove.getAPILevel) {
-            const apiLevel = parseInt(window.parent.Groove.getAPILevel());
-            return apiLevel >= 33; // Android 13 (TIRAMISU) and above
-        } else {
-            // Fallback for web mode - don't assume support
-            return false;
-        }
-    } catch (error) {
-        console.log("Error checking monochrome icons support:", error);
-        return false;
-    }
-}
-
 function getAppTilePreferences(packageName) {
     try {
         if (window.parent.Groove && window.parent.Groove.getAppTilePreferences) {
@@ -412,14 +394,14 @@ function getAppTilePreferences(packageName) {
     } catch (error) {
         console.log("Error getting app tile preferences:", error);
     }
-    
+
     // Fallback to localStorage for web mode
     if (!localStorage["perAppTilePreferences"]) localStorage["perAppTilePreferences"] = JSON.stringify({});
     const perAppTilePreferences = JSON.parse(localStorage["perAppTilePreferences"]);
     if (!perAppTilePreferences[packageName]) {
         perAppTilePreferences[packageName] = {
             icon: "default",
-            background: "default", 
+            background: "default",
             textColor: "default"
         };
         localStorage["perAppTilePreferences"] = JSON.stringify(perAppTilePreferences);
@@ -443,7 +425,7 @@ function getEffectiveTilePreferences(packageName) {
     // Get per-app preferences
     const appPrefs = getAppTilePreferences(packageName);
     const globalPrefs = getGlobalTilePreferences();
-    
+
     // Return effective preferences (use global when app pref is "default")
     return {
         icon: appPrefs.icon === "default" ? globalPrefs.icon : appPrefs.icon,
@@ -456,24 +438,24 @@ function setAppTilePreferences(packageName, data) {
     try {
         if (window.parent.Groove && window.parent.Groove.setAppTilePreferences) {
             window.parent.Groove.setAppTilePreferences(packageName, JSON.stringify(data));
-            console.log("Saved app tile preferences via Groove API:", packageName, data);
+            //console.log("Saved app tile preferences via Groove API:", packageName, data);
         }
     } catch (error) {
         console.log("Error setting app tile preferences via Groove API:", error);
     }
-    
+
     // Also save to localStorage for web mode and as backup
     getAppTilePreferences(packageName);
     const perAppTilePreferences = JSON.parse(localStorage["perAppTilePreferences"]);
     perAppTilePreferences[packageName] = data;
     localStorage["perAppTilePreferences"] = JSON.stringify(perAppTilePreferences);
-    console.log("Saved app tile preferences to localStorage:", packageName, data);
-    
+    //console.log("Saved app tile preferences to localStorage:", packageName, data);
+
     // Trigger tile refresh when per-app preferences change
     if (window.parent) {
-        window.parent.dispatchEvent(new CustomEvent('tilePreferencesChanged', { 
-            detail: { packageName, preferences: data } 
+        window.parent.dispatchEvent(new CustomEvent('tilePreferencesChanged', {
+            detail: { packageName, preferences: data }
         }));
-        console.log("Dispatched tilePreferencesChanged event");
+        //console.log("Dispatched tilePreferencesChanged event");
     }
 }

@@ -290,7 +290,7 @@ jobs:
         run: |
           VERSION_NAME="${{ steps.version_vars.outputs.version_name }}"
           INCLUDE_GECKOVIEW="${{ steps.version_vars.outputs.include_geckoview }}"
-          RELEASE_TAG="v${VERSION_NAME}"
+          RELEASE_TAG="${VERSION_NAME}"
           
           # Build assets list based on include_geckoview setting
           if [ "$INCLUDE_GECKOVIEW" = "true" ]; then

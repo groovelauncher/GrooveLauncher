@@ -271,7 +271,7 @@ jobs:
           
           echo "Creating release with tag $RELEASE_TAG"
           gh release create "$RELEASE_TAG" $ASSETS \
-            --title "Groove Launcher v${VERSION_NAME}" \
+            --title "${VERSION_NAME}" \
             --notes "$RELEASE_NOTES" \
             --latest
             

@@ -165,7 +165,7 @@ public class ContentServer extends WebViewClientCompat {
                                     IconPack perAppIconPackInstance = new IconPack();
                                     perAppIconPackInstance.packageName = perAppIconPack;
                                     perAppIconPackInstance.setContext(mainActivity);
-                                    perAppIconPackInstance.load();
+                                    //perAppIconPackInstance.load();
                                     
                                     if (perAppIconPackInstance.hasIconForPackage(iconPackageName)) {
                                         return new WebResourceResponse(null, null, null);

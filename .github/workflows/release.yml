@@ -133,6 +133,10 @@ jobs:
               ]
             }")
           
+          # Log the full response for debugging
+          echo "Gemini API Response for What's New:"
+          echo "$RESPONSE"
+          
           # Extract text from response
           WHATS_NEW_HTML=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text' 2>/dev/null || echo "")
           
@@ -143,6 +147,7 @@ jobs:
             echo "whats_new_generated=true" >> $GITHUB_OUTPUT
           else
             echo "Failed to generate what's new description"
+            echo "Extracted content: '$WHATS_NEW_HTML'"
             echo "whats_new_generated=false" >> $GITHUB_OUTPUT
           fi
 
@@ -250,6 +255,10 @@ jobs:
               ]
             }")
           
+          # Log the full response for debugging
+          echo "Gemini API Response for Release Description:"
+          echo "$RESPONSE"
+          
           # Extract text from response
           RELEASE_NOTES=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text' 2>/dev/null || echo "")
           
@@ -264,6 +273,7 @@ jobs:
             echo "release_notes_generated=true" >> $GITHUB_OUTPUT
           else
             echo "Failed to generate release description, using default"
+            echo "Extracted content: '$RELEASE_NOTES'"
             echo "release_notes_generated=false" >> $GITHUB_OUTPUT
           fi
 

@@ -85,7 +85,7 @@ public class GravyServer extends BroadcastReceiver {
         IntentFilter responseFilter = new IntentFilter(ACTION_RECEIVE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             // Android 12 (API level 31) and above
-            context.registerReceiver(responseReceiver, filter, Context.RECEIVER_EXPORTED); // Or Context.RECEIVER_NOT_EXPORTED
+            context.registerReceiver(responseReceiver, responseFilter, Context.RECEIVER_EXPORTED); // Or Context.RECEIVER_NOT_EXPORTED
         } else {
             context.registerReceiver(responseReceiver, responseFilter);
         }
@@ -146,7 +146,7 @@ public class GravyServer extends BroadcastReceiver {
     }
 
     public List<String> queryServerApps() {
-        List<String> clientApps = new ArrayList<>();
+        List<String> serverApps = new ArrayList<>();
         PackageManager packageManager = context.getPackageManager();
 
         // Create an intent for the action you are querying
@@ -157,11 +157,11 @@ public class GravyServer extends BroadcastReceiver {
 
         for (ResolveInfo receiver : receivers) {
             String packageName = receiver.activityInfo.packageName;
-            clientApps.add(packageName);
-            Log.d("GravyServer", "Discovered client app: " + packageName);
+            serverApps.add(packageName);
+            Log.d("GravyServer", "Discovered server app: " + packageName);
         }
 
-        return clientApps;
+        return serverApps;
     }
 
     public static class version {
